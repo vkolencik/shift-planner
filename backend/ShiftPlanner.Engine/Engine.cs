@@ -4,6 +4,69 @@ namespace ShiftPlanner.Engine;
 
 public static class Engine
 {
+    
+    public class VarArraySolutionPrinter : CpSolverSolutionCallback
+    {
+        public VarArraySolutionPrinter(IntVar[] variables)
+        {
+            variables_ = variables;
+        }
+
+        public override void OnSolutionCallback()
+        {
+            {
+                Console.WriteLine(String.Format("Solution #{0}: time = {1:F2} s", solution_count_, WallTime()));
+                foreach (IntVar v in variables_)
+                {
+                    Console.WriteLine(String.Format("  {0} = {1}", v.ShortString(), Value(v)));
+                }
+                solution_count_++;
+            }
+        }
+
+        public int SolutionCount()
+        {
+            return solution_count_;
+        }
+
+        private int solution_count_;
+        private IntVar[] variables_;
+    }
+    
+    public static void Test()
+    {
+        CpModel model = new CpModel();
+        
+        IntVar x = model.NewIntVar(0, 10, "x");
+        IntVar y = model.NewIntVar(0, 20, "y");
+        IntVar z = model.NewIntVar(0, 30, "z");
+        
+        model.Add(x != y);
+        model.Add(y != z);
+        model.Add(x != z);
+
+        model.Add(x + y + z == 13);
+        
+        model.Maximize(z);
+        
+        CpSolver solver = new CpSolver();
+        solver.StringParameters = "enumerate_all_solutions:true";
+        
+        VarArraySolutionPrinter cb = new VarArraySolutionPrinter(new IntVar[] { x, y, z });
+
+        CpSolverStatus status = solver.Solve(model, cb);
+        
+        Console.WriteLine(status);
+        Console.WriteLine($"{solver.Value(x)}, {solver.Value(y)}, {solver.Value(z)}");
+        
+        Console.WriteLine("Statistics");
+        Console.WriteLine($"  conflicts : {solver.NumConflicts()}");
+        Console.WriteLine($"  branches  : {solver.NumBranches()}");
+        Console.WriteLine($"  wall time : {solver.WallTime()} s");
+        Console.WriteLine($"  number of solutions found: {cb.SolutionCount()}");
+    }
+    
+    
     public static void CalculateSchedule()
     {
         const int numNurses = 4;

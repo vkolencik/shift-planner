@@ -2,4 +2,4 @@
 
 using ShiftPlanner.Engine;
 
-Engine.CalculateSchedule();
+Engine.Test();
