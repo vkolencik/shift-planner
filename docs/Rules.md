@@ -2,9 +2,9 @@
 
 1. Basic constraints
    1. Every shift has exactly one employee
-   2. No employee has more than 1 shift at a given day
+   2. No employee has more than 1 shift in a given day
 2. No consecutive shifts
-3. At most *n* shifts with only 1 day in between?
+3. At most *n* shifts in a month with only 1 day in between?
 4. Employee qualification distribution:
    1. At least 1 employee with qualification at least *x*?
    2. Something else?
