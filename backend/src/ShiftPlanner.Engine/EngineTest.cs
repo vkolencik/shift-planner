@@ -2,10 +2,9 @@
 
 namespace ShiftPlanner.Engine;
 
-public static class Engine
+public static class EngineTest
 {
-    
-    public class VarArraySolutionPrinter : CpSolverSolutionCallback
+    private class VarArraySolutionPrinter : CpSolverSolutionCallback
     {
         public VarArraySolutionPrinter(IntVar[] variables)
         {
@@ -32,7 +31,7 @@ public static class Engine
         private int solution_count_;
         private IntVar[] variables_;
     }
-    
+
     public static void Test()
     {
         CpModel model = new CpModel();
@@ -65,11 +64,10 @@ public static class Engine
         Console.WriteLine($"  wall time : {solver.WallTime()} s");
         Console.WriteLine($"  number of solutions found: {cb.SolutionCount()}");
     }
-    
-    
+
     public static void CalculateSchedule()
     {
-      const int numNurses = 5;
+        const int numNurses = 5;
         const int numDays = 7;
         const int numShifts = 3;
 

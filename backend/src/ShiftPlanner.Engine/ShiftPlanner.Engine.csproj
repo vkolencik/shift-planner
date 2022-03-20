@@ -10,4 +10,8 @@
       <PackageReference Include="Google.OrTools" Version="9.2.9972" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj" />
+    </ItemGroup>
+
 </Project>
