@@ -4,7 +4,7 @@ using Xunit;
 
 namespace ShiftPlanner.Engine.Functional.Tests
 {
-    public class SchedulingEngineShould
+    public class SchedulingEngineFunctionalityShould
     {
         [Fact]
         public void ComputeBasicSchedule()

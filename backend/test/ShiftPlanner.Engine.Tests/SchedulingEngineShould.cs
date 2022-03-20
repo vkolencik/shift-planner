@@ -1,3 +1,4 @@
+using System;
 using Moq;
 using ShiftPlanner.Domain;
 using Xunit;
@@ -6,12 +7,11 @@ namespace ShiftPlanner.Engine.Tests;
 
 public class SchedulingEngineShould
 {
+    Mock<ISolver> _modelMock = new Mock<ISolver>();
     [Fact]
     public void CreateShiftVariables()
     {
-        var modelMock = new Mock<IModel>();
-        var solverMock = new Mock<ISolver>();
-        var engine = new SchedulingEngine(modelMock.Object, solverMock.Object);
+        var engine = CreateEngine();
 
         var inputParams = new SchedulingParameters(
             new ScheduledMonth(2022, 2),
@@ -35,9 +35,25 @@ public class SchedulingEngineShould
             {
                 for (int w = 1; w <= inputParams.Workplaces.Count; w++)
                 {
-                    modelMock.Verify(_ => _.NewBoolVar(new VariableName($"shifts_e{e}_d{d}_w{w}")));
+                    _modelMock.Verify(_ => _.NewBoolVar(new VariableName($"shifts_e{e}_d{d}_w{w}")));
                 }
             }
         }
+    }
+
+    private SchedulingEngine CreateEngine()
+    {
+        return new SchedulingEngine(_modelMock.Object);
+    }
+
+    [Fact]
+    public void RunSolver()
+    {
+        var engine = CreateEngine();
+        
+        engine.CalculateSchedule(
+            new SchedulingParameters(new ScheduledMonth(2022, 2), Array.Empty<Employee>(), Array.Empty<Workplace>()));
+        
+        _modelMock.Verify(_ => _.Solve());
     }
 }

@@ -7,16 +7,14 @@ namespace ShiftPlanner.Engine
 {
     internal class SchedulingEngine
     {
-        private readonly IModel _model;
-        private ISolver _solver;
+        private readonly ISolver _solver;
 
-        internal SchedulingEngine(IModel model, ISolver solver)
+        internal SchedulingEngine(ISolver solver)
         {
-            _model = model;
             _solver = solver;
         }
 
-        public static SchedulingEngine CreateGoogleSolverEngine() => new SchedulingEngine(new GoogleCpModel(), new GoogleCpSolver()); 
+        public static SchedulingEngine CreateGoogleSolverEngine() => new SchedulingEngine(new GoogleCpSolver()); 
     
         public Schedule CalculateSchedule(SchedulingParameters input)
         {
@@ -30,11 +28,13 @@ namespace ShiftPlanner.Engine
                 {
                     foreach (var w in workplaces.Values)
                     {
-                        _model.NewBoolVar(VariableName.Schedule(e, d, w));
+                        _solver.NewBoolVar(VariableName.Schedule(e, d, w));
                     }
                 }
             }
 
+            _solver.Solve();
+            
             return new Schedule(ImmutableDictionary<DateOnly, IDictionary<Workplace, Employee>>.Empty);
         }
 
