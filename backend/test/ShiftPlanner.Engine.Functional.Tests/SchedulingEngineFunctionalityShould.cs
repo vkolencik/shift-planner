@@ -9,7 +9,6 @@ namespace ShiftPlanner.Engine.Functional.Tests
         [Fact]
         public void ComputeBasicSchedule()
         {
-            var engine = SchedulingEngine.CreateGoogleSolverEngine();
 
             var vojta = new Employee("Vojta");
             var aro = new Workplace("ARO");
@@ -19,9 +18,10 @@ namespace ShiftPlanner.Engine.Functional.Tests
                 new[] {vojta},
                 new[] {aro}
             ); 
-            var schedule = engine.CalculateSchedule(
-                inputParams
-            );
+
+            var engine = SchedulingEngine.CreateGoogleSolverEngine(inputParams);
+
+            var schedule = engine.Solve();
 
             for (int d = 1; d <= 28; d++)
             {

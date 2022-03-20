@@ -8,34 +8,60 @@ namespace ShiftPlanner.Engine
     internal class SchedulingEngine
     {
         private readonly ISolver _solver;
+        private IDictionary<Employee, int> _employees;
+        private IDictionary<Workplace, int> _workplaces;
+        private IReadOnlyCollection<Day> _days;
 
-        internal SchedulingEngine(ISolver solver)
+        internal SchedulingEngine(ISolver solver, SchedulingParameters input)
         {
             _solver = solver;
+            Init(input);
         }
 
-        public static SchedulingEngine CreateGoogleSolverEngine() => new SchedulingEngine(new GoogleCpSolver()); 
-    
-        public Schedule CalculateSchedule(SchedulingParameters input)
-        {
-            var employees = CreateIndex(input.Employees);
-            var workplaces = CreateIndex(input.Workplaces);
-            var days = CreateDays(input.Month);
+        public static SchedulingEngine CreateGoogleSolverEngine(SchedulingParameters input) => new SchedulingEngine(new GoogleCpSolver(), input);
 
-            foreach (var e in employees.Values)
+        private void Init(SchedulingParameters input)
+        {
+            _employees = CreateIndex(input.Employees);
+            _workplaces = CreateIndex(input.Workplaces);
+            _days = CreateDays(input.Month);
+
+            foreach (var e in _employees.Values)
             {
-                foreach (var d in days.Select(d => d.Date.Day))
+                foreach (var d in _days.Select(d => d.Date.Day))
                 {
-                    foreach (var w in workplaces.Values)
+                    foreach (var w in _workplaces.Values)
                     {
                         _solver.NewBoolVar(VariableName.Schedule(e, d, w));
                     }
                 }
             }
-
+        }
+        
+        public Schedule Solve()
+        {
             _solver.Solve();
-            
-            return new Schedule(ImmutableDictionary<DateOnly, IDictionary<Workplace, Employee>>.Empty);
+
+            var outputModel = new Dictionary<DateOnly, IDictionary<Workplace, Employee>>();
+
+            foreach (var day in _days)
+            {
+                foreach (var workplace in _workplaces)
+                {
+                    var assignedEmployee = _employees
+                        .Single(e => _solver.Result(VariableName.Schedule(e.Value, day.Date.Day, workplace.Value)) == 1)
+                        .Key;
+
+                    if (!outputModel.TryGetValue(day.Date, out _))
+                    {
+                        outputModel.Add(day.Date, new Dictionary<Workplace, Employee>());
+                    }
+                    
+                    outputModel[day.Date].Add(workplace.Key, assignedEmployee);
+                }
+            }
+
+            return new Schedule(outputModel);
         }
 
         private static IDictionary<T, int> CreateIndex<T>(IReadOnlyCollection<T> elements)
