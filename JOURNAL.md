@@ -3,6 +3,7 @@
 * Started to write scheduler from scratch
   * Create wrapper interfaces around Google CP libs so that stuff can be unit tested
   * Convert input domain values to the language of Google CP solver (Employees/Shifts/Workplaces => CP boolean variables)
+  * Convert computation results to output model (CP boolean variables => map of Day > Workplace > Employee)
 
 # 2022-03-13
 * Read the [docs](https://developers.google.com/optimization/scheduling/employee_scheduling#requests) to see how different rules can be expressed in the solver.
