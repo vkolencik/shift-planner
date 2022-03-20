@@ -2,5 +2,5 @@
 
 using ShiftPlanner.Engine;
 
-EngineTest.CalculateSchedule();
+SampleSchedulingEngine.CalculateSchedule();
                                                                                                                                                                                                                                                                                                                                                                      

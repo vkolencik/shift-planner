@@ -2,7 +2,7 @@
 
 namespace ShiftPlanner.Engine;
 
-public static class EngineTest
+public static class SampleSchedulingEngine
 {
     private class VarArraySolutionPrinter : CpSolverSolutionCallback
     {

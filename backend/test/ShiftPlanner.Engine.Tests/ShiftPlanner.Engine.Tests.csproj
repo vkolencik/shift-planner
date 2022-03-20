@@ -25,4 +25,8 @@
       <ProjectReference Include="..\..\src\ShiftPlanner.Engine\ShiftPlanner.Engine.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Functional" />
+    </ItemGroup>
+
 </Project>

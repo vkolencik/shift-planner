@@ -4,7 +4,7 @@ using Xunit;
 
 namespace ShiftPlanner.Engine.Tests;
 
-public class EngineShould
+public class SchedulingEngineShould
 {
     [Fact]
     public void CreateShiftVariables()
