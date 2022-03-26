@@ -1,4 +1,4 @@
-﻿namespace ShiftPlanner.Engine;
+namespace ShiftPlanner.Engine;
 
 internal record VariableName(string Value)
 {
@@ -6,4 +6,3 @@ internal record VariableName(string Value)
         new VariableName($"shifts_e{employee}_d{day}_w{workplace}");
 }
  
-

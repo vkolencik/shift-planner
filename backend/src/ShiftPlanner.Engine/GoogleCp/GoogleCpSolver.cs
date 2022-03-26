@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Google.OrTools.Sat;
 
 namespace ShiftPlanner.Engine.GoogleCp;

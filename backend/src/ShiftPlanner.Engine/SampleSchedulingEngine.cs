@@ -1,4 +1,4 @@
-﻿using Google.OrTools.Sat;
+using Google.OrTools.Sat;
 
 namespace ShiftPlanner.Engine;
 

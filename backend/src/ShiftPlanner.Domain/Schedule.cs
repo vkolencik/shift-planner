@@ -1,4 +1,4 @@
-﻿namespace ShiftPlanner.Domain;
+namespace ShiftPlanner.Domain;
 
 public record Schedule
 {

@@ -1,4 +1,4 @@
-﻿using ShiftPlanner.Domain;
+using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.GoogleCp;
 
 namespace ShiftPlanner.Engine
