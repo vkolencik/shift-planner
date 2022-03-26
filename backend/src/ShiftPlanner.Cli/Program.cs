@@ -1,6 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
+// See https://aka.ms/new-console-template for more information
 
 using ShiftPlanner.Engine;
 
-Engine.CalculateSchedule();
+SampleSchedulingEngine.CalculateSchedule();
                                                                                                                                                                                                                                                                                                                                                                      
