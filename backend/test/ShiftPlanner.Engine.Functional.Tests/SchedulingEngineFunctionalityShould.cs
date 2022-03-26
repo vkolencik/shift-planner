@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ShiftPlanner.Domain;
 using Xunit;
 
@@ -25,7 +26,8 @@ namespace ShiftPlanner.Engine.Functional.Tests
 
             for (int d = 1; d <= 28; d++)
             {
-                Assert.Equal(vojta, schedule.Assignments[new DateOnly(2022, 2, d)][aro]);
+                var day = new DateOnly(2022, 2, d);
+                Assert.Equal(vojta, schedule.GetAssignedEmployee(day, aro));
             }
         }
     }

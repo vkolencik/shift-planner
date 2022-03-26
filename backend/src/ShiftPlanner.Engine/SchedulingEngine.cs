@@ -18,7 +18,8 @@ namespace ShiftPlanner.Engine
             Init(input);
         }
 
-        public static SchedulingEngine CreateGoogleSolverEngine(SchedulingParameters input) => new SchedulingEngine(new GoogleCpSolver(), input);
+        public static SchedulingEngine CreateGoogleSolverEngine(SchedulingParameters input) =>
+            new SchedulingEngine(new GoogleCpSolver(), input);
 
         private void Init(SchedulingParameters input)
         {
@@ -37,12 +38,12 @@ namespace ShiftPlanner.Engine
                 }
             }
         }
-        
+
         public Schedule Solve()
         {
             _solver.Solve();
 
-            var outputModel = new Dictionary<DateOnly, IDictionary<Workplace, Employee>>();
+            var outputModel = new List<Shift>();
 
             foreach (var day in _days)
             {
@@ -52,16 +53,11 @@ namespace ShiftPlanner.Engine
                         .Single(e => _solver.Result(VariableName.Schedule(e.Value, day.Date.Day, workplace.Value)) == 1)
                         .Key;
 
-                    if (!outputModel.TryGetValue(day.Date, out _))
-                    {
-                        outputModel.Add(day.Date, new Dictionary<Workplace, Employee>());
-                    }
-                    
-                    outputModel[day.Date].Add(workplace.Key, assignedEmployee);
+                    outputModel.Add(new Shift(assignedEmployee, day.Date, workplace.Key));
                 }
             }
 
-            return new Schedule(outputModel);
+            return Schedule.CreateSchedule(outputModel);
         }
 
         private static IDictionary<T, int> CreateIndex<T>(IReadOnlyCollection<T> elements)

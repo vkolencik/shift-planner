@@ -14,14 +14,16 @@ public class SchedulingEngineShould
     public void CreateShiftSolverVariables()
     {
         var input = CreateBasicInput();
-        var engine = CreateEngine(input);
+        CreateEngine(input);
 
-        for (int d = 1; d <= 28; d++)
+        for (int day = 1; day <= 28; day++)
         {
-            for (int e = 1; e <= input.Employees.Count; e++)
+            for (int employeeIndex = 1; employeeIndex <= input.Employees.Count; employeeIndex++)
             {
-                for (int w = 1; w <= input.Workplaces.Count; w++)
+                for (int workplaceIndex = 1; workplaceIndex <= input.Workplaces.Count; workplaceIndex++)
                 {
+                    var (e, d, w) = (employeeIndex, day, workplaceIndex);
+                    
                     _modelMock.Verify(_ => _.NewBoolVar(new VariableName($"shifts_e{e}_d{d}_w{w}")));
                 }
             }
@@ -65,21 +67,21 @@ public class SchedulingEngineShould
         {
             Assert.Equal(
                 input.Employees.First(),
-                schedule.Assignments[new DateOnly(2022, 2, d)][input.Workplaces.First()]);
+                schedule.GetAssignedEmployee(new DateOnly(2022, 2, d), input.Workplaces.First()));
         }
 
         for (int d = 1; d <= 28; d += 2)
         {
             Assert.Equal(
                 input.Employees.ElementAt(1),
-                schedule.Assignments[new DateOnly(2022, 2, d)][input.Workplaces.ElementAt(1)]);
+                schedule.GetAssignedEmployee(new DateOnly(2022, 2, d), input.Workplaces.ElementAt(1)));
         }
 
         for (int d = 2; d <= 28; d += 2)
         {
             Assert.Equal(
                 input.Employees.ElementAt(2),
-                schedule.Assignments[new DateOnly(2022, 2, d)][input.Workplaces.ElementAt(1)]);
+                schedule.GetAssignedEmployee(new DateOnly(2022, 2, d), input.Workplaces.ElementAt(1)));
         }
     }
 
