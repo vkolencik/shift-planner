@@ -1,3 +1,8 @@
+# 2022-03-26
+* Finished basic scheduller, including the ability to add generic constraints on sums of variables.
+  * Generic shift scheduler component
+  * Thin wrapper around Google CP library's model and solver so that the scheduler is is testable
+
 # 2022-03-20
 * Added domain project
 * Started to write scheduler from scratch
