@@ -6,9 +6,9 @@ namespace ShiftPlanner.Engine
     internal class SchedulingEngine
     {
         private readonly ISolver _solver;
-        private IDictionary<Employee, int> _employees;
-        private IDictionary<Workplace, int> _workplaces;
-        private IReadOnlyCollection<Day> _days;
+        private IDictionary<Employee, int> _employees = null!;
+        private IDictionary<Workplace, int> _workplaces = null!;
+        private IDictionary<Day, int> _days = null!;
 
         internal SchedulingEngine(ISolver solver, SchedulingParameters input)
         {
@@ -23,7 +23,7 @@ namespace ShiftPlanner.Engine
         {
             _employees = CreateIndex(input.Employees);
             _workplaces = CreateIndex(input.Workplaces);
-            _days = input.Days;
+            _days = CreateIndex(input.Days);
 
             foreach (var e in _employees.Values)
             {
@@ -43,15 +43,15 @@ namespace ShiftPlanner.Engine
 
             var outputModel = new List<Shift>();
 
-            foreach (int d in Enumerable.Range(1, _days.Count))
+            foreach (var day in _days)
             {
                 foreach (var workplace in _workplaces)
                 {
                     var assignedEmployee = _employees
-                        .Single(e => _solver.Result(VariableName.Schedule(e.Value, d, workplace.Value)) == 1)
+                        .Single(e => _solver.Result(VariableName.Schedule(e.Value, day.Value, workplace.Value)) == 1)
                         .Key;
 
-                    outputModel.Add(new Shift(assignedEmployee, _days.ElementAt(d - 1).Date, workplace.Key));
+                    outputModel.Add(new Shift(assignedEmployee, day.Key, workplace.Key));
                 }
             }
 
@@ -62,6 +62,15 @@ namespace ShiftPlanner.Engine
             where T : notnull
         {
             return elements.Select(KeyValuePair.Create).ToDictionary(x => x.Key, y => y.Value + 1);
+        }
+
+        public void AddConstraint(IReadOnlyCollection<Shift> shifts, Constraint constraint, int bound)
+        {
+            var shiftVariables = shifts
+                .Select(s => VariableName.Schedule(_employees[s.Employee], _days[s.Day], _workplaces[s.Workplace]))
+                .ToArray();
+            
+            _solver.AddConstraint(shiftVariables, constraint, bound);
         }
     }
 }

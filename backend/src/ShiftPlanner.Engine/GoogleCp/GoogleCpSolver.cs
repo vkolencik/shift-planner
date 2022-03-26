@@ -1,4 +1,5 @@
-﻿using Google.OrTools.Sat;
+﻿using System.ComponentModel;
+using Google.OrTools.Sat;
 
 namespace ShiftPlanner.Engine.GoogleCp;
 
@@ -45,5 +46,23 @@ internal class GoogleCpSolver : ISolver
         }
 
         return _solver.Value(value);
+    }
+
+    public void AddConstraint(IReadOnlyCollection<VariableName> variableNames, Constraint constraint, int bound)
+    {
+        var variables = variableNames.Select(v => _variables[v]).ToArray();
+        switch (constraint)
+        {
+            case Constraint.Eq:
+                _model.Add(LinearExpr.Sum(variables) == 1);
+                break;
+            case Constraint.Gt:
+                _model.Add(LinearExpr.Sum(variables) >= 1);
+                break;
+            case Constraint.Lt:
+                _model.Add(LinearExpr.Sum(variables) <= 1);
+                break;
+            default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));                
+        }
     }
 }

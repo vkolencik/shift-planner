@@ -9,14 +9,14 @@ namespace ShiftPlanner.Engine.Tests;
 
 public class SchedulingEngineShould
 {
-    Mock<ISolver> _modelMock = new Mock<ISolver>();
+    Mock<ISolver> _solverMock = new Mock<ISolver>();
     [Fact]
     public void CreateShiftSolverVariables()
     {
         var input = CreateBasicInput();
         CreateEngine(input);
 
-        for (int day = 1; day <= 28; day++)
+        for (int day = 1; day <= input.Days.Count; day++)
         {
             for (int employeeIndex = 1; employeeIndex <= input.Employees.Count; employeeIndex++)
             {
@@ -24,7 +24,7 @@ public class SchedulingEngineShould
                 {
                     var (e, d, w) = (employeeIndex, day, workplaceIndex);
                     
-                    _modelMock.Verify(_ => _.NewBoolVar(new VariableName($"shifts_e{e}_d{d}_w{w}")));
+                    _solverMock.Verify(_ => _.NewBoolVar(new VariableName($"shifts_e{e}_d{d}_w{w}")));
                 }
             }
         }
@@ -37,53 +37,71 @@ public class SchedulingEngineShould
         
         engine.Solve();
         
-        _modelMock.Verify(_ => _.Solve());
+        _solverMock.Verify(_ => _.Solve());
     }
 
     [Fact]
     public void CreateOutputModel()
     {
         var input = CreateBasicInput();
-        for (int day = 1; day <= 28; day++)
+        for (int day = 1; day <= input.Days.Count; day++)
         {
             var d = day;
             
             // First employee is on the first workplace all the time:
-            _modelMock.Setup(_ => _.Result(VariableName.Schedule(1, d, 1))).Returns(1);
-            _modelMock.Setup(_ => _.Result(VariableName.Schedule(2, d, 1))).Returns(0);
-            _modelMock.Setup(_ => _.Result(VariableName.Schedule(3, d, 1))).Returns(0);
+            _solverMock.Setup(_ => _.Result(VariableName.Schedule(1, d, 1))).Returns(1);
+            _solverMock.Setup(_ => _.Result(VariableName.Schedule(2, d, 1))).Returns(0);
+            _solverMock.Setup(_ => _.Result(VariableName.Schedule(3, d, 1))).Returns(0);
             
             // Other two employees take turns at the second workplace:
-            _modelMock.Setup(_ => _.Result(VariableName.Schedule(1, d, 2))).Returns(0);
-            _modelMock.Setup(_ => _.Result(VariableName.Schedule(2, d, 2))).Returns(day % 2);
-            _modelMock.Setup(_ => _.Result(VariableName.Schedule(3, d, 2))).Returns((day + 1) % 2);
+            _solverMock.Setup(_ => _.Result(VariableName.Schedule(1, d, 2))).Returns(0);
+            _solverMock.Setup(_ => _.Result(VariableName.Schedule(2, d, 2))).Returns(day % 2);
+            _solverMock.Setup(_ => _.Result(VariableName.Schedule(3, d, 2))).Returns((day + 1) % 2);
             
         }
         var engine = CreateEngine(input);
 
         var schedule = engine.Solve();
 
-        for (int d = 1; d <= 28; d++)
+        for (int d = 1; d <= input.Days.Count; d++)
         {
             Assert.Equal(
                 input.Employees.First(),
-                schedule.GetAssignedEmployee(new DateOnly(2022, 2, d), input.Workplaces.First()));
+                schedule.GetAssignedEmployee(new Day(new DateOnly(2022, 2, d)), input.Workplaces.First()));
         }
 
-        for (int d = 1; d <= 28; d += 2)
+        for (int d = 1; d <= input.Days.Count; d += 2)
         {
             Assert.Equal(
                 input.Employees.ElementAt(1),
-                schedule.GetAssignedEmployee(new DateOnly(2022, 2, d), input.Workplaces.ElementAt(1)));
+                schedule.GetAssignedEmployee(new Day(new DateOnly(2022, 2, d)), input.Workplaces.ElementAt(1)));
         }
 
-        for (int d = 2; d <= 28; d += 2)
+        for (int d = 2; d <= input.Days.Count; d += 2)
         {
             Assert.Equal(
                 input.Employees.ElementAt(2),
-                schedule.GetAssignedEmployee(new DateOnly(2022, 2, d), input.Workplaces.ElementAt(1)));
+                schedule.GetAssignedEmployee(new Day(new DateOnly(2022, 2, d)), input.Workplaces.ElementAt(1)));
         }
     }
+
+    [Fact]
+    public void CreateSumConstraint()
+    {
+        var input = CreateBasicInput();
+        var engine = CreateEngine(input);
+
+        var shifts = new []
+        {
+            new Shift(input.Employees.ElementAt(0), input.Days.ElementAt(0), input.Workplaces.ElementAt(0)),
+            new Shift(input.Employees.ElementAt(1), input.Days.ElementAt(1), input.Workplaces.ElementAt(1))
+        };
+        
+        engine.AddConstraint(shifts, Constraint.Gt, 2);
+
+        _solverMock.Verify(
+            s => s.AddConstraint(new[] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(2, 2, 2)}, Constraint.Gt, 2));
+    } 
 
     private static SchedulingParameters CreateEmptyInput()
     {
@@ -93,7 +111,7 @@ public class SchedulingEngineShould
     private static SchedulingParameters CreateBasicInput()
     {
         return new SchedulingParameters(
-            Day.CreateDaysForMonth(new ScheduledMonth(2022, 2)),
+            Enumerable.Range(1, 5).Select(d => new Day(new DateOnly(2022, 2, d))).ToArray(),
             new Employee[]
             {
                 new Employee("Hynek"),
@@ -109,6 +127,6 @@ public class SchedulingEngineShould
 
     private SchedulingEngine CreateEngine(SchedulingParameters input)
     {
-        return new SchedulingEngine(_modelMock.Object, input);
+        return new SchedulingEngine(_solverMock.Object, input);
     }
 }
