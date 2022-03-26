@@ -7,6 +7,6 @@ public record Workplace(string Name);
 public record ScheduledMonth(int Year, int Month);
 
 public record SchedulingParameters(
-    ScheduledMonth Month,
+    IReadOnlyCollection<Day> Days,
     IReadOnlyCollection<Employee> Employees,
     IReadOnlyCollection<Workplace> Workplaces);

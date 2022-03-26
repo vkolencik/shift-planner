@@ -15,7 +15,7 @@ namespace ShiftPlanner.Engine.Functional.Tests
             var aro = new Workplace("ARO");
 
             var inputParams = new SchedulingParameters(
-                new ScheduledMonth(2022, 2),
+                Day.CreateDaysForMonth(new ScheduledMonth(2022, 2)),
                 new[] {vojta},
                 new[] {aro}
             ); 

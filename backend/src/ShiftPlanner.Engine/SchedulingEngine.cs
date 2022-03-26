@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-using Google.OrTools.Sat;
-using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.GoogleCp;
 
 namespace ShiftPlanner.Engine
@@ -25,11 +23,11 @@ namespace ShiftPlanner.Engine
         {
             _employees = CreateIndex(input.Employees);
             _workplaces = CreateIndex(input.Workplaces);
-            _days = CreateDays(input.Month);
+            _days = input.Days;
 
             foreach (var e in _employees.Values)
             {
-                foreach (var d in _days.Select(d => d.Date.Day))
+                foreach (int d in Enumerable.Range(1, _days.Count))
                 {
                     foreach (var w in _workplaces.Values)
                     {
@@ -45,15 +43,15 @@ namespace ShiftPlanner.Engine
 
             var outputModel = new List<Shift>();
 
-            foreach (var day in _days)
+            foreach (int d in Enumerable.Range(1, _days.Count))
             {
                 foreach (var workplace in _workplaces)
                 {
                     var assignedEmployee = _employees
-                        .Single(e => _solver.Result(VariableName.Schedule(e.Value, day.Date.Day, workplace.Value)) == 1)
+                        .Single(e => _solver.Result(VariableName.Schedule(e.Value, d, workplace.Value)) == 1)
                         .Key;
 
-                    outputModel.Add(new Shift(assignedEmployee, day.Date, workplace.Key));
+                    outputModel.Add(new Shift(assignedEmployee, _days.ElementAt(d - 1).Date, workplace.Key));
                 }
             }
 
@@ -64,13 +62,6 @@ namespace ShiftPlanner.Engine
             where T : notnull
         {
             return elements.Select(KeyValuePair.Create).ToDictionary(x => x.Key, y => y.Value + 1);
-        }
-
-        private static IReadOnlyCollection<Day> CreateDays(ScheduledMonth month)
-        {
-            return Enumerable.Range(1, DateTime.DaysInMonth(month.Year, month.Month))
-                .Select(d => new Day(new DateOnly(month.Year, month.Month, d)))
-                .ToArray();
         }
     }
 }

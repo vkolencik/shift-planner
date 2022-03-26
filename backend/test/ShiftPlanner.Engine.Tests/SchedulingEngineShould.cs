@@ -87,13 +87,13 @@ public class SchedulingEngineShould
 
     private static SchedulingParameters CreateEmptyInput()
     {
-        return new SchedulingParameters(new ScheduledMonth(2022, 2), Array.Empty<Employee>(), Array.Empty<Workplace>());
+        return new SchedulingParameters(Day.CreateDaysForMonth(new ScheduledMonth(2022, 2)), Array.Empty<Employee>(), Array.Empty<Workplace>());
     }
 
     private static SchedulingParameters CreateBasicInput()
     {
         return new SchedulingParameters(
-            new ScheduledMonth(2022, 2),
+            Day.CreateDaysForMonth(new ScheduledMonth(2022, 2)),
             new Employee[]
             {
                 new Employee("Hynek"),
