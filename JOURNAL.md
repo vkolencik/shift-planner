@@ -1,3 +1,9 @@
+# 2022-03-27
+* Added basic scheduling rules:
+  * Every workplace has an employee assigned for every day
+  * No employee is asigned to two workplaces at once
+  * Employees can't have consecutive shifts
+
 # 2022-03-26
 * Finished basic scheduller, including the ability to add generic constraints on sums of variables.
   * Generic shift scheduler component
