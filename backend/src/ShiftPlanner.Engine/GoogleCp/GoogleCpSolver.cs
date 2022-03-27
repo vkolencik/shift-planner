@@ -54,13 +54,13 @@ internal class GoogleCpSolver : ISolver
         switch (constraint)
         {
             case Constraint.Eq:
-                _model.Add(LinearExpr.Sum(variables) == 1);
+                _model.Add(LinearExpr.Sum(variables) == bound);
                 break;
             case Constraint.Gt:
-                _model.Add(LinearExpr.Sum(variables) >= 1);
+                _model.Add(LinearExpr.Sum(variables) >= bound);
                 break;
             case Constraint.Lt:
-                _model.Add(LinearExpr.Sum(variables) <= 1);
+                _model.Add(LinearExpr.Sum(variables) <= bound);
                 break;
             default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));                
         }
