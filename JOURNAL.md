@@ -1,3 +1,6 @@
+# 2022-03-31
+* Separated scheduler and solver
+
 # 2022-03-27
 * Added basic scheduling rules:
   * Every workplace has an employee assigned for every day
