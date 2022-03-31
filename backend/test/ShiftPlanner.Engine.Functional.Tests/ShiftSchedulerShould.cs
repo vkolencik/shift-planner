@@ -17,7 +17,7 @@ public class ShiftSchedulerShould
 
         var schedule = scheduler.ComputeSchedule(
             new SchedulingParameters(
-                Enumerable.Range(1, 10).Select(d => new Day(new DateOnly(2022, 2, d))).ToArray(),
+                new ScheduledMonth(2022, 2),
                 new[] {pat, mat},
                 new[] {new Workplace("aro")}
             ));

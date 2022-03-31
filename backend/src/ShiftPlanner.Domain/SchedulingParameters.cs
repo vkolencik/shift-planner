@@ -1,6 +1,6 @@
 namespace ShiftPlanner.Domain;
 
 public record SchedulingParameters(
-    IReadOnlyCollection<Day> Days,
+    ScheduledMonth Month,
     IReadOnlyCollection<Employee> Employees,
     IReadOnlyCollection<Workplace> Workplaces);

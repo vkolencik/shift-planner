@@ -48,7 +48,7 @@ internal class GoogleCpSolver : ISolver
         return _solver.Value(value);
     }
 
-    public void AddConstraint(IReadOnlyCollection<VariableName> variableNames, Constraint constraint, int bound)
+    public void AddSumConstraint(IReadOnlyCollection<VariableName> variableNames, Constraint constraint, int bound)
     {
         var variables = variableNames.Select(v => _variables[v]).ToArray();
         switch (constraint)
