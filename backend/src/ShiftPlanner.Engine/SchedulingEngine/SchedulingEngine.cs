@@ -1,25 +1,25 @@
 using ShiftPlanner.Domain;
-using ShiftPlanner.Engine.GoogleCp;
+using ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
 
-namespace ShiftPlanner.Engine
+namespace ShiftPlanner.Engine.SchedulingEngine
 {
-    internal class SchedulingEngine
+    internal class SchedulingEngine : ISchedulingEngine
     {
         private readonly ISolver _solver;
         private IDictionary<Employee, int> _employees = null!;
         private IDictionary<Workplace, int> _workplaces = null!;
         private IDictionary<Day, int> _days = null!;
 
-        internal SchedulingEngine(ISolver solver, SchedulingParameters input)
+        internal SchedulingEngine(ISolver solver, SolverParameters input)
         {
             _solver = solver;
             Init(input);
         }
 
-        public static SchedulingEngine CreateGoogleSolverEngine(SchedulingParameters input) =>
+        public static SchedulingEngine CreateGoogleSolverEngine(SolverParameters input) =>
             new SchedulingEngine(new GoogleCpSolver(), input);
 
-        private void Init(SchedulingParameters input)
+        private void Init(SolverParameters input)
         {
             _employees = CreateIndex(input.Employees);
             _workplaces = CreateIndex(input.Workplaces);
@@ -64,13 +64,13 @@ namespace ShiftPlanner.Engine
             return elements.Select(KeyValuePair.Create).ToDictionary(x => x.Key, y => y.Value + 1);
         }
 
-        public void AddConstraint(IReadOnlyCollection<Shift> shifts, Constraint constraint, int bound)
+        public void AddSumConstraint(IReadOnlyCollection<Shift> shifts, Constraint constraint, int bound)
         {
             var shiftVariables = shifts
                 .Select(s => VariableName.Schedule(_employees[s.Employee], _days[s.Day], _workplaces[s.Workplace]))
                 .ToArray();
             
-            _solver.AddConstraint(shiftVariables, constraint, bound);
+            _solver.AddSumConstraint(shiftVariables, constraint, bound);
         }
     }
 }

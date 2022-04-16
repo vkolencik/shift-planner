@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using Google.OrTools.Sat;
 
-namespace ShiftPlanner.Engine.GoogleCp;
+namespace ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
 
 internal class GoogleCpSolver : ISolver
 {
@@ -48,19 +48,19 @@ internal class GoogleCpSolver : ISolver
         return _solver.Value(value);
     }
 
-    public void AddConstraint(IReadOnlyCollection<VariableName> variableNames, Constraint constraint, int bound)
+    public void AddSumConstraint(IReadOnlyCollection<VariableName> variableNames, Constraint constraint, int bound)
     {
         var variables = variableNames.Select(v => _variables[v]).ToArray();
         switch (constraint)
         {
             case Constraint.Eq:
-                _model.Add(LinearExpr.Sum(variables) == 1);
+                _model.Add(LinearExpr.Sum(variables) == bound);
                 break;
             case Constraint.Gt:
-                _model.Add(LinearExpr.Sum(variables) >= 1);
+                _model.Add(LinearExpr.Sum(variables) >= bound);
                 break;
             case Constraint.Lt:
-                _model.Add(LinearExpr.Sum(variables) <= 1);
+                _model.Add(LinearExpr.Sum(variables) <= bound);
                 break;
             default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));                
         }

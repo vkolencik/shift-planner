@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
-using Google.OrTools.ConstraintSolver;
 using Moq;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Engine.SchedulingEngine;
 using Xunit;
+using Constraint = ShiftPlanner.Engine.SchedulingEngine.Constraint;
 
-namespace ShiftPlanner.Engine.Tests;
+namespace ShiftPlanner.Engine.Tests.SchedulingEngine;
 
 public class SchedulingEngineShould
 {
@@ -97,20 +98,20 @@ public class SchedulingEngineShould
             new Shift(input.Employees.ElementAt(1), input.Days.ElementAt(1), input.Workplaces.ElementAt(1))
         };
         
-        engine.AddConstraint(shifts, Constraint.Gt, 2);
+        engine.AddSumConstraint(shifts, Constraint.Gt, 2);
 
         _solverMock.Verify(
-            s => s.AddConstraint(new[] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(2, 2, 2)}, Constraint.Gt, 2));
+            s => s.AddSumConstraint(new[] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(2, 2, 2)}, Constraint.Gt, 2));
     } 
 
-    private static SchedulingParameters CreateEmptyInput()
+    private static SolverParameters CreateEmptyInput()
     {
-        return new SchedulingParameters(Day.CreateDaysForMonth(new ScheduledMonth(2022, 2)), Array.Empty<Employee>(), Array.Empty<Workplace>());
+        return new SolverParameters(Day.CreateDaysForMonth(new ScheduledMonth(2022, 2)), Array.Empty<Employee>(), Array.Empty<Workplace>());
     }
 
-    private static SchedulingParameters CreateBasicInput()
+    private static SolverParameters CreateBasicInput()
     {
-        return new SchedulingParameters(
+        return new SolverParameters(
             Enumerable.Range(1, 5).Select(d => new Day(new DateOnly(2022, 2, d))).ToArray(),
             new Employee[]
             {
@@ -125,8 +126,8 @@ public class SchedulingEngineShould
             });
     }
 
-    private SchedulingEngine CreateEngine(SchedulingParameters input)
+    private Engine.SchedulingEngine.SchedulingEngine CreateEngine(SolverParameters input)
     {
-        return new SchedulingEngine(_solverMock.Object, input);
+        return new Engine.SchedulingEngine.SchedulingEngine(_solverMock.Object, input);
     }
 }
