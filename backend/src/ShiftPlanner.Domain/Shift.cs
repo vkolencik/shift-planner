@@ -1,3 +1,3 @@
-namespace ShiftPlanner.Domain;
+﻿namespace ShiftPlanner.Domain;
 
-public record Shift(Employee Employee, Day Day, Workplace Workplace);
+public record Shift(Day Day, Workplace Workplace);

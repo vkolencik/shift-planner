@@ -2,15 +2,15 @@ namespace ShiftPlanner.Domain;
 
 public record Schedule
 {
-    private Schedule(IEnumerable<Shift> shifts)
+    private Schedule(IEnumerable<ShiftAssignment> shifts)
     {
         Shifts = shifts.ToArray();
     }
     
-    public IEnumerable<Shift> Shifts { get; private init; }
+    public IEnumerable<ShiftAssignment> Shifts { get; private init; }
     
-    public Employee GetAssignedEmployee(Day day, Workplace workplace) =>
-        Shifts.Single(s => s.Day == day && s.Workplace == workplace).Employee;
+    public Employee GetAssignedEmployee(Shift shift) =>
+        Shifts.Single(s => s.Shift == shift).Employee;
 
-    public static Schedule CreateSchedule(IEnumerable<Shift> shifts) => new Schedule(shifts);
+    public static Schedule CreateSchedule(IEnumerable<ShiftAssignment> shifts) => new Schedule(shifts);
 }

@@ -68,21 +68,21 @@ public class SchedulingEngineShould
         {
             Assert.Equal(
                 input.Employees.First(),
-                schedule.GetAssignedEmployee(new Day(new DateOnly(2022, 2, d)), input.Workplaces.First()));
+                schedule.GetAssignedEmployee(new Shift(new Day(new DateOnly(2022, 2, d)), input.Workplaces.First())));
         }
 
         for (int d = 1; d <= input.Days.Count; d += 2)
         {
             Assert.Equal(
                 input.Employees.ElementAt(1),
-                schedule.GetAssignedEmployee(new Day(new DateOnly(2022, 2, d)), input.Workplaces.ElementAt(1)));
+                schedule.GetAssignedEmployee(new Shift(new Day(new DateOnly(2022, 2, d)), input.Workplaces.ElementAt(1))));
         }
 
         for (int d = 2; d <= input.Days.Count; d += 2)
         {
             Assert.Equal(
                 input.Employees.ElementAt(2),
-                schedule.GetAssignedEmployee(new Day(new DateOnly(2022, 2, d)), input.Workplaces.ElementAt(1)));
+                schedule.GetAssignedEmployee(new Shift(new Day(new DateOnly(2022, 2, d)), input.Workplaces.ElementAt(1))));
         }
     }
 
@@ -94,8 +94,8 @@ public class SchedulingEngineShould
 
         var shifts = new []
         {
-            new Shift(input.Employees.ElementAt(0), input.Days.ElementAt(0), input.Workplaces.ElementAt(0)),
-            new Shift(input.Employees.ElementAt(1), input.Days.ElementAt(1), input.Workplaces.ElementAt(1))
+            new ShiftAssignment(input.Employees.ElementAt(0), input.Days.ElementAt(0), input.Workplaces.ElementAt(0)),
+            new ShiftAssignment(input.Employees.ElementAt(1), input.Days.ElementAt(1), input.Workplaces.ElementAt(1))
         };
         
         engine.AddSumConstraint(shifts, Constraint.Gt, 2);
