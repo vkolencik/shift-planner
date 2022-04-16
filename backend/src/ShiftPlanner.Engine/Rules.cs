@@ -49,4 +49,25 @@ internal static class Rules
             }
         }
     }
+
+    public static void NoAlternativeDayShiftsForEmployee(SolverParameters schedulingParameters, ISchedulingEngine engine)
+    {
+        foreach (var employee in schedulingParameters.Employees)
+        {
+            foreach (var (day1, day3) in schedulingParameters.Days.Zip(schedulingParameters.Days.Skip(2)))
+            {
+                if (day1.Date.DayOfWeek == DayOfWeek.Friday)
+                {
+                    continue;
+                }
+                
+                var employeesShiftsInAlternateDays = schedulingParameters.Workplaces
+                    .SelectMany(w => new [] {new Shift(employee, day1, w), new Shift(employee, day3, w)})
+                    .ToArray();
+ 
+                engine.AddSumConstraint(employeesShiftsInAlternateDays, Constraint.Lt, 1);
+            }
+        }
+        
+    }
 }
