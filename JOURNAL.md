@@ -1,3 +1,8 @@
+# 2022-04-16
+* Refactored rules to a separate class, covered them by tests
+* Created directory structure in the solver engine project
+* Added rule for alternate days
+
 # 2022-03-31
 * Separated scheduler and solver
 
