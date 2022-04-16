@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
-using Google.OrTools.ConstraintSolver;
 using Moq;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Engine.SchedulingEngine;
 using Xunit;
+using Constraint = ShiftPlanner.Engine.SchedulingEngine.Constraint;
 
-namespace ShiftPlanner.Engine.Tests;
+namespace ShiftPlanner.Engine.Tests.SchedulingEngine;
 
 public class SchedulingEngineShould
 {
@@ -125,8 +126,8 @@ public class SchedulingEngineShould
             });
     }
 
-    private SchedulingEngine CreateEngine(SolverParameters input)
+    private Engine.SchedulingEngine.SchedulingEngine CreateEngine(SolverParameters input)
     {
-        return new SchedulingEngine(_solverMock.Object, input);
+        return new Engine.SchedulingEngine.SchedulingEngine(_solverMock.Object, input);
     }
 }

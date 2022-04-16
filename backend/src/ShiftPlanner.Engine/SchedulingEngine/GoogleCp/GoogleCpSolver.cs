@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using Google.OrTools.Sat;
 
-namespace ShiftPlanner.Engine.GoogleCp;
+namespace ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
 
 internal class GoogleCpSolver : ISolver
 {

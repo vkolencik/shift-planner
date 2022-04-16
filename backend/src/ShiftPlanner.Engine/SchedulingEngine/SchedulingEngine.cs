@@ -1,9 +1,9 @@
 using ShiftPlanner.Domain;
-using ShiftPlanner.Engine.GoogleCp;
+using ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
 
-namespace ShiftPlanner.Engine
+namespace ShiftPlanner.Engine.SchedulingEngine
 {
-    internal class SchedulingEngine
+    internal class SchedulingEngine : ISchedulingEngine
     {
         private readonly ISolver _solver;
         private IDictionary<Employee, int> _employees = null!;

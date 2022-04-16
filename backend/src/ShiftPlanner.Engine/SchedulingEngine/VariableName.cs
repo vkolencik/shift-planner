@@ -1,4 +1,4 @@
-namespace ShiftPlanner.Engine;
+namespace ShiftPlanner.Engine.SchedulingEngine;
 
 internal record VariableName(string Value)
 {

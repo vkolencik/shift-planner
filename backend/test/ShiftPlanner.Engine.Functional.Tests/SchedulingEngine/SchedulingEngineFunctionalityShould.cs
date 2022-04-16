@@ -1,9 +1,9 @@
 using System;
-using System.Linq;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Engine.SchedulingEngine;
 using Xunit;
 
-namespace ShiftPlanner.Engine.Functional.Tests
+namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
 {
     public class SchedulingEngineFunctionalityShould
     {
@@ -20,7 +20,7 @@ namespace ShiftPlanner.Engine.Functional.Tests
                 new[] {aro}
             );
 
-            var engine = SchedulingEngine.CreateGoogleSolverEngine(inputParams);
+            var engine = Engine.SchedulingEngine.SchedulingEngine.CreateGoogleSolverEngine(inputParams);
 
             for (int d = 1; d <= 28; d++)
             {
