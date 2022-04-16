@@ -14,12 +14,14 @@ public class ShiftSchedulerShould
 
         var pat = new Employee("Pat");
         var mat = new Employee("Mat");
+        var dodo = new Employee("Dodo");
 
         var aro = new Workplace("aro");
+        
         var schedule = scheduler.ComputeSchedule(
             new SchedulingParameters(
                 new ScheduledMonth(2022, 2),
-                new[] {pat, mat},
+                new[] {pat, mat, dodo},
                 new[] {aro}
             ));
 
@@ -27,20 +29,27 @@ public class ShiftSchedulerShould
             .Where(s => s.Employee == pat)
             .ToArray();
 
-        var aroShifts = schedule.Shifts
-            .Where(s => s.Workplace == aro)
-            .ToArray();
-
         var minDaysBetweenShifts = patsShifts
             .OrderBy(s => s.Day.Date.ToDateTime(new TimeOnly(0, 0)))
             .Zip(patsShifts.Skip(1), (s1, s2) => DaysBetween(s1.Day.Date, s2.Day.Date))
             .Min();
-
         Assert.True(minDaysBetweenShifts >= 2);
+        
+        var aroShifts = schedule.Shifts
+            .Where(s => s.Workplace == aro)
+            .ToArray();
         Assert.Equal(28, aroShifts.Length);
+
+        var daysWithShiftAndAlsoShiftTwoDaysAfter = patsShifts
+            .OrderBy(s => s.Day.Date.ToDateTime(new TimeOnly(0, 0)))
+            .Zip(patsShifts.Skip(1), (s1, s2) => Tuple.Create(s1.Day, DaysBetween(s1.Day.Date, s2.Day.Date)))
+            .Where(x => x.Item2 == 2)
+            .Select(x => x.Item1);
+        
+        Assert.All(daysWithShiftAndAlsoShiftTwoDaysAfter, day => Assert.Equal(DayOfWeek.Friday, day.Date.DayOfWeek));
     }
 
-    private int DaysBetween(DateOnly d1, DateOnly d2) =>
+    private static int DaysBetween(DateOnly d1, DateOnly d2) =>
         d2.ToDateTime(new TimeOnly(0, 0)).Subtract(d1.ToDateTime(new TimeOnly(0, 0))).Days;
 
 }
