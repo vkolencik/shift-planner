@@ -41,7 +41,7 @@ namespace ShiftPlanner.Engine.SchedulingEngine
         {
             _solver.Solve();
 
-            var outputModel = new List<Shift>();
+            var outputModel = new List<ShiftAssignment>();
 
             foreach (var day in _days)
             {
@@ -51,7 +51,7 @@ namespace ShiftPlanner.Engine.SchedulingEngine
                         .Single(e => _solver.Result(VariableName.Schedule(e.Value, day.Value, workplace.Value)) == 1)
                         .Key;
 
-                    outputModel.Add(new Shift(assignedEmployee, day.Key, workplace.Key));
+                    outputModel.Add(new ShiftAssignment(assignedEmployee, day.Key, workplace.Key));
                 }
             }
 
@@ -64,10 +64,10 @@ namespace ShiftPlanner.Engine.SchedulingEngine
             return elements.Select(KeyValuePair.Create).ToDictionary(x => x.Key, y => y.Value + 1);
         }
 
-        public void AddSumConstraint(IReadOnlyCollection<Shift> shifts, Constraint constraint, int bound)
+        public void AddSumConstraint(IReadOnlyCollection<ShiftAssignment> shifts, Constraint constraint, int bound)
         {
             var shiftVariables = shifts
-                .Select(s => VariableName.Schedule(_employees[s.Employee], _days[s.Day], _workplaces[s.Workplace]))
+                .Select(s => VariableName.Schedule(_employees[s.Employee], _days[s.Shift.Day], _workplaces[s.Shift.Workplace]))
                 .ToArray();
             
             _solver.AddSumConstraint(shiftVariables, constraint, bound);

@@ -42,82 +42,82 @@ public class RulesShould
     [Fact]
     public void CoverEveryDayAtEveryWorkplace()
     {
-        var capturedShifts = new List<IReadOnlyCollection<Shift>>();
+        var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Eq, 1));
 
         Rules.EveryDayAtEveryWorkplaceIsCovered(SchedulingParametersTwoDays, _engineMock.Object);
 
         Assert.Equal(4, capturedShifts.Count);
-        Assert.Contains(new [] { new Shift(Employee1, Day1, Workplace1), new Shift(Employee2, Day1, Workplace1)}, capturedShifts);
-        Assert.Contains(new [] { new Shift(Employee1, Day1, Workplace2), new Shift(Employee2, Day1, Workplace2)}, capturedShifts);
-        Assert.Contains(new [] { new Shift(Employee1, Day2, Workplace1), new Shift(Employee2, Day2, Workplace1)}, capturedShifts);
-        Assert.Contains(new [] { new Shift(Employee1, Day2, Workplace2), new Shift(Employee2, Day2, Workplace2)}, capturedShifts);
+        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day1, Workplace1), new ShiftAssignment(Employee2, Day1, Workplace1)}, capturedShifts);
+        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day1, Workplace2), new ShiftAssignment(Employee2, Day1, Workplace2)}, capturedShifts);
+        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day2, Workplace1), new ShiftAssignment(Employee2, Day2, Workplace1)}, capturedShifts);
+        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day2, Workplace2), new ShiftAssignment(Employee2, Day2, Workplace2)}, capturedShifts);
     }
 
     [Fact]
     public void DisallowConcurrentShiftsForEmployee()
     {
-        var capturedShifts = new List<IReadOnlyCollection<Shift>>();
+        var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lt, 1));
         
         Rules.EveryEmployeeHasOneShiftAtATime(SchedulingParametersTwoDays, _engineMock.Object);
         
         Assert.Equal(4, capturedShifts.Count);
-        Assert.Contains(new [] { new Shift(Employee1, Day1, Workplace1), new Shift(Employee1, Day1, Workplace2)}, capturedShifts);
-        Assert.Contains(new [] { new Shift(Employee1, Day2, Workplace1), new Shift(Employee1, Day2, Workplace2)}, capturedShifts);
-        Assert.Contains(new [] { new Shift(Employee2, Day1, Workplace1), new Shift(Employee2, Day1, Workplace2)}, capturedShifts);
-        Assert.Contains(new [] { new Shift(Employee2, Day2, Workplace1), new Shift(Employee2, Day2, Workplace2)}, capturedShifts);
+        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day1, Workplace1), new ShiftAssignment(Employee1, Day1, Workplace2)}, capturedShifts);
+        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day2, Workplace1), new ShiftAssignment(Employee1, Day2, Workplace2)}, capturedShifts);
+        Assert.Contains(new [] { new ShiftAssignment(Employee2, Day1, Workplace1), new ShiftAssignment(Employee2, Day1, Workplace2)}, capturedShifts);
+        Assert.Contains(new [] { new ShiftAssignment(Employee2, Day2, Workplace1), new ShiftAssignment(Employee2, Day2, Workplace2)}, capturedShifts);
     }
 
     [Fact]
     public void DisallowConsecutiveShiftsForEmployee()
     {
-        var capturedShifts = new List<IReadOnlyCollection<Shift>>();
+        var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lt, 1));
 
         Rules.NoConsecutiveShiftsForEmployee(SchedulingParametersTwoDays, _engineMock.Object);
         
         Assert.Equal(2, capturedShifts.Count);
-        Assert.Contains(new HashSet<Shift> {
-            new Shift(Employee1, Day1, Workplace1),
-            new Shift(Employee1, Day1, Workplace2),
-            new Shift(Employee1, Day2, Workplace1),
-            new Shift(Employee1, Day2, Workplace2)
-        }, capturedShifts.Select(x => new HashSet<Shift>(x)));
+        Assert.Contains(new HashSet<ShiftAssignment> {
+            new ShiftAssignment(Employee1, Day1, Workplace1),
+            new ShiftAssignment(Employee1, Day1, Workplace2),
+            new ShiftAssignment(Employee1, Day2, Workplace1),
+            new ShiftAssignment(Employee1, Day2, Workplace2)
+        }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
 
-        Assert.Contains(new HashSet<Shift> {
-            new Shift(Employee2, Day1, Workplace1),
-            new Shift(Employee2, Day1, Workplace2),
-            new Shift(Employee2, Day2, Workplace1),
-            new Shift(Employee2, Day2, Workplace2)
-        }, capturedShifts.Select(x => new HashSet<Shift>(x)));
+        Assert.Contains(new HashSet<ShiftAssignment> {
+            new ShiftAssignment(Employee2, Day1, Workplace1),
+            new ShiftAssignment(Employee2, Day1, Workplace2),
+            new ShiftAssignment(Employee2, Day2, Workplace1),
+            new ShiftAssignment(Employee2, Day2, Workplace2)
+        }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
     }
 
     [Fact]
     public void DisallowShiftsOnAlternateDaysExceptWeekends()
     {
-        var capturedShifts = new List<IReadOnlyCollection<Shift>>();
+        var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lt, 1));
 
         Rules.NoAlternativeDayShiftsForEmployee(SchedulingParametersOneWeek, _engineMock.Object);
 
         Assert.Contains(
-            new HashSet<Shift>
+            new HashSet<ShiftAssignment>
             {
-                new Shift(Employee1, Day1, Workplace1),
-                new Shift(Employee1, Day1, Workplace2),
-                new Shift(Employee1, Day3, Workplace1),
-                new Shift(Employee1, Day3, Workplace2)
-            }, capturedShifts.Select(x => new HashSet<Shift>(x)));
+                new ShiftAssignment(Employee1, Day1, Workplace1),
+                new ShiftAssignment(Employee1, Day1, Workplace2),
+                new ShiftAssignment(Employee1, Day3, Workplace1),
+                new ShiftAssignment(Employee1, Day3, Workplace2)
+            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
 
         Assert.DoesNotContain(
-            new HashSet<Shift>
+            new HashSet<ShiftAssignment>
             {
-                new Shift(Employee1, Day4Friday, Workplace1),
-                new Shift(Employee1, Day4Friday, Workplace2),
-                new Shift(Employee1, Day6Sunday, Workplace1),
-                new Shift(Employee1, Day6Sunday, Workplace2)
-            }, capturedShifts.Select(x => new HashSet<Shift>(x)));
+                new ShiftAssignment(Employee1, Day4Friday, Workplace1),
+                new ShiftAssignment(Employee1, Day4Friday, Workplace2),
+                new ShiftAssignment(Employee1, Day6Sunday, Workplace1),
+                new ShiftAssignment(Employee1, Day6Sunday, Workplace2)
+            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
     }
     
 }

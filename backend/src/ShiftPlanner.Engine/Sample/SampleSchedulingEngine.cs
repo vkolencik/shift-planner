@@ -176,9 +176,11 @@ public static class SampleSchedulingEngine
         int minShiftsPerNurse = (numShifts * numDays) / numNurses;
         int maxShiftsPerNurse;
         if ((numShifts * numDays) % numNurses == 0)
+#pragma warning disable CS0162
         {
             maxShiftsPerNurse = minShiftsPerNurse;
         }
+#pragma warning restore CS0162
         else
         {
             maxShiftsPerNurse = minShiftsPerNurse + 1;
@@ -226,7 +228,9 @@ public static class SampleSchedulingEngine
                 Console.WriteLine($"Day {d}");
                 foreach (int n in allNurses)
                 {
+#pragma warning disable CS0219
                     bool isWorking = false;
+#pragma warning restore CS0219
                     foreach (int s in allShifts)
                     {
                         var key = Tuple.Create(n, d, s);

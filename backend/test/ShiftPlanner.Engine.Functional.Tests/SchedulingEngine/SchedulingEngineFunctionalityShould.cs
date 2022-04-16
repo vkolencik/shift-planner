@@ -24,7 +24,7 @@ namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
 
             for (int d = 1; d <= 28; d++)
             {
-                engine.AddSumConstraint(new [] {new Shift(vojta, new Day(new DateOnly(2022, 2, d)), aro)}, Constraint.Eq, 1);
+                engine.AddSumConstraint(new [] {new ShiftAssignment(vojta, new Day(new DateOnly(2022, 2, d)), aro)}, Constraint.Eq, 1);
             }
 
             var schedule = engine.Solve();
@@ -32,7 +32,7 @@ namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
             for (int d = 1; d <= 28; d++)
             {
                 var day = new Day(new DateOnly(2022, 2, d));
-                Assert.Equal(vojta, schedule.GetAssignedEmployee(day, aro));
+                Assert.Equal(vojta, schedule.GetAssignedEmployee(new Shift(day, aro)));
             }
         }
     }
