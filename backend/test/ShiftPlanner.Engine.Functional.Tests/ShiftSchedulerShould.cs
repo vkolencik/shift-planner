@@ -14,22 +14,20 @@ public class ShiftSchedulerShould
 
         var employees = Enumerable.Range(1,12).Select(i => new Employee($"Employee{i}")).ToArray();
 
-        var workplaces = new[]
+        var competenceGroups = new[]
         {
-            new Workplace("aro1"),
-            new Workplace("aro2"),
-            new Workplace("res1"),
-            new Workplace("res2")
+            new CompetenceGroup(new [] {new Workplace("aro1"), new Workplace("aro2")}),
+            new CompetenceGroup(new [] {new Workplace("res1"), new Workplace("res2")})
         };
         
         var e1 = employees[0];
-        var aro1 = workplaces[0];
+        var aro1 = competenceGroups[0].Workplaces.First();
 
         var schedule = scheduler.ComputeSchedule(
             new SchedulingParameters(
                 new ScheduledMonth(2022, 2),
                 employees,
-                workplaces
+                competenceGroups
             ));
         
         var e1Shifts = schedule.Shifts

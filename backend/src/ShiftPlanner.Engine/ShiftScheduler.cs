@@ -28,6 +28,6 @@ public class ShiftScheduler
         return new SolverParameters(
             days,
             schedulingParameters.Employees,
-            schedulingParameters.Workplaces);
+            schedulingParameters.CompetenceGroups.SelectMany(g => g.Workplaces).ToArray());
     }
 }
