@@ -12,7 +12,7 @@ public class ShiftSchedulerShould
     {
         var scheduler = new ShiftScheduler();
 
-        var employees = Enumerable.Range(1,12).Select(i => new Employee($"Employee{i}")).ToArray();
+        var employees = Enumerable.Range(1,12).Select(i => new Employee($"Employee{i}", CompetenceLevel.Level1)).ToArray();
 
         var competenceGroups = new[]
         {
