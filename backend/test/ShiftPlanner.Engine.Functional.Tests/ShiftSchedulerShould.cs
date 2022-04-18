@@ -32,6 +32,11 @@ public class ShiftSchedulerShould
         {
             AssertEmployeeInvariants(schedule, employee);
         }
+
+        foreach (var competenceGroup in _competenceGroups)
+        {
+            AssertCompetenceGroupInvariants(schedule, competenceGroup);
+        }
         
         foreach (var workplace in _competenceGroups.SelectMany(g => g.Workplaces))
         {
@@ -73,13 +78,25 @@ public class ShiftSchedulerShould
         }
     }
 
+    private static void AssertCompetenceGroupInvariants(Schedule schedule, CompetenceGroup competenceGroup)
+    {
+        var competenceGroupShifts = schedule.Shifts
+            .Where(s => competenceGroup.Workplaces.Contains(s.Shift.Workplace))
+            .ToArray();
+
+        var shiftsPerDay = Enumerable.Range(1, 28)
+            .Select(d => competenceGroupShifts.Where(s => s.Shift.Day.Date.Day == d));
+        
+        Assert.All(shiftsPerDay, dayShifts => Assert.Contains(dayShifts, s => s.Employee.CompetenceLevel == CompetenceLevel.Level1));
+    }
+
     private static void AssertWorkplaceInvariants(Schedule schedule, Workplace workplace)
     {
-        var aroShifts = schedule.Shifts
+        var workplaceShifts = schedule.Shifts
             .Where(s => s.Shift.Workplace == workplace)
             .ToArray();
-        Assert.Equal(28, aroShifts.Length);
-        Assert.Equal(Enumerable.Range(1, 28), aroShifts.Select(s => s.Shift.Day.Date.Day));
+        Assert.Equal(28, workplaceShifts.Length);
+        Assert.Equal(Enumerable.Range(1, 28), workplaceShifts.Select(s => s.Shift.Day.Date.Day));
     }
 
     private static int DaysBetween(DateOnly d1, DateOnly d2) =>
