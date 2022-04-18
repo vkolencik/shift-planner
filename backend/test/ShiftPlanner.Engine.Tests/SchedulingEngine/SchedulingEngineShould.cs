@@ -98,10 +98,10 @@ public class SchedulingEngineShould
             new ShiftAssignment(input.Employees.ElementAt(1), input.Days.ElementAt(1), input.Workplaces.ElementAt(1))
         };
         
-        engine.AddSumConstraint(shifts, Constraint.Gt, 2);
+        engine.AddSumConstraint(shifts, Constraint.Gte, 2);
 
         _solverMock.Verify(
-            s => s.AddSumConstraint(new[] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(2, 2, 2)}, Constraint.Gt, 2));
+            s => s.AddSumConstraint(new[] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(2, 2, 2)}, Constraint.Gte, 2));
     } 
 
     private static SolverParameters CreateEmptyInput()

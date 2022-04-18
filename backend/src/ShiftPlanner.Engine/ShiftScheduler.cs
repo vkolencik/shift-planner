@@ -17,6 +17,8 @@ public class ShiftScheduler
         Rules.NoConsecutiveShiftsForEmployee(solverParameters, engine);
         
         Rules.NoAlternativeDayShiftsForEmployee(solverParameters, engine);
+        
+        Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(schedulingParameters, solverParameters.Days, engine);
 
         return engine.Solve();
     }

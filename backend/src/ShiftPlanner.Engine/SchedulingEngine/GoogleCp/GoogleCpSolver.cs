@@ -61,10 +61,10 @@ internal class GoogleCpSolver : ISolver
             case Constraint.Eq:
                 _model.Add(LinearExpr.Sum(variables) == bound);
                 break;
-            case Constraint.Gt:
+            case Constraint.Gte:
                 _model.Add(LinearExpr.Sum(variables) >= bound);
                 break;
-            case Constraint.Lt:
+            case Constraint.Lte:
                 _model.Add(LinearExpr.Sum(variables) <= bound);
                 break;
             default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));                

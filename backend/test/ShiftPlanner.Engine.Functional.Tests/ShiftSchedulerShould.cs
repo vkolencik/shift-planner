@@ -85,7 +85,8 @@ public class ShiftSchedulerShould
             .ToArray();
 
         var shiftsPerDay = Enumerable.Range(1, 28)
-            .Select(d => competenceGroupShifts.Where(s => s.Shift.Day.Date.Day == d));
+            .Select(d => competenceGroupShifts.Where(s => s.Shift.Day.Date.Day == d))
+            .ToArray();
         
         Assert.All(shiftsPerDay, dayShifts => Assert.Contains(dayShifts, s => s.Employee.CompetenceLevel == CompetenceLevel.Level1));
     }

@@ -20,16 +20,22 @@ public class RulesShould
     private static readonly Day Day6Sunday = new Day(new DateOnly(2022, 2, 6));
     private static readonly Day Day7 = new Day(new DateOnly(2022, 2, 7));
     private static readonly Employee Employee1 = new Employee("Employee1", CompetenceLevel.Level1);
-    private static readonly Employee Employee2 = new Employee("Employee2", CompetenceLevel.Level1);
+    private static readonly Employee Employee2 = new Employee("Employee2", CompetenceLevel.Level2);
+    private static readonly Employee Employee3 = new Employee("Employee3", CompetenceLevel.Level1);
     private static readonly Workplace Workplace1 = new Workplace("Workplace1");
     private static readonly Workplace Workplace2 = new Workplace("Workplace2");
 
-    private static readonly SolverParameters SchedulingParametersTwoDays = new SolverParameters(
+    private static readonly SchedulingParameters SchedulingParameters = new SchedulingParameters(
+        new ScheduledMonth(2022, 2),
+        new[] {Employee1, Employee2, Employee3},
+        new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})});
+    
+    private static readonly SolverParameters SolverParametersTwoDays = new SolverParameters(
         new[] {Day1, Day2},
         new[] {Employee1, Employee2},
         new[] {Workplace1, Workplace2});
 
-    private static readonly SolverParameters SchedulingParametersOneWeek = new SolverParameters(
+    private static readonly SolverParameters SolverParametersOneWeek = new SolverParameters(
         new[] {Day1, Day2, Day3, Day4Friday, Day5Saturday, Day6Sunday, Day7},
         new[] {Employee1, Employee2},
         new[] {Workplace1, Workplace2});
@@ -45,7 +51,7 @@ public class RulesShould
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Eq, 1));
 
-        Rules.EveryDayAtEveryWorkplaceIsCovered(SchedulingParametersTwoDays, _engineMock.Object);
+        Rules.EveryDayAtEveryWorkplaceIsCovered(SolverParametersTwoDays, _engineMock.Object);
 
         Assert.Equal(4, capturedShifts.Count);
         Assert.Contains(new [] { new ShiftAssignment(Employee1, Day1, Workplace1), new ShiftAssignment(Employee2, Day1, Workplace1)}, capturedShifts);
@@ -58,9 +64,9 @@ public class RulesShould
     public void DisallowConcurrentShiftsForEmployee()
     {
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lt, 1));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
         
-        Rules.EveryEmployeeHasOneShiftAtATime(SchedulingParametersTwoDays, _engineMock.Object);
+        Rules.EveryEmployeeHasOneShiftAtATime(SolverParametersTwoDays, _engineMock.Object);
         
         Assert.Equal(4, capturedShifts.Count);
         Assert.Contains(new [] { new ShiftAssignment(Employee1, Day1, Workplace1), new ShiftAssignment(Employee1, Day1, Workplace2)}, capturedShifts);
@@ -73,9 +79,9 @@ public class RulesShould
     public void DisallowConsecutiveShiftsForEmployee()
     {
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lt, 1));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
 
-        Rules.NoConsecutiveShiftsForEmployee(SchedulingParametersTwoDays, _engineMock.Object);
+        Rules.NoConsecutiveShiftsForEmployee(SolverParametersTwoDays, _engineMock.Object);
         
         Assert.Equal(2, capturedShifts.Count);
         Assert.Contains(new HashSet<ShiftAssignment> {
@@ -97,9 +103,9 @@ public class RulesShould
     public void DisallowShiftsOnAlternateDaysExceptWeekends()
     {
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lt, 1));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
 
-        Rules.NoAlternativeDayShiftsForEmployee(SchedulingParametersOneWeek, _engineMock.Object);
+        Rules.NoAlternativeDayShiftsForEmployee(SolverParametersOneWeek, _engineMock.Object);
 
         Assert.Contains(
             new HashSet<ShiftAssignment>
@@ -119,5 +125,29 @@ public class RulesShould
                 new ShiftAssignment(Employee1, Day6Sunday, Workplace2)
             }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
     }
-    
+
+    [Fact]
+    public void EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee()
+    {
+        var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Gte, 1));
+
+        Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(SchedulingParameters, new [] {Day1, Day2}, _engineMock.Object);
+        
+        Assert.Equal(4, capturedShifts.Count);
+
+        Assert.Contains(
+            new HashSet<ShiftAssignment>
+            {
+                new ShiftAssignment(Employee1, Day1, Workplace1),
+                new ShiftAssignment(Employee3, Day1, Workplace1)
+            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
+
+        Assert.Contains(
+            new HashSet<ShiftAssignment>
+            {
+                new ShiftAssignment(Employee1, Day1, Workplace2),
+                new ShiftAssignment(Employee3, Day1, Workplace2)
+            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
+    }
 }
