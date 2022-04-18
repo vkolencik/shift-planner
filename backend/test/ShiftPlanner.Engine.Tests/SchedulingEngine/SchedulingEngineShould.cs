@@ -111,19 +111,21 @@ public class SchedulingEngineShould
 
     private static SolverParameters CreateBasicInput()
     {
+        var workplaces = new Workplace[]
+        {
+            new Workplace("ARO"),
+            new Workplace("JIP"),
+        };
+        
         return new SolverParameters(
             Enumerable.Range(1, 5).Select(d => new Day(new DateOnly(2022, 2, d))).ToArray(),
             new Employee[]
             {
-                new Employee("Hynek", CompetenceLevel.Level1),
-                new Employee("Vilem", CompetenceLevel.Level1),
-                new Employee("Jarmila", CompetenceLevel.Level1),
+                new Employee("Hynek", CompetenceLevel.Level1, new Capabilities(workplaces)),
+                new Employee("Vilem", CompetenceLevel.Level1, new Capabilities(workplaces)),
+                new Employee("Jarmila", CompetenceLevel.Level1, new Capabilities(workplaces)),
             }, 
-            new Workplace[]
-            {
-                new Workplace("ARO"),
-                new Workplace("JIP"),
-            });
+            workplaces);
     }
 
     private Engine.SchedulingEngine.SchedulingEngine CreateEngine(SolverParameters input)

@@ -8,13 +8,28 @@ namespace ShiftPlanner.Engine.Functional.Tests;
 
 public class ShiftSchedulerShould
 {
-    readonly IReadOnlyCollection<Employee> _employees = Enumerable.Range(1,48).Select(i => new Employee($"Employee{i}", (CompetenceLevel) (i % 4 + 1))).ToArray();
+    private readonly IReadOnlyCollection<Employee> _employees;
 
-    private readonly IReadOnlyCollection<CompetenceGroup> _competenceGroups = new[]
+    private readonly IReadOnlyCollection<CompetenceGroup> _competenceGroups;
+
+    public ShiftSchedulerShould()
     {
-        new CompetenceGroup(new [] {new Workplace("aro1"), new Workplace("aro2")}),
-        new CompetenceGroup(new [] {new Workplace("res1"), new Workplace("res2")})
-    };
+        _competenceGroups = new[]
+        {
+            new CompetenceGroup(new[] {new Workplace("aro1"), new Workplace("aro2")}),
+            new CompetenceGroup(new[] {new Workplace("res1"), new Workplace("res2")})
+        };
+
+        var capableForAllWorkplaces = new Capabilities(_competenceGroups.SelectMany(cg => cg.Workplaces).ToArray());
+        var capableForFirstWorkplace = new Capabilities(new[] {_competenceGroups.First().Workplaces.First()});
+        
+        _employees = Enumerable.Range(1, 48)
+            .Select(i => new Employee(
+                Name: $"Employee{i}",
+                CompetenceLevel: (CompetenceLevel) (i % 4 + 1),
+                Capabilities: i == 0 ? capableForFirstWorkplace : capableForAllWorkplaces
+            )).ToArray();
+    }
 
     [Fact]
     public void ComputeSimpleSchedule()

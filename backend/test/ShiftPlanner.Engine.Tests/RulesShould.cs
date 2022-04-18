@@ -19,11 +19,11 @@ public class RulesShould
     private static readonly Day Day5Saturday = new Day(new DateOnly(2022, 2, 5));
     private static readonly Day Day6Sunday = new Day(new DateOnly(2022, 2, 6));
     private static readonly Day Day7 = new Day(new DateOnly(2022, 2, 7));
-    private static readonly Employee Employee1 = new Employee("Employee1", CompetenceLevel.Level1);
-    private static readonly Employee Employee2 = new Employee("Employee2", CompetenceLevel.Level2);
-    private static readonly Employee Employee3 = new Employee("Employee3", CompetenceLevel.Level1);
     private static readonly Workplace Workplace1 = new Workplace("Workplace1");
     private static readonly Workplace Workplace2 = new Workplace("Workplace2");
+    private static readonly Employee Employee1 = new Employee("Employee1", CompetenceLevel.Level1, new Capabilities(new [] { Workplace1, Workplace2 }));
+    private static readonly Employee Employee2 = new Employee("Employee2", CompetenceLevel.Level2, new Capabilities(new [] { Workplace1, Workplace2 }));
+    private static readonly Employee Employee3 = new Employee("Employee3", CompetenceLevel.Level1, new Capabilities(new [] { Workplace1, Workplace2 }));
 
     private static readonly SchedulingParameters SchedulingParameters = new SchedulingParameters(
         new ScheduledMonth(2022, 2),
