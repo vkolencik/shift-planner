@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ShiftPlanner.Domain;
 using Xunit;
@@ -7,54 +8,78 @@ namespace ShiftPlanner.Engine.Functional.Tests;
 
 public class ShiftSchedulerShould
 {
+    readonly IReadOnlyCollection<Employee> _employees = Enumerable.Range(1,48).Select(i => new Employee($"Employee{i}", (CompetenceLevel) (i % 4 + 1))).ToArray();
+
+    private readonly IReadOnlyCollection<CompetenceGroup> _competenceGroups = new[]
+    {
+        new CompetenceGroup(new [] {new Workplace("aro1"), new Workplace("aro2")}),
+        new CompetenceGroup(new [] {new Workplace("res1"), new Workplace("res2")})
+    };
+
     [Fact]
     public void ComputeSimpleSchedule()
     {
         var scheduler = new ShiftScheduler();
 
-        var employees = Enumerable.Range(1,12).Select(i => new Employee($"Employee{i}", CompetenceLevel.Level1)).ToArray();
-
-        var competenceGroups = new[]
-        {
-            new CompetenceGroup(new [] {new Workplace("aro1"), new Workplace("aro2")}),
-            new CompetenceGroup(new [] {new Workplace("res1"), new Workplace("res2")})
-        };
-        
-        var e1 = employees[0];
-        var aro1 = competenceGroups[0].Workplaces.First();
-
         var schedule = scheduler.ComputeSchedule(
             new SchedulingParameters(
                 new ScheduledMonth(2022, 2),
-                employees,
-                competenceGroups
+                _employees,
+                _competenceGroups
             ));
         
-        var e1Shifts = schedule.Shifts
-            .Where(s => s.Employee == e1)
+        foreach (var employee in _employees)
+        {
+            AssertEmployeeInvariants(schedule, employee);
+        }
+        
+        foreach (var workplace in _competenceGroups.SelectMany(g => g.Workplaces))
+        {
+            AssertWorkplaceInvariants(schedule, workplace);
+        }
+    }
+
+    private static void AssertEmployeeInvariants(Schedule schedule, Employee employee)
+    {
+        var employeeShifts = schedule.Shifts
+            .Where(s => s.Employee == employee)
             .ToArray();
 
-        var minDaysBetweenShifts = e1Shifts
-            .OrderBy(s => s.Shift.Day.Date.ToDateTime(new TimeOnly(0, 0)))
-            .Zip(e1Shifts.Skip(1), (s1, s2) => DaysBetween(s1.Shift.Day.Date, s2.Shift.Day.Date))
-            .Min();
-        Assert.True(minDaysBetweenShifts >= 2);
+        if (!employeeShifts.Any())
+        {
+            return;
+        }
 
+        if (employeeShifts.Length > 1)
+        {
+            var minDaysBetweenShifts = employeeShifts
+                .OrderBy(s => s.Shift.Day.Date.ToDateTime(new TimeOnly(0, 0)))
+                .Zip(employeeShifts.Skip(1), (s1, s2) => DaysBetween(s1.Shift.Day.Date, s2.Shift.Day.Date))
+                .Min();
+            Assert.True(minDaysBetweenShifts >= 2);
+        }
+
+        if (employeeShifts.Length > 2)
+        {
+            var daysWithShiftAndAlsoShiftTwoDaysAfter = employeeShifts
+                .OrderBy(s => s.Shift.Day.Date.ToDateTime(new TimeOnly(0, 0)))
+                .Zip(
+                    employeeShifts.Skip(1),
+                    (s1, s2) => Tuple.Create(s1.Shift.Day, DaysBetween(s1.Shift.Day.Date, s2.Shift.Day.Date)))
+                .Where(x => x.Item2 == 2)
+                .Select(x => x.Item1);
+
+            Assert.All(daysWithShiftAndAlsoShiftTwoDaysAfter, day => Assert.Equal(DayOfWeek.Friday, day.Date.DayOfWeek));
+        }
+    }
+
+    private static void AssertWorkplaceInvariants(Schedule schedule, Workplace workplace)
+    {
         var aroShifts = schedule.Shifts
-            .Where(s => s.Shift.Workplace == aro1)
+            .Where(s => s.Shift.Workplace == workplace)
             .ToArray();
         Assert.Equal(28, aroShifts.Length);
         Assert.Equal(Enumerable.Range(1, 28), aroShifts.Select(s => s.Shift.Day.Date.Day));
-
-        var daysWithShiftAndAlsoShiftTwoDaysAfter = e1Shifts
-            .OrderBy(s => s.Shift.Day.Date.ToDateTime(new TimeOnly(0, 0)))
-            .Zip(
-                e1Shifts.Skip(1),
-                (s1, s2) => Tuple.Create(s1.Shift.Day, DaysBetween(s1.Shift.Day.Date, s2.Shift.Day.Date)))
-            .Where(x => x.Item2 == 2)
-            .Select(x => x.Item1);
-
-        Assert.All(daysWithShiftAndAlsoShiftTwoDaysAfter, day => Assert.Equal(DayOfWeek.Friday, day.Date.DayOfWeek));
     }
 
     private static int DaysBetween(DateOnly d1, DateOnly d2) =>
