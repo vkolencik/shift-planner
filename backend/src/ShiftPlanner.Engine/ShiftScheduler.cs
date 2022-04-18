@@ -17,6 +17,8 @@ public class ShiftScheduler
         Rules.NoConsecutiveShiftsForEmployee(solverParameters, engine);
         
         Rules.NoAlternativeDayShiftsForEmployee(solverParameters, engine);
+        
+        Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(schedulingParameters, solverParameters.Days, engine);
 
         return engine.Solve();
     }
@@ -28,6 +30,6 @@ public class ShiftScheduler
         return new SolverParameters(
             days,
             schedulingParameters.Employees,
-            schedulingParameters.Workplaces);
+            schedulingParameters.CompetenceGroups.SelectMany(g => g.Workplaces).ToArray());
     }
 }

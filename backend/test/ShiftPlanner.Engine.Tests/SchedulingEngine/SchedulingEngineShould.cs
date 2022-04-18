@@ -98,10 +98,10 @@ public class SchedulingEngineShould
             new ShiftAssignment(input.Employees.ElementAt(1), input.Days.ElementAt(1), input.Workplaces.ElementAt(1))
         };
         
-        engine.AddSumConstraint(shifts, Constraint.Gt, 2);
+        engine.AddSumConstraint(shifts, Constraint.Gte, 2);
 
         _solverMock.Verify(
-            s => s.AddSumConstraint(new[] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(2, 2, 2)}, Constraint.Gt, 2));
+            s => s.AddSumConstraint(new[] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(2, 2, 2)}, Constraint.Gte, 2));
     } 
 
     private static SolverParameters CreateEmptyInput()
@@ -115,9 +115,9 @@ public class SchedulingEngineShould
             Enumerable.Range(1, 5).Select(d => new Day(new DateOnly(2022, 2, d))).ToArray(),
             new Employee[]
             {
-                new Employee("Hynek"),
-                new Employee("Vilem"),
-                new Employee("Jarmila"),
+                new Employee("Hynek", CompetenceLevel.Level1),
+                new Employee("Vilem", CompetenceLevel.Level1),
+                new Employee("Jarmila", CompetenceLevel.Level1),
             }, 
             new Workplace[]
             {

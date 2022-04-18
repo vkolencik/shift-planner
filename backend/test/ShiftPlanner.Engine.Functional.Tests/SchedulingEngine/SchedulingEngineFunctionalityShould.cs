@@ -11,7 +11,7 @@ namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
         public void ComputeBasicSchedule()
         {
 
-            var vojta = new Employee("Vojta");
+            var vojta = new Employee("Vojta", CompetenceLevel.Level1);
             var aro = new Workplace("ARO");
 
             var inputParams = new SolverParameters(

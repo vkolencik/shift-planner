@@ -30,7 +30,7 @@ internal static class Rules
                     .Select(w => new ShiftAssignment(employee, day, w))
                     .ToArray();
  
-                engine.AddSumConstraint(employeesShiftsThatDay, Constraint.Lt, 1);
+                engine.AddSumConstraint(employeesShiftsThatDay, Constraint.Lte, 1);
             }
         }
     }
@@ -45,7 +45,7 @@ internal static class Rules
                     .SelectMany(w => new [] {new ShiftAssignment(employee, day1, w), new ShiftAssignment(employee, day2, w)})
                     .ToArray();
  
-                engine.AddSumConstraint(employeesShiftsInTwoDays, Constraint.Lt, 1);
+                engine.AddSumConstraint(employeesShiftsInTwoDays, Constraint.Lte, 1);
             }
         }
     }
@@ -65,9 +65,26 @@ internal static class Rules
                     .SelectMany(w => new [] {new ShiftAssignment(employee, day1, w), new ShiftAssignment(employee, day3, w)})
                     .ToArray();
  
-                engine.AddSumConstraint(employeesShiftsInAlternateDays, Constraint.Lt, 1);
+                engine.AddSumConstraint(employeesShiftsInAlternateDays, Constraint.Lte, 1);
             }
         }
         
+    }
+
+
+    public static void EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(SchedulingParameters schedulingParameters, IReadOnlyCollection<Day> days, ISchedulingEngine engine)
+    {
+        foreach (var competenceGroup in schedulingParameters.CompetenceGroups)
+        {
+            foreach (var day in days)
+            {
+                IReadOnlyCollection<ShiftAssignment> employeesLevel1AndWorkplacesCombinations = schedulingParameters.Employees
+                    .Where(e => e.CompetenceLevel == CompetenceLevel.Level1)
+                    .SelectMany(e => competenceGroup.Workplaces.Select(w => new ShiftAssignment(e, day, w)))
+                    .ToArray();
+                
+                engine.AddSumConstraint(employeesLevel1AndWorkplacesCombinations, Constraint.Gte, 1);
+            }
+        }
     }
 }

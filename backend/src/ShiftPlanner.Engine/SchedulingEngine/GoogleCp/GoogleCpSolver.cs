@@ -39,6 +39,11 @@ internal class GoogleCpSolver : ISolver
         {
             throw new InvalidOperationException("Solver hasn't been executed yet. Call the .Solve() method first.");
         }
+
+        if (_status != CpSolverStatus.Optimal && _status != CpSolverStatus.Feasible)
+        {
+            throw new InvalidOperationException($"Solver didn't find solution (solution status: {_status.ToString()}).");
+        }
         
         if (!_variables.TryGetValue(variableName, out var value))
         {
@@ -56,10 +61,10 @@ internal class GoogleCpSolver : ISolver
             case Constraint.Eq:
                 _model.Add(LinearExpr.Sum(variables) == bound);
                 break;
-            case Constraint.Gt:
+            case Constraint.Gte:
                 _model.Add(LinearExpr.Sum(variables) >= bound);
                 break;
-            case Constraint.Lt:
+            case Constraint.Lte:
                 _model.Add(LinearExpr.Sum(variables) <= bound);
                 break;
             default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));                
