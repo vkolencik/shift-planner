@@ -87,4 +87,20 @@ internal static class Rules
             }
         }
     }
+
+    public static void DisallowShiftsWithoutEmployeeCapability(SolverParameters solverParameters, ISchedulingEngine engine)
+    {
+        foreach (var employee in solverParameters.Employees)
+        {
+            var incapableWorkplaces = solverParameters.Workplaces.Except(employee.Capabilities.Workplaces);
+
+            foreach (var incapableWorkplace in incapableWorkplaces)
+            {
+                foreach (var day in solverParameters.Days)
+                {
+                    engine.AddVariableConstraint(new ShiftAssignment(employee, day, incapableWorkplace), Constraint.Eq, 0);
+                }
+            }
+        }
+    }
 }

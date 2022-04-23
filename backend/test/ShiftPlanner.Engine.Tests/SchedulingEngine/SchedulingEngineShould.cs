@@ -102,7 +102,23 @@ public class SchedulingEngineShould
 
         _solverMock.Verify(
             s => s.AddSumConstraint(new[] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(2, 2, 2)}, Constraint.Gte, 2));
-    } 
+    }
+
+    [Fact]
+    public void CreateVariableConstraint()
+    {
+        var input = CreateBasicInput();
+        var engine = CreateEngine(input);
+
+        var shift = new ShiftAssignment(
+            input.Employees.ElementAt(0), input.Days.ElementAt(0), input.Workplaces.ElementAt(0));
+        
+        engine.AddVariableConstraint( shift, Constraint.Lte, 7);
+
+        _solverMock.Verify(
+            s => s.AddVariableConstraint(VariableName.Schedule(1, 1, 1), Constraint.Lte, 7));
+        
+    }
 
     private static SolverParameters CreateEmptyInput()
     {
@@ -111,19 +127,21 @@ public class SchedulingEngineShould
 
     private static SolverParameters CreateBasicInput()
     {
+        var workplaces = new Workplace[]
+        {
+            new Workplace("ARO"),
+            new Workplace("JIP"),
+        };
+        
         return new SolverParameters(
             Enumerable.Range(1, 5).Select(d => new Day(new DateOnly(2022, 2, d))).ToArray(),
             new Employee[]
             {
-                new Employee("Hynek", CompetenceLevel.Level1),
-                new Employee("Vilem", CompetenceLevel.Level1),
-                new Employee("Jarmila", CompetenceLevel.Level1),
+                new Employee("Hynek", CompetenceLevel.Level1, new Capabilities(workplaces)),
+                new Employee("Vilem", CompetenceLevel.Level1, new Capabilities(workplaces)),
+                new Employee("Jarmila", CompetenceLevel.Level1, new Capabilities(workplaces)),
             }, 
-            new Workplace[]
-            {
-                new Workplace("ARO"),
-                new Workplace("JIP"),
-            });
+            workplaces);
     }
 
     private Engine.SchedulingEngine.SchedulingEngine CreateEngine(SolverParameters input)
