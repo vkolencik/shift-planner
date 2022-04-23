@@ -102,7 +102,23 @@ public class SchedulingEngineShould
 
         _solverMock.Verify(
             s => s.AddSumConstraint(new[] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(2, 2, 2)}, Constraint.Gte, 2));
-    } 
+    }
+
+    [Fact]
+    public void CreateVariableConstraint()
+    {
+        var input = CreateBasicInput();
+        var engine = CreateEngine(input);
+
+        var shift = new ShiftAssignment(
+            input.Employees.ElementAt(0), input.Days.ElementAt(0), input.Workplaces.ElementAt(0));
+        
+        engine.AddVariableConstraint( shift, Constraint.Lte, 7);
+
+        _solverMock.Verify(
+            s => s.AddVariableConstraint(VariableName.Schedule(1, 1, 1), Constraint.Lte, 7));
+        
+    }
 
     private static SolverParameters CreateEmptyInput()
     {

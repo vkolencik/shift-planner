@@ -70,4 +70,22 @@ internal class GoogleCpSolver : ISolver
             default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));                
         }
     }
+
+    public void AddVariableConstraint(VariableName variableName, Constraint constraint, int value)
+    {
+        var variable = _variables[variableName];
+        switch (constraint)
+        {
+            case Constraint.Eq:
+                _model.Add(variable == value);
+                break;
+            case Constraint.Gte:
+                _model.Add(variable >= value);
+                break;
+            case Constraint.Lte:
+                _model.Add(variable <= value);
+                break;
+            default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));
+        }
+    }
 }
