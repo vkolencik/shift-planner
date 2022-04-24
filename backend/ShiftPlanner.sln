@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Engine.Tests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Engine.Functional.Tests", "test\ShiftPlanner.Engine.Functional.Tests\ShiftPlanner.Engine.Functional.Tests.csproj", "{09A36C83-D6A1-417D-A745-EA043C0FA05A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Domain.Tests", "test\ShiftPlanner.Domain.Tests\ShiftPlanner.Domain.Tests.csproj", "{38CE854D-6872-4818-ACA0-06F820E81BD3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{09A36C83-D6A1-417D-A745-EA043C0FA05A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09A36C83-D6A1-417D-A745-EA043C0FA05A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09A36C83-D6A1-417D-A745-EA043C0FA05A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38CE854D-6872-4818-ACA0-06F820E81BD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38CE854D-6872-4818-ACA0-06F820E81BD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38CE854D-6872-4818-ACA0-06F820E81BD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38CE854D-6872-4818-ACA0-06F820E81BD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{16875CB4-4C8C-4422-BF43-57D4602DF72E} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
@@ -60,5 +66,6 @@ Global
 		{C59127F1-19B3-4B65-812F-109738C4335C} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
 		{AB152F21-A96D-4A9C-87CC-F77138FA2EFB} = {ED84CCCC-8C80-441B-A438-23AA1BDA62C0}
 		{09A36C83-D6A1-417D-A745-EA043C0FA05A} = {ED84CCCC-8C80-441B-A438-23AA1BDA62C0}
+		{38CE854D-6872-4818-ACA0-06F820E81BD3} = {ED84CCCC-8C80-441B-A438-23AA1BDA62C0}
 	EndGlobalSection
 EndGlobal

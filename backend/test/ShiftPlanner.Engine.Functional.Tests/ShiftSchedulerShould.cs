@@ -22,8 +22,8 @@ public class ShiftSchedulerShould
             new CompetenceGroup(new[] {new Workplace("res1"), new Workplace("res2")})
         };
 
-        _capableForFirstWorkplaces = new Capabilities(_competenceGroups.Select(cg => cg.Workplaces.First()).ToArray());
-        _capableForSecondWorkplaces = new Capabilities(_competenceGroups.Select(cg => cg.Workplaces.Skip(1).First()).ToArray());
+        _capableForFirstWorkplaces = new Capabilities(_competenceGroups.Select(cg => new WorkplaceCapability.Green(cg.Workplaces.First(), 100)).ToArray());
+        _capableForSecondWorkplaces = new Capabilities(_competenceGroups.Select(cg => new WorkplaceCapability.Green(cg.Workplaces.Skip(1).First(), 100)).ToArray());
         
         _employees = Enumerable.Range(1, 48)
             .Select(i => new Employee(
@@ -94,8 +94,11 @@ public class ShiftSchedulerShould
             Assert.All(daysWithShiftAndAlsoShiftTwoDaysAfter, day => Assert.Equal(DayOfWeek.Friday, day.Date.DayOfWeek));
         }
         
-        var workplacesEmployeeWorksAt = new HashSet<Workplace>(schedule.Shifts.Where(s => s.Employee == employee).Select(s => s.Shift.Workplace));
-        Assert.Subset(new HashSet<Workplace>(employee.Capabilities.Workplaces), workplacesEmployeeWorksAt);
+        var workplacesEmployeeWorksAt = new HashSet<Workplace>(
+            schedule.Shifts
+                .Where(s => s.Employee == employee)
+                .Select(s => s.Shift.Workplace));
+        Assert.Subset(employee.Capabilities.AllowedWorkplaces, workplacesEmployeeWorksAt);
     }
 
     private static void AssertCompetenceGroupInvariants(Schedule schedule, CompetenceGroup competenceGroup)
