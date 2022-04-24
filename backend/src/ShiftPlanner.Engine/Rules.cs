@@ -92,10 +92,7 @@ internal static class Rules
     {
         foreach (var employee in solverParameters.Employees)
         {
-            var capableWorkplaces = employee.Capabilities.WorkplaceCapabilities
-                .OfType<WorkplaceCapability.Green>()
-                .Select(wc => wc.Workplace);
-            var incapableWorkplaces = solverParameters.Workplaces.Except(capableWorkplaces);
+            var incapableWorkplaces = solverParameters.Workplaces.Except(employee.Capabilities.AllowedWorkplaces);
 
             foreach (var incapableWorkplace in incapableWorkplaces)
             {
