@@ -14,15 +14,27 @@ public class ComputedScheduleShould
 
     public ComputedScheduleShould()
     {
+        var aro1 = new Workplace("aro1");
+        var aro2 = new Workplace("aro2");
+        var res1 = new Workplace("res1");
+        var res2 = new Workplace("res2");
         _competenceGroups = new[]
         {
-            new CompetenceGroup(new[] {new Workplace("aro1"), new Workplace("aro2")}),
-            new CompetenceGroup(new[] {new Workplace("res1"), new Workplace("res2")})
+            new CompetenceGroup(new[] {aro1, aro2}),
+            new CompetenceGroup(new[] {res1, res2})
         };
 
-        // TODO: add red capabilities
-        var capableForFirstWorkplaces = new Capabilities(_competenceGroups.Select(cg => new WorkplaceCapability.Green(cg.Workplaces.First(), 100)).ToArray());
-        var capableForSecondWorkplaces = new Capabilities(_competenceGroups.Select(cg => new WorkplaceCapability.Green(cg.Workplaces.Skip(1).First(), 100)).ToArray());
+        var capableForFirstWorkplaces = new Capabilities(new WorkplaceCapability[]
+        {
+            new WorkplaceCapability.Green(aro1, 50), new WorkplaceCapability.Green(res1, 50),
+            new WorkplaceCapability.Red(aro2), new WorkplaceCapability.Red(res2),  
+        });
+
+        var capableForSecondWorkplaces = new Capabilities(new WorkplaceCapability[]
+        {
+            new WorkplaceCapability.Red(aro1), new WorkplaceCapability.Red(res1),
+            new WorkplaceCapability.Green(aro2, 50), new WorkplaceCapability.Green(res2, 50),
+        });
         
         _employees = Enumerable.Range(1, 48)
             .Select(i => new Employee(
