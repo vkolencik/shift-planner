@@ -21,9 +21,11 @@ public class RulesShould
     private static readonly Day Day7 = new Day(new DateOnly(2022, 2, 7));
     private static readonly Workplace Workplace1 = new Workplace("Workplace1");
     private static readonly Workplace Workplace2 = new Workplace("Workplace2");
-    private static readonly Employee Employee1 = new Employee("Employee1", CompetenceLevel.Level1, new Capabilities(new [] { Workplace1 }));
-    private static readonly Employee Employee2 = new Employee("Employee2", CompetenceLevel.Level2, new Capabilities(new [] { Workplace1, Workplace2 }));
-    private static readonly Employee Employee3 = new Employee("Employee3", CompetenceLevel.Level1, new Capabilities(new [] { Workplace1, Workplace2 }));
+    private static readonly Capabilities CapabilitiesFirstWorkplace = new Capabilities(new WorkplaceCapability[] { new WorkplaceCapability.Green(Workplace1, 100), new WorkplaceCapability.Red(Workplace2) });
+    private static readonly Capabilities CapabilitiesBothWorkplaces = new Capabilities(new WorkplaceCapability[] { new WorkplaceCapability.Green(Workplace1, 100), new WorkplaceCapability.Green(Workplace2, 100) });
+    private static readonly Employee Employee1 = new Employee("Employee1", CompetenceLevel.Level1, CapabilitiesFirstWorkplace);
+    private static readonly Employee Employee2 = new Employee("Employee2", CompetenceLevel.Level2, CapabilitiesBothWorkplaces);
+    private static readonly Employee Employee3 = new Employee("Employee3", CompetenceLevel.Level1, CapabilitiesBothWorkplaces);
 
     private static readonly SchedulingParameters SchedulingParameters = new SchedulingParameters(
         new ScheduledMonth(2022, 2),

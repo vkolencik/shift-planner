@@ -137,9 +137,9 @@ public class SchedulingEngineShould
             Enumerable.Range(1, 5).Select(d => new Day(new DateOnly(2022, 2, d))).ToArray(),
             new Employee[]
             {
-                new Employee("Hynek", CompetenceLevel.Level1, new Capabilities(workplaces)),
-                new Employee("Vilem", CompetenceLevel.Level1, new Capabilities(workplaces)),
-                new Employee("Jarmila", CompetenceLevel.Level1, new Capabilities(workplaces)),
+                new Employee("Hynek", CompetenceLevel.Level1, new Capabilities(Array.Empty<WorkplaceCapability>())),
+                new Employee("Vilem", CompetenceLevel.Level1, new Capabilities(Array.Empty<WorkplaceCapability>())),
+                new Employee("Jarmila", CompetenceLevel.Level1, new Capabilities(Array.Empty<WorkplaceCapability>())),
             }, 
             workplaces);
     }
