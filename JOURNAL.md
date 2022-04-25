@@ -1,3 +1,10 @@
+#  2022-04-24
+* Added percentual preferences for workplaces to model
+* Split integration test to several test cases
+
+# 2022-04-18
+* Added employee qualifications
+
 # 2022-04-16
 * Refactored rules to a separate class, covered them by tests
 * Created directory structure in the solver engine project
