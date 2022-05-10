@@ -166,4 +166,15 @@ public class RulesShould
         Assert.DoesNotContain(new ShiftAssignment(Employee2, Day1, Workplace1), capturedShifts);
         Assert.DoesNotContain(new ShiftAssignment(Employee2, Day1, Workplace2), capturedShifts);
     }
+
+    [Fact]
+    public void SpreadShiftAssignmentEvenly()
+    {
+        var capturedShifts = new List<ShiftAssignment>();
+        int standard = 6;
+        _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShifts), Constraint.Gte, standard -1));
+        _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShifts), Constraint.Lte, standard +1));
+
+        Rules.SpreadShiftAssignmentEvenly(SolverParametersTwoDays, _engineMock.Object);
+    }
 }
