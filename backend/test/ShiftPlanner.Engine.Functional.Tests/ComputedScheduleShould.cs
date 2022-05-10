@@ -93,6 +93,18 @@ public class ComputedScheduleShould
     }
 
     [Fact]
+    public void SpreadAssignedShiftsEvenlyAmongEmployees()
+    {
+        var schedule = ComputeSchedule();
+
+        var shiftNumbers = _employees.Select(e => schedule.Shifts.Count(s => s.Employee == e));
+
+        var maxShiftsPerMonth = shiftNumbers.Max();
+        var minShiftsPerMonth = shiftNumbers.Min();
+        Assert.True(maxShiftsPerMonth - minShiftsPerMonth <= 2, $"Minimum number of shifts {minShiftsPerMonth} is too different from maximum {maxShiftsPerMonth}");
+    }
+
+    [Fact]
     public void AssignShiftsAccordingToEmployeeCapabilities()
     {
         var schedule = ComputeSchedule();
