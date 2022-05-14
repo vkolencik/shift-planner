@@ -170,11 +170,23 @@ public class RulesShould
     [Fact]
     public void SpreadShiftAssignmentEvenly()
     {
-        var capturedShifts = new List<ShiftAssignment>();
-        int standard = 6;
-        _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShifts), Constraint.Gte, standard -1));
-        _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShifts), Constraint.Lte, standard +1));
+        var capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
+        var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
+        var solverParams = SolverParametersTwoDays;
+        var standard = solverParams.Days.Count * solverParams.Workplaces.Count / solverParams.Employees.Count;
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, standard - 1));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, standard + 1));
 
-        Rules.SpreadShiftAssignmentEvenly(SolverParametersTwoDays, _engineMock.Object);
+        Rules.SpreadShiftAssignmentEvenly(solverParams, _engineMock.Object);
+        
+        
+        Assert.Contains(
+            new HashSet<ShiftAssignment>
+            {
+                new ShiftAssignment(Employee1, Day1, Workplace1),
+                new ShiftAssignment(Employee1, Day2, Workplace1),
+                new ShiftAssignment(Employee1, Day1, Workplace2),
+                new ShiftAssignment(Employee1, Day2, Workplace2),
+            }, capturedShiftsLte.Select(x => new HashSet<ShiftAssignment>(x)));
     }
 }
