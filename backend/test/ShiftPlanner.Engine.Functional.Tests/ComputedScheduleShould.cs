@@ -8,9 +8,11 @@ namespace ShiftPlanner.Engine.Functional.Tests;
 
 public class ComputedScheduleShould
 {
-    private readonly IReadOnlyCollection<Employee> _employees;
-
     private readonly IReadOnlyCollection<CompetenceGroup> _competenceGroups;
+
+    private readonly IReadOnlyCollection<EmployeeMonth> _employeeMonths;
+
+    public IEnumerable<Employee> Employees => _employeeMonths.Select(e => e.Employee);
 
     public ComputedScheduleShould()
     {
@@ -36,12 +38,12 @@ public class ComputedScheduleShould
             new WorkplaceCapability.Green(aro2, 50), new WorkplaceCapability.Green(res2, 50),
         });
         
-        _employees = Enumerable.Range(1, 48)
-            .Select(i => new Employee(
+        _employeeMonths = Enumerable.Range(1, 48)
+            .Select(i => new EmployeeMonth(new Employee(
                 Name: $"Employee{i}",
                 CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
                 Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces
-            )).ToArray();
+            ))).ToArray();
     }
 
     [Fact]
@@ -49,7 +51,7 @@ public class ComputedScheduleShould
     {
         var schedule = ComputeSchedule();
 
-        foreach (var employee in _employees)
+        foreach (var employee in Employees)
         {
             var employeeShifts = schedule.Shifts
                 .Where(s => s.Employee == employee)
@@ -71,7 +73,7 @@ public class ComputedScheduleShould
     {
         var schedule = ComputeSchedule();
 
-        foreach (var employee in _employees)
+        foreach (var employee in Employees)
         {
             var employeeShifts = schedule.Shifts
                 .Where(s => s.Employee == employee)
@@ -97,7 +99,7 @@ public class ComputedScheduleShould
     {
         var schedule = ComputeSchedule();
 
-        var shiftNumbers = _employees.Select(e => schedule.Shifts.Count(s => s.Employee == e));
+        var shiftNumbers = Employees.Select(e => schedule.Shifts.Count(s => s.Employee == e));
 
         var maxShiftsPerMonth = shiftNumbers.Max();
         var minShiftsPerMonth = shiftNumbers.Min();
@@ -109,7 +111,7 @@ public class ComputedScheduleShould
     {
         var schedule = ComputeSchedule();
 
-        foreach (var employee in _employees)
+        foreach (var employee in Employees)
         {
             var workplacesEmployeeWorksAt = new HashSet<Workplace>(
                 schedule.Shifts
@@ -160,7 +162,7 @@ public class ComputedScheduleShould
         var schedule = scheduler.ComputeSchedule(
             new SchedulingParameters(
                 new ScheduledMonth(2022, 2),
-                _employees,
+                _employeeMonths,
                 _competenceGroups
             ));
         return schedule;

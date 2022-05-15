@@ -15,7 +15,7 @@ public class RulesShould
 
     public static readonly SchedulingParameters SchedulingParameters = new SchedulingParameters(
         new ScheduledMonth(2022, 2),
-        new[] {Employee1, Employee2, Employee3},
+        new[] {new EmployeeMonth(Employee1), new EmployeeMonth(Employee2), new EmployeeMonth(Employee3)},
         new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})});
 
     public RulesShould()
