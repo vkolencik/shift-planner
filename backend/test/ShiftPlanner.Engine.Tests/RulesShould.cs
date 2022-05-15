@@ -5,42 +5,18 @@ using Moq;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine;
 using Xunit;
+using static ShiftPlanner.Engine.Tests.RulesFixture;
 
 namespace ShiftPlanner.Engine.Tests;
 
 public class RulesShould
 {
-    private Mock<ISchedulingEngine> _engineMock;
+    private readonly Mock<ISchedulingEngine> _engineMock;
 
-    private static readonly Day Day1 = new Day(new DateOnly(2022, 2, 1));
-    private static readonly Day Day2 = new Day(new DateOnly(2022, 2, 2));
-    private static readonly Day Day3 = new Day(new DateOnly(2022, 2, 3));
-    private static readonly Day Day4Friday = new Day(new DateOnly(2022, 2, 4));
-    private static readonly Day Day5Saturday = new Day(new DateOnly(2022, 2, 5));
-    private static readonly Day Day6Sunday = new Day(new DateOnly(2022, 2, 6));
-    private static readonly Day Day7 = new Day(new DateOnly(2022, 2, 7));
-    private static readonly Workplace Workplace1 = new Workplace("Workplace1");
-    private static readonly Workplace Workplace2 = new Workplace("Workplace2");
-    private static readonly Capabilities CapabilitiesFirstWorkplace = new Capabilities(new WorkplaceCapability[] { new WorkplaceCapability.Green(Workplace1, 100), new WorkplaceCapability.Red(Workplace2) });
-    private static readonly Capabilities CapabilitiesBothWorkplaces = new Capabilities(new WorkplaceCapability[] { new WorkplaceCapability.Yellow(Workplace1), new WorkplaceCapability.Green(Workplace2, 100) });
-    private static readonly Employee Employee1 = new Employee("Employee1", CompetenceLevel.Level1, CapabilitiesFirstWorkplace);
-    private static readonly Employee Employee2 = new Employee("Employee2", CompetenceLevel.Level2, CapabilitiesBothWorkplaces);
-    private static readonly Employee Employee3 = new Employee("Employee3", CompetenceLevel.Level1, CapabilitiesBothWorkplaces);
-
-    private static readonly SchedulingParameters SchedulingParameters = new SchedulingParameters(
+    public static readonly SchedulingParameters SchedulingParameters = new SchedulingParameters(
         new ScheduledMonth(2022, 2),
         new[] {Employee1, Employee2, Employee3},
         new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})});
-    
-    private static readonly SolverParameters SolverParametersTwoDays = new SolverParameters(
-        new[] {Day1, Day2},
-        new[] {Employee1, Employee2},
-        new[] {Workplace1, Workplace2});
-
-    private static readonly SolverParameters SolverParametersOneWeek = new SolverParameters(
-        new[] {Day1, Day2, Day3, Day4Friday, Day5Saturday, Day6Sunday, Day7},
-        new[] {Employee1, Employee2},
-        new[] {Workplace1, Workplace2});
 
     public RulesShould()
     {
@@ -165,28 +141,5 @@ public class RulesShould
         Assert.Contains(new ShiftAssignment(Employee1, Day2, Workplace2), capturedShifts);
         Assert.DoesNotContain(new ShiftAssignment(Employee2, Day1, Workplace1), capturedShifts);
         Assert.DoesNotContain(new ShiftAssignment(Employee2, Day1, Workplace2), capturedShifts);
-    }
-
-    [Fact]
-    public void SpreadShiftAssignmentEvenly()
-    {
-        var capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
-        var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
-        var solverParams = SolverParametersTwoDays;
-        var standard = solverParams.Days.Count * solverParams.Workplaces.Count / solverParams.Employees.Count;
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, standard - 1));
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, standard + 1));
-
-        Rules.SpreadShiftAssignmentEvenly(solverParams, _engineMock.Object);
-        
-        
-        Assert.Contains(
-            new HashSet<ShiftAssignment>
-            {
-                new ShiftAssignment(Employee1, Day1, Workplace1),
-                new ShiftAssignment(Employee1, Day2, Workplace1),
-                new ShiftAssignment(Employee1, Day1, Workplace2),
-                new ShiftAssignment(Employee1, Day2, Workplace2),
-            }, capturedShiftsLte.Select(x => new HashSet<ShiftAssignment>(x)));
     }
 }

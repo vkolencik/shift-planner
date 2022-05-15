@@ -39,7 +39,7 @@ public class ComputedScheduleShould
         _employees = Enumerable.Range(1, 48)
             .Select(i => new Employee(
                 Name: $"Employee{i}",
-                CompetenceLevel: (CompetenceLevel) (i % 4 + 1),
+                CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
                 Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces
             )).ToArray();
     }

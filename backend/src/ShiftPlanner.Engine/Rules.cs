@@ -103,9 +103,4 @@ internal static class Rules
             }
         }
     }
-
-    public static void SpreadShiftAssignmentEvenly(SolverParameters solverParameters, ISchedulingEngine engine)
-    {
-        
-    }
 }
