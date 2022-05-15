@@ -21,6 +21,8 @@ public class ShiftScheduler
         Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(schedulingParameters, solverParameters.Days, engine);
         
         Rules.DisallowShiftsWithoutEmployeeCapability(solverParameters, engine);
+        
+        EmployeeStandardRule.SpreadShiftAssignmentEvenly(solverParameters, engine);
 
         return engine.Solve();
     }

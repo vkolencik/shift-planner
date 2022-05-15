@@ -39,7 +39,7 @@ public class ComputedScheduleShould
         _employees = Enumerable.Range(1, 48)
             .Select(i => new Employee(
                 Name: $"Employee{i}",
-                CompetenceLevel: (CompetenceLevel) (i % 4 + 1),
+                CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
                 Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces
             )).ToArray();
     }
@@ -90,6 +90,18 @@ public class ComputedScheduleShould
                 Assert.All(daysWithShiftAndAlsoShiftTwoDaysAfter, day => Assert.Equal(DayOfWeek.Friday, day.Date.DayOfWeek));
             }
         }
+    }
+
+    [Fact]
+    public void SpreadAssignedShiftsEvenlyAmongEmployees()
+    {
+        var schedule = ComputeSchedule();
+
+        var shiftNumbers = _employees.Select(e => schedule.Shifts.Count(s => s.Employee == e));
+
+        var maxShiftsPerMonth = shiftNumbers.Max();
+        var minShiftsPerMonth = shiftNumbers.Min();
+        Assert.True(maxShiftsPerMonth - minShiftsPerMonth <= 2, $"Minimum number of shifts {minShiftsPerMonth} is too different from maximum {maxShiftsPerMonth}");
     }
 
     [Fact]
