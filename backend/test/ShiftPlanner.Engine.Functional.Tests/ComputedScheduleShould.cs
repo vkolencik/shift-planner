@@ -72,7 +72,7 @@ public class ComputedScheduleShould
             new WorkplaceCapability.Green(Aro3, 30), new WorkplaceCapability.Green(Res3, 30),
         });
        
-        _employeeMonths = Enumerable.Range(1, 20)
+        _employeeMonths = Enumerable.Range(1, 40)
             .Select(i => new EmployeeMonth(
                 new Employee(
                     Name: $"Employee{i}",
