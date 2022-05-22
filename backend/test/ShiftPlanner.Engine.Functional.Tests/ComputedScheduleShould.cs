@@ -46,9 +46,9 @@ public class ComputedScheduleShould
             new Capabilities(
                 new WorkplaceCapability[]
                 {
-                    new WorkplaceCapability.Green(Aro1, 15), new WorkplaceCapability.Green(Res1, 15),
-                    new WorkplaceCapability.Green(Aro2, 15), new WorkplaceCapability.Green(Res2, 15),
-                    new WorkplaceCapability.Green(Aro3, 15), new WorkplaceCapability.Green(Res3, 25),
+                    new WorkplaceCapability.Red(Aro1), new WorkplaceCapability.Red(Res1),
+                    new WorkplaceCapability.Red(Aro2), new WorkplaceCapability.Red(Res2),
+                    new WorkplaceCapability.Green(Aro3, 80), new WorkplaceCapability.Green(Res3, 20),
                 })
         ),
         new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 15))}
@@ -197,7 +197,43 @@ public class ComputedScheduleShould
         var minShiftsTimeOffPerMonth = shiftNumbersForEmployeesWithTimeOff.Min();
         Assert.True(maxShiftsTimeOffPerMonth - minShiftsTimeOffPerMonth <= 2, $"Minimum number of shifts {minShiftsTimeOffPerMonth} is too different from maximum {maxShiftsTimeOffPerMonth}");
         
-        Assert.True(2 * maxShiftsTimeOffPerMonth - 1 <= maxShiftsPerMonth && maxShiftsPerMonth <= 2 * maxShiftsTimeOffPerMonth + 1, $"Employees with half of month off should have about half the number of total shifts, but had {maxShiftsTimeOffPerMonth} which is not half of {maxShiftsPerMonth}");
+        Assert.True(Math.Abs(2 * maxShiftsTimeOffPerMonth - maxShiftsPerMonth) <= 1, $"Employees with half of month off should have about half the number of total shifts, but had {maxShiftsTimeOffPerMonth} which is not half of {maxShiftsPerMonth}");
+    }
+
+    [Fact]
+    public void AssignShiftsAccordingToPreferencePercentages()
+    {
+        var schedule = ComputeSchedule();
+
+        var percentualShifts = schedule.Shifts.Where(s => s.Employee == _percentualCapabilitiesEmployee1.Employee).ToArray();
+        var totalShiftCount = percentualShifts.Length;
+
+        var shiftsOnAro1 = percentualShifts.Count(s => s.Shift.Workplace == Aro1);
+        var shiftsOnAro2 = percentualShifts.Count(s => s.Shift.Workplace == Aro2);
+        var shiftsOnAro3 = percentualShifts.Count(s => s.Shift.Workplace == Aro3);
+        var shiftsOnRes1 = percentualShifts.Count(s => s.Shift.Workplace == Res1);
+        
+        Assert.Equal(totalShiftCount, shiftsOnAro1 + shiftsOnAro2 + shiftsOnAro3 + shiftsOnRes1);
+        Assert.True(Math.Abs(totalShiftCount * 0.2 - shiftsOnAro1) <= 1, $"Shifts on the workplace should be about 20 % of total shifts ({totalShiftCount}) but is {shiftsOnAro1}");
+        Assert.True(Math.Abs(totalShiftCount * 0.2 - shiftsOnAro2) <= 1, $"Shifts on the workplace should be about 20 % of total shifts ({totalShiftCount}) but is {shiftsOnAro2}");
+        Assert.True(Math.Abs(totalShiftCount * 0.4 - shiftsOnAro3) <= 1, $"Shifts on the workplace should be about 40 % of total shifts ({totalShiftCount}) but is {shiftsOnAro3}");
+        Assert.True(Math.Abs(totalShiftCount * 0.2 - shiftsOnRes1) <= 1, $"Shifts on the workplace should be about 20 % of total shifts ({totalShiftCount}) but is {shiftsOnRes1}");
+    }
+
+    [Fact]
+    public void AssignShiftsAccordingToPreferencePercentagesWithLeave()
+    {
+        var schedule = ComputeSchedule();
+
+        var percentualShifts = schedule.Shifts.Where(s => s.Employee == _percentualCapabilitiesEmployee2WithLeave.Employee).ToArray();
+        var totalShiftCount = percentualShifts.Length;
+
+        var shiftsOnAro3 = percentualShifts.Count(s => s.Shift.Workplace == Aro3);
+        var shiftsOnRes3 = percentualShifts.Count(s => s.Shift.Workplace == Res3);
+        
+        Assert.Equal(totalShiftCount, shiftsOnAro3 + shiftsOnRes3);
+        Assert.True(Math.Abs(totalShiftCount * 0.8 - shiftsOnAro3) <= 1, $"Shifts on the workplace should be about 80 % of total shifts ({totalShiftCount}) but is {shiftsOnAro3}");
+        Assert.True(Math.Abs(totalShiftCount * 0.2 - shiftsOnRes3) <= 1, $"Shifts on the workplace should be about 20 % of total shifts ({totalShiftCount}) but is {shiftsOnRes3}");
     }
 
     [Fact]
