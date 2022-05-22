@@ -5,31 +5,35 @@ namespace ShiftPlanner.Engine;
 
 internal static class EmployeeStandardRule
 {
-    public static void SpreadShiftAssignmentEvenly(SolverParameters solverParameters, ISchedulingEngine engine)
+    public static void SpreadShiftAssignmentEvenly(SchedulingParameters schedulingParameters, ISchedulingEngine engine)
     {
-        solverParameters.Employees.ToList().ForEach(e => AddEmployeeStandardRules(solverParameters, engine, e));
+        schedulingParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeeStandardRules(schedulingParameters, engine, em));
     }
 
     private static void AddEmployeeStandardRules(
-        SolverParameters solverParameters,
+        SchedulingParameters schedulingParameters,
         ISchedulingEngine engine,
-        Employee employee)
+        EmployeeMonth employeeMonth)
     {
-        var employeeStandard = ComputeStandard(solverParameters, employee);
+        var employeeStandard = ComputeStandard(schedulingParameters, employeeMonth);
 
-        var employeeShiftsInMonth = solverParameters.Days
-            .SelectMany(d => solverParameters.Workplaces.Select(w => new ShiftAssignment(employee, d, w)))
+        var employeeShiftsInMonth = schedulingParameters.Month.Days
+            .SelectMany(d => schedulingParameters.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, d, w)))
             .ToList();
 
         engine.AddSumConstraint(employeeShiftsInMonth, Constraint.Gte, employeeStandard.Minimum);
         engine.AddSumConstraint(employeeShiftsInMonth, Constraint.Lte, employeeStandard.Maximum);
     }
 
-    private static EmployeeStandard ComputeStandard(SolverParameters solverParameters, Employee employee)
+    private static EmployeeStandard ComputeStandard(SchedulingParameters schedulingParameters, EmployeeMonth employee)
     {
-        decimal standard = (decimal) solverParameters.Days.Count
-                           * solverParameters.Workplaces.Count
-                           / solverParameters.Employees.Count; 
+        var daysCount = (decimal) schedulingParameters.Month.Days.Count;
+        var totalRequiredCapacity = daysCount * schedulingParameters.Workplaces.Count;
+        var totalEmployeeCapacity =
+            (decimal) schedulingParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
+        var employeeCapacity = daysCount - employee.Leaves.Sum(l => l.LengthDays);
+        var standard = totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
+        
         return new EmployeeStandard((int) Math.Floor(standard), (int) Math.Ceiling(standard));
     }
 

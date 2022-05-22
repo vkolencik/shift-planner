@@ -15,6 +15,7 @@ public class ComputedScheduleShould
     private IEnumerable<Employee> Employees => _employeeMonths.Select(e => e.Employee);
     private int EmployeesWithTimeOffCount = 3;
     private IEnumerable<EmployeeMonth> EmployeeMonthsWithTimeOff => _employeeMonths.Take(EmployeesWithTimeOffCount);    
+    private IEnumerable<Employee> EmployeesWithTimeOff => EmployeeMonthsWithTimeOff.Select(em => em.Employee);    
     public ComputedScheduleShould()
     {
         var aro1 = new Workplace("aro1");
@@ -45,8 +46,8 @@ public class ComputedScheduleShould
                     Name: $"Employee{i}",
                     CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
                     Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces),
-                    i <= EmployeesWithTimeOffCount ? new [] { new Leave(new Day(2022, 2, 1 + i * 5), new Day(2022, 2, 1 + i * 5 + 10)) } : Array.Empty<Leave>()                
-                )).ToArray();
+                i <= EmployeesWithTimeOffCount ? new [] { new Leave(new Day(2022, 2, 1 + i * 2), new Day(2022, 2, 1 + i * 2 + 14)) } : Array.Empty<Leave>()                
+            )).ToArray();
     }
 
     [Fact]
@@ -151,11 +152,18 @@ public class ComputedScheduleShould
     {
         var schedule = ComputeSchedule();
 
-        var shiftNumbers = Employees.Select(e => schedule.Shifts.Count(s => s.Employee == e)).ToList();
+        var shiftNumbers = Employees.Where(e => !EmployeesWithTimeOff.Contains(e)).Select(e => schedule.Shifts.Count(s => s.Employee == e)).ToList();
 
         var maxShiftsPerMonth = shiftNumbers.Max();
         var minShiftsPerMonth = shiftNumbers.Min();
         Assert.True(maxShiftsPerMonth - minShiftsPerMonth <= 2, $"Minimum number of shifts {minShiftsPerMonth} is too different from maximum {maxShiftsPerMonth}");
+        
+        var shiftNumbersForEmployeesWithTimeOff = EmployeesWithTimeOff.Select(e => schedule.Shifts.Count(s => s.Employee == e)).ToList();
+        var maxShiftsTimeOffPerMonth = shiftNumbersForEmployeesWithTimeOff.Max();
+        var minShiftsTimeOffPerMonth = shiftNumbersForEmployeesWithTimeOff.Min();
+        Assert.True(maxShiftsTimeOffPerMonth - minShiftsTimeOffPerMonth <= 2, $"Minimum number of shifts {minShiftsTimeOffPerMonth} is too different from maximum {maxShiftsTimeOffPerMonth}");
+        
+        Assert.True(2 * maxShiftsTimeOffPerMonth - 1 <= maxShiftsPerMonth && maxShiftsPerMonth <= 2 * maxShiftsTimeOffPerMonth + 1, $"Employees with half of month off should have about half the number of total shifts, but had {maxShiftsTimeOffPerMonth} which is not half of {maxShiftsPerMonth}");
     }
 
     [Fact]

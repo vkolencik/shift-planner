@@ -22,7 +22,7 @@ public class ShiftScheduler
         
         Rules.DisallowShiftsWithoutEmployeeCapability(solverParameters, engine);
         
-        EmployeeStandardRule.SpreadShiftAssignmentEvenly(solverParameters, engine);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParameters, engine);
 
         Rules.TakeLeavesIntoAccount(schedulingParameters, engine);
 
