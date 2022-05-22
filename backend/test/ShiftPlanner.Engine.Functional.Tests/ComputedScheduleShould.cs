@@ -8,46 +8,80 @@ namespace ShiftPlanner.Engine.Functional.Tests;
 
 public class ComputedScheduleShould
 {
-    private readonly IReadOnlyCollection<CompetenceGroup> _competenceGroups;
-
     private readonly IReadOnlyCollection<EmployeeMonth> _employeeMonths;
 
     private IEnumerable<Employee> Employees => _employeeMonths.Select(e => e.Employee);
-    private int EmployeesWithTimeOffCount = 3;
-    private IEnumerable<EmployeeMonth> EmployeeMonthsWithTimeOff => _employeeMonths.Take(EmployeesWithTimeOffCount);    
+    private readonly int _employeesWithTimeOffCount = 3;
+
+    static readonly Workplace Aro1 = new Workplace("aro1");
+    static readonly Workplace Aro2 = new Workplace("aro2");
+    static readonly Workplace Aro3 = new Workplace("aro3");
+    static readonly Workplace Res1 = new Workplace("res1");
+    static readonly Workplace Res2 = new Workplace("res2");
+    static readonly Workplace Res3 = new Workplace("res3");
+        
+    private readonly IReadOnlyCollection<CompetenceGroup> _competenceGroups = new[]
+    {
+        new CompetenceGroup(new[] {Aro1, Aro2, Aro3}),
+        new CompetenceGroup(new[] {Res1, Res2, Res3})
+    };
+
+    readonly EmployeeMonth _percentualCapabilitiesEmployee1 = new EmployeeMonth(
+        new Employee(
+            "PercentualCapabilitiesEmployee1",
+            CompetenceLevel.Level1,
+            new Capabilities(
+                new WorkplaceCapability[]
+                {
+                    new WorkplaceCapability.Green(Aro1, 20), new WorkplaceCapability.Green(Res1, 20),
+                    new WorkplaceCapability.Green(Aro2, 20), new WorkplaceCapability.Red(Res2),
+                    new WorkplaceCapability.Green(Aro3, 40), new WorkplaceCapability.Red(Res3)
+                })
+        ));
+
+    readonly EmployeeMonth _percentualCapabilitiesEmployee2WithLeave = new EmployeeMonth(
+        new Employee(
+            "PercentualCapabilitiesEmployee2",
+            CompetenceLevel.Level2,
+            new Capabilities(
+                new WorkplaceCapability[]
+                {
+                    new WorkplaceCapability.Red(Aro1), new WorkplaceCapability.Red(Res1),
+                    new WorkplaceCapability.Red(Aro2), new WorkplaceCapability.Red(Res2),
+                    new WorkplaceCapability.Green(Aro3, 80), new WorkplaceCapability.Green(Res3, 20),
+                })
+        ),
+        new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 15))}
+    );
+
+    private IEnumerable<EmployeeMonth> EmployeeMonthsWithTimeOff => _employeeMonths.Take(_employeesWithTimeOffCount).Concat(new [] { _percentualCapabilitiesEmployee2WithLeave});    
     private IEnumerable<Employee> EmployeesWithTimeOff => EmployeeMonthsWithTimeOff.Select(em => em.Employee);    
     public ComputedScheduleShould()
     {
-        var aro1 = new Workplace("aro1");
-        var aro2 = new Workplace("aro2");
-        var res1 = new Workplace("res1");
-        var res2 = new Workplace("res2");
-        _competenceGroups = new[]
-        {
-            new CompetenceGroup(new[] {aro1, aro2}),
-            new CompetenceGroup(new[] {res1, res2})
-        };
-
         var capableForFirstWorkplaces = new Capabilities(new WorkplaceCapability[]
         {
-            new WorkplaceCapability.Green(aro1, 50), new WorkplaceCapability.Green(res1, 50),
-            new WorkplaceCapability.Red(aro2), new WorkplaceCapability.Red(res2),  
+            new WorkplaceCapability.Green(Aro1, 30), new WorkplaceCapability.Green(Res1, 40),
+            new WorkplaceCapability.Green(Aro2, 30), new WorkplaceCapability.Red(Res2),  
+            new WorkplaceCapability.Red(Aro3), new WorkplaceCapability.Red(Res3),  
         });
 
         var capableForSecondWorkplaces = new Capabilities(new WorkplaceCapability[]
         {
-            new WorkplaceCapability.Red(aro1), new WorkplaceCapability.Red(res1),
-            new WorkplaceCapability.Green(aro2, 50), new WorkplaceCapability.Green(res2, 50),
+            new WorkplaceCapability.Red(Aro1), new WorkplaceCapability.Red(Res1),
+            new WorkplaceCapability.Red(Aro2), new WorkplaceCapability.Green(Res2, 40),
+            new WorkplaceCapability.Green(Aro3, 30), new WorkplaceCapability.Green(Res3, 30),
         });
-        
-        _employeeMonths = Enumerable.Range(1, 48)
+       
+        _employeeMonths = Enumerable.Range(1, 40)
             .Select(i => new EmployeeMonth(
                 new Employee(
                     Name: $"Employee{i}",
                     CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
                     Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces),
-                i <= EmployeesWithTimeOffCount ? new [] { new Leave(new Day(2022, 2, 1 + i * 2), new Day(2022, 2, 1 + i * 2 + 14)) } : Array.Empty<Leave>()                
-            )).ToArray();
+                i <= _employeesWithTimeOffCount ? new [] { new Leave(new Day(2022, 2, 1 + i * 2), new Day(2022, 2, 1 + i * 2 + 14)) } : Array.Empty<Leave>()                
+            ))
+            .Concat(new[] {_percentualCapabilitiesEmployee1, _percentualCapabilitiesEmployee2WithLeave})
+            .ToArray();
     }
 
     [Fact]
@@ -163,7 +197,43 @@ public class ComputedScheduleShould
         var minShiftsTimeOffPerMonth = shiftNumbersForEmployeesWithTimeOff.Min();
         Assert.True(maxShiftsTimeOffPerMonth - minShiftsTimeOffPerMonth <= 2, $"Minimum number of shifts {minShiftsTimeOffPerMonth} is too different from maximum {maxShiftsTimeOffPerMonth}");
         
-        Assert.True(2 * maxShiftsTimeOffPerMonth - 1 <= maxShiftsPerMonth && maxShiftsPerMonth <= 2 * maxShiftsTimeOffPerMonth + 1, $"Employees with half of month off should have about half the number of total shifts, but had {maxShiftsTimeOffPerMonth} which is not half of {maxShiftsPerMonth}");
+        Assert.True(Math.Abs(2 * maxShiftsTimeOffPerMonth - maxShiftsPerMonth) <= 1, $"Employees with half of month off should have about half the number of total shifts, but had {maxShiftsTimeOffPerMonth} which is not half of {maxShiftsPerMonth}");
+    }
+
+    [Fact]
+    public void AssignShiftsAccordingToPreferencePercentages()
+    {
+        var schedule = ComputeSchedule();
+
+        var percentualShifts = schedule.Shifts.Where(s => s.Employee == _percentualCapabilitiesEmployee1.Employee).ToArray();
+        var totalShiftCount = percentualShifts.Length;
+
+        var shiftsOnAro1 = percentualShifts.Count(s => s.Shift.Workplace == Aro1);
+        var shiftsOnAro2 = percentualShifts.Count(s => s.Shift.Workplace == Aro2);
+        var shiftsOnAro3 = percentualShifts.Count(s => s.Shift.Workplace == Aro3);
+        var shiftsOnRes1 = percentualShifts.Count(s => s.Shift.Workplace == Res1);
+        
+        Assert.Equal(totalShiftCount, shiftsOnAro1 + shiftsOnAro2 + shiftsOnAro3 + shiftsOnRes1);
+        Assert.True(Math.Abs(totalShiftCount * 0.2 - shiftsOnAro1) <= 1, $"Shifts on the workplace should be about 20 % of total shifts ({totalShiftCount}) but is {shiftsOnAro1}");
+        Assert.True(Math.Abs(totalShiftCount * 0.2 - shiftsOnAro2) <= 1, $"Shifts on the workplace should be about 20 % of total shifts ({totalShiftCount}) but is {shiftsOnAro2}");
+        Assert.True(Math.Abs(totalShiftCount * 0.4 - shiftsOnAro3) <= 1, $"Shifts on the workplace should be about 40 % of total shifts ({totalShiftCount}) but is {shiftsOnAro3}");
+        Assert.True(Math.Abs(totalShiftCount * 0.2 - shiftsOnRes1) <= 1, $"Shifts on the workplace should be about 20 % of total shifts ({totalShiftCount}) but is {shiftsOnRes1}");
+    }
+
+    [Fact]
+    public void AssignShiftsAccordingToPreferencePercentagesWithLeave()
+    {
+        var schedule = ComputeSchedule();
+
+        var percentualShifts = schedule.Shifts.Where(s => s.Employee == _percentualCapabilitiesEmployee2WithLeave.Employee).ToArray();
+        var totalShiftCount = percentualShifts.Length;
+
+        var shiftsOnAro3 = percentualShifts.Count(s => s.Shift.Workplace == Aro3);
+        var shiftsOnRes3 = percentualShifts.Count(s => s.Shift.Workplace == Res3);
+        
+        Assert.Equal(totalShiftCount, shiftsOnAro3 + shiftsOnRes3);
+        Assert.True(Math.Abs(totalShiftCount * 0.8 - shiftsOnAro3) <= 1, $"Shifts on the workplace should be about 80 % of total shifts ({totalShiftCount}) but is {shiftsOnAro3}");
+        Assert.True(Math.Abs(totalShiftCount * 0.2 - shiftsOnRes3) <= 1, $"Shifts on the workplace should be about 20 % of total shifts ({totalShiftCount}) but is {shiftsOnRes3}");
     }
 
     [Fact]
