@@ -127,9 +127,10 @@ public class SchedulingEngineShould
 
     private static SolverParameters CreateBasicInput()
     {
+        var workplace1 = new Workplace("ARO");
         var workplaces = new Workplace[]
         {
-            new Workplace("ARO"),
+            workplace1,
             new Workplace("JIP"),
         };
         
@@ -137,9 +138,9 @@ public class SchedulingEngineShould
             Enumerable.Range(1, 5).Select(d => new Day(2022, 2, d)).ToArray(),
             new Employee[]
             {
-                new Employee("Hynek", CompetenceLevel.Level1, new Capabilities(Array.Empty<WorkplaceCapability>())),
-                new Employee("Vilem", CompetenceLevel.Level1, new Capabilities(Array.Empty<WorkplaceCapability>())),
-                new Employee("Jarmila", CompetenceLevel.Level1, new Capabilities(Array.Empty<WorkplaceCapability>())),
+                new Employee("Hynek", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(workplace1, 100)})),
+                new Employee("Vilem", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(workplace1, 100)})),
+                new Employee("Jarmila", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(workplace1, 100)})),
             }, 
             workplaces);
     }
