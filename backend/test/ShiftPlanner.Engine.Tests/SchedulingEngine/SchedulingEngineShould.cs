@@ -68,21 +68,21 @@ public class SchedulingEngineShould
         {
             Assert.Equal(
                 input.Employees.First(),
-                schedule.GetAssignedEmployee(new Shift(new Day(new DateOnly(2022, 2, d)), input.Workplaces.First())));
+                schedule.GetAssignedEmployee(new Shift(new Day(2022, 2, d), input.Workplaces.First())));
         }
 
         for (int d = 1; d <= input.Days.Count; d += 2)
         {
             Assert.Equal(
                 input.Employees.ElementAt(1),
-                schedule.GetAssignedEmployee(new Shift(new Day(new DateOnly(2022, 2, d)), input.Workplaces.ElementAt(1))));
+                schedule.GetAssignedEmployee(new Shift(new Day(2022, 2, d), input.Workplaces.ElementAt(1))));
         }
 
         for (int d = 2; d <= input.Days.Count; d += 2)
         {
             Assert.Equal(
                 input.Employees.ElementAt(2),
-                schedule.GetAssignedEmployee(new Shift(new Day(new DateOnly(2022, 2, d)), input.Workplaces.ElementAt(1))));
+                schedule.GetAssignedEmployee(new Shift(new Day(2022, 2, d), input.Workplaces.ElementAt(1))));
         }
     }
 
@@ -122,7 +122,7 @@ public class SchedulingEngineShould
 
     private static SolverParameters CreateEmptyInput()
     {
-        return new SolverParameters(Day.CreateDaysForMonth(new ScheduledMonth(2022, 2)), Array.Empty<Employee>(), Array.Empty<Workplace>());
+        return new SolverParameters(new ScheduledMonth(2022, 2).Days, Array.Empty<Employee>(), Array.Empty<Workplace>());
     }
 
     private static SolverParameters CreateBasicInput()
@@ -134,7 +134,7 @@ public class SchedulingEngineShould
         };
         
         return new SolverParameters(
-            Enumerable.Range(1, 5).Select(d => new Day(new DateOnly(2022, 2, d))).ToArray(),
+            Enumerable.Range(1, 5).Select(d => new Day(2022, 2, d)).ToArray(),
             new Employee[]
             {
                 new Employee("Hynek", CompetenceLevel.Level1, new Capabilities(Array.Empty<WorkplaceCapability>())),

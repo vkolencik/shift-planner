@@ -103,4 +103,21 @@ internal static class Rules
             }
         }
     }
+
+    public static void TakeLeavesIntoAccount(SchedulingParameters schedulingParameters, ISchedulingEngine engine)
+    {
+        foreach (var employeeMonth in schedulingParameters.EmployeeMonths)
+        {
+            foreach (var leave in employeeMonth.Leaves)
+            {
+                foreach (var day in leave.Days)
+                {
+                    foreach (var workplace in schedulingParameters.Workplaces)
+                    {
+                        engine.AddVariableConstraint(new ShiftAssignment(employeeMonth.Employee, day, workplace), Constraint.Eq, 0);
+                    }
+                }
+            }
+        }
+    }
 }

@@ -5,13 +5,13 @@ namespace ShiftPlanner.Engine.Tests;
 
 static internal class RulesFixture
 {
-    public static readonly Day Day1 = new Day(new DateOnly(2022, 2, 1));
-    public static readonly Day Day2 = new Day(new DateOnly(2022, 2, 2));
-    public static readonly Day Day3 = new Day(new DateOnly(2022, 2, 3));
-    public static readonly Day Day4Friday = new Day(new DateOnly(2022, 2, 4));
-    public static readonly Day Day5Saturday = new Day(new DateOnly(2022, 2, 5));
-    public static readonly Day Day6Sunday = new Day(new DateOnly(2022, 2, 6));
-    public static readonly Day Day7 = new Day(new DateOnly(2022, 2, 7));
+    public static readonly Day Day1 = new Day(2022, 2, 1);
+    public static readonly Day Day2 = new Day(2022, 2, 2);
+    public static readonly Day Day3 = new Day(2022, 2, 3);
+    public static readonly Day Day4Friday = new Day(2022, 2, 4);
+    public static readonly Day Day5Saturday = new Day(2022, 2, 5);
+    public static readonly Day Day6Sunday = new Day(2022, 2, 6);
+    public static readonly Day Day7 = new Day(2022, 2, 7);
     public static readonly Workplace Workplace1 = new Workplace("Workplace1");
     public static readonly Workplace Workplace2 = new Workplace("Workplace2");
     public static readonly Capabilities CapabilitiesFirstWorkplace = new Capabilities(new WorkplaceCapability[] { new WorkplaceCapability.Green(Workplace1, 100), new WorkplaceCapability.Red(Workplace2) });

@@ -15,7 +15,12 @@ public class RulesShould
 
     public static readonly SchedulingParameters SchedulingParameters = new SchedulingParameters(
         new ScheduledMonth(2022, 2),
-        new[] {Employee1, Employee2, Employee3},
+        new[]
+        {
+            new EmployeeMonth(Employee1, new [] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 2))}),
+            new EmployeeMonth(Employee2),
+            new EmployeeMonth(Employee3)
+        },
         new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})});
 
     public RulesShould()
@@ -141,5 +146,24 @@ public class RulesShould
         Assert.Contains(new ShiftAssignment(Employee1, Day2, Workplace2), capturedShifts);
         Assert.DoesNotContain(new ShiftAssignment(Employee2, Day1, Workplace1), capturedShifts);
         Assert.DoesNotContain(new ShiftAssignment(Employee2, Day1, Workplace2), capturedShifts);
+    }
+
+    [Fact]
+    public void RespectDaysOff()
+    {
+        var capturedShifts = new List<ShiftAssignment>();
+        _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShifts), Constraint.Eq, 0));
+
+        Rules.TakeLeavesIntoAccount(SchedulingParameters, _engineMock.Object);
+        
+        Assert.Equal(
+            new HashSet<ShiftAssignment>
+            {
+                new ShiftAssignment(Employee1, new Day(2022, 2, 1), Workplace1),
+                new ShiftAssignment(Employee1, new Day(2022, 2, 1), Workplace2),
+                new ShiftAssignment(Employee1, new Day(2022, 2, 2), Workplace1),
+                new ShiftAssignment(Employee1, new Day(2022, 2, 2), Workplace2)
+            },
+            capturedShifts.ToHashSet());
     }
 }

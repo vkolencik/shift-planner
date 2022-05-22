@@ -2,5 +2,10 @@ namespace ShiftPlanner.Domain;
 
 public record SchedulingParameters(
     ScheduledMonth Month,
-    IReadOnlyCollection<Employee> Employees,
-    IReadOnlyCollection<CompetenceGroup> CompetenceGroups);
+    IReadOnlyCollection<EmployeeMonth> EmployeeMonths,
+    IReadOnlyCollection<CompetenceGroup> CompetenceGroups)
+{
+    public IReadOnlyCollection<Employee> Employees => EmployeeMonths.Select(em => em.Employee).ToArray();
+
+    public IEnumerable<Workplace> Workplaces => CompetenceGroups.SelectMany(cg => cg.Workplaces);
+}
