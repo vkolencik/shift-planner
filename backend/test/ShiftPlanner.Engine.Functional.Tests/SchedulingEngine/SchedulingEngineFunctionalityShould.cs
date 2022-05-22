@@ -14,7 +14,7 @@ namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
             var vojta = new Employee("Vojta", CompetenceLevel.Level1, new Capabilities(new[] { new WorkplaceCapability.Green(aro, 100) }));
 
             var inputParams = new SolverParameters(
-                Day.CreateDaysForMonth(new ScheduledMonth(2022, 2)),
+                new ScheduledMonth(2022, 2).Days,
                 new[] {vojta},
                 new[] {aro}
             );
@@ -30,7 +30,7 @@ namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
 
             for (int d = 1; d <= 28; d++)
             {
-                var day = new Day(new DateOnly(2022, 2, d));
+                var day = new Day(2022, 2, d);
                 Assert.Equal(vojta, schedule.GetAssignedEmployee(new Shift(day, aro)));
             }
         }

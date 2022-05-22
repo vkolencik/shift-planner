@@ -24,12 +24,14 @@ public class ShiftScheduler
         
         EmployeeStandardRule.SpreadShiftAssignmentEvenly(solverParameters, engine);
 
+        Rules.TakeLeavesIntoAccount(schedulingParameters, engine);
+
         return engine.Solve();
     }
 
     private static SolverParameters GetSolverParameters(SchedulingParameters schedulingParameters)
     {
-        var days = Day.CreateDaysForMonth(schedulingParameters.Month);
+        var days = schedulingParameters.Month.Days;
 
         return new SolverParameters(
             days,

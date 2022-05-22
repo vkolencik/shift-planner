@@ -1,13 +1,37 @@
 namespace ShiftPlanner.Domain;
 
-public record Day(DateOnly Date)
+public record Day(DateOnly Date) : IComparable<Day>
 {
+    public Day(int year, int month, int day): this(new DateOnly(year, month, day))
+    {
+    }
+
     public int Index() => Date.Day;
 
-    public static IReadOnlyCollection<Day> CreateDaysForMonth(ScheduledMonth month)
+    public static bool operator <(Day? left, Day? right)
     {
-        return Enumerable.Range(1, DateTime.DaysInMonth(month.Year, month.Month))
-            .Select(d => new Day(new DateOnly(month.Year, month.Month, d)))
-            .ToArray();
+        return Comparer<Day>.Default.Compare(left, right) < 0;
+    }
+
+    public static bool operator >(Day? left, Day? right)
+    {
+        return Comparer<Day>.Default.Compare(left, right) > 0;
+    }
+
+    public static bool operator <=(Day? left, Day? right)
+    {
+        return Comparer<Day>.Default.Compare(left, right) <= 0;
+    }
+
+    public static bool operator >=(Day? left, Day? right)
+    {
+        return Comparer<Day>.Default.Compare(left, right) >= 0;
+    }
+
+    public int CompareTo(Day? other)
+    {
+        if (ReferenceEquals(this, other)) return 0;
+        if (ReferenceEquals(null, other)) return 1;
+        return Date.CompareTo(other.Date);
     }
 }

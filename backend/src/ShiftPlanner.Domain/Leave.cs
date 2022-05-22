@@ -2,24 +2,36 @@
 
 public record Leave
 {
-    public Leave(DateOnly From, DateOnly To)
+    public Leave(Day from, Day to)
     {
-        if (To < From)
+        if (to.Date < from.Date)
         {
-            throw new ArgumentException("End date cannot be before start date", nameof(To));
+            throw new ArgumentException("End date cannot be before start date", nameof(to));
         }
 
-        this.From = From;
-        this.To = To;
+        this.From = from;
+        this.To = to;
     }
 
-    public int LengthDays => (To.ToDateTime(TimeOnly.MinValue) - From.ToDateTime(TimeOnly.MinValue)).Days + 1;
-    public DateOnly From { get; init; }
-    public DateOnly To { get; init; }
+    public int LengthDays => (To.Date.ToDateTime(TimeOnly.MinValue) - From.Date.ToDateTime(TimeOnly.MinValue)).Days + 1;
 
-    public void Deconstruct(out DateOnly From, out DateOnly To)
+    public IEnumerable<Day> Days
     {
-        From = this.From;
-        To = this.To;
+        get
+        {
+            for (var date = From.Date; date <= To.Date; date = date.AddDays(1))
+            {
+                yield return new Day(date);
+            }
+        }
+    }
+    
+    public Day From { get; init; }
+    public Day To { get; init; }
+
+    public void Deconstruct(out Day from, out Day to)
+    {
+        from = this.From;
+        to = this.To;
     }
 }

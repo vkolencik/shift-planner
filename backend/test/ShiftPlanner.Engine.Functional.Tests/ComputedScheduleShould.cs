@@ -12,8 +12,9 @@ public class ComputedScheduleShould
 
     private readonly IReadOnlyCollection<EmployeeMonth> _employeeMonths;
 
-    public IEnumerable<Employee> Employees => _employeeMonths.Select(e => e.Employee);
-
+    private IEnumerable<Employee> Employees => _employeeMonths.Select(e => e.Employee);
+    private int EmployeesWithTimeOffCount = 3;
+    private IEnumerable<EmployeeMonth> EmployeeMonthsWithTimeOff => _employeeMonths.Take(EmployeesWithTimeOffCount);    
     public ComputedScheduleShould()
     {
         var aro1 = new Workplace("aro1");
@@ -39,11 +40,13 @@ public class ComputedScheduleShould
         });
         
         _employeeMonths = Enumerable.Range(1, 48)
-            .Select(i => new EmployeeMonth(new Employee(
-                Name: $"Employee{i}",
-                CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
-                Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces
-            ))).ToArray();
+            .Select(i => new EmployeeMonth(
+                new Employee(
+                    Name: $"Employee{i}",
+                    CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
+                    Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces),
+                    i <= EmployeesWithTimeOffCount ? new [] { new Leave(new Day(2022, 2, 1 + i * 5), new Day(2022, 2, 1 + i * 5 + 10)) } : Array.Empty<Leave>()                
+                )).ToArray();
     }
 
     [Fact]
@@ -95,18 +98,6 @@ public class ComputedScheduleShould
     }
 
     [Fact]
-    public void SpreadAssignedShiftsEvenlyAmongEmployees()
-    {
-        var schedule = ComputeSchedule();
-
-        var shiftNumbers = Employees.Select(e => schedule.Shifts.Count(s => s.Employee == e));
-
-        var maxShiftsPerMonth = shiftNumbers.Max();
-        var minShiftsPerMonth = shiftNumbers.Min();
-        Assert.True(maxShiftsPerMonth - minShiftsPerMonth <= 2, $"Minimum number of shifts {minShiftsPerMonth} is too different from maximum {maxShiftsPerMonth}");
-    }
-
-    [Fact]
     public void AssignShiftsAccordingToEmployeeCapabilities()
     {
         var schedule = ComputeSchedule();
@@ -155,6 +146,36 @@ public class ComputedScheduleShould
         }
     }
 
+    [Fact]
+    public void SpreadAssignedShiftsEvenlyAmongEmployees()
+    {
+        var schedule = ComputeSchedule();
+
+        var shiftNumbers = Employees.Select(e => schedule.Shifts.Count(s => s.Employee == e)).ToList();
+
+        var maxShiftsPerMonth = shiftNumbers.Max();
+        var minShiftsPerMonth = shiftNumbers.Min();
+        Assert.True(maxShiftsPerMonth - minShiftsPerMonth <= 2, $"Minimum number of shifts {minShiftsPerMonth} is too different from maximum {maxShiftsPerMonth}");
+    }
+
+    [Fact]
+    public void NotAssignShiftsToEmployeesOnLeave()
+    {
+        var schedule = ComputeSchedule();
+
+        foreach (var employeeMonthWithTimeOff in EmployeeMonthsWithTimeOff)
+        {
+            var leave = employeeMonthWithTimeOff.Leaves.First() ?? throw new NullReferenceException();
+
+            var assignedShifts = schedule.Shifts
+                .Where(s => s.Employee == employeeMonthWithTimeOff.Employee)
+                .Where(s => leave.From <= s.Shift.Day && s.Shift.Day <= leave.To)
+                .ToList();
+            
+            Assert.Empty(assignedShifts);
+        }
+    } 
+    
     private Schedule ComputeSchedule()
     {
         var scheduler = new ShiftScheduler();
