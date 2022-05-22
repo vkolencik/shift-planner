@@ -7,5 +7,5 @@ public record SchedulingParameters(
 {
     public IReadOnlyCollection<Employee> Employees => EmployeeMonths.Select(em => em.Employee).ToArray();
 
-    public IEnumerable<Workplace> Workplaces => CompetenceGroups.SelectMany(cg => cg.Workplaces);
+    public IReadOnlyCollection<Workplace> Workplaces => CompetenceGroups.SelectMany(cg => cg.Workplaces).ToArray();
 }
