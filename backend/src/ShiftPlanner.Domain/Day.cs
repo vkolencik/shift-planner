@@ -2,6 +2,8 @@ namespace ShiftPlanner.Domain;
 
 public record Day(DateOnly Date) : IComparable<Day>
 {
+    public DayOfWeek DayOfWeek => Date.DayOfWeek;
+
     public Day(int year, int month, int day): this(new DateOnly(year, month, day))
     {
     }

@@ -127,7 +127,7 @@ public class ComputedScheduleShould
                     .Where(x => x.Item2 == 2)
                     .Select(x => x.Item1);
 
-                Assert.All(daysWithShiftAndAlsoShiftTwoDaysAfter, day => Assert.Equal(DayOfWeek.Friday, day.Date.DayOfWeek));
+                Assert.All(daysWithShiftAndAlsoShiftTwoDaysAfter, day => Assert.Equal(DayOfWeek.Friday, day.DayOfWeek));
             }
         }
     }
@@ -251,6 +251,23 @@ public class ComputedScheduleShould
                 .ToList();
             
             Assert.Empty(assignedShifts);
+        }
+    }
+
+    [Theory]
+    [InlineData(DayOfWeek.Saturday)]
+    [InlineData(DayOfWeek.Sunday)]
+    public void HaveAtMostOneOfEachWeekendDaysAssigned(DayOfWeek weekendDay)
+    {
+        var schedule = ComputeSchedule();
+
+        foreach (var employee in Employees)
+        {
+            var weekendDayShifts = schedule.Shifts
+                .Where(s => s.Employee == employee && s.Shift.Day.DayOfWeek == weekendDay)
+                .ToArray();
+            
+            Assert.True(weekendDayShifts.Length <= 1, $"More than one shift for {employee.Name} on {weekendDay.ToString()}: {string.Join(", ", weekendDayShifts.Select(s => s.Shift.Day))}");
         }
     } 
     
