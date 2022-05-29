@@ -120,4 +120,22 @@ internal static class Rules
             }
         }
     }
+
+    public static void LimitWeekendShifts(SchedulingParameters schedulingParameters, ISchedulingEngine engine)
+    {
+        LimitShiftsOnDays(schedulingParameters, engine, schedulingParameters.Month.Days.Where(d => d.DayOfWeek == DayOfWeek.Saturday), 1);
+        LimitShiftsOnDays(schedulingParameters, engine, schedulingParameters.Month.Days.Where(d => d.DayOfWeek == DayOfWeek.Sunday), 1);
+    }
+
+    private static void LimitShiftsOnDays(SchedulingParameters schedulingParameters, ISchedulingEngine engine, IEnumerable<Day> days, int limit)
+    {
+        foreach (var employeeMonth in schedulingParameters.EmployeeMonths)
+        {
+            var saturdayShifts = schedulingParameters.Workplaces
+                .SelectMany(w => days.Select(d => new ShiftAssignment(employeeMonth.Employee, d, w)))
+                .ToArray();
+
+            engine.AddSumConstraint(saturdayShifts, Constraint.Lte, limit);
+        }
+    }
 }
