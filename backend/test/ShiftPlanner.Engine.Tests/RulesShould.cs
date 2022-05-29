@@ -23,6 +23,8 @@ public class RulesShould
         },
         new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})});
 
+    private static IEnumerable<Workplace> Workplaces => new[] {Workplace1, Workplace2};
+
     public RulesShould()
     {
         _engineMock = new Mock<ISchedulingEngine>();
@@ -165,5 +167,29 @@ public class RulesShould
                 new ShiftAssignment(Employee1, new Day(2022, 2, 2), Workplace2)
             },
             capturedShifts.ToHashSet());
+    }
+
+    [Fact]
+    public void LimitWeekendShifts()
+    {
+        var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
+        
+        Rules.LimitWeekendShifts(SchedulingParameters, _engineMock.Object);
+
+        var saturdays = new[] {5, 12, 19, 26};
+        var sundays = new[] {6, 13, 20, 27};
+
+        Assert.All(
+            new[] {Employee1, Employee2, Employee3}, employee =>
+            {
+                Assert.Contains(
+                    saturdays.SelectMany(d => Workplaces.Select(workplace => new ShiftAssignment(employee, new Day(2022, 2, d), workplace))).ToHashSet(),
+                    capturedShifts.Select(_ => _.ToHashSet()));
+
+                Assert.Contains(
+                    sundays.SelectMany(d => Workplaces.Select(workplace => new ShiftAssignment(employee, new Day(2022, 2, d), workplace))).ToHashSet(),
+                    capturedShifts.Select(_ => _.ToHashSet()));
+            });
     }
 }

@@ -97,7 +97,7 @@ public class EmployeeStandardRuleShould
     }
 
     [Fact]
-    public void AssignShiftsAccordingToPreferencePercetages()
+    public void AssignShiftsAccordingToPreferencePercentages()
     {
         var capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();

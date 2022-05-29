@@ -18,6 +18,8 @@ public class ShiftScheduler
         
         Rules.NoAlternativeDayShiftsForEmployee(solverParameters, engine);
         
+        Rules.LimitWeekendShifts(schedulingParameters, engine);
+        
         Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(schedulingParameters, solverParameters.Days, engine);
         
         Rules.DisallowShiftsWithoutEmployeeCapability(solverParameters, engine);
