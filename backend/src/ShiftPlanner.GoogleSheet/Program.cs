@@ -6,6 +6,7 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Util.Store;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Engine;
 
 namespace ShiftPlanner.GoogleSheet;
 
@@ -20,21 +21,7 @@ static class Program
     {
         try
         {
-            var credential = GoogleCredential.FromFile("credentials/krtekpoc-credentials.json").CreateScoped(Scopes);            // Load client secrets.
-            // using (var stream =
-            //        new FileStream("credentials/krtekpoc-credentials.json", FileMode.Open, FileAccess.Read))
-            // {
-            //     /* The file token.json stors the user's access and refresh tokens, and is created
-            //      automatically when the authorization flow completes for the first time. */
-            //     string credPath = "token.json";
-            //     credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-            //         GoogleClientSecrets.FromStream(stream).Secrets,
-            //         Scopes,
-            //         "user",
-            //         CancellationToken.None,
-            //         new FileDataStore(credPath, true)).Result;
-            //     Console.WriteLine("Credential file saved to: " + credPath);
-            // }
+            var credential = GoogleCredential.FromFile("credentials/krtekpoc-credentials.json").CreateScoped(Scopes);
 
             // Create Google Sheets API service.
             var service = new SheetsService(
@@ -46,7 +33,7 @@ static class Program
 
             // Define request parameters.
             String spreadsheetId = "1iLE1TDFKrUbnzTVX8PmjP5AvvccD2dsFjomD5c5yiJs";
-            String range = "Kose!A3:H38";
+            String range = "Kose!A3:I38";
             SpreadsheetsResource.ValuesResource.GetRequest request =
                 service.Spreadsheets.Values.Get(spreadsheetId, range);
 
@@ -94,9 +81,18 @@ static class Program
                     .ToArray();
 
                 employees.Add(new Employee(name, competenceLevel, new Capabilities(capabilities)));
-                // Print columns A and E, which correspond to indices 0 and 4.
-                Console.WriteLine(string.Join(", ", row));
             }
+
+            var schedulingParams = new SchedulingParameters(
+                new ScheduledMonth(2022, 6),
+                employees.Select(e => new EmployeeMonth(e)).ToArray(),
+                competenceGroups);
+            
+            var scheduler = new ShiftScheduler();
+
+            var schedule = scheduler.ComputeSchedule(schedulingParams);
+
+            Console.Out.WriteLine(schedule.Shifts.First());
         }
         catch (FileNotFoundException e)
         {
