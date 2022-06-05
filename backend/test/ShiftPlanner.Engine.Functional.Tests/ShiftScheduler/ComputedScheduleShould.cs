@@ -269,7 +269,7 @@ public class ComputedScheduleShould
             
             Assert.True(weekendDayShifts.Length <= 1, $"More than one shift for {employee.Name} on {weekendDay.ToString()}: {string.Join(", ", weekendDayShifts.Select(s => s.Shift.Day))}");
         }
-    } 
+    }
     
     private Schedule ComputeSchedule()
     {
