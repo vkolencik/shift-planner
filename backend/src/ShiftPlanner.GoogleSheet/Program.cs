@@ -12,6 +12,8 @@ namespace ShiftPlanner.GoogleSheet;
 
 static class Program
 {
+    private const string SpreadsheetId = "1iLE1TDFKrUbnzTVX8PmjP5AvvccD2dsFjomD5c5yiJs";
+
     /* Global instance of the scopes required by this quickstart.
      If modifying these scopes, delete your previously saved token.json/ folder. */
     static string[] Scopes = {SheetsService.Scope.Spreadsheets};
@@ -36,12 +38,13 @@ static class Program
                     new Workplace("URG"),
                 })
         };
-        
+
         var workplaces = competenceGroups.SelectMany(cg => cg.Workplaces).ToArray();
 
         var employees = ReadInputFromGoogleSheet(workplaces);
+        var scheduledMonth = new ScheduledMonth(2022, 6);
         var schedulingParams = new MonthScheduleParameters(
-            new ScheduledMonth(2022, 6),
+            scheduledMonth,
             employees.Select(e => new EmployeeMonth(e)).ToArray(),
             competenceGroups);
 
@@ -60,25 +63,56 @@ static class Program
         Console.Out.WriteLine($"Computed schedule with flexibility {successResult.Flexibility}");
 
         Console.Out.WriteLine(successResult.Schedule.Shifts.First());
+
+        WriteScheduleToGoogleSheet(scheduledMonth, workplaces, successResult.Schedule);
+    }
+
+    private static void WriteScheduleToGoogleSheet(ScheduledMonth month, IReadOnlyCollection<Workplace> workplaces, Schedule schedule)
+    {
+        var service = GetGoogleSheetsService();
+
+        service.Spreadsheets.Values.BatchClear(
+            new BatchClearValuesRequest() {Ranges = new[] {"Vysledky!A2:G40"}}, SpreadsheetId).Execute();
+        service.Spreadsheets.Values.BatchClear(
+            new BatchClearValuesRequest() {Ranges = new[] {"Vysledky!B1:G1"}}, SpreadsheetId).Execute();
+
+        WriteListToSheet(service, "A2", month.Days.Select(d => d.Date.Day), "COLUMNS");
+        WriteListToSheet(service, "B1", workplaces.Select(w => w.Name));
+
+        int rowIndex = 2;
+        foreach (var day in month.Days)
+        {
+            WriteListToSheet(service, $"B{rowIndex}", workplaces.Select(w => schedule.GetAssignedEmployee(new Shift(day, w)).Name));
+            rowIndex++;
+        }
+    }
+
+    private static void WriteListToSheet<T>(SheetsService service, string rangeStart, IEnumerable<T> values, string dimension = "ROWS")
+    {
+        service.Spreadsheets.Values.BatchUpdate(
+            new BatchUpdateValuesRequest()
+            {
+                Data = new List<ValueRange>
+                {
+                    new ValueRange()
+                    {
+                        Range = $"Vysledky!{rangeStart}",
+                        Values = new List<IList<object>> {values.Cast<object>().ToList()},
+                        MajorDimension = dimension
+                    },
+                },
+                ValueInputOption = "RAW"
+            }, SpreadsheetId).Execute();
     }
 
     private static IReadOnlyCollection<Employee> ReadInputFromGoogleSheet(Workplace[] workplaces)
     {
-        var credential = GoogleCredential.FromFile("credentials/krtekpoc-credentials.json").CreateScoped(Scopes);
-
-        // Create Google Sheets API service.
-        var service = new SheetsService(
-            new BaseClientService.Initializer
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = ApplicationName
-            });
+        var service = GetGoogleSheetsService();
 
         // Define request parameters.
-        String spreadsheetId = "1iLE1TDFKrUbnzTVX8PmjP5AvvccD2dsFjomD5c5yiJs";
         String range = "Kose!A3:I38";
         SpreadsheetsResource.ValuesResource.GetRequest request =
-            service.Spreadsheets.Values.Get(spreadsheetId, range);
+            service.Spreadsheets.Values.Get(SpreadsheetId, range);
 
         ValueRange response = request.Execute();
         IList<IList<Object>> values = response.Values;
@@ -106,5 +140,19 @@ static class Program
         }
 
         return employees;
+    }
+
+    private static SheetsService GetGoogleSheetsService()
+    {
+        var credential = GoogleCredential.FromFile("credentials/krtekpoc-credentials.json").CreateScoped(Scopes);
+
+        // Create Google Sheets API service.
+        var service = new SheetsService(
+            new BaseClientService.Initializer
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = ApplicationName
+            });
+        return service;
     }
 }
