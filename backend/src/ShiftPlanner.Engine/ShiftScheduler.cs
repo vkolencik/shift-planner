@@ -5,9 +5,10 @@ namespace ShiftPlanner.Engine;
 
 public class ShiftScheduler
 {
-    public Schedule ComputeSchedule(SchedulingParameters schedulingParameters)
+    public Schedule ComputeSchedule(MonthScheduleParameters monthScheduleParameters)
     {
-        var solverParameters = GetSolverParameters(schedulingParameters);
+        var solverParameters = GetSolverParameters(monthScheduleParameters);
+        var schedulingParameters2 = GetSchedulingParameters2(monthScheduleParameters, ScheduleFlexibility.Strict);
         var engine = new SchedulingEngine.SchedulingEngine(new GoogleCpSolver(), solverParameters);
 
         Rules.EveryDayAtEveryWorkplaceIsCovered(solverParameters, engine);
@@ -18,28 +19,37 @@ public class ShiftScheduler
         
         Rules.NoAlternativeDayShiftsForEmployee(solverParameters, engine);
         
-        Rules.LimitWeekendShifts(schedulingParameters, engine);
+        Rules.LimitWeekendShifts(monthScheduleParameters, engine);
         
-        Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(schedulingParameters, solverParameters.Days, engine);
+        Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(monthScheduleParameters, solverParameters.Days, engine);
         
         Rules.DisallowShiftsWithoutEmployeeCapability(solverParameters, engine);
         
-        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParameters, engine);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParameters2, engine);
         
-        EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulingParameters, engine);
+        EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulingParameters2, engine);
 
-        Rules.TakeLeavesIntoAccount(schedulingParameters, engine);
+        Rules.TakeLeavesIntoAccount(monthScheduleParameters, engine);
 
         return engine.Solve();
     }
 
-    private static SolverParameters GetSolverParameters(SchedulingParameters schedulingParameters)
+    private SchedulerParameters GetSchedulingParameters2(MonthScheduleParameters monthScheduleParameters, ScheduleFlexibility flexiblity)
     {
-        var days = schedulingParameters.Month.Days;
+        return new SchedulerParameters(
+            monthScheduleParameters.Month,
+            monthScheduleParameters.EmployeeMonths, 
+            monthScheduleParameters.CompetenceGroups, 
+            flexiblity);
+    }
+
+    private static SolverParameters GetSolverParameters(MonthScheduleParameters monthScheduleParameters)
+    {
+        var days = monthScheduleParameters.Month.Days;
 
         return new SolverParameters(
             days,
-            schedulingParameters.Employees,
-            schedulingParameters.CompetenceGroups.SelectMany(g => g.Workplaces).ToArray());
+            monthScheduleParameters.Employees,
+            monthScheduleParameters.CompetenceGroups.SelectMany(g => g.Workplaces).ToArray());
     }
 }

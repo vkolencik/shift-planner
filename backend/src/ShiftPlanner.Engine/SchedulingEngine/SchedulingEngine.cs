@@ -64,7 +64,7 @@ namespace ShiftPlanner.Engine.SchedulingEngine
             return elements.Select(KeyValuePair.Create).ToDictionary(x => x.Key, y => y.Value + 1);
         }
 
-        public void AddSumConstraint(IReadOnlyCollection<ShiftAssignment> shifts, Constraint constraint, int bound)
+        public void AddSumConstraint(IReadOnlyCollection<ShiftAssignment> shifts, Constraint constraint, uint bound)
         {
             var shiftVariables = shifts
                 .Select(s => VariableName.Schedule(_employees[s.Employee], _days[s.Shift.Day], _workplaces[s.Shift.Workplace]))

@@ -16,8 +16,7 @@ namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
             var inputParams = new SolverParameters(
                 new ScheduledMonth(2022, 2).Days,
                 new[] {vojta},
-                new[] {aro}
-            );
+                new[] {aro});
 
             var engine = Engine.SchedulingEngine.SchedulingEngine.CreateGoogleSolverEngine(inputParams);
 

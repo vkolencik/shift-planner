@@ -276,7 +276,7 @@ public class ComputedScheduleShould
         var scheduler = new ShiftScheduler();
 
         var schedule = scheduler.ComputeSchedule(
-            new SchedulingParameters(
+            new MonthScheduleParameters(
                 new ScheduledMonth(2022, 2),
                 _employeeMonths,
                 _competenceGroups

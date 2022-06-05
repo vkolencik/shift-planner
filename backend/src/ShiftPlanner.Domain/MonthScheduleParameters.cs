@@ -1,6 +1,6 @@
 namespace ShiftPlanner.Domain;
 
-public record SchedulingParameters(
+public record MonthScheduleParameters(
     ScheduledMonth Month,
     IReadOnlyCollection<EmployeeMonth> EmployeeMonths,
     IReadOnlyCollection<CompetenceGroup> CompetenceGroups)
