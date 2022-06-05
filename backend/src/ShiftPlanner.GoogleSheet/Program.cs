@@ -83,16 +83,26 @@ static class Program
                 employees.Add(new Employee(name, competenceLevel, new Capabilities(capabilities)));
             }
 
-            var schedulingParams = new SchedulingParameters(
+            var schedulingParams = new MonthScheduleParameters(
                 new ScheduledMonth(2022, 6),
                 employees.Select(e => new EmployeeMonth(e)).ToArray(),
                 competenceGroups);
             
             var scheduler = new ShiftScheduler();
 
-            var schedule = scheduler.ComputeSchedule(schedulingParams);
+            var result = scheduler.ComputeSchedule(schedulingParams);
 
-            Console.Out.WriteLine(schedule.Shifts.First());
+            if (result is SolutionNotFound)
+            {
+                Console.Error.WriteLine($"Solution not found");
+                Environment.ExitCode = 1;
+                return;
+            }
+
+            var successResult = (SuccessfulSchedulingResult) result;
+            Console.Out.WriteLine($"Computed schedule with flexibility {successResult.Flexibility}");
+            
+            Console.Out.WriteLine(successResult.Schedule.Shifts.First());
         }
         catch (FileNotFoundException e)
         {
