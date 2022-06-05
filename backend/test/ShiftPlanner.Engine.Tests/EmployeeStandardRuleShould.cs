@@ -24,7 +24,7 @@ public class EmployeeStandardRuleShould
         var capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
 
-        var schedulingParams = new SchedulingParameters2(
+        var schedulingParams = new SchedulerParameters(
             new ScheduledMonth(2022, 2),
             new[]
             {
@@ -57,7 +57,7 @@ public class EmployeeStandardRuleShould
         var capturedShiftsHalfMonthOffGte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedShiftsHalfMonthOffLte = new List<IReadOnlyCollection<ShiftAssignment>>();
 
-        var schedulingParams = new SchedulingParameters2(
+        var schedulingParams = new SchedulerParameters(
             new ScheduledMonth(2022, 2),
             new[]
             {
@@ -105,7 +105,7 @@ public class EmployeeStandardRuleShould
         var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
 
         var employee = new Employee("Emplooyee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 20), new WorkplaceCapability.Green(Workplace2, 80) }));
-        var schedulingParams = new SchedulingParameters2(
+        var schedulingParams = new SchedulerParameters(
             new ScheduledMonth(2022, 2),
             new[]
             {

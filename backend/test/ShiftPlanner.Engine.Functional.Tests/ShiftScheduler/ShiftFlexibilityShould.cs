@@ -13,7 +13,7 @@ public class ShiftFlexibilityShould
 
         var workplaceA = new Workplace("A");
         var workplaceB = new Workplace("B");
-        SchedulingParameters parameters = new SchedulingParameters(
+        MonthScheduleParameters parameters = new MonthScheduleParameters(
             new ScheduledMonth(2022, 2),
             Enumerable.Range(1, 5).Select(
                     i => new EmployeeMonth(
