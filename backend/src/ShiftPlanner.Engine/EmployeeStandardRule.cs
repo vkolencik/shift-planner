@@ -5,24 +5,26 @@ namespace ShiftPlanner.Engine;
 
 internal static class EmployeeStandardRule
 {
-    public static void SpreadShiftAssignmentEvenly(SchedulingParameters schedulingParameters, ISchedulingEngine engine)
+    public static void SpreadShiftAssignmentEvenly(SchedulingParameters schedulingParameters, ISchedulingEngine engine,
+        ScheduleFlexibility scheduleFlexibility)
     {
-        schedulingParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeeStandardRules(schedulingParameters, engine, em));
+        schedulingParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeeStandardRules(schedulingParameters, engine, em, scheduleFlexibility));
     }
 
     public static void AssignShiftsByPreferencePercentages(SchedulingParameters schedulingParameters,
-        ISchedulingEngine engine)
+        ISchedulingEngine engine,
+        ScheduleFlexibility scheduleFlexibility)
     {
-        schedulingParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeePreferencePercentages(schedulingParameters, engine, em));
+        schedulingParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeePreferencePercentages(schedulingParameters, engine, em, scheduleFlexibility));
 
     }
 
-    private static void AddEmployeeStandardRules(
-        SchedulingParameters schedulingParameters,
+    private static void AddEmployeeStandardRules(SchedulingParameters schedulingParameters,
         ISchedulingEngine engine,
-        EmployeeMonth employeeMonth)
+        EmployeeMonth employeeMonth,
+        ScheduleFlexibility scheduleFlexibility)
     {
-        var employeeStandard = ComputeStandard(schedulingParameters, employeeMonth, 1);
+        var employeeStandard = ComputeStandard(schedulingParameters, employeeMonth, scheduleFlexibility, 1);
 
         var employeeShiftsInMonth = schedulingParameters.Month.Days
             .SelectMany(d => schedulingParameters.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, d, w)))
@@ -32,15 +34,15 @@ internal static class EmployeeStandardRule
         engine.AddSumConstraint(employeeShiftsInMonth, Constraint.Lte, employeeStandard.Maximum);
     }
 
-    private static void AddEmployeePreferencePercentages(
-        SchedulingParameters schedulingParameters,
+    private static void AddEmployeePreferencePercentages(SchedulingParameters schedulingParameters,
         ISchedulingEngine engine,
-        EmployeeMonth employeeMonth)
+        EmployeeMonth employeeMonth,
+        ScheduleFlexibility scheduleFlexibility)
     {
         foreach (var capability in employeeMonth.Employee.Capabilities.WorkplaceCapabilities
                      .OfType<WorkplaceCapability.Green>())
         {
-            var employeeStandardForWorkplace = ComputeStandard(schedulingParameters, employeeMonth, (double) capability.PreferencePercentage / 100);
+            var employeeStandardForWorkplace = ComputeStandard(schedulingParameters, employeeMonth, scheduleFlexibility, (double) capability.PreferencePercentage / 100);
 
             var employeeShiftsInMonthForWorkspace = schedulingParameters.Month.Days
                 .Select(d => new ShiftAssignment(employeeMonth.Employee, d, capability.Workplace))
@@ -51,7 +53,8 @@ internal static class EmployeeStandardRule
         }
     }
 
-    private static EmployeeStandard ComputeStandard(SchedulingParameters schedulingParameters, EmployeeMonth employee, double multiplier)
+    private static EmployeeStandard ComputeStandard(SchedulingParameters schedulingParameters, EmployeeMonth employee,
+        ScheduleFlexibility scheduleFlexibility, double multiplier)
     {
         var daysCount = (double) schedulingParameters.Month.Days.Count;
         var totalRequiredCapacity = daysCount * schedulingParameters.Workplaces.Count;

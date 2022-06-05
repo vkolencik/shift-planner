@@ -38,7 +38,7 @@ public class EmployeeStandardRuleShould
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (int) Math.Floor(standard)));
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (int) Math.Ceiling(standard)));
 
-        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParams, _engineMock.Object);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParams, _engineMock.Object, ScheduleFlexibility.Strict);
 
         Assert.Equal(capturedShiftsGte.ToHashSet(), capturedShiftsLte.ToHashSet());
         Assert.All(
@@ -78,7 +78,7 @@ public class EmployeeStandardRuleShould
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsHalfMonthOffGte), Constraint.Gte, (int) Math.Floor(standardLeave)));
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsHalfMonthOffLte), Constraint.Lte, (int) Math.Ceiling(standardLeave)));
 
-        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParams, _engineMock.Object);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParams, _engineMock.Object, ScheduleFlexibility.Strict);
 
         Assert.Equal(capturedShiftsFullMonthGte.ToHashSet(), capturedShiftsFullMonthLte.ToHashSet());
         Assert.Equal(capturedShiftsHalfMonthOffGte.ToHashSet(), capturedShiftsHalfMonthOffLte.ToHashSet());
@@ -120,7 +120,7 @@ public class EmployeeStandardRuleShould
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (int) Math.Floor(standard * 0.2)));
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (int) Math.Ceiling(standard * 0.2)));
 
-        EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulingParams, _engineMock.Object);
+        EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulingParams, _engineMock.Object, ScheduleFlexibility.Strict);
 
         Assert.Equal(capturedShiftsGte.ToHashSet(), capturedShiftsLte.ToHashSet()); 
         Assert.Contains(
