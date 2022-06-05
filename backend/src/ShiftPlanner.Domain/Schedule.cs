@@ -1,6 +1,10 @@
 namespace ShiftPlanner.Domain;
 
-public record Schedule
+public abstract record SchedulingResult;
+
+internal record SolutionNotFound : SchedulingResult;
+
+public record Schedule : SchedulingResult
 {
     private Schedule(IEnumerable<ShiftAssignment> shifts)
     {

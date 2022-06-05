@@ -62,8 +62,10 @@ public class SchedulingEngineShould
         }
         var engine = CreateEngine(input);
 
-        var schedule = engine.Solve();
+        var result = engine.Solve();
 
+        var schedule = Assert.IsType<Schedule>(result);
+        
         for (int d = 1; d <= input.Days.Count; d++)
         {
             Assert.Equal(
@@ -145,8 +147,8 @@ public class SchedulingEngineShould
             workplaces);
     }
 
-    private Engine.SchedulingEngine.SchedulingEngine CreateEngine(SolverParameters input)
+    private Engine.SchedulingEngine.Engine CreateEngine(SolverParameters input)
     {
-        return new Engine.SchedulingEngine.SchedulingEngine(_solverMock.Object, input);
+        return new Engine.SchedulingEngine.Engine(_solverMock.Object, input);
     }
 }
