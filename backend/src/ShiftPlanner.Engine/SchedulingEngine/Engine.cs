@@ -3,21 +3,21 @@ using ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
 
 namespace ShiftPlanner.Engine.SchedulingEngine
 {
-    internal class SchedulingEngine : ISchedulingEngine
+    internal class Engine : ISchedulingEngine
     {
         private readonly ISolver _solver;
         private IDictionary<Employee, int> _employees = null!;
         private IDictionary<Workplace, int> _workplaces = null!;
         private IDictionary<Day, int> _days = null!;
 
-        internal SchedulingEngine(ISolver solver, SolverParameters input)
+        internal Engine(ISolver solver, SolverParameters input)
         {
             _solver = solver;
             Init(input);
         }
 
-        public static SchedulingEngine CreateGoogleSolverEngine(SolverParameters input) =>
-            new SchedulingEngine(new GoogleCpSolver(), input);
+        public static Engine CreateGoogleSolverEngine(SolverParameters input) =>
+            new Engine(new GoogleCpSolver(), input);
 
         private void Init(SolverParameters input)
         {
@@ -37,9 +37,14 @@ namespace ShiftPlanner.Engine.SchedulingEngine
             }
         }
 
-        public Schedule Solve()
+        public Schedule? Solve()
         {
             _solver.Solve();
+
+            if (_solver.SolverStatus == SolverStatus.NotFound)
+            {
+                return null;
+            }
 
             var outputModel = new List<ShiftAssignment>();
 

@@ -6,7 +6,7 @@ namespace ShiftPlanner.Engine.Functional.Tests;
 
 public class ShiftFlexibilityShould
 {
-    [Fact(Skip = "Will be fixed after refactoring")]
+    [Fact]
     public void MakeSchedulerUltimatelyFindASolution()
     {
         var scheduler = new ShiftScheduler();
@@ -27,7 +27,7 @@ public class ShiftFlexibilityShould
                                     new WorkplaceCapability.Red(workplaceB)
                                 }))))
                 .Concat(
-                    Enumerable.Range(1, 15).Select(
+                    Enumerable.Range(1, 20).Select(
                         i => new EmployeeMonth(
                             new Employee(
                                 $"EmployeeB{i}",
@@ -41,9 +41,10 @@ public class ShiftFlexibilityShould
                 ).ToArray(),
             new[] {new CompetenceGroup(new[] {workplaceA, workplaceB})});
 
-        var schedule = scheduler.ComputeSchedule(parameters);
+        var result = scheduler.ComputeSchedule(parameters);
 
-        Assert.NotNull(schedule);
-        Assert.NotEqual(ScheduleFlexibility.Strict, schedule.Flexibility);
+        var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
+        Assert.NotEmpty(successResult.Schedule.Shifts);
+        Assert.NotEqual(ScheduleFlexibility.Strict, successResult.Flexibility);
     }
 }

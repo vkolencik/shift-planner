@@ -88,4 +88,14 @@ internal class GoogleCpSolver : ISolver
             default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));
         }
     }
+
+    public SolverStatus SolverStatus => _solver.Response.Status switch
+    {
+        CpSolverStatus.Unknown => SolverStatus.Initialized,
+        CpSolverStatus.Infeasible => SolverStatus.NotFound,
+        CpSolverStatus.Feasible => SolverStatus.Success,
+        CpSolverStatus.Optimal => SolverStatus.Success,
+        _ => throw new NotSupportedException($"Unsupported solver status {_solver.Response.Status}")
+    };
+
 }
