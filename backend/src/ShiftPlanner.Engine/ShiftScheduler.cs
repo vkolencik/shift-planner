@@ -8,7 +8,7 @@ public class ShiftScheduler
     public SchedulingResult ComputeSchedule(MonthScheduleParameters monthScheduleParameters)
     {
         var solverParameters = GetSolverParameters(monthScheduleParameters);
-        for (uint degreeOfFlexibility = 0; degreeOfFlexibility <= 5; degreeOfFlexibility++)
+        for (uint degreeOfFlexibility = 0; degreeOfFlexibility <= 50; degreeOfFlexibility++)
         {
             var flexibility = new ScheduleFlexibility(degreeOfFlexibility);
             var schedulerParameters = GetSchedulerParameters(monthScheduleParameters, flexibility);

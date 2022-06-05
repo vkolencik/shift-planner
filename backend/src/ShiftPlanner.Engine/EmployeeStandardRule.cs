@@ -54,20 +54,15 @@ internal static class EmployeeStandardRule
     {
         var daysCount = (double) monthScheduleParameters.Month.Days.Count;
         var totalRequiredCapacity = daysCount * monthScheduleParameters.Workplaces.Count;
-        var totalEmployeeCapacity =
-            (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
+        var totalEmployeeCapacity = (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
         var employeeCapacity = daysCount - employee.Leaves.Sum(l => l.LengthDays);
-        var standard = multiplier * totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
+        var flexibilityModifier = (double) monthScheduleParameters.Flexibility.Degree / 10;
+        var standardLb = Math.Max(0, multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity - flexibilityModifier));
+        var standardUb = multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity + flexibilityModifier);
 
         return new EmployeeStandard(
-            GetStandardMinimum(standard, monthScheduleParameters.Flexibility),
-            (uint) Math.Ceiling(standard) + monthScheduleParameters.Flexibility.Degree);
-    }
-
-    private static uint GetStandardMinimum(double standard, ScheduleFlexibility flexibility)
-    {
-        var floor = (uint) Math.Floor(standard);
-        return floor >= flexibility.Degree ? floor - flexibility.Degree : 0;
+            (uint) Math.Floor(standardLb),
+            (uint) Math.Ceiling(standardUb));
     }
 
     private record struct EmployeeStandard(uint Minimum, uint Maximum);
