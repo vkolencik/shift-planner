@@ -37,13 +37,13 @@ namespace ShiftPlanner.Engine.SchedulingEngine
             }
         }
 
-        public SchedulingResult Solve()
+        public Schedule? Solve()
         {
             _solver.Solve();
 
             if (_solver.SolverStatus == SolverStatus.NotFound)
             {
-                return new SolutionNotFound();
+                return null;
             }
 
             var outputModel = new List<ShiftAssignment>();

@@ -60,8 +60,14 @@ internal static class EmployeeStandardRule
         var standard = multiplier * totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
 
         return new EmployeeStandard(
-            Math.Max(0, (uint) Math.Floor(standard) - monthScheduleParameters.Flexibility.Degree),
+            GetStandardMinimum(standard, monthScheduleParameters.Flexibility),
             (uint) Math.Ceiling(standard) + monthScheduleParameters.Flexibility.Degree);
+    }
+
+    private static uint GetStandardMinimum(double standard, ScheduleFlexibility flexibility)
+    {
+        var floor = (uint) Math.Floor(standard);
+        return floor >= flexibility.Degree ? floor - flexibility.Degree : 0;
     }
 
     private record struct EmployeeStandard(uint Minimum, uint Maximum);

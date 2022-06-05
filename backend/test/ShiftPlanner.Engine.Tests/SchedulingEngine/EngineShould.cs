@@ -8,7 +8,7 @@ using Constraint = ShiftPlanner.Engine.SchedulingEngine.Constraint;
 
 namespace ShiftPlanner.Engine.Tests.SchedulingEngine;
 
-public class SchedulingEngineShould
+public class EngineShould
 {
     Mock<ISolver> _solverMock = new Mock<ISolver>();
     [Fact]
@@ -123,7 +123,7 @@ public class SchedulingEngineShould
     }
 
     [Fact]
-    public void ReturnNotFound_WhenSolverDoesntFindSolution()
+    public void ReturnNull_WhenSolverDoesntFindSolution()
     {
         var engine = CreateEngine(CreateEmptyInput());
         
@@ -131,7 +131,7 @@ public class SchedulingEngineShould
 
         var schedulingResult = engine.Solve();
         
-        Assert.IsType<SolutionNotFound>(schedulingResult);
+        Assert.Null(schedulingResult);
     }
 
     private static SolverParameters CreateEmptyInput()

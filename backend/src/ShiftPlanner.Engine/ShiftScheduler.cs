@@ -5,12 +5,13 @@ namespace ShiftPlanner.Engine;
 
 public class ShiftScheduler
 {
-    public Schedule ComputeSchedule(MonthScheduleParameters monthScheduleParameters)
+    public SchedulingResult ComputeSchedule(MonthScheduleParameters monthScheduleParameters)
     {
         var solverParameters = GetSolverParameters(monthScheduleParameters);
-        for (uint flexibility = 0; flexibility <= 5; flexibility++)
+        for (uint degreeOfFlexibility = 0; degreeOfFlexibility <= 5; degreeOfFlexibility++)
         {
-            var schedulingParameters2 = GetSchedulingParameters2(monthScheduleParameters, new ScheduleFlexibility(flexibility));
+            var flexibility = new ScheduleFlexibility(degreeOfFlexibility);
+            var schedulerParameters = GetSchedulerParameters(monthScheduleParameters, flexibility);
             var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(solverParameters);
 
             Rules.EveryDayAtEveryWorkplaceIsCovered(solverParameters, engine);
@@ -28,24 +29,24 @@ public class ShiftScheduler
 
             Rules.DisallowShiftsWithoutEmployeeCapability(solverParameters, engine);
 
-            EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParameters2, engine);
+            EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulerParameters, engine);
 
-            EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulingParameters2, engine);
+            EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulerParameters, engine);
 
             Rules.TakeLeavesIntoAccount(monthScheduleParameters, engine);
 
             var result = engine.Solve();
 
-            if (result is Schedule schedule)
+            if (result != null)
             {
-                return schedule;
+                return new SuccessfulSchedulingResult(result, flexibility);
             }
         }
 
         throw new Exception("Cannot find feasible solution");
     }
 
-    private SchedulerParameters GetSchedulingParameters2(MonthScheduleParameters monthScheduleParameters, ScheduleFlexibility flexiblity)
+    private SchedulerParameters GetSchedulerParameters(MonthScheduleParameters monthScheduleParameters, ScheduleFlexibility flexiblity)
     {
         return new SchedulerParameters(
             monthScheduleParameters.Month,
