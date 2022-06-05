@@ -279,8 +279,7 @@ public class ComputedScheduleShould
             new SchedulingParameters(
                 new ScheduledMonth(2022, 2),
                 _employeeMonths,
-                _competenceGroups,
-                ScheduleFlexibility.Strict
+                _competenceGroups
             ));
         return schedule;
     }

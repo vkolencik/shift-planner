@@ -15,8 +15,7 @@ public class SchedulingParametersShould
         var parameters = new SchedulingParameters(
             new ScheduledMonth(2022, 2),
             Array.Empty<EmployeeMonth>(),
-            new [] { new CompetenceGroup(new [] {workplace1}), new CompetenceGroup(new [] {workplace2})},
-            ScheduleFlexibility.Strict);
+            new [] { new CompetenceGroup(new [] {workplace1}), new CompetenceGroup(new [] {workplace2})});
 
         Assert.Equal(new HashSet<Workplace> {workplace1, workplace2}, parameters.Workplaces);
     }

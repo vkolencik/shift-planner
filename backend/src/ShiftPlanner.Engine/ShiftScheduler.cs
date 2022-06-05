@@ -8,6 +8,7 @@ public class ShiftScheduler
     public Schedule ComputeSchedule(SchedulingParameters schedulingParameters)
     {
         var solverParameters = GetSolverParameters(schedulingParameters);
+        var schedulingParameters2 = GetSchedulingParameters2(schedulingParameters, ScheduleFlexibility.Strict);
         var engine = new SchedulingEngine.SchedulingEngine(new GoogleCpSolver(), solverParameters);
 
         Rules.EveryDayAtEveryWorkplaceIsCovered(solverParameters, engine);
@@ -24,13 +25,22 @@ public class ShiftScheduler
         
         Rules.DisallowShiftsWithoutEmployeeCapability(solverParameters, engine);
         
-        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParameters, engine);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParameters2, engine);
         
-        EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulingParameters, engine);
+        EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulingParameters2, engine);
 
         Rules.TakeLeavesIntoAccount(schedulingParameters, engine);
 
         return engine.Solve();
+    }
+
+    private SchedulingParameters2 GetSchedulingParameters2(SchedulingParameters schedulingParameters, ScheduleFlexibility flexiblity)
+    {
+        return new SchedulingParameters2(
+            schedulingParameters.Month,
+            schedulingParameters.EmployeeMonths, 
+            schedulingParameters.CompetenceGroups, 
+            flexiblity);
     }
 
     private static SolverParameters GetSolverParameters(SchedulingParameters schedulingParameters)

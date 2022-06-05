@@ -39,8 +39,7 @@ public class ShiftFlexibilityShould
                                         new WorkplaceCapability.Green(workplaceB, 100)
                                     }))))
                 ).ToArray(),
-            new[] {new CompetenceGroup(new[] {workplaceA, workplaceB})},
-            ScheduleFlexibility.Strict);
+            new[] {new CompetenceGroup(new[] {workplaceA, workplaceB})});
 
         var schedule = scheduler.ComputeSchedule(parameters);
 

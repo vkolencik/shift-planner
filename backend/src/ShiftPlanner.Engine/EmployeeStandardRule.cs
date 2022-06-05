@@ -5,20 +5,20 @@ namespace ShiftPlanner.Engine;
 
 internal static class EmployeeStandardRule
 {
-    public static void SpreadShiftAssignmentEvenly(SchedulingParameters schedulingParameters, ISchedulingEngine engine)
+    public static void SpreadShiftAssignmentEvenly(SchedulingParameters2 schedulingParameters, ISchedulingEngine engine)
     {
         schedulingParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeeStandardRules(schedulingParameters, engine, em));
     }
 
     public static void AssignShiftsByPreferencePercentages(
-        SchedulingParameters schedulingParameters,
+        SchedulingParameters2 schedulingParameters,
         ISchedulingEngine engine)
     {
         schedulingParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeePreferencePercentages(schedulingParameters, engine, em));
 
     }
 
-    private static void AddEmployeeStandardRules(SchedulingParameters schedulingParameters,
+    private static void AddEmployeeStandardRules(SchedulingParameters2 schedulingParameters,
         ISchedulingEngine engine,
         EmployeeMonth employeeMonth)
     {
@@ -32,7 +32,7 @@ internal static class EmployeeStandardRule
         engine.AddSumConstraint(employeeShiftsInMonth, Constraint.Lte, employeeStandard.Maximum);
     }
 
-    private static void AddEmployeePreferencePercentages(SchedulingParameters schedulingParameters,
+    private static void AddEmployeePreferencePercentages(SchedulingParameters2 schedulingParameters,
         ISchedulingEngine engine,
         EmployeeMonth employeeMonth)
     {
@@ -50,7 +50,7 @@ internal static class EmployeeStandardRule
         }
     }
 
-    private static EmployeeStandard ComputeStandard(SchedulingParameters schedulingParameters, EmployeeMonth employee, double multiplier)
+    private static EmployeeStandard ComputeStandard(SchedulingParameters2 schedulingParameters, EmployeeMonth employee, double multiplier)
     {
         var daysCount = (double) schedulingParameters.Month.Days.Count;
         var totalRequiredCapacity = daysCount * schedulingParameters.Workplaces.Count;
