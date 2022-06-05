@@ -41,6 +41,11 @@ namespace ShiftPlanner.Engine.SchedulingEngine
         {
             _solver.Solve();
 
+            if (_solver.SolverStatus == SolverStatus.NotFound)
+            {
+                return new SolutionNotFound();
+            }
+
             var outputModel = new List<ShiftAssignment>();
 
             foreach (var day in _days)

@@ -122,6 +122,18 @@ public class SchedulingEngineShould
         
     }
 
+    [Fact]
+    public void ReturnNotFound_WhenSolverDoesntFindSolution()
+    {
+        var engine = CreateEngine(CreateEmptyInput());
+        
+        _solverMock.Setup(_ => _.SolverStatus).Returns(SolverStatus.NotFound);
+
+        var schedulingResult = engine.Solve();
+        
+        Assert.IsType<SolutionNotFound>(schedulingResult);
+    }
+
     private static SolverParameters CreateEmptyInput()
     {
         return new SolverParameters(new ScheduledMonth(2022, 2).Days, Array.Empty<Employee>(), Array.Empty<Workplace>());

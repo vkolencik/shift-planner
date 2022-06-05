@@ -2,7 +2,7 @@ namespace ShiftPlanner.Domain;
 
 public abstract record SchedulingResult;
 
-internal record SolutionNotFound : SchedulingResult;
+public record SolutionNotFound : SchedulingResult;
 
 public record Schedule : SchedulingResult
 {
