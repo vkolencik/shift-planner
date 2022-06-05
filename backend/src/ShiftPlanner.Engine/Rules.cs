@@ -127,7 +127,7 @@ internal static class Rules
         LimitShiftsOnDays(schedulingParameters, engine, schedulingParameters.Month.Days.Where(d => d.DayOfWeek == DayOfWeek.Sunday), 1);
     }
 
-    private static void LimitShiftsOnDays(SchedulingParameters schedulingParameters, ISchedulingEngine engine, IEnumerable<Day> days, int limit)
+    private static void LimitShiftsOnDays(SchedulingParameters schedulingParameters, ISchedulingEngine engine, IEnumerable<Day> days, uint limit)
     {
         foreach (var employeeMonth in schedulingParameters.EmployeeMonths)
         {

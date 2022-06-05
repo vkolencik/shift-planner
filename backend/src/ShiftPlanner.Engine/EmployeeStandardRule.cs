@@ -62,9 +62,11 @@ internal static class EmployeeStandardRule
             (double) schedulingParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
         var employeeCapacity = daysCount - employee.Leaves.Sum(l => l.LengthDays);
         var standard = multiplier * totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
-        
-        return new EmployeeStandard((int) Math.Floor(standard), (int) Math.Ceiling(standard));
+
+        return new EmployeeStandard(
+            Math.Max(0, (uint) Math.Floor(standard) - scheduleFlexibility.Degree),
+            (uint) Math.Ceiling(standard) + scheduleFlexibility.Degree);
     }
 
-    private record struct EmployeeStandard(int Minimum, int Maximum);
+    private record struct EmployeeStandard(uint Minimum, uint Maximum);
 }

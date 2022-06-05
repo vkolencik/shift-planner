@@ -35,8 +35,8 @@ public class EmployeeStandardRuleShould
 
         var standard = (double) schedulingParams.Month.Days.Count * schedulingParams.Workplaces.Count / schedulingParams.Employees.Count;
 
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (int) Math.Floor(standard)));
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (int) Math.Ceiling(standard)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (uint) Math.Floor(standard)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (uint) Math.Ceiling(standard)));
 
         EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParams, _engineMock.Object, ScheduleFlexibility.Strict);
 
@@ -73,10 +73,10 @@ public class EmployeeStandardRuleShould
         var standardNoLeaves = v * ceNoLeaves / ct;
         var standardLeave = v * ceLeave / ct;
 
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsFullMonthGte), Constraint.Gte, (int) Math.Floor(standardNoLeaves)));
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsFullMonthLte), Constraint.Lte, (int) Math.Ceiling(standardNoLeaves)));
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsHalfMonthOffGte), Constraint.Gte, (int) Math.Floor(standardLeave)));
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsHalfMonthOffLte), Constraint.Lte, (int) Math.Ceiling(standardLeave)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsFullMonthGte), Constraint.Gte, (uint) Math.Floor(standardNoLeaves)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsFullMonthLte), Constraint.Lte, (uint) Math.Ceiling(standardNoLeaves)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsHalfMonthOffGte), Constraint.Gte, (uint) Math.Floor(standardLeave)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsHalfMonthOffLte), Constraint.Lte, (uint) Math.Ceiling(standardLeave)));
 
         EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParams, _engineMock.Object, ScheduleFlexibility.Strict);
 
@@ -117,8 +117,8 @@ public class EmployeeStandardRuleShould
 
         var standard = (double) schedulingParams.Month.Days.Count * schedulingParams.Workplaces.Count / schedulingParams.Employees.Count;
 
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (int) Math.Floor(standard * 0.2)));
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (int) Math.Ceiling(standard * 0.2)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (uint) Math.Floor(standard * 0.2)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (uint) Math.Ceiling(standard * 0.2)));
 
         EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulingParams, _engineMock.Object, ScheduleFlexibility.Strict);
 
