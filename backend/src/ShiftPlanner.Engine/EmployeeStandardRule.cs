@@ -5,26 +5,24 @@ namespace ShiftPlanner.Engine;
 
 internal static class EmployeeStandardRule
 {
-    public static void SpreadShiftAssignmentEvenly(SchedulingParameters schedulingParameters, ISchedulingEngine engine,
-        ScheduleFlexibility scheduleFlexibility)
+    public static void SpreadShiftAssignmentEvenly(SchedulingParameters schedulingParameters, ISchedulingEngine engine)
     {
-        schedulingParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeeStandardRules(schedulingParameters, engine, em, scheduleFlexibility));
+        schedulingParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeeStandardRules(schedulingParameters, engine, em));
     }
 
-    public static void AssignShiftsByPreferencePercentages(SchedulingParameters schedulingParameters,
-        ISchedulingEngine engine,
-        ScheduleFlexibility scheduleFlexibility)
+    public static void AssignShiftsByPreferencePercentages(
+        SchedulingParameters schedulingParameters,
+        ISchedulingEngine engine)
     {
-        schedulingParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeePreferencePercentages(schedulingParameters, engine, em, scheduleFlexibility));
+        schedulingParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeePreferencePercentages(schedulingParameters, engine, em));
 
     }
 
     private static void AddEmployeeStandardRules(SchedulingParameters schedulingParameters,
         ISchedulingEngine engine,
-        EmployeeMonth employeeMonth,
-        ScheduleFlexibility scheduleFlexibility)
+        EmployeeMonth employeeMonth)
     {
-        var employeeStandard = ComputeStandard(schedulingParameters, employeeMonth, scheduleFlexibility, 1);
+        var employeeStandard = ComputeStandard(schedulingParameters, employeeMonth, 1);
 
         var employeeShiftsInMonth = schedulingParameters.Month.Days
             .SelectMany(d => schedulingParameters.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, d, w)))
@@ -36,13 +34,12 @@ internal static class EmployeeStandardRule
 
     private static void AddEmployeePreferencePercentages(SchedulingParameters schedulingParameters,
         ISchedulingEngine engine,
-        EmployeeMonth employeeMonth,
-        ScheduleFlexibility scheduleFlexibility)
+        EmployeeMonth employeeMonth)
     {
         foreach (var capability in employeeMonth.Employee.Capabilities.WorkplaceCapabilities
                      .OfType<WorkplaceCapability.Green>())
         {
-            var employeeStandardForWorkplace = ComputeStandard(schedulingParameters, employeeMonth, scheduleFlexibility, (double) capability.PreferencePercentage / 100);
+            var employeeStandardForWorkplace = ComputeStandard(schedulingParameters, employeeMonth, (double) capability.PreferencePercentage / 100);
 
             var employeeShiftsInMonthForWorkspace = schedulingParameters.Month.Days
                 .Select(d => new ShiftAssignment(employeeMonth.Employee, d, capability.Workplace))
@@ -53,8 +50,7 @@ internal static class EmployeeStandardRule
         }
     }
 
-    private static EmployeeStandard ComputeStandard(SchedulingParameters schedulingParameters, EmployeeMonth employee,
-        ScheduleFlexibility scheduleFlexibility, double multiplier)
+    private static EmployeeStandard ComputeStandard(SchedulingParameters schedulingParameters, EmployeeMonth employee, double multiplier)
     {
         var daysCount = (double) schedulingParameters.Month.Days.Count;
         var totalRequiredCapacity = daysCount * schedulingParameters.Workplaces.Count;
@@ -64,8 +60,8 @@ internal static class EmployeeStandardRule
         var standard = multiplier * totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
 
         return new EmployeeStandard(
-            Math.Max(0, (uint) Math.Floor(standard) - scheduleFlexibility.Degree),
-            (uint) Math.Ceiling(standard) + scheduleFlexibility.Degree);
+            Math.Max(0, (uint) Math.Floor(standard) - schedulingParameters.Flexibility.Degree),
+            (uint) Math.Ceiling(standard) + schedulingParameters.Flexibility.Degree);
     }
 
     private record struct EmployeeStandard(uint Minimum, uint Maximum);

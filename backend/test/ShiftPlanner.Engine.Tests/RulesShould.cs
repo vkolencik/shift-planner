@@ -21,7 +21,8 @@ public class RulesShould
             new EmployeeMonth(Employee2),
             new EmployeeMonth(Employee3)
         },
-        new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})});
+        new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})},
+        ScheduleFlexibility.Strict);
 
     private static IEnumerable<Workplace> Workplaces => new[] {Workplace1, Workplace2};
 
