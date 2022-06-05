@@ -276,12 +276,14 @@ public class ComputedScheduleShould
         var scheduler = new ShiftScheduler();
 
         var schedule = scheduler.ComputeSchedule(
-            new SchedulingParameters(
+            new MonthScheduleParameters(
                 new ScheduledMonth(2022, 2),
                 _employeeMonths,
                 _competenceGroups
             ));
-        return schedule;
+        var successResult = (SuccessfulSchedulingResult) schedule;
+        Assert.Equal(successResult.Flexibility, ScheduleFlexibility.Strict);
+        return successResult.Schedule;
     }
 
     private static int DaysBetween(DateOnly d1, DateOnly d2) =>

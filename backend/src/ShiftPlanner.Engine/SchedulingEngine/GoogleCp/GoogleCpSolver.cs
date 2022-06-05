@@ -53,7 +53,7 @@ internal class GoogleCpSolver : ISolver
         return _solver.Value(value);
     }
 
-    public void AddSumConstraint(IReadOnlyCollection<VariableName> variableNames, Constraint constraint, int bound)
+    public void AddSumConstraint(IReadOnlyCollection<VariableName> variableNames, Constraint constraint, uint bound)
     {
         var variables = variableNames.Select(v => _variables[v]).ToArray();
         switch (constraint)
@@ -88,4 +88,14 @@ internal class GoogleCpSolver : ISolver
             default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));
         }
     }
+
+    public SolverStatus SolverStatus => _solver.Response.Status switch
+    {
+        CpSolverStatus.Unknown => SolverStatus.Initialized,
+        CpSolverStatus.Infeasible => SolverStatus.NotFound,
+        CpSolverStatus.Feasible => SolverStatus.Success,
+        CpSolverStatus.Optimal => SolverStatus.Success,
+        _ => throw new NotSupportedException($"Unsupported solver status {_solver.Response.Status}")
+    };
+
 }

@@ -13,7 +13,7 @@ public class RulesShould
 {
     private readonly Mock<ISchedulingEngine> _engineMock;
 
-    public static readonly SchedulingParameters SchedulingParameters = new SchedulingParameters(
+    public static readonly MonthScheduleParameters MonthScheduleParameters = new MonthScheduleParameters(
         new ScheduledMonth(2022, 2),
         new[]
         {
@@ -117,7 +117,7 @@ public class RulesShould
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Gte, 1));
 
-        Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(SchedulingParameters, new [] {Day1, Day2}, _engineMock.Object);
+        Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(MonthScheduleParameters, new [] {Day1, Day2}, _engineMock.Object);
         
         Assert.Equal(4, capturedShifts.Count);
 
@@ -156,7 +156,7 @@ public class RulesShould
         var capturedShifts = new List<ShiftAssignment>();
         _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShifts), Constraint.Eq, 0));
 
-        Rules.TakeLeavesIntoAccount(SchedulingParameters, _engineMock.Object);
+        Rules.TakeLeavesIntoAccount(MonthScheduleParameters, _engineMock.Object);
         
         Assert.Equal(
             new HashSet<ShiftAssignment>
@@ -175,7 +175,7 @@ public class RulesShould
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
         
-        Rules.LimitWeekendShifts(SchedulingParameters, _engineMock.Object);
+        Rules.LimitWeekendShifts(MonthScheduleParameters, _engineMock.Object);
 
         var saturdays = new[] {5, 12, 19, 26};
         var sundays = new[] {6, 13, 20, 27};

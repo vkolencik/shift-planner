@@ -16,17 +16,18 @@ namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
             var inputParams = new SolverParameters(
                 new ScheduledMonth(2022, 2).Days,
                 new[] {vojta},
-                new[] {aro}
-            );
+                new[] {aro});
 
-            var engine = Engine.SchedulingEngine.SchedulingEngine.CreateGoogleSolverEngine(inputParams);
+            var engine = ShiftPlanner.Engine.SchedulingEngine.Engine.CreateGoogleSolverEngine(inputParams);
 
             for (int d = 1; d <= 28; d++)
             {
                 engine.AddSumConstraint(new [] {new ShiftAssignment(vojta, new Day(new DateOnly(2022, 2, d)), aro)}, Constraint.Eq, 1);
             }
 
-            var schedule = engine.Solve();
+            var result = engine.Solve();
+
+            var schedule = Assert.IsType<Schedule>(result);
 
             for (int d = 1; d <= 28; d++)
             {

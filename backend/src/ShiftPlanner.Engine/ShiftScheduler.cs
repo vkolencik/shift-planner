@@ -1,45 +1,67 @@
 ﻿using ShiftPlanner.Domain;
-using ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
+using ShiftPlanner.Engine.SchedulingEngine;
 
 namespace ShiftPlanner.Engine;
 
 public class ShiftScheduler
 {
-    public Schedule ComputeSchedule(SchedulingParameters schedulingParameters)
+    public SchedulingResult ComputeSchedule(MonthScheduleParameters monthScheduleParameters)
     {
-        var solverParameters = GetSolverParameters(schedulingParameters);
-        var engine = new SchedulingEngine.SchedulingEngine(new GoogleCpSolver(), solverParameters);
+        var solverParameters = GetSolverParameters(monthScheduleParameters);
+        for (uint degreeOfFlexibility = 0; degreeOfFlexibility <= 5; degreeOfFlexibility++)
+        {
+            var flexibility = new ScheduleFlexibility(degreeOfFlexibility);
+            var schedulerParameters = GetSchedulerParameters(monthScheduleParameters, flexibility);
+            var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(solverParameters);
 
-        Rules.EveryDayAtEveryWorkplaceIsCovered(solverParameters, engine);
+            Rules.EveryDayAtEveryWorkplaceIsCovered(solverParameters, engine);
 
-        Rules.EveryEmployeeHasOneShiftAtATime(solverParameters, engine);
+            Rules.EveryEmployeeHasOneShiftAtATime(solverParameters, engine);
 
-        Rules.NoConsecutiveShiftsForEmployee(solverParameters, engine);
-        
-        Rules.NoAlternativeDayShiftsForEmployee(solverParameters, engine);
-        
-        Rules.LimitWeekendShifts(schedulingParameters, engine);
-        
-        Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(schedulingParameters, solverParameters.Days, engine);
-        
-        Rules.DisallowShiftsWithoutEmployeeCapability(solverParameters, engine);
-        
-        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParameters, engine);
-        
-        EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulingParameters, engine);
+            Rules.NoConsecutiveShiftsForEmployee(solverParameters, engine);
 
-        Rules.TakeLeavesIntoAccount(schedulingParameters, engine);
+            Rules.NoAlternativeDayShiftsForEmployee(solverParameters, engine);
 
-        return engine.Solve();
+            Rules.LimitWeekendShifts(monthScheduleParameters, engine);
+
+            Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(
+                monthScheduleParameters, solverParameters.Days, engine);
+
+            Rules.DisallowShiftsWithoutEmployeeCapability(solverParameters, engine);
+
+            EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulerParameters, engine);
+
+            EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulerParameters, engine);
+
+            Rules.TakeLeavesIntoAccount(monthScheduleParameters, engine);
+
+            var result = engine.Solve();
+
+            if (result != null)
+            {
+                return new SuccessfulSchedulingResult(result, flexibility);
+            }
+        }
+
+        throw new Exception("Cannot find feasible solution");
     }
 
-    private static SolverParameters GetSolverParameters(SchedulingParameters schedulingParameters)
+    private SchedulerParameters GetSchedulerParameters(MonthScheduleParameters monthScheduleParameters, ScheduleFlexibility flexiblity)
     {
-        var days = schedulingParameters.Month.Days;
+        return new SchedulerParameters(
+            monthScheduleParameters.Month,
+            monthScheduleParameters.EmployeeMonths, 
+            monthScheduleParameters.CompetenceGroups, 
+            flexiblity);
+    }
+
+    private static SolverParameters GetSolverParameters(MonthScheduleParameters monthScheduleParameters)
+    {
+        var days = monthScheduleParameters.Month.Days;
 
         return new SolverParameters(
             days,
-            schedulingParameters.Employees,
-            schedulingParameters.CompetenceGroups.SelectMany(g => g.Workplaces).ToArray());
+            monthScheduleParameters.Employees,
+            monthScheduleParameters.CompetenceGroups.SelectMany(g => g.Workplaces).ToArray());
     }
 }

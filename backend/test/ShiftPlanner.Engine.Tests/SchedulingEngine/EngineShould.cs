@@ -8,7 +8,7 @@ using Constraint = ShiftPlanner.Engine.SchedulingEngine.Constraint;
 
 namespace ShiftPlanner.Engine.Tests.SchedulingEngine;
 
-public class SchedulingEngineShould
+public class EngineShould
 {
     Mock<ISolver> _solverMock = new Mock<ISolver>();
     [Fact]
@@ -62,8 +62,10 @@ public class SchedulingEngineShould
         }
         var engine = CreateEngine(input);
 
-        var schedule = engine.Solve();
+        var result = engine.Solve();
 
+        var schedule = Assert.IsType<Schedule>(result);
+        
         for (int d = 1; d <= input.Days.Count; d++)
         {
             Assert.Equal(
@@ -120,6 +122,18 @@ public class SchedulingEngineShould
         
     }
 
+    [Fact]
+    public void ReturnNull_WhenSolverDoesntFindSolution()
+    {
+        var engine = CreateEngine(CreateEmptyInput());
+        
+        _solverMock.Setup(_ => _.SolverStatus).Returns(SolverStatus.NotFound);
+
+        var schedulingResult = engine.Solve();
+        
+        Assert.Null(schedulingResult);
+    }
+
     private static SolverParameters CreateEmptyInput()
     {
         return new SolverParameters(new ScheduledMonth(2022, 2).Days, Array.Empty<Employee>(), Array.Empty<Workplace>());
@@ -145,8 +159,8 @@ public class SchedulingEngineShould
             workplaces);
     }
 
-    private Engine.SchedulingEngine.SchedulingEngine CreateEngine(SolverParameters input)
+    private Engine.SchedulingEngine.Engine CreateEngine(SolverParameters input)
     {
-        return new Engine.SchedulingEngine.SchedulingEngine(_solverMock.Object, input);
+        return new Engine.SchedulingEngine.Engine(_solverMock.Object, input);
     }
 }
