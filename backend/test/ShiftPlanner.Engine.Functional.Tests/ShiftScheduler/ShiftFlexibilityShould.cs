@@ -6,7 +6,7 @@ namespace ShiftPlanner.Engine.Functional.Tests;
 
 public class ShiftFlexibilityShould
 {
-    [Fact(Skip = "Will be fixed after refactoring")]
+    [Fact]
     public void MakeSchedulerUltimatelyFindASolution()
     {
         var scheduler = new ShiftScheduler();
