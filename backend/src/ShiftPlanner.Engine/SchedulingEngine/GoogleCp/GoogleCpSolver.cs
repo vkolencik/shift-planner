@@ -5,8 +5,8 @@ namespace ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
 
 internal class GoogleCpSolver : ISolver
 {
-    private CpModel _model;
-    private CpSolver _solver;
+    private readonly CpModel _model;
+    private readonly CpSolver _solver;
     private readonly IDictionary<VariableName, IntVar> _variables = new Dictionary<VariableName, IntVar>();
     private CpSolverStatus? _status;
 

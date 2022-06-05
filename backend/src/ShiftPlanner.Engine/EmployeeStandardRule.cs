@@ -57,8 +57,8 @@ internal static class EmployeeStandardRule
         var totalEmployeeCapacity = (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
         var employeeCapacity = daysCount - employee.Leaves.Sum(l => l.LengthDays);
         var flexibilityModifier = (double) monthScheduleParameters.Flexibility.Degree / 10;
-        var standardLb = Math.Max(0, multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity - flexibilityModifier));
-        var standardUb = multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity + flexibilityModifier);
+        var standardLb = Math.Max(0, multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity) - flexibilityModifier);
+        var standardUb = Math.Min(6, multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity) + flexibilityModifier);
 
         return new EmployeeStandard(
             (uint) Math.Floor(standardLb),
