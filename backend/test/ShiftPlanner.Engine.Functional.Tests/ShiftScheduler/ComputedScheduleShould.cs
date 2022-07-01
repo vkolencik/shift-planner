@@ -270,6 +270,24 @@ public class ComputedScheduleShould
             Assert.True(weekendDayShifts.Length <= 1, $"More than one shift for {employee.Name} on {weekendDay.ToString()}: {string.Join(", ", weekendDayShifts.Select(s => s.Shift.Day))}");
         }
     }
+
+    [Fact]
+    public void SpreadAssignedShiftsEvenlyAcrossMonth()
+    {
+        var schedule = ComputeSchedule();
+
+        foreach (var employee in Employees)
+        {
+            var employeeShifts = schedule.Shifts.Where(s => s.Employee == employee);
+
+            var weekBoundaries = new [] { 1, 8, 15, 22, 29 };
+            var weeklyShiftCounts = weekBoundaries.Take(4)
+                .Zip(weekBoundaries.Skip(1), (dayFrom, dayTo) => employeeShifts.Count(s => dayFrom <= s.Shift.Day.Date.Day && s.Shift.Day.Date.Day < dayTo))
+                .ToArray();
+
+            Assert.True(weeklyShiftCounts.Max() - weeklyShiftCounts.Min() < 3, $"Too large differences between weekly shift counts for {employee.Name}: {string.Join(", ", weeklyShiftCounts)}");
+        }
+    }
     
     private Schedule ComputeSchedule()
     {
