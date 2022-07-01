@@ -104,7 +104,7 @@ public class EmployeeStandardRuleShould
         var capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
 
-        var employee = new Employee("Emplooyee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 20), new WorkplaceCapability.Green(Workplace2, 80) }));
+        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 20), new WorkplaceCapability.Green(Workplace2, 80) }), 999);
         var schedulingParams = new SchedulerParameters(
             new ScheduledMonth(2022, 2),
             new[]
@@ -129,5 +129,33 @@ public class EmployeeStandardRuleShould
         Assert.Contains(
                 schedulingParams.Month.Days.Select(d => new ShiftAssignment(employee, d, Workplace1)).ToHashSet(),
                 capturedShiftsLte.Select(x => new HashSet<ShiftAssignment>(x)));
+    }
+
+    [Fact]
+    public void TakeEmployeeMaxStandardIntoAccount()
+    {
+        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), 13);
+        var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
+        var capturedBoundsLte = new List<uint>();
+        
+        var schedulingParams = new SchedulerParameters(
+            new ScheduledMonth(2022, 2),
+            new[]
+            {
+                new EmployeeMonth(employee)
+            },
+            new[]
+            {
+                new CompetenceGroup(new[] {Workplace1})
+            },
+            ScheduleFlexibility.Strict
+        );
+
+        _engineMock.Setup(_ => _.AddSumConstraint(It.IsAny<IReadOnlyCollection<ShiftAssignment>>(), Constraint.Lte, Capture.In(capturedBoundsLte)));
+
+        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParams, _engineMock.Object);
+
+        var lteBound = Assert.Single(capturedBoundsLte);
+        Assert.Equal(employee.MaxShiftsPerMonth, lteBound);
     }
 }

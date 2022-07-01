@@ -50,15 +50,15 @@ internal static class EmployeeStandardRule
         }
     }
 
-    private static EmployeeStandard ComputeStandard(SchedulerParameters monthScheduleParameters, EmployeeMonth employee, double multiplier)
+    private static EmployeeStandard ComputeStandard(SchedulerParameters monthScheduleParameters, EmployeeMonth employeeMonth, double multiplier)
     {
         var daysCount = (double) monthScheduleParameters.Month.Days.Count;
         var totalRequiredCapacity = daysCount * monthScheduleParameters.Workplaces.Count;
         var totalEmployeeCapacity = (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
-        var employeeCapacity = daysCount - employee.Leaves.Sum(l => l.LengthDays);
+        var employeeCapacity = daysCount - employeeMonth.Leaves.Sum(l => l.LengthDays);
         var flexibilityModifier = (double) monthScheduleParameters.Flexibility.Degree / 10;
         var standardLb = Math.Max(0, multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity) - flexibilityModifier);
-        var standardUb = Math.Min(6, multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity) + flexibilityModifier);
+        var standardUb = Math.Min(employeeMonth.Employee.MaxShiftsPerMonth, multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity) + flexibilityModifier);
 
         return new EmployeeStandard(
             (uint) Math.Floor(standardLb),
