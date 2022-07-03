@@ -29,9 +29,11 @@ public class ShiftScheduler
 
             Rules.DisallowShiftsWithoutEmployeeCapability(solverParameters, engine);
 
-            EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulerParameters, engine);
+            EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulerParameters, engine);
 
             EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulerParameters, engine);
+            
+            EmployeeStandardRule.SpreadShiftsEvenlyThroughoutMonth(schedulerParameters, engine);
 
             Rules.TakeLeavesIntoAccount(monthScheduleParameters, engine);
 

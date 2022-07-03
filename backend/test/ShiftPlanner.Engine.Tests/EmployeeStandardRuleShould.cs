@@ -39,7 +39,7 @@ public class EmployeeStandardRuleShould
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (uint) Math.Floor(standard)));
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (uint) Math.Ceiling(standard)));
 
-        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParams, _engineMock.Object);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object);
 
         Assert.Equal(capturedShiftsGte.ToHashSet(), capturedShiftsLte.ToHashSet());
         Assert.All(
@@ -80,7 +80,7 @@ public class EmployeeStandardRuleShould
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsHalfMonthOffGte), Constraint.Gte, (uint) Math.Floor(standardLeave)));
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsHalfMonthOffLte), Constraint.Lte, (uint) Math.Ceiling(standardLeave)));
 
-        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParams, _engineMock.Object);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object);
 
         Assert.Equal(capturedShiftsFullMonthGte.ToHashSet(), capturedShiftsFullMonthLte.ToHashSet());
         Assert.Equal(capturedShiftsHalfMonthOffGte.ToHashSet(), capturedShiftsHalfMonthOffLte.ToHashSet());
@@ -153,9 +153,52 @@ public class EmployeeStandardRuleShould
 
         _engineMock.Setup(_ => _.AddSumConstraint(It.IsAny<IReadOnlyCollection<ShiftAssignment>>(), Constraint.Lte, Capture.In(capturedBoundsLte)));
 
-        EmployeeStandardRule.SpreadShiftAssignmentEvenly(schedulingParams, _engineMock.Object);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object);
 
         var lteBound = Assert.Single(capturedBoundsLte);
         Assert.Equal(employee.MaxShiftsPerMonth, lteBound);
     }
+
+    [Fact]
+    public void SpreadShiftsEvenlyThroughoutMonth()
+    {
+        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), 999);
+
+        var schedulingParams = new SchedulerParameters(
+            new ScheduledMonth(2022, 2),
+            new[]
+            {
+                new EmployeeMonth(employee)
+            },
+            new[]
+            {
+                new CompetenceGroup(new[] {Workplace1})
+            },
+            ScheduleFlexibility.Strict
+        );
+
+        var standard = (double) schedulingParams.Month.Days.Count * schedulingParams.Workplaces.Count;
+
+        List<IReadOnlyCollection<ShiftAssignment>> capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
+        List<IReadOnlyCollection<ShiftAssignment>> capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (uint) Math.Floor(standard / 2)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (uint) Math.Ceiling(standard / 2)));
+
+        EmployeeStandardRule.SpreadShiftsEvenlyThroughoutMonth(schedulingParams, _engineMock.Object);
+
+        Assert.Equal(3, capturedShiftsLte.Count);
+
+        Assert.Equal(capturedShiftsLte[0].ToHashSet(), capturedShiftsGte[0].ToHashSet());
+        Assert.Equal(capturedShiftsLte[1].ToHashSet(), capturedShiftsGte[1].ToHashSet());
+        Assert.Equal(capturedShiftsLte[2].ToHashSet(), capturedShiftsGte[2].ToHashSet());
+
+        var range1 = RangeFromTo(1, 15).Select(d => new ShiftAssignment(employee, new Day(2022, 2, d), Workplace1)).ToHashSet();
+        var range2 = RangeFromTo(8, 22).Select(d => new ShiftAssignment(employee, new Day(2022, 2, d), Workplace1)).ToHashSet();
+        var range3 = RangeFromTo(15, 28).Select(d => new ShiftAssignment(employee, new Day(2022, 2, d), Workplace1)).ToHashSet();
+        Assert.Contains(range1, capturedShiftsLte.Select(_ => _.ToHashSet()));
+        Assert.Contains(range2, capturedShiftsLte.Select(_ => _.ToHashSet()));
+        Assert.Contains(range3, capturedShiftsLte.Select(_ => _.ToHashSet()));
+    }
+
+    private static IEnumerable<int> RangeFromTo(int from, int to) => Enumerable.Range(from, to - from + 1);
 }
