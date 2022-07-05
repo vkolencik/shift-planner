@@ -19,7 +19,7 @@ public class EmployeeStandardRuleShould
     }
 
     [Fact]
-    public void SpreadShiftAssignmentEvenly()
+    public void SpreadShiftAssignmentEvenlyAmongEmployees()
     {
         var capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
@@ -50,7 +50,7 @@ public class EmployeeStandardRuleShould
     }
 
     [Fact]
-    public void SpreadShiftAssignmentEvenlyTakingLeavesIntoAccount()
+    public void SpreadShiftAssignmentEvenlyAmongEmployeesTakingLeavesIntoAccount()
     {
         var capturedShiftsFullMonthGte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedShiftsFullMonthLte = new List<IReadOnlyCollection<ShiftAssignment>>();
@@ -99,7 +99,7 @@ public class EmployeeStandardRuleShould
     }
 
     [Fact]
-    public void AssignShiftsAccordingToPreferencePercentages()
+    public void AssignShiftsToEmployeesAccordingToPreferencePercentages()
     {
         var capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
@@ -181,23 +181,23 @@ public class EmployeeStandardRuleShould
 
         List<IReadOnlyCollection<ShiftAssignment>> capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
         List<IReadOnlyCollection<ShiftAssignment>> capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (uint) Math.Floor(standard / 2)));
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (uint) Math.Ceiling(standard / 2)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (uint) Math.Floor(standard / 4)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (uint) Math.Ceiling(standard / 4)));
 
         EmployeeStandardRule.SpreadShiftsEvenlyThroughoutMonth(schedulingParams, _engineMock.Object);
 
-        Assert.Equal(3, capturedShiftsLte.Count);
+        Assert.Equal(4, capturedShiftsLte.Count);
 
-        Assert.Equal(capturedShiftsLte[0].ToHashSet(), capturedShiftsGte[0].ToHashSet());
-        Assert.Equal(capturedShiftsLte[1].ToHashSet(), capturedShiftsGte[1].ToHashSet());
-        Assert.Equal(capturedShiftsLte[2].ToHashSet(), capturedShiftsGte[2].ToHashSet());
+        Assert.Equal(capturedShiftsLte.Select(_ => _.ToHashSet()), capturedShiftsGte.Select(_ => _.ToHashSet()));
 
-        var range1 = RangeFromTo(1, 15).Select(d => new ShiftAssignment(employee, new Day(2022, 2, d), Workplace1)).ToHashSet();
-        var range2 = RangeFromTo(8, 22).Select(d => new ShiftAssignment(employee, new Day(2022, 2, d), Workplace1)).ToHashSet();
-        var range3 = RangeFromTo(15, 28).Select(d => new ShiftAssignment(employee, new Day(2022, 2, d), Workplace1)).ToHashSet();
+        var range1 = RangeFromTo(1, 7).Select(d => new ShiftAssignment(employee, new Day(2022, 2, d), Workplace1)).ToHashSet();
+        var range2 = RangeFromTo(8, 14).Select(d => new ShiftAssignment(employee, new Day(2022, 2, d), Workplace1)).ToHashSet();
+        var range3 = RangeFromTo(15, 21).Select(d => new ShiftAssignment(employee, new Day(2022, 2, d), Workplace1)).ToHashSet();
+        var range4 = RangeFromTo(22, 28).Select(d => new ShiftAssignment(employee, new Day(2022, 2, d), Workplace1)).ToHashSet();
         Assert.Contains(range1, capturedShiftsLte.Select(_ => _.ToHashSet()));
         Assert.Contains(range2, capturedShiftsLte.Select(_ => _.ToHashSet()));
         Assert.Contains(range3, capturedShiftsLte.Select(_ => _.ToHashSet()));
+        Assert.Contains(range4, capturedShiftsLte.Select(_ => _.ToHashSet()));
     }
 
     private static IEnumerable<int> RangeFromTo(int from, int to) => Enumerable.Range(from, to - from + 1);

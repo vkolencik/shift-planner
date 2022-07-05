@@ -21,17 +21,18 @@ internal static class EmployeeStandardRule
     {
         foreach (var employeeMonth in schedulingParams.EmployeeMonths)
         {
-            var standard = ComputeStandard(schedulingParams, employeeMonth, 0.5);
+            var standard = ComputeStandard(schedulingParams, employeeMonth, 0.25);
 
             var daysInMonth = schedulingParams.Month.Days.Count;
-            var length = daysInMonth / 2;
+            var length = daysInMonth / 4;
             var step = daysInMonth / 4;
 
             var ranges = new[]
             {
-                (1, 1 + length),
-                (1 + step, 1 + step + length),
-                (1 + 2 * step, daysInMonth)
+                (0 * step + 1, 0 * step + length),
+                (1 * step + 1, 1 * step + length),
+                (2 * step + 1, 2 * step + length),
+                (3 * step + 1, daysInMonth)
             };
             
             foreach (var (from, to) in ranges)
