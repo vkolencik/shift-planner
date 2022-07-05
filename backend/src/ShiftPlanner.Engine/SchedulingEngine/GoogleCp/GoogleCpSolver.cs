@@ -89,6 +89,26 @@ internal class GoogleCpSolver : ISolver
         }
     }
 
+    public void AddRelationConstraint(VariableName variableName1, Constraint constraint, VariableName variableName2)
+    {
+        var variable1 = _variables[variableName1];
+        var variable2 = _variables[variableName2];
+
+        switch (constraint)
+        {
+            case Constraint.Eq:
+                _model.Add(variable1 == variable2);
+                break;
+            case Constraint.Gte:
+                _model.Add(variable1 >= variable2);
+                break;
+            case Constraint.Lte:
+                _model.Add(variable1 <= variable2);
+                break;
+            default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));
+        }
+    }
+
     public SolverStatus SolverStatus => _solver.Response.Status switch
     {
         CpSolverStatus.Unknown => SolverStatus.Initialized,

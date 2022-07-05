@@ -119,7 +119,23 @@ public class EngineShould
 
         _solverMock.Verify(
             s => s.AddVariableConstraint(VariableName.Schedule(1, 1, 1), Constraint.Lte, 7));
+    }
+
+    [Fact]
+    public void CreateRelationConstraint()
+    {
+        var input = CreateBasicInput();
+        var engine = CreateEngine(input);
+
+        var shift1 = new ShiftAssignment(
+            input.Employees.ElementAt(0), input.Days.ElementAt(0), input.Workplaces.ElementAt(0));
+        var shift2 = new ShiftAssignment(
+            input.Employees.ElementAt(1), input.Days.ElementAt(0), input.Workplaces.ElementAt(0));
         
+        engine.AddRelationConstraint(shift1, Constraint.Eq, shift2);
+
+        _solverMock.Verify(
+            s => s.AddRelationConstraint(VariableName.Schedule(1, 1, 1), Constraint.Eq, VariableName.Schedule(2, 1, 1)));
     }
 
     [Fact]

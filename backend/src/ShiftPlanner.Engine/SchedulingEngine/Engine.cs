@@ -1,3 +1,4 @@
+using System.Net.NetworkInformation;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
 
@@ -84,6 +85,14 @@ namespace ShiftPlanner.Engine.SchedulingEngine
                 VariableName.Schedule(_employees[shift.Employee], _days[shift.Shift.Day], _workplaces[shift.Shift.Workplace]),
                 constraint,
                 value);
+        }
+
+        public void AddRelationConstraint(ShiftAssignment shift1, Constraint constraint, ShiftAssignment shift2)
+        {
+            _solver.AddRelationConstraint(
+                VariableName.Schedule(_employees[shift1.Employee], _days[shift1.Shift.Day], _workplaces[shift1.Shift.Workplace]),
+                constraint,
+                VariableName.Schedule(_employees[shift2.Employee], _days[shift2.Shift.Day], _workplaces[shift2.Shift.Workplace]));
         }
     }
 }
