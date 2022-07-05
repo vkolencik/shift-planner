@@ -127,15 +127,32 @@ internal static class Rules
         LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek == DayOfWeek.Sunday), 1);
     }
 
+    public static void AlwaysScheduleAlternatesOverWeekends(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
+    {
+        var fridays = monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek == DayOfWeek.Friday).ToArray();
+        var sundaysAfterFridays = fridays.Select(d => new Day(d.Date.AddDays(2))).Where(d => d.Date.Month == monthScheduleParameters.Month.Month).ToArray();
+        
+        foreach (var employeeMonth in monthScheduleParameters.EmployeeMonths)
+        {
+            foreach (var (friday, sunday) in fridays.Zip(sundaysAfterFridays))
+            {
+                engine.AddSumRelationConstraint(
+                    monthScheduleParameters.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, friday, w)).ToArray(),
+                    Constraint.Eq, 
+                    monthScheduleParameters.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, sunday, w)).ToArray());
+            }
+        }
+    }
+
     private static void LimitShiftsOnDays(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine, IEnumerable<Day> days, uint limit)
     {
         foreach (var employeeMonth in monthScheduleParameters.EmployeeMonths)
         {
-            var saturdayShifts = monthScheduleParameters.Workplaces
+            var shiftsOnTheWeekday = monthScheduleParameters.Workplaces
                 .SelectMany(w => days.Select(d => new ShiftAssignment(employeeMonth.Employee, d, w)))
                 .ToArray();
 
-            engine.AddSumConstraint(saturdayShifts, Constraint.Lte, limit);
+            engine.AddSumConstraint(shiftsOnTheWeekday, Constraint.Lte, limit);
         }
     }
 }
