@@ -122,20 +122,24 @@ public class EngineShould
     }
 
     [Fact]
-    public void CreateRelationConstraint()
+    public void CreateSumRelationConstraint()
     {
         var input = CreateBasicInput();
         var engine = CreateEngine(input);
 
-        var shift1 = new ShiftAssignment(
+        var shiftA1 = new ShiftAssignment(
             input.Employees.ElementAt(0), input.Days.ElementAt(0), input.Workplaces.ElementAt(0));
-        var shift2 = new ShiftAssignment(
+        var shiftA2 = new ShiftAssignment(
+            input.Employees.ElementAt(0), input.Days.ElementAt(1), input.Workplaces.ElementAt(0));
+        var shiftB1 = new ShiftAssignment(
             input.Employees.ElementAt(1), input.Days.ElementAt(0), input.Workplaces.ElementAt(0));
+        var shiftB2 = new ShiftAssignment(
+            input.Employees.ElementAt(1), input.Days.ElementAt(1), input.Workplaces.ElementAt(0));
         
-        engine.AddRelationConstraint(shift1, Constraint.Eq, shift2);
+        engine.AddSumRelationConstraint(new [] {shiftA1, shiftA2}, Constraint.Eq, new [] {shiftB1, shiftB2});
 
         _solverMock.Verify(
-            s => s.AddRelationConstraint(VariableName.Schedule(1, 1, 1), Constraint.Eq, VariableName.Schedule(2, 1, 1)));
+            s => s.AddSumRelationConstraint(new [] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(1, 2, 1)}, Constraint.Eq, new [] {VariableName.Schedule(2, 1, 1), VariableName.Schedule(2, 2, 1)}));
     }
 
     [Fact]

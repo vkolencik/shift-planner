@@ -87,12 +87,16 @@ namespace ShiftPlanner.Engine.SchedulingEngine
                 value);
         }
 
-        public void AddRelationConstraint(ShiftAssignment shift1, Constraint constraint, ShiftAssignment shift2)
+        public void AddSumRelationConstraint(IReadOnlyCollection<ShiftAssignment> shifts1, Constraint constraint, IReadOnlyCollection<ShiftAssignment> shifts2)
         {
-            _solver.AddRelationConstraint(
-                VariableName.Schedule(_employees[shift1.Employee], _days[shift1.Shift.Day], _workplaces[shift1.Shift.Workplace]),
+            _solver.AddSumRelationConstraint(
+                shifts1
+                    .Select(s => VariableName.Schedule(_employees[s.Employee], _days[s.Shift.Day], _workplaces[s.Shift.Workplace]))
+                    .ToArray(),
                 constraint,
-                VariableName.Schedule(_employees[shift2.Employee], _days[shift2.Shift.Day], _workplaces[shift2.Shift.Workplace]));
+                shifts2
+                    .Select(s => VariableName.Schedule(_employees[s.Employee], _days[s.Shift.Day], _workplaces[s.Shift.Workplace]))
+                    .ToArray());
         }
     }
 }
