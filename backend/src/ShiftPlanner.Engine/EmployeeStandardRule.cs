@@ -5,7 +5,7 @@ namespace ShiftPlanner.Engine;
 
 internal static class EmployeeStandardRule
 {
-    public static void SpreadShiftAssignmentEvenly(SchedulerParameters monthScheduleParameters, ISchedulingEngine engine)
+    public static void SpreadShiftAssignmentEvenlyAmongEmployees(SchedulerParameters monthScheduleParameters, ISchedulingEngine engine)
     {
         monthScheduleParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeeStandardRules(monthScheduleParameters, engine, em));
     }
@@ -15,7 +15,37 @@ internal static class EmployeeStandardRule
         ISchedulingEngine engine)
     {
         monthScheduleParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeePreferencePercentages(monthScheduleParameters, engine, em));
+    }
 
+    public static void SpreadShiftsEvenlyThroughoutMonth(SchedulerParameters schedulingParams, ISchedulingEngine engine)
+    {
+        foreach (var employeeMonth in schedulingParams.EmployeeMonths)
+        {
+            var standard = ComputeStandard(schedulingParams, employeeMonth, 0.25);
+
+            var daysInMonth = schedulingParams.Month.Days.Count;
+            var length = daysInMonth / 4;
+            var step = daysInMonth / 4;
+
+            var ranges = new[]
+            {
+                (0 * step + 1, 0 * step + length),
+                (1 * step + 1, 1 * step + length),
+                (2 * step + 1, 2 * step + length),
+                (3 * step + 1, daysInMonth)
+            };
+            
+            foreach (var (from, to) in ranges)
+            {
+                var shiftsInRange = schedulingParams.Month.Days
+                    .Where(d => from <= d.Date.Day && d.Date.Day <= to)
+                    .SelectMany(d => schedulingParams.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, d, w)))
+                    .ToArray();
+                
+                engine.AddSumConstraint(shiftsInRange, Constraint.Lte, standard.Maximum);
+                engine.AddSumConstraint(shiftsInRange, Constraint.Gte, standard.Minimum);
+            }
+        }
     }
 
     private static void AddEmployeeStandardRules(SchedulerParameters monthScheduleParameters,
@@ -50,24 +80,19 @@ internal static class EmployeeStandardRule
         }
     }
 
-    private static EmployeeStandard ComputeStandard(SchedulerParameters monthScheduleParameters, EmployeeMonth employee, double multiplier)
+    private static EmployeeStandard ComputeStandard(SchedulerParameters monthScheduleParameters, EmployeeMonth employeeMonth, double multiplier)
     {
         var daysCount = (double) monthScheduleParameters.Month.Days.Count;
         var totalRequiredCapacity = daysCount * monthScheduleParameters.Workplaces.Count;
-        var totalEmployeeCapacity =
-            (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
-        var employeeCapacity = daysCount - employee.Leaves.Sum(l => l.LengthDays);
-        var standard = multiplier * totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
+        var totalEmployeeCapacity = (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
+        var employeeCapacity = daysCount - employeeMonth.Leaves.Sum(l => l.LengthDays);
+        var flexibilityModifier = (double) monthScheduleParameters.Flexibility.Degree / 10;
+        var standardLb = Math.Max(0, multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity) - flexibilityModifier);
+        var standardUb = Math.Min(employeeMonth.Employee.MaxShiftsPerMonth, multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity) + flexibilityModifier);
 
         return new EmployeeStandard(
-            GetStandardMinimum(standard, monthScheduleParameters.Flexibility),
-            (uint) Math.Ceiling(standard) + monthScheduleParameters.Flexibility.Degree);
-    }
-
-    private static uint GetStandardMinimum(double standard, ScheduleFlexibility flexibility)
-    {
-        var floor = (uint) Math.Floor(standard);
-        return floor >= flexibility.Degree ? floor - flexibility.Degree : 0;
+            (uint) Math.Floor(standardLb),
+            (uint) Math.Ceiling(standardUb));
     }
 
     private record struct EmployeeStandard(uint Minimum, uint Maximum);

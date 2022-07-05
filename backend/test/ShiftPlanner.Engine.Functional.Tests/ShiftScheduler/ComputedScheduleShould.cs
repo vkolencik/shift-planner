@@ -55,7 +55,8 @@ public class ComputedScheduleShould
     );
 
     private IEnumerable<EmployeeMonth> EmployeeMonthsWithTimeOff => _employeeMonths.Take(_employeesWithTimeOffCount).Concat(new [] { _percentualCapabilitiesEmployee2WithLeave});    
-    private IEnumerable<Employee> EmployeesWithTimeOff => EmployeeMonthsWithTimeOff.Select(em => em.Employee);    
+    private IEnumerable<Employee> EmployeesWithTimeOff => EmployeeMonthsWithTimeOff.Select(em => em.Employee);
+    private IEnumerable<Employee> EmployeesWithoutTimeOff => Employees.Except(EmployeesWithTimeOff);
     public ComputedScheduleShould()
     {
         var capableForFirstWorkplaces = new Capabilities(new WorkplaceCapability[]
@@ -268,6 +269,24 @@ public class ComputedScheduleShould
                 .ToArray();
             
             Assert.True(weekendDayShifts.Length <= 1, $"More than one shift for {employee.Name} on {weekendDay.ToString()}: {string.Join(", ", weekendDayShifts.Select(s => s.Shift.Day))}");
+        }
+    }
+
+    [Fact]
+    public void SpreadAssignedShiftsEvenlyAcrossMonth()
+    {
+        var schedule = ComputeSchedule();
+
+        foreach (var employee in EmployeesWithoutTimeOff)
+        {
+            var employeeShifts = schedule.Shifts.Where(s => s.Employee == employee);
+
+            var boundaries = new [] { 1, 15, 29 };
+            var shiftCounts = boundaries.Take(boundaries.Length - 1)
+                .Zip(boundaries.Skip(1), (dayFrom, dayTo) => employeeShifts.Count(s => dayFrom <= s.Shift.Day.Date.Day && s.Shift.Day.Date.Day < dayTo))
+                .ToArray();
+
+            Assert.True(shiftCounts.Max() - shiftCounts.Min() < 3, $"Too large differences between shift counts for {employee.Name}: {string.Join(", ", shiftCounts)}");
         }
     }
     
