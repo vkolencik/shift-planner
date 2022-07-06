@@ -164,11 +164,14 @@ public class EmployeeStandardRuleShould
     {
         var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), 999);
 
+        var leave = new Leave(new Day(2022, 2, 1), new Day(2022, 2, 3));
         var schedulingParams = new SchedulerParameters(
             new ScheduledMonth(2022, 2),
             new[]
             {
-                new EmployeeMonth(employee)
+                new EmployeeMonth(
+                    employee,
+                    new[] {leave})
             },
             new[]
             {
@@ -177,12 +180,14 @@ public class EmployeeStandardRuleShould
             ScheduleFlexibility.Strict
         );
 
-        var standard = (double) schedulingParams.Month.Days.Count * schedulingParams.Workplaces.Count;
+        var workingDaysCount = schedulingParams.Month.Days.Count - leave.Days.Count();
 
         List<IReadOnlyCollection<ShiftAssignment>> capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
         List<IReadOnlyCollection<ShiftAssignment>> capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (uint) Math.Floor(standard / 4)));
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (uint) Math.Ceiling(standard / 4)));
+        var capturedLowerBounds = new List<uint>();
+        var capturedUpperBounds = new List<uint>();
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, Capture.In(capturedUpperBounds)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, Capture.In(capturedLowerBounds)));
 
         EmployeeStandardRule.SpreadShiftsEvenlyThroughoutMonth(schedulingParams, _engineMock.Object);
 
@@ -198,6 +203,12 @@ public class EmployeeStandardRuleShould
         Assert.Contains(range2, capturedShiftsLte.Select(_ => _.ToHashSet()));
         Assert.Contains(range3, capturedShiftsLte.Select(_ => _.ToHashSet()));
         Assert.Contains(range4, capturedShiftsLte.Select(_ => _.ToHashSet()));
+
+        Assert.All(capturedLowerBounds.Skip(1), lb => Assert.Equal(7U, lb));
+        Assert.All(capturedUpperBounds.Skip(1), ub => Assert.Equal(8U, ub));
+        // Three-day leave in the first week => lower standard:
+        Assert.Equal(4U, capturedLowerBounds.First());
+        Assert.Equal(5U, capturedUpperBounds.First());
     }
 
     private static IEnumerable<int> RangeFromTo(int from, int to) => Enumerable.Range(from, to - from + 1);

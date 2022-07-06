@@ -19,24 +19,33 @@ internal static class EmployeeStandardRule
 
     public static void SpreadShiftsEvenlyThroughoutMonth(SchedulerParameters schedulingParams, ISchedulingEngine engine)
     {
+        var daysInMonth = schedulingParams.Month.Days.Count;
+        var length = daysInMonth / 4;
+        var step = daysInMonth / 4;
+
+        var ranges = new[]
+        {
+            (0 * step + 1, 0 * step + length),
+            (1 * step + 1, 1 * step + length),
+            (2 * step + 1, 2 * step + length),
+            (3 * step + 1, daysInMonth)
+        };
+
         foreach (var employeeMonth in schedulingParams.EmployeeMonths)
         {
-            var standard = ComputeStandard(schedulingParams, employeeMonth, 0.25);
+            var workingDaysInMonth = schedulingParams.Month.Days
+                .Where(d => !employeeMonth.Leaves.Any(l => l.Days.Contains(d)))
+                .Count();
 
-            var daysInMonth = schedulingParams.Month.Days.Count;
-            var length = daysInMonth / 4;
-            var step = daysInMonth / 4;
-
-            var ranges = new[]
-            {
-                (0 * step + 1, 0 * step + length),
-                (1 * step + 1, 1 * step + length),
-                (2 * step + 1, 2 * step + length),
-                (3 * step + 1, daysInMonth)
-            };
-            
             foreach (var (from, to) in ranges)
             {
+                var workingDaysInRange = schedulingParams.Month.Days
+                    .Where(d => from <= d.Date.Day && d.Date.Day <= to)
+                    .Where(d => !employeeMonth.Leaves.Any(l => l.Days.Contains(d)))
+                    .Count();
+
+                var standard = ComputeStandard(schedulingParams, employeeMonth, (double) workingDaysInRange / workingDaysInMonth);
+                
                 var shiftsInRange = schedulingParams.Month.Days
                     .Where(d => from <= d.Date.Day && d.Date.Day <= to)
                     .SelectMany(d => schedulingParams.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, d, w)))
@@ -80,15 +89,19 @@ internal static class EmployeeStandardRule
         }
     }
 
-    private static EmployeeStandard ComputeStandard(SchedulerParameters monthScheduleParameters, EmployeeMonth employeeMonth, double multiplier)
+    private static EmployeeStandard ComputeStandard(
+        SchedulerParameters monthScheduleParameters,
+        EmployeeMonth employeeMonth,
+        double multiplier)
     {
         var daysCount = (double) monthScheduleParameters.Month.Days.Count;
         var totalRequiredCapacity = daysCount * monthScheduleParameters.Workplaces.Count;
         var totalEmployeeCapacity = (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
         var employeeCapacity = daysCount - employeeMonth.Leaves.Sum(l => l.LengthDays);
         var flexibilityModifier = (double) monthScheduleParameters.Flexibility.Degree / 10;
-        var standardLb = Math.Max(0, multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity) - flexibilityModifier);
-        var standardUb = Math.Min(employeeMonth.Employee.MaxShiftsPerMonth, multiplier * (totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity) + flexibilityModifier);
+        var preciseStandard = totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
+        var standardLb = Math.Max(0, multiplier * preciseStandard - flexibilityModifier);
+        var standardUb = Math.Min(employeeMonth.Employee.MaxShiftsPerMonth, multiplier * preciseStandard + flexibilityModifier);
 
         return new EmployeeStandard(
             (uint) Math.Floor(standardLb),
