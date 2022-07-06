@@ -89,6 +89,26 @@ internal class GoogleCpSolver : ISolver
         }
     }
 
+    public void AddSumRelationConstraint(IReadOnlyCollection<VariableName> variableNames1, Constraint constraint, IReadOnlyCollection<VariableName> variableNames2)
+    {
+        var variables1 = variableNames1.Select(v => _variables[v]).ToArray();
+        var variables2 = variableNames2.Select(v => _variables[v]).ToArray();
+
+        switch (constraint)
+        {
+            case Constraint.Eq:
+                _model.Add(LinearExpr.Sum(variables1) == LinearExpr.Sum(variables2));
+                break;
+            case Constraint.Gte:
+                _model.Add(LinearExpr.Sum(variables1) >= LinearExpr.Sum(variables2));
+                break;
+            case Constraint.Lte:
+                _model.Add(LinearExpr.Sum(variables1) <= LinearExpr.Sum(variables2));
+                break;
+            default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));
+        }
+    }
+
     public SolverStatus SolverStatus => _solver.Response.Status switch
     {
         CpSolverStatus.Unknown => SolverStatus.Initialized,

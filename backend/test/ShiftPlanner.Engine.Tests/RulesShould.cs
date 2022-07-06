@@ -13,7 +13,7 @@ public class RulesShould
 {
     private readonly Mock<ISchedulingEngine> _engineMock;
 
-    public static readonly MonthScheduleParameters MonthScheduleParameters = new MonthScheduleParameters(
+    private static readonly MonthScheduleParameters MonthScheduleParameters = new MonthScheduleParameters(
         new ScheduledMonth(2022, 2),
         new[]
         {
@@ -24,6 +24,10 @@ public class RulesShould
         new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})});
 
     private static IEnumerable<Workplace> Workplaces => new[] {Workplace1, Workplace2};
+
+    private static IEnumerable<int> _fridays = new[] {4, 11, 18, 25};
+    private static IEnumerable<int> _saturdays = new[] {5, 12, 19, 26};
+    private static IEnumerable<int> _sundays = new[] {6, 13, 20, 27};
 
     public RulesShould()
     {
@@ -177,19 +181,42 @@ public class RulesShould
         
         Rules.LimitWeekendShifts(MonthScheduleParameters, _engineMock.Object);
 
-        var saturdays = new[] {5, 12, 19, 26};
-        var sundays = new[] {6, 13, 20, 27};
-
         Assert.All(
             new[] {Employee1, Employee2, Employee3}, employee =>
             {
                 Assert.Contains(
-                    saturdays.SelectMany(d => Workplaces.Select(workplace => new ShiftAssignment(employee, new Day(2022, 2, d), workplace))).ToHashSet(),
+                    _saturdays.SelectMany(d => Workplaces.Select(workplace => new ShiftAssignment(employee, new Day(2022, 2, d), workplace))).ToHashSet(),
                     capturedShifts.Select(_ => _.ToHashSet()));
 
                 Assert.Contains(
-                    sundays.SelectMany(d => Workplaces.Select(workplace => new ShiftAssignment(employee, new Day(2022, 2, d), workplace))).ToHashSet(),
+                    _sundays.SelectMany(d => Workplaces.Select(workplace => new ShiftAssignment(employee, new Day(2022, 2, d), workplace))).ToHashSet(),
                     capturedShifts.Select(_ => _.ToHashSet()));
+            });
+    }
+
+    [Fact]
+    public void AlwaysScheduleAlternatesOverWeekends()
+    {
+        var capturedShiftsLhs = new List<IReadOnlyCollection<ShiftAssignment>>();
+        var capturedShiftsRhs = new List<IReadOnlyCollection<ShiftAssignment>>();
+        
+        _engineMock.Setup(_ => _.AddSumRelationConstraint(Capture.In(capturedShiftsLhs), Constraint.Eq, Capture.In(capturedShiftsRhs)));
+        
+        Rules.AlwaysScheduleAlternatesOverWeekends(MonthScheduleParameters, _engineMock.Object);
+
+        Assert.All(
+            new[] {Employee1, Employee2, Employee3}, employee =>
+            {
+                Assert.All<(int, int)>(_fridays.Zip(_sundays), tuple =>
+                {
+                    var (friday, sunday) = tuple;
+                    Assert.Contains(
+                        Workplaces.Select(w => new ShiftAssignment(employee, new Day(2022, 2, friday), w)),
+                        capturedShiftsLhs.Select(_ => _.ToHashSet()));
+                    Assert.Contains(
+                        Workplaces.Select(w => new ShiftAssignment(employee, new Day(2022, 2, sunday), w)),
+                        capturedShiftsRhs.Select(_ => _.ToHashSet()));
+                });
             });
     }
 }
