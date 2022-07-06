@@ -1,6 +1,6 @@
 # Shift planner
 
-[![.NET](https://github.com/vkolencik/shift-planner/actions/workflows/dotnet.yml/badge.svg)](https://github.com/vkolencik/shift-planner/actions/workflows/dotnet.yml)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/vkolencik/shift-planner/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/vkolencik/shift-planner/tree/main)
 
 👷‍♂️ **WIP**
 
