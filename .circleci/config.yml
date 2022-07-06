@@ -10,8 +10,10 @@ jobs:
     description: Setup and run application tests
     executor:
       name: windows/default
+    working_directory: ~/project/backend
     steps:
-      - checkout
+      - checkout:
+          path: ~/project
 #      - restore_cache:
 #          keys:
 #            - dotnet-packages-v1-{{ checksum "SimpleCalc/SimpleCalc.csproj" }}
