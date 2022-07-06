@@ -289,6 +289,65 @@ public class ComputedScheduleShould
             Assert.True(shiftCounts.Max() - shiftCounts.Min() < 3, $"Too large differences between shift counts for {employee.Name}: {string.Join(", ", shiftCounts)}");
         }
     }
+
+    [Fact]
+    public void SpreadAssignedShiftsEvenlyAcrossMonthTakingLeavesIntoAccount()
+    {
+        var scheduler = new ShiftScheduler();
+
+        var week1start = 1;
+        var week2start = 8;
+        var week3start = 15;
+        var week4start = 22;
+
+        var boundaries = new[] {week1start, week2start, week3start, week4start, 29};
+
+        var oddWeekLeaves = new []
+        {
+            new Leave(new Day(2022, 2, week1start), new Day(2022, 2, week1start + 3)), 
+            new Leave(new Day(2022, 2, week3start), new Day(2022, 2, week3start + 3))
+        };
+        var evenWeekLeaves = new []
+        {
+            new Leave(new Day(2022, 2, week2start), new Day(2022, 2, week2start + 3)), 
+            new Leave(new Day(2022, 2, week4start), new Day(2022, 2, week4start + 3))
+        };
+
+        var oddWeekLeaveEmployees = Enumerable.Range(1,3).Select(i => 
+                new EmployeeMonth(
+                new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), 999),
+                oddWeekLeaves))
+            .ToArray();
+
+        var evenWeekLeaveEmployees = Enumerable.Range(4,3).Select(i => 
+                new EmployeeMonth(
+                new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), 999),
+                evenWeekLeaves))
+            .ToArray();
+
+        var result = scheduler.ComputeSchedule(
+            new MonthScheduleParameters(
+                new ScheduledMonth(2022, 2),
+                oddWeekLeaveEmployees.Concat(evenWeekLeaveEmployees).ToArray(),
+                new [] {new CompetenceGroup(new [] {Aro1})}
+            ));
+        var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
+        Assert.Equal(successResult.Flexibility, ScheduleFlexibility.Strict);
+        var schedule = successResult.Schedule;
+        
+        foreach (var employeeMonth in oddWeekLeaveEmployees)
+        {
+            var employeeShifts = schedule.Shifts.Where(s => s.Employee == employeeMonth.Employee);
+        
+            var shiftCounts = boundaries.Take(boundaries.Length - 1)
+                .Zip(boundaries.Skip(1), (dayFrom, dayTo) => employeeShifts.Count(s => dayFrom <= s.Shift.Day.Date.Day && s.Shift.Day.Date.Day < dayTo))
+                .ToArray();
+
+            var calibratedShiftCounts = shiftCounts.Zip(new[] {2, 1, 2, 1}, (int x, int y) => x * y).ToArray();
+        
+            Assert.True(calibratedShiftCounts.Max() - calibratedShiftCounts.Min() < 3, $"Too large differences between shift counts for {employeeMonth.Employee.Name}: {string.Join(", ", shiftCounts)}");
+        }
+    }
     
     [Fact]
     public void AlwaysScheduleWeekendsWithAlternates()
@@ -321,14 +380,14 @@ public class ComputedScheduleShould
     {
         var scheduler = new ShiftScheduler();
 
-        var schedule = scheduler.ComputeSchedule(
+        var result = scheduler.ComputeSchedule(
             new MonthScheduleParameters(
                 new ScheduledMonth(2022, 2),
                 _employeeMonths,
                 _competenceGroups
             ));
-        var successResult = (SuccessfulSchedulingResult) schedule;
-        // Assert.Equal(successResult.Flexibility, ScheduleFlexibility.Strict);
+        var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
+        Assert.True(successResult.Flexibility.Degree <= 1, $"Scheduler was forced to use too much flexibility (flexibility degree: {successResult.Flexibility.Degree}");
         return successResult.Schedule;
     }
 
