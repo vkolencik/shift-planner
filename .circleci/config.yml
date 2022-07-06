@@ -18,25 +18,26 @@ jobs:
     steps:
       - checkout:
           path: ~/project
+      - install .net tools:
+          - dotnet tool install -g trx2junit
+          - echo 'export PATH="$PATH:/root/.dotnet/tools"' >> "$BASH_ENV"
 #      - restore_cache:
 #          keys:
 #            - dotnet-packages-v1-{{ checksum "SimpleCalc/SimpleCalc.csproj" }}
-      - run:
-          name: "Install project dependencies"
-          command: dotnet restore
+      - run: dotnet restore
 #      - save_cache:
 #          paths:
 #            - C:\Users\circleci\.nuget\packages
 #          key: dotnet-packages-v1-{{ checksum "SimpleCalc/SimpleCalc.csproj" }}
+      - run: dotnet build
+      - run: dotnet test --no-build --logger "trx"
       - run:
-          name: "Run Application Tests"
-          command: dotnet test -v n --results-directory:test_coverage --collect:"Code Coverage"
-      - run:
-          name: "Print Working Directory"
-          command: pwd
-      - store_artifacts:
-          path: C:\Users\circleci\project\test_coverage
-
+          name: "Store test results"
+          when: always
+          command: |
+            dotnet tool install -g trx2junit
+            export PATH="$PATH:/root/.dotnet/tools"
+            trx2junit test/**/TestResults/*.trx
 workflows:
   test_and_build:
     jobs:
