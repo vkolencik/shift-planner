@@ -73,7 +73,7 @@ public class ComputedScheduleShould
             new WorkplaceCapability.Green(Aro3, 30), new WorkplaceCapability.Green(Res3, 30),
         });
        
-        _employeeMonths = Enumerable.Range(1, 40)
+        _employeeMonths = Enumerable.Range(1, 42)
             .Select(i => new EmployeeMonth(
                 new Employee(
                     Name: $"Employee{i}",
@@ -404,7 +404,7 @@ public class ComputedScheduleShould
                 _competenceGroups
             ));
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
-        Assert.True(successResult.Flexibility.Degree <= 1, $"Scheduler was forced to use too much flexibility (flexibility degree: {successResult.Flexibility.Degree}");
+        Assert.True(successResult.Flexibility.Degree <= 1, $"Scheduler was forced to use too much flexibility (flexibility degree: {successResult.Flexibility.Degree})");
         return successResult.Schedule;
     }
 
