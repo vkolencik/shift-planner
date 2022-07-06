@@ -18,9 +18,6 @@ jobs:
     steps:
       - checkout:
           path: ~/project
-      - install .net tools:
-          - dotnet tool install -g trx2junit
-          - echo 'export PATH="$PATH:/root/.dotnet/tools"' >> "$BASH_ENV"
 #      - restore_cache:
 #          keys:
 #            - dotnet-packages-v1-{{ checksum "SimpleCalc/SimpleCalc.csproj" }}
