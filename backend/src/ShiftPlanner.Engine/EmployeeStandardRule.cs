@@ -44,7 +44,7 @@ internal static class EmployeeStandardRule
                     .Where(d => !employeeMonth.Leaves.Any(l => l.Days.Contains(d)))
                     .Count();
 
-                var standard = ComputeStandard(schedulingParams, employeeMonth, (double) workingDaysInRange / workingDaysInMonth);
+                var standard = ComputeStandard(schedulingParams, employeeMonth, (double) workingDaysInRange / workingDaysInMonth, 0.1);
                 
                 var shiftsInRange = schedulingParams.Month.Days
                     .Where(d => from <= d.Date.Day && d.Date.Day <= to)
@@ -92,13 +92,14 @@ internal static class EmployeeStandardRule
     private static EmployeeStandard ComputeStandard(
         SchedulerParameters monthScheduleParameters,
         EmployeeMonth employeeMonth,
-        double multiplier)
+        double multiplier,
+        double flexibilityMultiplier = 1)
     {
         var daysCount = (double) monthScheduleParameters.Month.Days.Count;
         var totalRequiredCapacity = daysCount * monthScheduleParameters.Workplaces.Count;
         var totalEmployeeCapacity = (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
         var employeeCapacity = daysCount - employeeMonth.Leaves.Sum(l => l.LengthDays);
-        var flexibilityModifier = (double) monthScheduleParameters.Flexibility.Degree / 10;
+        var flexibilityModifier = flexibilityMultiplier * monthScheduleParameters.Flexibility.Degree / 10;
         var preciseStandard = totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
         var standardLb = Math.Max(0, multiplier * preciseStandard - flexibilityModifier);
         var standardUb = Math.Min(employeeMonth.Employee.MaxShiftsPerMonth, multiplier * preciseStandard + flexibilityModifier);
