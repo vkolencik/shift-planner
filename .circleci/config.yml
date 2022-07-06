@@ -36,15 +36,6 @@ jobs:
           command: pwd
       - store_artifacts:
           path: C:\Users\circleci\project\test_coverage
-  build:
-    description: Build application with Release configuration
-    executor:
-      name: windows/server-2022
-    steps:
-      - checkout
-      - run:
-          name: "Build Application according to some given configuration"
-          command: dotnet build --configuration Release
 
 workflows:
   test_and_build:
