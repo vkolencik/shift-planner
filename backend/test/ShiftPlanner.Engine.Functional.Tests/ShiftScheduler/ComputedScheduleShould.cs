@@ -313,16 +313,20 @@ public class ComputedScheduleShould
             new Leave(new Day(2022, 2, week4start), new Day(2022, 2, week4start + 3))
         };
 
-        var oddWeekLeaveEmployees = Enumerable.Range(1,3).Select(i => 
-                new EmployeeMonth(
-                new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), 999),
-                oddWeekLeaves))
+        int numberOfEmployeesInEachGroup = 4;
+
+        var oddWeekLeaveEmployees = Enumerable.Range(1, numberOfEmployeesInEachGroup).Select(
+                i =>
+                    new EmployeeMonth(
+                        new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), 999),
+                        oddWeekLeaves))
             .ToArray();
 
-        var evenWeekLeaveEmployees = Enumerable.Range(4,3).Select(i => 
-                new EmployeeMonth(
-                new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), 999),
-                evenWeekLeaves))
+        var evenWeekLeaveEmployees = Enumerable.Range(numberOfEmployeesInEachGroup + 1, numberOfEmployeesInEachGroup).Select(
+                i =>
+                    new EmployeeMonth(
+                        new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), 999),
+                        evenWeekLeaves))
             .ToArray();
 
         var result = scheduler.ComputeSchedule(
@@ -345,7 +349,20 @@ public class ComputedScheduleShould
 
             var calibratedShiftCounts = shiftCounts.Zip(new[] {2, 1, 2, 1}, (int x, int y) => x * y).ToArray();
         
-            Assert.True(calibratedShiftCounts.Max() - calibratedShiftCounts.Min() < 3, $"Too large differences between shift counts for {employeeMonth.Employee.Name}: {string.Join(", ", shiftCounts)}");
+            Assert.True(calibratedShiftCounts.Max() - calibratedShiftCounts.Min() <= 2, $"Too large differences between shift counts for {employeeMonth.Employee.Name}: {string.Join(", ", shiftCounts)}");
+        }
+
+        foreach (var employeeMonth in evenWeekLeaveEmployees)
+        {
+            var employeeShifts = schedule.Shifts.Where(s => s.Employee == employeeMonth.Employee);
+        
+            var shiftCounts = boundaries.Take(boundaries.Length - 1)
+                .Zip(boundaries.Skip(1), (dayFrom, dayTo) => employeeShifts.Count(s => dayFrom <= s.Shift.Day.Date.Day && s.Shift.Day.Date.Day < dayTo))
+                .ToArray();
+
+            var calibratedShiftCounts = shiftCounts.Zip(new[] {1, 2, 1, 2}, (int x, int y) => x * y).ToArray();
+        
+            Assert.True(calibratedShiftCounts.Max() - calibratedShiftCounts.Min() <= 2, $"Too large differences between shift counts for {employeeMonth.Employee.Name}: {string.Join(", ", shiftCounts)}");
         }
     }
     
