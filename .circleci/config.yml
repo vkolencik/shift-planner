@@ -18,23 +18,26 @@ jobs:
     steps:
       - checkout:
           path: ~/project
-#      - restore_cache:
-#          keys:
-#            - dotnet-packages-v1-{{ checksum "SimpleCalc/SimpleCalc.csproj" }}
+      #      - restore_cache:
+      #          keys:
+      #            - dotnet-packages-v1-{{ checksum "SimpleCalc/SimpleCalc.csproj" }}
       - run: dotnet restore
-#      - save_cache:
-#          paths:
-#            - C:\Users\circleci\.nuget\packages
-#          key: dotnet-packages-v1-{{ checksum "SimpleCalc/SimpleCalc.csproj" }}
+      #      - save_cache:
+      #          paths:
+      #            - C:\Users\circleci\.nuget\packages
+      #          key: dotnet-packages-v1-{{ checksum "SimpleCalc/SimpleCalc.csproj" }}
       - run: dotnet build
       - run: dotnet test --no-build --logger "trx"
       - run:
-          name: "Store test results"
+          name: "Convert test results"
           when: always
           command: |
             dotnet tool install -g trx2junit
             export PATH="$PATH:/root/.dotnet/tools"
             trx2junit test/**/TestResults/*.trx
+      - store_test_results:
+          path: tests/TestResults
+
 workflows:
   test_and_build:
     jobs:
