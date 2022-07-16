@@ -76,9 +76,9 @@ public class ComputedScheduleShould
         _employeeMonths = Enumerable.Range(1, 42)
             .Select(i => new EmployeeMonth(
                 new Employee(
-                    Name: $"Employee{i}",
-                    CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
-                    Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces),
+                    name: $"Employee{i}",
+                    competenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
+                    capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces),
                 i <= _employeesWithTimeOffCount ? new [] { new Leave(new Day(2022, 2, 1 + i * 2), new Day(2022, 2, 1 + i * 2 + 14)) } : Array.Empty<Leave>()                
             ))
             .Concat(new[] {_percentualCapabilitiesEmployee1, _percentualCapabilitiesEmployee2WithLeave})
@@ -318,14 +318,14 @@ public class ComputedScheduleShould
         var oddWeekLeaveEmployees = Enumerable.Range(1, numberOfEmployeesInEachGroup).Select(
                 i =>
                     new EmployeeMonth(
-                        new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), 999),
+                        new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), Workload.Infinite),
                         oddWeekLeaves))
             .ToArray();
 
         var evenWeekLeaveEmployees = Enumerable.Range(numberOfEmployeesInEachGroup + 1, numberOfEmployeesInEachGroup).Select(
                 i =>
                     new EmployeeMonth(
-                        new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), 999),
+                        new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), Workload.Infinite),
                         evenWeekLeaves))
             .ToArray();
 
