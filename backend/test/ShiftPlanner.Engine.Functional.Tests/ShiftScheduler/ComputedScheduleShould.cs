@@ -187,11 +187,13 @@ public class ComputedScheduleShould
     {
         var schedule = ComputeSchedule();
 
-        var shiftNumbers = Employees.Where(e => !EmployeesWithTimeOff.Contains(e)).Select(e => schedule.Shifts.Count(s => s.Employee == e)).ToList();
+        var shiftNumbers = EmployeesWithoutTimeOff.Select(e => schedule.Shifts.Count(s => s.Employee == e)).ToList();
 
         var maxShiftsPerMonth = shiftNumbers.Max();
         var minShiftsPerMonth = shiftNumbers.Min();
         Assert.True(maxShiftsPerMonth - minShiftsPerMonth <= 2, $"Minimum number of shifts {minShiftsPerMonth} is too different from maximum {maxShiftsPerMonth}");
+        Assert.All(shiftNumbers, shiftNumber => Assert.True(shiftNumber <= Workload.Full.MaximumShiftsPerMonth, $"Number of shifts ({shiftNumber}) should be <= maximum of {Workload.Full.MinimumShiftsPerMonth}"));
+        Assert.All(shiftNumbers, shiftNumber => Assert.True(shiftNumber >= Workload.Full.MinimumShiftsPerMonth, $"Number of shifts ({shiftNumber}) should be >= minimum of {Workload.Full.MinimumShiftsPerMonth}"));
         
         var shiftNumbersForEmployeesWithTimeOff = EmployeesWithTimeOff.Select(e => schedule.Shifts.Count(s => s.Employee == e)).ToList();
         var maxShiftsTimeOffPerMonth = shiftNumbersForEmployeesWithTimeOff.Max();
@@ -199,6 +201,8 @@ public class ComputedScheduleShould
         Assert.True(maxShiftsTimeOffPerMonth - minShiftsTimeOffPerMonth <= 2, $"Minimum number of shifts {minShiftsTimeOffPerMonth} is too different from maximum {maxShiftsTimeOffPerMonth}");
         
         Assert.True(Math.Abs(2 * maxShiftsTimeOffPerMonth - maxShiftsPerMonth) <= 1, $"Employees with half of month off should have about half the number of total shifts, but had {maxShiftsTimeOffPerMonth} which is not half of {maxShiftsPerMonth}");
+        Assert.All(shiftNumbersForEmployeesWithTimeOff, shiftNumber => Assert.True(2 * shiftNumber <= Workload.Full.MaximumShiftsPerMonth));
+        Assert.All(shiftNumbersForEmployeesWithTimeOff, shiftNumber => Assert.True(2 * shiftNumber >= Workload.Full.MinimumShiftsPerMonth));
     }
 
     [Fact]

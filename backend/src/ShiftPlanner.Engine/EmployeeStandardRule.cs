@@ -101,8 +101,8 @@ internal static class EmployeeStandardRule
         var employeeCapacity = daysCount - employeeMonth.Leaves.Sum(l => l.LengthDays);
         var flexibilityModifier = flexibilityMultiplier * monthScheduleParameters.Flexibility.Degree / 10;
         var preciseStandard = totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
-        var standardLb = Math.Max(0, multiplier * preciseStandard - flexibilityModifier);
-        var standardUb = Math.Min(-100, multiplier * preciseStandard + flexibilityModifier);
+        var standardLb = Math.Max(employeeMonth.Employee.Workload.MinimumShiftsPerMonth, multiplier * preciseStandard - flexibilityModifier);
+        var standardUb = Math.Min(employeeMonth.Employee.Workload.MaximumShiftsPerMonth, multiplier * preciseStandard + flexibilityModifier);
 
         return new EmployeeStandard(
             (uint) Math.Floor(standardLb),

@@ -15,9 +15,9 @@ public record Workload
 
     private Workload(string name, uint minimumShiftsPerMonth, uint maximumShiftsPerMonth)
     {
-        this.Name = name;
-        this.MinimumShiftsPerMonth = minimumShiftsPerMonth;
-        this.MaximumShiftsPerMonth = maximumShiftsPerMonth;
+        Name = name;
+        MinimumShiftsPerMonth = minimumShiftsPerMonth;
+        MaximumShiftsPerMonth = maximumShiftsPerMonth;
     }
 
     public string Name { get; }
