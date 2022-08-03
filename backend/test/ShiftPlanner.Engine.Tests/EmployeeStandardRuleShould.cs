@@ -170,6 +170,7 @@ public class EmployeeStandardRuleShould
     {
         var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), workload);
         var capturedBoundsLte = new List<uint>();
+        var capturedBoundsGte = new List<uint>();
 
         var month = new ScheduledMonth(2022, 2);
         var schedulingParams = new SchedulerParameters(
@@ -186,12 +187,17 @@ public class EmployeeStandardRuleShould
         );
 
         _engineMock.Setup(_ => _.AddSumConstraint(It.IsAny<IReadOnlyCollection<ShiftAssignment>>(), Constraint.Lte, Capture.In(capturedBoundsLte)));
+        _engineMock.Setup(_ => _.AddSumConstraint(It.IsAny<IReadOnlyCollection<ShiftAssignment>>(), Constraint.Gte, Capture.In(capturedBoundsGte)));
 
         EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object);
 
         var lteBound = Assert.Single(capturedBoundsLte);
+        var gteBound = Assert.Single(capturedBoundsGte);
         
-        Assert.Equal(workload.MaximumShiftsPerMonth, 2 * lteBound);
+        Assert.Equal(Math.Ceiling((double) workload.MaximumShiftsPerMonth / 2), lteBound);
+        
+        // TODO: create a separate test for upper bound as well
+        // Assert.Equal(Math.Floor((double) workload.MaximumShiftsPerMonth / 2), gteBound);
     }
 
     private static IEnumerable<object[]> GetAllWorkloads() => new []
