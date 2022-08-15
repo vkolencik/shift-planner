@@ -36,7 +36,8 @@ public class ComputedScheduleShould
                     new WorkplaceCapability.Green(Aro1, 20), new WorkplaceCapability.Green(Res1, 20),
                     new WorkplaceCapability.Green(Aro2, 20), new WorkplaceCapability.Red(Res2),
                     new WorkplaceCapability.Green(Aro3, 40), new WorkplaceCapability.Red(Res3)
-                })
+                }),
+            Workload.Infinite
         ));
 
     readonly EmployeeMonth _percentualCapabilitiesEmployee2WithLeave = new EmployeeMonth(
@@ -49,7 +50,8 @@ public class ComputedScheduleShould
                     new WorkplaceCapability.Red(Aro1), new WorkplaceCapability.Red(Res1),
                     new WorkplaceCapability.Red(Aro2), new WorkplaceCapability.Red(Res2),
                     new WorkplaceCapability.Green(Aro3, 80), new WorkplaceCapability.Green(Res3, 20),
-                })
+                }),
+            Workload.Infinite   
         ),
         new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 15))}
     );
@@ -76,9 +78,10 @@ public class ComputedScheduleShould
         _employeeMonths = Enumerable.Range(1, 42)
             .Select(i => new EmployeeMonth(
                 new Employee(
-                    name: $"Employee{i}",
-                    competenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
-                    capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces),
+                    Name: $"Employee{i}",
+                    CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
+                    Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces,
+                    Workload: Workload.Infinite),
                 i <= _employeesWithTimeOffCount ? new [] { new Leave(new Day(2022, 2, 1 + i * 2), new Day(2022, 2, 1 + i * 2 + 14)) } : Array.Empty<Leave>()                
             ))
             .Concat(new[] {_percentualCapabilitiesEmployee1, _percentualCapabilitiesEmployee2WithLeave})
@@ -192,8 +195,6 @@ public class ComputedScheduleShould
         var maxShiftsPerMonth = shiftNumbers.Max();
         var minShiftsPerMonth = shiftNumbers.Min();
         Assert.True(maxShiftsPerMonth - minShiftsPerMonth <= 2, $"Minimum number of shifts {minShiftsPerMonth} is too different from maximum {maxShiftsPerMonth}");
-        Assert.All(shiftNumbers, shiftNumber => Assert.True(shiftNumber <= Workload.Full.MaximumShiftsPerMonth, $"Number of shifts ({shiftNumber}) should be <= maximum of {Workload.Full.MinimumShiftsPerMonth}"));
-        Assert.All(shiftNumbers, shiftNumber => Assert.True(shiftNumber >= Workload.Full.MinimumShiftsPerMonth, $"Number of shifts ({shiftNumber}) should be >= minimum of {Workload.Full.MinimumShiftsPerMonth}"));
         
         var shiftNumbersForEmployeesWithTimeOff = EmployeesWithTimeOff.Select(e => schedule.Shifts.Count(s => s.Employee == e)).ToList();
         var maxShiftsTimeOffPerMonth = shiftNumbersForEmployeesWithTimeOff.Max();
@@ -201,8 +202,6 @@ public class ComputedScheduleShould
         Assert.True(maxShiftsTimeOffPerMonth - minShiftsTimeOffPerMonth <= 2, $"Minimum number of shifts {minShiftsTimeOffPerMonth} is too different from maximum {maxShiftsTimeOffPerMonth}");
         
         Assert.True(Math.Abs(2 * maxShiftsTimeOffPerMonth - maxShiftsPerMonth) <= 1, $"Employees with half of month off should have about half the number of total shifts, but had {maxShiftsTimeOffPerMonth} which is not half of {maxShiftsPerMonth}");
-        Assert.All(shiftNumbersForEmployeesWithTimeOff, shiftNumber => Assert.True(2 * shiftNumber <= Workload.Full.MaximumShiftsPerMonth));
-        Assert.All(shiftNumbersForEmployeesWithTimeOff, shiftNumber => Assert.True(2 * shiftNumber >= Workload.Full.MinimumShiftsPerMonth));
     }
 
     [Fact]

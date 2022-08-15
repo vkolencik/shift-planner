@@ -25,7 +25,9 @@ public class ShiftFlexibilityShould
                                 {
                                     new WorkplaceCapability.Green(workplaceA, 100),
                                     new WorkplaceCapability.Red(workplaceB)
-                                }))))
+                                }),
+                            Workload.Infinite
+                        )))
                 .Concat(
                     Enumerable.Range(1, 20).Select(
                         i => new EmployeeMonth(
@@ -37,7 +39,8 @@ public class ShiftFlexibilityShould
                                     {
                                         new WorkplaceCapability.Red(workplaceA),
                                         new WorkplaceCapability.Green(workplaceB, 100)
-                                    }))))
+                                    }),
+                                Workload.Infinite)))
                 ).ToArray(),
             new[] {new CompetenceGroup(new[] {workplaceA, workplaceB})});
 
