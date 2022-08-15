@@ -36,7 +36,8 @@ public class ComputedScheduleShould
                     new WorkplaceCapability.Green(Aro1, 20), new WorkplaceCapability.Green(Res1, 20),
                     new WorkplaceCapability.Green(Aro2, 20), new WorkplaceCapability.Red(Res2),
                     new WorkplaceCapability.Green(Aro3, 40), new WorkplaceCapability.Red(Res3)
-                })
+                }),
+            Workload.Infinite
         ));
 
     readonly EmployeeMonth _percentualCapabilitiesEmployee2WithLeave = new EmployeeMonth(
@@ -49,7 +50,8 @@ public class ComputedScheduleShould
                     new WorkplaceCapability.Red(Aro1), new WorkplaceCapability.Red(Res1),
                     new WorkplaceCapability.Red(Aro2), new WorkplaceCapability.Red(Res2),
                     new WorkplaceCapability.Green(Aro3, 80), new WorkplaceCapability.Green(Res3, 20),
-                })
+                }),
+            Workload.Infinite   
         ),
         new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 15))}
     );
@@ -78,7 +80,8 @@ public class ComputedScheduleShould
                 new Employee(
                     Name: $"Employee{i}",
                     CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
-                    Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces),
+                    Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces,
+                    Workload: Workload.Infinite),
                 i <= _employeesWithTimeOffCount ? new [] { new Leave(new Day(2022, 2, 1 + i * 2), new Day(2022, 2, 1 + i * 2 + 14)) } : Array.Empty<Leave>()                
             ))
             .Concat(new[] {_percentualCapabilitiesEmployee1, _percentualCapabilitiesEmployee2WithLeave})
@@ -187,7 +190,7 @@ public class ComputedScheduleShould
     {
         var schedule = ComputeSchedule();
 
-        var shiftNumbers = Employees.Where(e => !EmployeesWithTimeOff.Contains(e)).Select(e => schedule.Shifts.Count(s => s.Employee == e)).ToList();
+        var shiftNumbers = EmployeesWithoutTimeOff.Select(e => schedule.Shifts.Count(s => s.Employee == e)).ToList();
 
         var maxShiftsPerMonth = shiftNumbers.Max();
         var minShiftsPerMonth = shiftNumbers.Min();
@@ -318,14 +321,14 @@ public class ComputedScheduleShould
         var oddWeekLeaveEmployees = Enumerable.Range(1, numberOfEmployeesInEachGroup).Select(
                 i =>
                     new EmployeeMonth(
-                        new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), 999),
+                        new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), Workload.Infinite),
                         oddWeekLeaves))
             .ToArray();
 
         var evenWeekLeaveEmployees = Enumerable.Range(numberOfEmployeesInEachGroup + 1, numberOfEmployeesInEachGroup).Select(
                 i =>
                     new EmployeeMonth(
-                        new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), 999),
+                        new Employee($"Employee{i}", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Aro1, 100)}), Workload.Infinite),
                         evenWeekLeaves))
             .ToArray();
 

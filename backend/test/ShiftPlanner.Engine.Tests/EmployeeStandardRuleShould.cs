@@ -104,7 +104,7 @@ public class EmployeeStandardRuleShould
         var capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
 
-        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 20), new WorkplaceCapability.Green(Workplace2, 80) }), 999);
+        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 20), new WorkplaceCapability.Green(Workplace2, 80) }), Workload.Infinite);
         var schedulingParams = new SchedulerParameters(
             new ScheduledMonth(2022, 2),
             new[]
@@ -131,15 +131,17 @@ public class EmployeeStandardRuleShould
                 capturedShiftsLte.Select(x => new HashSet<ShiftAssignment>(x)));
     }
 
-    [Fact]
-    public void TakeEmployeeMaxStandardIntoAccount()
+    [Theory]
+    [MemberData(nameof(GetAllWorkloads))]
+    public void TakeEmployeeMaxStandardIntoAccount(Workload workload)
     {
-        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), 13);
+        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), workload);
         var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedBoundsLte = new List<uint>();
-        
+
+        var month = new ScheduledMonth(2022, 2);
         var schedulingParams = new SchedulerParameters(
-            new ScheduledMonth(2022, 2),
+            month,
             new[]
             {
                 new EmployeeMonth(employee)
@@ -151,18 +153,67 @@ public class EmployeeStandardRuleShould
             ScheduleFlexibility.Strict
         );
 
-        _engineMock.Setup(_ => _.AddSumConstraint(It.IsAny<IReadOnlyCollection<ShiftAssignment>>(), Constraint.Lte, Capture.In(capturedBoundsLte)));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, Capture.In(capturedBoundsLte)));
 
         EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object);
 
         var lteBound = Assert.Single(capturedBoundsLte);
-        Assert.Equal(employee.MaxShiftsPerMonth, lteBound);
+        var lteShifts = Assert.Single(capturedShiftsLte);
+        
+        Assert.Equal(workload.MaximumShiftsPerMonth, lteBound);
+        Assert.Equal(month.Days.Select(d => new ShiftAssignment(employee, d, Workplace1)), lteShifts);
     }
+
+    [Theory]
+    [MemberData(nameof(GetAllWorkloads))]
+    public void TakeEmployeeMaxStandardIntoAccountIncludingLeave(Workload workload)
+    {
+        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), workload);
+        var capturedBoundsLte = new List<uint>();
+        var capturedBoundsGte = new List<uint>();
+
+        var month = new ScheduledMonth(2022, 2);
+        var schedulingParams = new SchedulerParameters(
+            month,
+            new[]
+            {
+                new EmployeeMonth(employee, new [] { new Leave(new Day(2022, 2, 1), new Day(2022, 2, 14))})
+            },
+            new[]
+            {
+                new CompetenceGroup(new[] {Workplace1})
+            },
+            ScheduleFlexibility.Strict
+        );
+
+        _engineMock.Setup(_ => _.AddSumConstraint(It.IsAny<IReadOnlyCollection<ShiftAssignment>>(), Constraint.Lte, Capture.In(capturedBoundsLte)));
+        _engineMock.Setup(_ => _.AddSumConstraint(It.IsAny<IReadOnlyCollection<ShiftAssignment>>(), Constraint.Gte, Capture.In(capturedBoundsGte)));
+
+        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object);
+
+        var lteBound = Assert.Single(capturedBoundsLte);
+        var gteBound = Assert.Single(capturedBoundsGte);
+        
+        Assert.Equal(Math.Ceiling((double) workload.MaximumShiftsPerMonth / 2), lteBound);
+        
+        // TODO: create a separate test for upper bound as well
+        // Assert.Equal(Math.Floor((double) workload.MaximumShiftsPerMonth / 2), gteBound);
+    }
+
+    private static IEnumerable<object[]> GetAllWorkloads() => new []
+    {
+        Workload.Workload04,
+        Workload.Workload05,
+        Workload.Workload06,
+        Workload.Workload07,
+        Workload.Workload08,
+        Workload.Full
+    }.Select(_ => new object[] {_});
 
     [Fact]
     public void SpreadShiftsEvenlyThroughoutMonth()
     {
-        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), 999);
+        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), Workload.Infinite);
 
         var leave = new Leave(new Day(2022, 2, 1), new Day(2022, 2, 3));
         var schedulingParams = new SchedulerParameters(
@@ -179,8 +230,6 @@ public class EmployeeStandardRuleShould
             },
             ScheduleFlexibility.Strict
         );
-
-        var workingDaysCount = schedulingParams.Month.Days.Count - leave.Days.Count();
 
         List<IReadOnlyCollection<ShiftAssignment>> capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
         List<IReadOnlyCollection<ShiftAssignment>> capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
