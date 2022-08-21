@@ -4,6 +4,7 @@ version: 2.1
 
 orbs:
   windows: circleci/windows@4.1.1
+  cdk: myhelix/cdk@1.4.2
 
 executors:
   dotnet-sdk:
@@ -42,3 +43,4 @@ workflows:
   test_and_build:
     jobs:
       - test
+      - cdk/deploy
