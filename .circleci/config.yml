@@ -43,4 +43,9 @@ workflows:
   test_and_build:
     jobs:
       - test
-      - cdk/deploy
+      - cdk/build:
+          cdk_directory: deployment
+  deploy:
+    jobs:
+      - cdk/deploy:
+          cdk_directory: deployment
