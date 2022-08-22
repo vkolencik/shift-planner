@@ -54,7 +54,7 @@ jobs:
       - checkout:
           path: ~/project
       - run: npm ci
-      - run: npm run cdk deploy
+      - run: npm run cdk deploy --require-approval never
 
 workflows:
   test_and_build:
