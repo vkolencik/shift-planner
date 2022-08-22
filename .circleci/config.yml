@@ -2,16 +2,16 @@
 
 version: 2.1
 
-orbs:
-  windows: circleci/windows@4.1.1
-
 executors:
   dotnet-sdk:
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
+  node:
+    docker:
+      - image: node:18-alpine
 
 jobs:
-  test:
+  test-backend:
     description: Setup and run application tests
     executor: dotnet-sdk
     working_directory: ~/project/backend
@@ -37,8 +37,31 @@ jobs:
             trx2junit test/**/TestResults/*.trx --output test/TestResults/
       - store_test_results:
           path: test/TestResults
+  build-cdk:
+    description: Build CDK deployment script
+    executor: node
+    working_directory: ~/project/deployment
+    steps:
+      - checkout:
+          path: ~/project
+      - run: npm ci
+      - run: npm run build
+  deploy-cdk:
+    description: Build CDK deployment script
+    executor: node
+    working_directory: ~/project/deployment
+    steps:
+      - checkout:
+          path: ~/project
+      - run: npm ci
+      - run: npm run cdk deploy
 
 workflows:
   test_and_build:
     jobs:
-      - test
+      - test-backend
+      - build-cdk
+      - deploy-cdk:
+          requires:
+            - test-backend
+            - build-cdk
