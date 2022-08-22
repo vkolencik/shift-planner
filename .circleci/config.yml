@@ -40,7 +40,7 @@ jobs:
   build-cdk:
     description: Build CDK deployment script
     executor: node
-    working_directory: ~/project/backend
+    working_directory: ~/project/deployment
     steps:
       - checkout:
           path: ~/project
@@ -49,7 +49,7 @@ jobs:
   deploy-cdk:
     description: Build CDK deployment script
     executor: node
-    working_directory: ~/project/backend
+    working_directory: ~/project/deployment
     steps:
       - checkout:
           path: ~/project
