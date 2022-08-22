@@ -1,41 +1,34 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Api", "src\ShiftPlanner.Api\ShiftPlanner.Api.csproj", "{16875CB4-4C8C-4422-BF43-57D4602DF72E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShiftPlanner.Engine", "src\ShiftPlanner.Engine\ShiftPlanner.Engine.csproj", "{C59127F1-19B3-4B65-812F-109738C4335C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Engine", "src\ShiftPlanner.Engine\ShiftPlanner.Engine.csproj", "{C59127F1-19B3-4B65-812F-109738C4335C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShiftPlanner.Cli", "src\ShiftPlanner.Cli\ShiftPlanner.Cli.csproj", "{399C7677-86DB-45CD-88B9-21F0904FE271}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Cli", "src\ShiftPlanner.Cli\ShiftPlanner.Cli.csproj", "{399C7677-86DB-45CD-88B9-21F0904FE271}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Domain", "src\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj", "{D8760DE2-4FDE-4375-9002-4FB8C716610C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShiftPlanner.Domain", "src\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj", "{D8760DE2-4FDE-4375-9002-4FB8C716610C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1E6033B3-8355-4D8C-92C7-F8367ECCD570}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{ED84CCCC-8C80-441B-A438-23AA1BDA62C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Engine.Tests", "test\ShiftPlanner.Engine.Tests\ShiftPlanner.Engine.Tests.csproj", "{AB152F21-A96D-4A9C-87CC-F77138FA2EFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShiftPlanner.Engine.Tests", "test\ShiftPlanner.Engine.Tests\ShiftPlanner.Engine.Tests.csproj", "{AB152F21-A96D-4A9C-87CC-F77138FA2EFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Engine.Functional.Tests", "test\ShiftPlanner.Engine.Functional.Tests\ShiftPlanner.Engine.Functional.Tests.csproj", "{09A36C83-D6A1-417D-A745-EA043C0FA05A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShiftPlanner.Engine.Functional.Tests", "test\ShiftPlanner.Engine.Functional.Tests\ShiftPlanner.Engine.Functional.Tests.csproj", "{09A36C83-D6A1-417D-A745-EA043C0FA05A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Domain.Tests", "test\ShiftPlanner.Domain.Tests\ShiftPlanner.Domain.Tests.csproj", "{38CE854D-6872-4818-ACA0-06F820E81BD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShiftPlanner.Domain.Tests", "test\ShiftPlanner.Domain.Tests\ShiftPlanner.Domain.Tests.csproj", "{38CE854D-6872-4818-ACA0-06F820E81BD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.GoogleSheet", "src\ShiftPlanner.GoogleSheet\ShiftPlanner.GoogleSheet.csproj", "{4C24C34E-9F34-43E2-AFB1-824CE884FDF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShiftPlanner.GoogleSheet", "src\ShiftPlanner.GoogleSheet\ShiftPlanner.GoogleSheet.csproj", "{4C24C34E-9F34-43E2-AFB1-824CE884FDF1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShiftPlanner.Api", "src\ShiftPlanner.Api\ShiftPlanner.Api.csproj", "{C5079A62-145E-4204-8B0E-CE7EDB638BDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{16875CB4-4C8C-4422-BF43-57D4602DF72E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16875CB4-4C8C-4422-BF43-57D4602DF72E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16875CB4-4C8C-4422-BF43-57D4602DF72E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16875CB4-4C8C-4422-BF43-57D4602DF72E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C59127F1-19B3-4B65-812F-109738C4335C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C59127F1-19B3-4B65-812F-109738C4335C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C59127F1-19B3-4B65-812F-109738C4335C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -64,15 +57,25 @@ Global
 		{4C24C34E-9F34-43E2-AFB1-824CE884FDF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C24C34E-9F34-43E2-AFB1-824CE884FDF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C24C34E-9F34-43E2-AFB1-824CE884FDF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5079A62-145E-4204-8B0E-CE7EDB638BDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5079A62-145E-4204-8B0E-CE7EDB638BDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5079A62-145E-4204-8B0E-CE7EDB638BDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5079A62-145E-4204-8B0E-CE7EDB638BDE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{16875CB4-4C8C-4422-BF43-57D4602DF72E} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
+		{C59127F1-19B3-4B65-812F-109738C4335C} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
 		{399C7677-86DB-45CD-88B9-21F0904FE271} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
 		{D8760DE2-4FDE-4375-9002-4FB8C716610C} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
-		{C59127F1-19B3-4B65-812F-109738C4335C} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
 		{AB152F21-A96D-4A9C-87CC-F77138FA2EFB} = {ED84CCCC-8C80-441B-A438-23AA1BDA62C0}
 		{09A36C83-D6A1-417D-A745-EA043C0FA05A} = {ED84CCCC-8C80-441B-A438-23AA1BDA62C0}
 		{38CE854D-6872-4818-ACA0-06F820E81BD3} = {ED84CCCC-8C80-441B-A438-23AA1BDA62C0}
 		{4C24C34E-9F34-43E2-AFB1-824CE884FDF1} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
+		{C5079A62-145E-4204-8B0E-CE7EDB638BDE} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F388AFFB-3E53-42D2-B0C1-6ADEB8A5C4AB}
 	EndGlobalSection
 EndGlobal
