@@ -11,7 +11,7 @@ executors:
       - image: node:18-alpine
 
 jobs:
-  test-backend:
+  build-and-test-backend:
     description: Setup and run application tests
     executor: dotnet-sdk
     working_directory: ~/project/backend
@@ -26,7 +26,7 @@ jobs:
       #          paths:
       #            - C:\Users\circleci\.nuget\packages
       #          key: dotnet-packages-v1-{{ checksum "SimpleCalc/SimpleCalc.csproj" }}
-      - run: dotnet build
+      - run: dotnet build -c Release
       - run: dotnet test --no-build --logger "trx"
       - run:
           name: "Convert test results"
@@ -59,9 +59,9 @@ jobs:
 workflows:
   test_and_build:
     jobs:
-      - test-backend
+      - build-and-test-backend
       - build-cdk
       - deploy-cdk:
           requires:
-            - test-backend
+            - build-and-test-backend
             - build-cdk
