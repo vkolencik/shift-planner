@@ -27,7 +27,7 @@ jobs:
       #            - C:\Users\circleci\.nuget\packages
       #          key: dotnet-packages-v1-{{ checksum "SimpleCalc/SimpleCalc.csproj" }}
       - run: dotnet build -c Release
-      - run: dotnet test --no-build --logger "trx"
+      - run: dotnet test --no-build --logger "trx" -c Release
       - run:
           name: "Convert test results"
           when: always
