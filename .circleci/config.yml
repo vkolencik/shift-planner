@@ -45,7 +45,10 @@ workflows:
       - test
       - cdk/build:
           cdk_directory: deployment
-  deploy:
-    jobs:
+          attach_at: deployment
       - cdk/deploy:
           cdk_directory: deployment
+          attach_at: deployment
+          requires:
+            - cdk/build
+            - test
