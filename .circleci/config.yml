@@ -62,7 +62,7 @@ jobs:
           # Must be absolute path or relative path from working_directory
           at: ../backend
       - run: npm ci
-      - run: npm run cdk deploy --require-approval never
+      - run: npm run cdk deploy -- --require-approval never
 
 workflows:
   test_and_build:
