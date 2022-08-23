@@ -1,7 +1,7 @@
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+import * as cdk from 'aws-cdk-lib'
+import { Construct } from 'constructs'
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda'
-import { LambdaRestApi } from 'aws-cdk-lib/aws-apigateway'
+import { EndpointType, LambdaRestApi } from 'aws-cdk-lib/aws-apigateway'
 
 export class DeploymentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -14,7 +14,8 @@ export class DeploymentStack extends cdk.Stack {
     })
 
     new LambdaRestApi(this, 'api-gateway', {
-      handler: backend
+      handler: backend,
+      endpointTypes: [EndpointType.EDGE]
     })
   }
 }
