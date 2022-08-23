@@ -11,7 +11,7 @@ executors:
       - image: node:18-alpine
 
 jobs:
-  test-backend:
+  build-and-test-backend:
     description: Setup and run application tests
     executor: dotnet-sdk
     working_directory: ~/project/backend
@@ -26,8 +26,8 @@ jobs:
       #          paths:
       #            - C:\Users\circleci\.nuget\packages
       #          key: dotnet-packages-v1-{{ checksum "SimpleCalc/SimpleCalc.csproj" }}
-      - run: dotnet build
-      - run: dotnet test --no-build --logger "trx"
+      - run: dotnet build -c Release
+      - run: dotnet test --no-build --logger "trx" -c Release
       - run:
           name: "Convert test results"
           when: always
@@ -37,6 +37,11 @@ jobs:
             trx2junit test/**/TestResults/*.trx --output test/TestResults/
       - store_test_results:
           path: test/TestResults
+      - persist_to_workspace:
+          root: .
+          # Must be relative path from root
+          paths:
+            - src/ShiftPlanner.Api/bin/Release/net6.0
   build-cdk:
     description: Build CDK deployment script
     executor: node
@@ -53,15 +58,18 @@ jobs:
     steps:
       - checkout:
           path: ~/project
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ../backend
       - run: npm ci
-      - run: npm run cdk deploy
+      - run: npm run cdk deploy -- --require-approval never
 
 workflows:
   test_and_build:
     jobs:
-      - test-backend
+      - build-and-test-backend
       - build-cdk
       - deploy-cdk:
           requires:
-            - test-backend
+            - build-and-test-backend
             - build-cdk
