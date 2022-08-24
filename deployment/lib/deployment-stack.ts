@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib'
 import { Construct } from 'constructs'
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda'
-import { ApiKeySourceType, EndpointType, LambdaRestApi } from 'aws-cdk-lib/aws-apigateway'
+import { EndpointType, LambdaRestApi } from 'aws-cdk-lib/aws-apigateway'
 
 export class DeploymentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -13,14 +13,9 @@ export class DeploymentStack extends cdk.Stack {
       runtime: Runtime.DOTNET_6
     })
 
-    const api = new LambdaRestApi(this, 'api-gateway', {
+    new LambdaRestApi(this, 'api-gateway', {
       handler: backend,
       endpointTypes: [EndpointType.REGIONAL],
-      apiKeySourceType: ApiKeySourceType.HEADER,
-    })
-    api.addApiKey('dev-api-key', {
-      apiKeyName: 'Dev API key',
-      value: 'a8c46cac-4dcf-4e4d-a48c-9e7f4ec75623'
     })
   }
 }
