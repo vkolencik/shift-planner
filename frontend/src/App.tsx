@@ -1,6 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react'
 import logo from './logo.svg';
 import './App.css';
+
+const baseUrl = 'https://9h0nneeao3.execute-api.eu-central-1.amazonaws.com/prod'
+// const baseUrl = 'https://localhost:65040'
+
+const ValuesFromBackend: React.FC = () => {
+  const [values, setValues] = useState<string[] | null>(null)
+  useEffect(() => {
+    fetch(baseUrl + '/api/values')
+      .then((response) => response.json())
+      .then((data) => setValues(data));
+  }, [])
+
+  if (values === null) {
+    return <div>loading...</div>
+  }
+
+  return <ul>
+    {values.map(v => <li>{v}</li>)}
+  </ul>
+}
 
 function App() {
   return (
@@ -18,6 +38,7 @@ function App() {
         >
           Learn React
         </a>
+        <ValuesFromBackend />
       </header>
     </div>
   );
