@@ -1,7 +1,9 @@
 import * as cdk from 'aws-cdk-lib'
 import { Construct } from 'constructs'
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda'
-import { EndpointType, LambdaRestApi } from 'aws-cdk-lib/aws-apigateway'
+import { EndpointType, LambdaRestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway'
+import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager'
+import { HostedZone } from 'aws-cdk-lib/aws-route53'
 
 export class DeploymentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -13,9 +15,21 @@ export class DeploymentStack extends cdk.Stack {
       runtime: Runtime.DOTNET_6
     })
 
+    const hostedZoneId = 'Z10312824UKCHIHP3DBN'
+    const cert = new Certificate(this, 'domain-certificate', {
+      domainName: '*.krtek.me',
+      validation: CertificateValidation.fromDns(HostedZone.fromHostedZoneId(this, 'hosted-zone-id', hostedZoneId))
+    })
+
     new LambdaRestApi(this, 'api-gateway', {
       handler: backend,
       endpointTypes: [EndpointType.REGIONAL],
+      domainName: {
+        domainName: 'b.krtek.me',
+        certificate: cert,
+        endpointType: EndpointType.REGIONAL,
+        securityPolicy: SecurityPolicy.TLS_1_2
+      }
     })
   }
 }
