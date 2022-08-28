@@ -63,6 +63,15 @@ jobs:
           at: ../backend
       - run: npm ci
       - run: npm run cdk deploy -- --require-approval never
+  integration-test-backend:
+    description: Runs integration test suite against deployed backend
+    executor: node
+    working_directory: ~/project/backend/integration-tests
+    steps:
+      - checkout:
+          path: ~/project
+      - run: npm ci
+      - run: npm test
 
 workflows:
   test_and_build:
@@ -73,3 +82,6 @@ workflows:
           requires:
             - build-and-test-backend
             - build-cdk
+      - integration-test-backend:
+          requires:
+            - deploy-cdk
