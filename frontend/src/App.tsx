@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import logo from './logo.svg';
 import './App.css';
 
-const baseUrl = 'https://9h0nneeao3.execute-api.eu-central-1.amazonaws.com/prod'
+const baseUrl = 'https://b.krtek.me'
 // const baseUrl = 'https://localhost:65040'
 
 const ValuesFromBackend: React.FC = () => {
