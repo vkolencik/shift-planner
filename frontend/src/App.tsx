@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './App.css';
 import { useAuth0 } from '@auth0/auth0-react'
+import Button from 'react-bootstrap/Button';
 
 const baseUrl = 'https://b.krtek.me'
 // const baseUrl = 'https://localhost:65040'
@@ -14,7 +15,7 @@ const ValuesFromBackend: React.FC = () => {
   }, [])
 
   if (values === null) {
-    return <div>loading...</div>
+    return <div>Please log in</div>
   }
 
   return <ul>
@@ -28,11 +29,11 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        { !isAuthenticated && <button onClick={() => loginWithRedirect()}>Login</button> }
+        { !isAuthenticated && <Button onClick={() => loginWithRedirect()}>Login</Button> }
 
         { isAuthenticated && user !== undefined && (
           <>
-            <button onClick={() => logout({returnTo: window.location.href})}>Logout</button>
+            <Button onClick={() => logout({returnTo: window.location.href})}>Logout</Button>
             <div>
               <img src={user.picture} alt={user.name} />
               <h2>{user.name}</h2>
