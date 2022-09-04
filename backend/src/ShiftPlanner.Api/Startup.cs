@@ -1,5 +1,7 @@
 namespace ShiftPlanner.Api;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 public class Startup
 {
     private readonly string _myAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -27,6 +29,16 @@ public class Startup
                     });
             });
 
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.Authority = "https://krtek.eu.auth0.com/";
+            options.Audience = "https://b.krtek.me";
+        });
+        
         services.AddControllers();
     }
     
@@ -40,11 +52,11 @@ public class Startup
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseHttpsRedirection();
-
         app.UseRouting();
 
         app.UseAuthorization();
+        
+        app.UseAuthentication();
 
         app.UseEndpoints(endpoints =>
         {
