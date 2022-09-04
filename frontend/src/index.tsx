@@ -15,7 +15,8 @@ root.render(
       domain="krtek.eu.auth0.com"
       clientId="DJath43A1oSS9KeuPbr0x5PiSG57ZcEv"
       redirectUri={window.location.origin}
-    >
+      audience="https://krtek.eu.auth0.com/api/v2/"
+      scope="read:current_user update:current_user_metadata">
       <App/>
     </Auth0Provider>
   </React.StrictMode>

@@ -7,20 +7,43 @@ const baseUrl = 'https://b.krtek.me'
 // const baseUrl = 'https://localhost:65040'
 
 const ValuesFromBackend: React.FC = () => {
-  const [values, setValues] = useState<string[] | null>(null)
-  useEffect(() => {
-    fetch(baseUrl + '/api/values')
-      .then((response) => response.json())
-      .then((data) => setValues(data));
-  }, [])
+  const { user, getAccessTokenSilently } = useAuth0()
+  // const [values, setValues] = useState<string[] | null>(null)
+  const [userMetadata, setUserMetadata] = useState<any | null>(null)
 
-  if (values === null) {
-    return <div>Please log in</div>
+  useEffect(() => {
+    if (user === undefined) {
+      throw new Error('User not logged in')
+    }
+
+    getAccessTokenSilently({
+      audience: `https://krtek.eu.auth0.com/api/v2/`,
+      scope: "read:current_user",
+    }).then(token => fetch(`https://krtek.eu.auth0.com/api/v2/users/${user.sub}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }))
+      .then(metadataResponse => metadataResponse.json())
+      .then(metadata => setUserMetadata(metadata))
+    // fetch(baseUrl + '/api/values')
+    //   .then((response) => response.json())
+    //   .then((data) => setValues(data));
+  }, [getAccessTokenSilently, user, user?.sub])
+
+  // if (values === null) {
+  //   return <div>Please log in</div>
+  // }
+
+  // return <ul>
+  //   {values.map(v => <li>{v}</li>)}
+  // </ul>
+
+  if (userMetadata === null) {
+    return <>Cannot fetch metadata</>
   }
 
-  return <ul>
-    {values.map(v => <li>{v}</li>)}
-  </ul>
+  return <pre>{JSON.stringify(userMetadata, null, 2)}</pre>
 }
 
 function App() {
@@ -39,10 +62,9 @@ function App() {
               <h2>{user.name}</h2>
               <p>{user.email}</p>
             </div>
+          <ValuesFromBackend />
           </>
         )}
-
-        <ValuesFromBackend />
       </header>
     </div>
   );
