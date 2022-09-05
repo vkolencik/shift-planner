@@ -1,3 +1,6 @@
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+
 namespace ShiftPlanner.Api;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -29,15 +32,20 @@ public class Startup
                     });
             });
 
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
-        {
-            options.Authority = "https://krtek.eu.auth0.com/";
-            options.Audience = "https://b.krtek.me";
-        });
+        // https://auth0.com/docs/quickstart/backend/aspnet-core-webapi/01-authorization
+        string domain = $"https://{Configuration["Auth0:Domain"]}/";
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = domain;
+                options.Audience = Configuration["Auth0:Audience"];
+                // If the access token does not have a `sub` claim, `User.Identity.Name` will be `null`. Map it to a different claim by setting the NameClaimType below.
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = ClaimTypes.NameIdentifier
+                };
+            });
         
         services.AddControllers();
     }

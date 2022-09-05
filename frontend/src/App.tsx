@@ -3,47 +3,45 @@ import './App.css';
 import { useAuth0 } from '@auth0/auth0-react'
 import Button from 'react-bootstrap/Button';
 
-const baseUrl = 'https://b.krtek.me'
-// const baseUrl = 'https://localhost:65040'
+// const baseUrl = 'https://b.krtek.me'
+const baseUrl = 'http://localhost:65041'
 
 const ValuesFromBackend: React.FC = () => {
-  const { user, getAccessTokenSilently } = useAuth0()
-  // const [values, setValues] = useState<string[] | null>(null)
-  const [userMetadata, setUserMetadata] = useState<any | null>(null)
+  const { user, getAccessTokenSilently, isAuthenticated } = useAuth0()
+  const [values, setValues] = useState<string[] | null>(null)
+  // const [userMetadata, setUserMetadata] = useState<any | null>(null)
 
   useEffect(() => {
-    if (user === undefined) {
-      throw new Error('User not logged in')
+    if (user === undefined || !isAuthenticated) {
+      setValues(null)
+      return
     }
 
     getAccessTokenSilently({
-      audience: `https://krtek.eu.auth0.com/api/v2/`,
-      scope: "read:current_user",
-    }).then(token => fetch(`https://krtek.eu.auth0.com/api/v2/users/${user.sub}`, {
+      audience: 'https://b.krtek.me',
+      scope: '',
+    }).then(token => fetch(baseUrl + '/api/values', {
       headers: {
         Authorization: `Bearer ${token}`,
-      },
+      }
     }))
-      .then(metadataResponse => metadataResponse.json())
-      .then(metadata => setUserMetadata(metadata))
-    // fetch(baseUrl + '/api/values')
-    //   .then((response) => response.json())
-    //   .then((data) => setValues(data));
+      .then((response) => response.json())
+      .then((data) => setValues(data))
   }, [getAccessTokenSilently, user, user?.sub])
 
-  // if (values === null) {
-  //   return <div>Please log in</div>
-  // }
-
-  // return <ul>
-  //   {values.map(v => <li>{v}</li>)}
-  // </ul>
-
-  if (userMetadata === null) {
-    return <>Cannot fetch metadata</>
+  if (values === null) {
+    return <div>Please log in</div>
   }
 
-  return <pre>{JSON.stringify(userMetadata, null, 2)}</pre>
+  return <ul>
+    {values.map(v => <li>{v}</li>)}
+  </ul>
+
+  // if (userMetadata === null) {
+  //   return <>Cannot fetch metadata</>
+  // }
+
+  // return <pre>{JSON.stringify(userMetadata, null, 2)}</pre>
 }
 
 function App() {

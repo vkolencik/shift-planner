@@ -4,7 +4,8 @@ const config: Config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   globals: {
-    backendBaseUrl: 'https://b.krtek.me'
+    // backendBaseUrl: 'https://b.krtek.me'
+    backendBaseUrl: 'http://localhost:65041'
   }
 };
 
