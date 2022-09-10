@@ -1,5 +1,7 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 
 namespace ShiftPlanner.Api;
 
@@ -25,10 +27,12 @@ public class Startup
                 options.AddPolicy(name: _myAllowSpecificOrigins,
                     policy  =>
                     {
-                        policy.WithOrigins(
-                            "http://localhost:3000",
-                            "https://krtek.me",
-                            "https://www.krtek.me");
+                        policy
+                            .WithOrigins(
+                                "http://localhost:3000",
+                                "https://krtek.me",
+                                "https://www.krtek.me")
+                            .WithHeaders(HeaderNames.Authorization);
                     });
             });
 
@@ -47,6 +51,13 @@ public class Startup
                 };
             });
         
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("user", policy => policy.Requirements.Add(new HasScopeRequirement("user", domain)));
+        });
+        
+        services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+        
         services.AddControllers();
     }
     
@@ -62,16 +73,15 @@ public class Startup
 
         app.UseRouting();
 
-        app.UseAuthorization();
-        
         app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
             endpoints.MapGet("/", async context =>
             {
-                await context.Response.WriteAsync("Welcome to running ASP.NET Core on AWS Lambda");
+                await context.Response.WriteAsync("alive");
             });
         });
     }
