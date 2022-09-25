@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ShiftPlanner.Api.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 public class ValuesController : ControllerBase
 {
     // GET api/values

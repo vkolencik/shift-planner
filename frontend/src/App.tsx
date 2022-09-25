@@ -4,15 +4,30 @@ import { useAuth0 } from '@auth0/auth0-react'
 import Button from 'react-bootstrap/Button';
 
 const baseUrl = 'https://b.krtek.me'
-// const baseUrl = 'https://localhost:65040'
+// const baseUrl = 'http://localhost:65041'
 
 const ValuesFromBackend: React.FC = () => {
+  const { user, getAccessTokenSilently, isAuthenticated } = useAuth0()
   const [values, setValues] = useState<string[] | null>(null)
+  // const [userMetadata, setUserMetadata] = useState<any | null>(null)
+
   useEffect(() => {
-    fetch(baseUrl + '/api/values')
+    if (user === undefined || !isAuthenticated) {
+      setValues(null)
+      return
+    }
+
+    getAccessTokenSilently({
+      audience: 'https://b.krtek.me',
+      scope: '',
+    }).then(token => fetch(baseUrl + '/api/values', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    }))
       .then((response) => response.json())
-      .then((data) => setValues(data));
-  }, [])
+      .then((data) => setValues(data))
+  }, [getAccessTokenSilently, user, user?.sub])
 
   if (values === null) {
     return <div>Please log in</div>
@@ -21,6 +36,12 @@ const ValuesFromBackend: React.FC = () => {
   return <ul>
     {values.map(v => <li>{v}</li>)}
   </ul>
+
+  // if (userMetadata === null) {
+  //   return <>Cannot fetch metadata</>
+  // }
+
+  // return <pre>{JSON.stringify(userMetadata, null, 2)}</pre>
 }
 
 function App() {
@@ -39,10 +60,9 @@ function App() {
               <h2>{user.name}</h2>
               <p>{user.email}</p>
             </div>
+          <ValuesFromBackend />
           </>
         )}
-
-        <ValuesFromBackend />
       </header>
     </div>
   );

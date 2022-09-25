@@ -5,6 +5,7 @@ const config: Config = {
   testEnvironment: 'node',
   globals: {
     backendBaseUrl: 'https://b.krtek.me'
+    // backendBaseUrl: 'http://localhost:65041'
   }
 };
 

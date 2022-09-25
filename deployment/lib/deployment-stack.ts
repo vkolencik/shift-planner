@@ -4,6 +4,7 @@ import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda'
 import { EndpointType, LambdaRestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway'
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager'
 import { HostedZone } from 'aws-cdk-lib/aws-route53'
+import { Duration } from 'aws-cdk-lib'
 
 export class DeploymentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -12,7 +13,8 @@ export class DeploymentStack extends cdk.Stack {
     const backend = new Function(this, 'backend-lambda-function', {
       code: Code.fromAsset('../backend/src/ShiftPlanner.Api/bin/Release/net6.0'),
       handler: 'ShiftPlanner.Api::ShiftPlanner.Api.LambdaEntryPoint::FunctionHandlerAsync',
-      runtime: Runtime.DOTNET_6
+      runtime: Runtime.DOTNET_6,
+      timeout: Duration.seconds(15)
     })
 
     const hostedZoneId = 'Z10312824UKCHIHP3DBN'
