@@ -3,8 +3,8 @@ import './App.css';
 import { useAuth0 } from '@auth0/auth0-react'
 import Button from 'react-bootstrap/Button';
 
-// const baseUrl = 'https://b.krtek.me'
-const baseUrl = 'http://localhost:65041'
+const baseUrl = 'https://b.krtek.me'
+// const baseUrl = 'http://localhost:65041'
 
 const ValuesFromBackend: React.FC = () => {
   const { user, getAccessTokenSilently, isAuthenticated } = useAuth0()
