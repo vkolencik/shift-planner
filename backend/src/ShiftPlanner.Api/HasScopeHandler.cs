@@ -4,11 +4,6 @@ namespace ShiftPlanner.Api;
 
 public class HasScopeHandler : AuthorizationHandler<HasScopeRequirement>
 {
-    public HasScopeHandler()
-    {
-        System.Console.Out.WriteLine("here");
-    }
-
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, HasScopeRequirement requirement)
     {
         // If user does not have the scope claim, get out of here
