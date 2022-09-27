@@ -4,21 +4,24 @@ import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Auth0Provider } from '@auth0/auth0-react'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import { BrowserRouter } from 'react-router-dom'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 )
 root.render(
   <React.StrictMode>
-    <Auth0Provider
-      domain="krtek.eu.auth0.com"
-      clientId="DJath43A1oSS9KeuPbr0x5PiSG57ZcEv"
-      redirectUri={window.location.origin}
-      audience="https://b.krtek.me"
-      scope="">
-      <App/>
-    </Auth0Provider>
+    <BrowserRouter>
+      <Auth0Provider
+        domain="krtek.eu.auth0.com"
+        clientId="DJath43A1oSS9KeuPbr0x5PiSG57ZcEv"
+        redirectUri={window.location.origin}
+        audience="https://b.krtek.me"
+        cacheLocation='localstorage'
+        scope="">
+        <App/>
+      </Auth0Provider>
+    </BrowserRouter>
   </React.StrictMode>
 )
 
