@@ -87,7 +87,7 @@ export const Requirements: React.FC = () => {
         select={handleDateRangeSelect}
         unselect={handleDateRangeUnselect}
         ref={calendarRef}
-        aspectRatio={3}
+        height='auto'
       /></div>
     </>
   )
