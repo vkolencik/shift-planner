@@ -4,6 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import Button from 'react-bootstrap/Button'
 import { Col, Container, Nav, Navbar, Row } from 'react-bootstrap'
 import { Link, Route, Routes } from 'react-router-dom'
+import { Requirements } from './Requirements'
 
 const baseUrl = 'https://b.krtek.me'
 // const baseUrl = 'http://localhost:65041'
@@ -116,7 +117,7 @@ function App () {
           <Col xs="12">
             <Routes>
               <Route path="/" element={<h1>Home</h1>}/>
-              <Route path="/pozadavky" element={<h1>Požadavky</h1>}/>
+              <Route path="/pozadavky" element={<Requirements />}/>
               <Route path="/tydenik" element={<h1>Týdeník</h1>}/>
               <Route path="/schvalovani" element={<h1>Schvalování</h1>}/>
               <Route path="/sluzby" element={<h1>Služby</h1>}/>
