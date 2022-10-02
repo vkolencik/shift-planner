@@ -88,6 +88,31 @@ export const Requirements: React.FC = () => {
         unselect={handleDateRangeUnselect}
         ref={calendarRef}
         height='auto'
+        events={[
+          {
+            id: '1',
+            title: 'chci',
+            start: '2022-12-06'
+          },
+          {
+            id: '2',
+            title: 'chci',
+            start: '2022-12-08'
+          },
+          {
+            id: '3',
+            title: 'dovolená',
+            start: '2022-12-21',
+            end: '2022-12-23',
+            color: '#9A7F0D'
+          },
+          {
+            id: '4',
+            title: 'nemůžu',
+            start: '2022-12-13',
+            color: '#9a0d0d'
+          }
+        ]}
       /></div>
     </>
   )
