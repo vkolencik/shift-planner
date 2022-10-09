@@ -74,7 +74,10 @@ const NavHeader: FC = () => {
         </Nav>
       </Navbar.Collapse>
       <UserBadge/>
-      <Button onClick={() => logout({returnTo: window.location.protocol + '//' + window.location.host})} className='ms-3'>Logout</Button>
+      {/*<Button*/}
+      {/*  onClick={() => logout({returnTo: window.location.protocol + '//' + window.location.host})} className='ms-3'>*/}
+      {/*  Logout*/}
+      {/*</Button>*/}
     </Container>
   </Navbar>)
 }
