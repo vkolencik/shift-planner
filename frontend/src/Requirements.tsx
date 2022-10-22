@@ -8,6 +8,8 @@ import { DateSelectArg, DateUnselectArg } from '@fullcalendar/common'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
+import { getRequirements, Requirement, RequirementType, requirementTypes } from './requirements/requirements-service'
+import { EventSourceInput } from '@fullcalendar/core'
 
 type DayDate = moment.Moment
 
@@ -17,6 +19,23 @@ interface DateRange {
 }
 
 const DisplayDate: React.FC<{date: DayDate}> = ({ date }: { date: DayDate }) => <>{date.format('D. M. YYYY')}</>
+
+function requirementsToEvents (requirements: Requirement[]): EventSourceInput {
+  const colorMapping: {[key in RequirementType]: string | undefined } = {
+    "only-afternoon": undefined,
+    "only-morning": undefined,
+    "soft-yes": undefined,
+    'leave': '#9A7F0D',
+    'hard-no': '#9a0d0d'
+  }
+
+  return requirements.map(r => ({
+    id: r.id,
+    title: requirementTypes[r.type].name,
+    start: r.date,
+    color: colorMapping[r.type]
+  }))
+}
 
 export const Requirements: React.FC = () => {
   const calendarRef = useRef<any>(null)
@@ -63,14 +82,16 @@ export const Requirements: React.FC = () => {
 
           <Modal.Body>
             <ul>
-              <li><a href="#" onClick={() => {setSelectedDateRange(null)}}>Dovolená</a></li>
-              {oneDayRange && <>
-                <li><a href="#" onClick={() => {setSelectedDateRange(null)}}>Chci</a></li>
-                <li><a href="#" onClick={() => {setSelectedDateRange(null)}}>Nemůžu</a></li>
-                <li><a href="#" onClick={() => {setSelectedDateRange(null)}}>Pouze R</a></li>
-                <li><a href="#" onClick={() => {setSelectedDateRange(null)}}>Až odpoledne</a></li>
-              </>
-              }
+              {Object.values(requirementTypes).map(t => (
+                <li><a href="#" onClick={() => {setSelectedDateRange(null)}}>{t.name}</a></li>)
+              )}
+              {/*<li><a href="#" onClick={() => {setSelectedDateRange(null)}}>Dovolená</a></li>*/}
+              {/*{oneDayRange && <>*/}
+              {/*  <li><a href="#" onClick={() => {setSelectedDateRange(null)}}>Chci</a></li>*/}
+              {/*  <li><a href="#" onClick={() => {setSelectedDateRange(null)}}>Nemůžu</a></li>*/}
+              {/*  <li><a href="#" onClick={() => {setSelectedDateRange(null)}}>Pouze R</a></li>*/}
+              {/*  <li><a href="#" onClick={() => {setSelectedDateRange(null)}}>Až odpoledne</a></li>*/}
+              {/*</>*/}
             </ul>
           </Modal.Body>
 
@@ -95,31 +116,7 @@ export const Requirements: React.FC = () => {
         unselect={handleDateRangeUnselect}
         ref={calendarRef}
         height='auto'
-        events={[
-          {
-            id: '1',
-            title: 'chci',
-            start: '2022-12-06'
-          },
-          {
-            id: '2',
-            title: 'chci',
-            start: '2022-12-08'
-          },
-          {
-            id: '3',
-            title: 'dovolená',
-            start: '2022-12-21',
-            end: '2022-12-23',
-            color: '#9A7F0D'
-          },
-          {
-            id: '4',
-            title: 'nemůžu',
-            start: '2022-12-13',
-            color: '#9a0d0d'
-          }
-        ]}
+        events={requirementsToEvents(getRequirements(''))}
       /></div>
     </>
   )
