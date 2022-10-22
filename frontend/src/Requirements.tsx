@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import FullCalendar from '@fullcalendar/react' // must go before plugins
 import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
-import interactionPlugin from '@fullcalendar/interaction'
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
 import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import csLocale from '@fullcalendar/core/locales/cs'
 import { DateSelectArg, DateUnselectArg } from '@fullcalendar/common'
@@ -32,11 +32,17 @@ export const Requirements: React.FC = () => {
     setSelectedDateRange({ from: moment(info.start), to: moment(info.end).add(-1, 'day') })
   }
 
+  const handleDateClick = (info: DateClickArg) => {
+    setSelectedDateRange({ from: moment(info.date), to: moment(info.date) })
+  }
+
   const handleDateRangeUnselect = (info: DateUnselectArg) => {
     setSelectedDateRange(null)
   }
 
   const oneDayRange = selectedDateRange !== null && selectedDateRange.from.isSame(selectedDateRange.to, 'day')
+
+  const closeModal = () => setSelectedDateRange(null)
 
   return (
     <>
@@ -45,7 +51,7 @@ export const Requirements: React.FC = () => {
       {selectedDateRange &&
         <Modal
           show={true}
-          onHide={() => {setSelectedDateRange(null)}}>
+          onHide={() => {closeModal()}}>
           <Modal.Header closeButton>
             <Modal.Title>
               {oneDayRange
@@ -69,7 +75,7 @@ export const Requirements: React.FC = () => {
           </Modal.Body>
 
           <Modal.Footer>
-            <Button variant="outline-secondary">Zavřít</Button>
+            <Button variant="outline-secondary" onClick={() => {closeModal()}}>Zavřít</Button>
           </Modal.Footer>
         </Modal>
       }
@@ -83,8 +89,9 @@ export const Requirements: React.FC = () => {
         firstDay={1}
         showNonCurrentDates={false}
         locale={csLocale}
-        selectable={true}
-        select={handleDateRangeSelect}
+        dateClick={handleDateClick}
+        // selectable={true}
+        // select={handleDateRangeSelect}
         unselect={handleDateRangeUnselect}
         ref={calendarRef}
         height='auto'
