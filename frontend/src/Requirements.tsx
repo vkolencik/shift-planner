@@ -8,7 +8,13 @@ import { DateSelectArg, DateUnselectArg } from '@fullcalendar/common'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
-import { getRequirements, Requirement, RequirementType, requirementTypes } from './requirements/requirements-service'
+import {
+  addRequirement,
+  getRequirements,
+  Requirement,
+  RequirementType,
+  requirementTypes
+} from './requirements/requirements-service'
 import { EventSourceInput } from '@fullcalendar/core'
 
 type DayDate = moment.Moment
@@ -40,6 +46,7 @@ function requirementsToEvents (requirements: Requirement[]): EventSourceInput {
 export const Requirements: React.FC = () => {
   const calendarRef = useRef<any>(null)
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange | null>(null)
+  const [requirements, setRequirements] = useState<Requirement[]>(getRequirements('bogus-user'))
 
   useEffect(() => {
     if (selectedDateRange === null && calendarRef.current) {
@@ -56,6 +63,20 @@ export const Requirements: React.FC = () => {
   }
 
   const handleDateRangeUnselect = (info: DateUnselectArg) => {
+    setSelectedDateRange(null)
+  }
+
+  const handleAddRequirement = (type: RequirementType) => {
+    if (selectedDateRange === null) {
+      throw new Error('selectedDateRange is null')
+    }
+
+    const requirement = addRequirement('bogus-user', {
+      type,
+      date: selectedDateRange?.from.format('yyyy-MM-DD')
+    })
+
+    setRequirements((prevState) => [...prevState, requirement])
     setSelectedDateRange(null)
   }
 
@@ -83,7 +104,7 @@ export const Requirements: React.FC = () => {
           <Modal.Body>
             <ul>
               {Object.values(requirementTypes).map(t => (
-                <li><a href="#" onClick={() => {setSelectedDateRange(null)}}>{t.name}</a></li>)
+                <li key={t.value}><a href="#" onClick={() => handleAddRequirement(t.value)}>{t.name}</a></li>)
               )}
               {/*<li><a href="#" onClick={() => {setSelectedDateRange(null)}}>Dovolená</a></li>*/}
               {/*{oneDayRange && <>*/}
@@ -116,7 +137,7 @@ export const Requirements: React.FC = () => {
         unselect={handleDateRangeUnselect}
         ref={calendarRef}
         height='auto'
-        events={requirementsToEvents(getRequirements(''))}
+        events={requirementsToEvents(requirements)}
       /></div>
     </>
   )
