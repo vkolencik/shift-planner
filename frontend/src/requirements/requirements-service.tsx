@@ -8,44 +8,22 @@ export const requirementTypes: { [key in RequirementType]: { name: string, value
 
 export type RequirementType = 'leave' | 'hard-no' | 'soft-yes' | 'only-morning' | 'only-afternoon'
 
-export interface Requirement {
-  id: string
-  date: string
-  type: RequirementType
+export type EmployeeMonthRequirements = { [key: string]: RequirementType }
+const requirements: EmployeeMonthRequirements = {
+  '2022-12-06': 'soft-yes',
+  '2022-12-08': 'soft-yes',
+  '2022-12-21': 'leave',
+  '2022-12-13': 'hard-no'
 }
 
-export type RequirementCreationCommand = Omit<Requirement, 'id'>
-
-let id = 0
-const requirements: Requirement[] = [
-  {
-    id: '' + id++,
-    type: 'soft-yes',
-    date: '2022-12-06'
-  },
-  {
-    id: '' + id++,
-    type: 'soft-yes',
-    date: '2022-12-08'
-  },
-  {
-    id: '' + id++,
-    type: 'leave',
-    date: '2022-12-21',
-  },
-  {
-    id: '' + id++,
-    type: 'hard-no',
-    date: '2022-12-13'
-  }
-]
-
-export function getRequirements(user: any): Requirement[] {
-  return requirements
+export function getRequirements(user: any): EmployeeMonthRequirements {
+  return {...requirements}
 }
 
-export function addRequirement(user: any, requirement: RequirementCreationCommand): Requirement {
-  const createdRequirement = { ...requirement, id: '' + id++}
-  requirements.push(createdRequirement)
-  return createdRequirement
+export function addRequirement(user: any, date: string, type: RequirementType) {
+  requirements[date] = type
+}
+
+export function removeRequirement(user: any, date: string) {
+  delete requirements[date]
 }
