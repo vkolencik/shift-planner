@@ -62,11 +62,21 @@ const getToken = (): Promise<string> =>
       if (respBody.error) {
         throw new Error(`${respBody.error} (${respBody.error_description})`)
       }
-      return respBody.access_token
+      const accessToken = respBody.access_token
+      if (!accessToken)
+      {
+        throw new Error('Empty access token')
+      }
+
+      return accessToken
     })
-    .catch(e => console.error(e))
 
 describe('backend should', () => {
+  it('return OK on live endpoint', async () => {
+    const resp = await fetch(`${backendBaseUrl}`)
+    expect(resp.status).toEqual(200)
+  })
+
   it('return unauthorized when auth token is not present in the request', async () => {
     const resp = await fetch(`${backendBaseUrl}/api/values`)
     expect(resp.status).toEqual(401)
