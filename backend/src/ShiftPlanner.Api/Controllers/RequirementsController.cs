@@ -7,9 +7,20 @@ namespace ShiftPlanner.Api.Controllers;
 [Authorize]
 public class RequirementsController : ControllerBase
 {
+    private readonly IRequirementsService _requirementsService;
+
+    public RequirementsController(IRequirementsService requirementsService)
+    {
+        _requirementsService = requirementsService;
+    }
+
     // GET api/values
     [HttpGet("{year}/{month}")]
-    public ActionResult<IDictionary<string, string>> Get([FromRoute] string tenant, [FromRoute] string userId)
+    public async Task<ActionResult<IDictionary<string, string>>> Get(
+        [FromRoute] string tenant,
+        [FromRoute] string userId,
+        [FromRoute] int year,
+        [FromRoute] int month)
     {
         var loggedInUserId = User.Identity.Name;
         
@@ -17,14 +28,9 @@ public class RequirementsController : ControllerBase
         {
             return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
-       
-        return Ok(new Dictionary<string, string>
-        {
-            ["2022-12-06"] = "soft-yes",
-            ["2022-12-08"] = "soft-yes",
-            ["2022-12-21"] = "leave",
-            ["2022-12-13"] = "hard-no"
-        });
+
+        var requirements = await _requirementsService.GetRequirements(userId, year, month);
+        return Ok(requirements);
     }
 
     [HttpPut("{year}/{month}/{day}")]
