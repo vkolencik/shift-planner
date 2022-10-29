@@ -2,14 +2,14 @@
 using ShiftPlanner.Domain;
 using Xunit;
 
-namespace ShiftPlanner.Engine.Functional.Tests;
+namespace ShiftPlanner.Engine.Functional.Tests.ShiftScheduler;
 
 public class ShiftFlexibilityShould
 {
     [Fact]
     public void MakeSchedulerUltimatelyFindASolution()
     {
-        var scheduler = new ShiftScheduler();
+        var scheduler = new Engine.ShiftScheduler();
 
         var workplaceA = new Workplace("A");
         var workplaceB = new Workplace("B");

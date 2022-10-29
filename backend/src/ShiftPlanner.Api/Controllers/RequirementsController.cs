@@ -12,13 +12,12 @@ public class RequirementsController : ControllerBase
     public ActionResult<IDictionary<string, string>> Get([FromRoute] string tenant, [FromRoute] string userId)
     {
         var loggedInUserId = User.Identity.Name;
-
+        
         if (loggedInUserId != userId)
         {
             return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
-
-        
+       
         return Ok(new Dictionary<string, string>
         {
             ["2022-12-06"] = "soft-yes",
