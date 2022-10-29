@@ -1,0 +1,4 @@
+{
+  "esModuleInterop": true,
+  "include": ["global.d.ts"]
+}

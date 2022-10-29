@@ -1,8 +1,6 @@
+// Code adapted from here: https://docs.aws.amazon.com/code-samples/latest/catalog/javascript-secrets-secrets_getsecretvalue.js.html
 import { SecretsManager } from 'aws-sdk'
 
-declare var backendBaseUrl: string
-
-// Code adapted from here: https://docs.aws.amazon.com/code-samples/latest/catalog/javascript-secrets-secrets_getsecretvalue.js.html
 function getSecretValue<T> (secretArn): Promise<T> {
   const client = new SecretsManager({
     region: 'eu-central-1'
@@ -44,7 +42,7 @@ async function getTestUserCredentials (): Promise<TestUserCredentials> {
   return credentials
 }
 
-const getToken = (): Promise<string> =>
+export const getToken = (): Promise<string> =>
   getTestUserCredentials()
     .then(testUserCredentials =>
       fetch('https://krtek.eu.auth0.com/oauth/token', {
@@ -63,34 +61,9 @@ const getToken = (): Promise<string> =>
         throw new Error(`${respBody.error} (${respBody.error_description})`)
       }
       const accessToken = respBody.access_token
-      if (!accessToken)
-      {
+      if (!accessToken) {
         throw new Error('Empty access token')
       }
 
       return accessToken
     })
-
-describe('backend should', () => {
-  it('return OK on live endpoint', async () => {
-    const resp = await fetch(`${backendBaseUrl}`)
-    expect(resp.status).toEqual(200)
-  })
-
-  it('return unauthorized when auth token is not present in the request', async () => {
-    const resp = await fetch(`${backendBaseUrl}/api/values`)
-    expect(resp.status).toEqual(401)
-  })
-
-  it('return values', async () => {
-    const token: string = await getToken()
-    const resp = await fetch(`${backendBaseUrl}/api/values`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    })
-
-    expect(resp.status).toEqual(200)
-    expect(await resp.json()).toEqual(['value1', 'value2'])
-  })
-})
