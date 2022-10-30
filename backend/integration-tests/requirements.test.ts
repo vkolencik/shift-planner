@@ -5,7 +5,8 @@ const tenant = 'tenant1'
 
 describe('requirements resource should', () => {
   it('return unauthorized when auth token is not present in the request', async () => {
-    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/${testUserId}/requirements/2022/10`)
+    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`)
+    const respText = await resp.text()
     expect(resp.status).toEqual(401)
   })
 
@@ -18,7 +19,7 @@ describe('requirements resource should', () => {
 
   it('return requirements for a given month', async () => {
     const token: string = await getToken()
-    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/${testUserId}/requirements/2022/10`, getHeaders(token))
+    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`, getHeaders(token))
 
     expect(resp.status).toEqual(200)
     expect(await resp.json()).toEqual({

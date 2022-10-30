@@ -5,7 +5,7 @@ const config: Config = {
   ...baseConfig,
   globals: {
     ...baseConfig.globals,
-    backendBaseUrl: 'https://b.krtek.me',
+    backendBaseUrl: 'https://b.krtek.me'
   }
 };
 
