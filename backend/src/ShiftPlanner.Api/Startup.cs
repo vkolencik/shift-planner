@@ -61,7 +61,7 @@ public class Startup
         
         services.AddControllers();
 
-        services.AddTransient<IRequirementsService, MockRequirementsService>();
+        services.AddTransient<IRequirementsService, RequirementsService>();
     }
     
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

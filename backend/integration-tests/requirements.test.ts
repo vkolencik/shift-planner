@@ -1,32 +1,64 @@
 import { getToken } from './helpers/auth'
 import { getHeaders } from './helpers/getHeaders'
 
-const tenant = 'tenant1'
-
 describe('requirements resource should', () => {
+  let token: string
+  const testTenant = `test-tenant-${new Date().getTime()}`
+
+  async function putRequirement (tenant: string, userId: string, day: number, requirementType: string): Promise<Response> {
+    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/2022/12/${String(day).padStart(2, '0')}`, {
+      ...getHeaders(token),
+      method: 'put',
+      body: JSON.stringify({ requirementType: requirementType })
+    })
+    expect(resp.status).toEqual(200)
+
+    return resp
+  }
+
+  beforeAll(async () => {
+    token = await getToken()
+  })
+
   it('return unauthorized when auth token is not present in the request', async () => {
-    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`)
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`)
     const respText = await resp.text()
     expect(resp.status).toEqual(401)
   })
 
   it('return unauthorized when asking for requirements of a different user', async () => {
     const token: string = await getToken()
-    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/some-different-user-id/requirements/2022/10`, getHeaders(token))
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/some-different-user-id/requirements/2022/10`, getHeaders(token))
 
     expect(resp.status).toEqual(401)
   })
 
-  it('return requirements for a given month', async () => {
-    const token: string = await getToken()
-    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`, getHeaders(token))
+  it('return empty array of requirements when none were created', async () => {
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`, getHeaders(token))
+    expect(resp.status).toEqual(200)
+    expect(await resp.json()).toEqual({})
+  })
+
+  it('put new requirement', async () => {
+    await putRequirement(testTenant, testUserId, 6, 'soft-yes')
+
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`, getHeaders(token))
 
     expect(resp.status).toEqual(200)
     expect(await resp.json()).toEqual({
-      '2022-12-06': 'soft-yes',
-      '2022-12-08': 'soft-yes',
-      '2022-12-21': 'leave',
-      '2022-12-13': 'hard-no'
+      '2022-12-06': 'soft-yes'
     })
   })
+
+  it('put new requirement to different tenant without influencing original tenant', async () => {
+    await putRequirement(`${testTenant}-2`, testUserId, 6, 'soft-yes')
+
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`, getHeaders(token))
+
+    expect(resp.status).toEqual(200)
+    expect(await resp.json()).toEqual({
+      '2022-12-06': 'soft-yes'
+    })
+  })
+
 })
