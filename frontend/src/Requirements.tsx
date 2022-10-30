@@ -10,10 +10,9 @@ import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
 import {
   addRequirement,
-  getRequirements,
   EmployeeMonthRequirements,
   RequirementType,
-  requirementTypes, removeRequirement
+  requirementTypes, removeRequirement, useApi
 } from './requirements/requirements-service'
 import { EventSourceInput } from '@fullcalendar/core'
 import { FormCheck, Spinner } from 'react-bootstrap'
@@ -27,13 +26,13 @@ interface DateRange {
   to: DayDate
 }
 
-const DisplayDate: React.FC<{date: DayDate}> = ({ date }: { date: DayDate }) => <>{date.format('D. M. YYYY')}</>
+const DisplayDate: React.FC<{ date: DayDate }> = ({ date }: { date: DayDate }) => <>{date.format('D. M. YYYY')}</>
 
 function requirementsToEvents (requirements: EmployeeMonthRequirements): EventSourceInput {
-  const colorMapping: {[key in RequirementType]: string | undefined } = {
-    "only-afternoon": '#0696c4',
-    "only-morning": '#9A7F0D',
-    "soft-yes": '#2eb401',
+  const colorMapping: { [key in RequirementType]: string | undefined } = {
+    'only-afternoon': '#0696c4',
+    'only-morning': '#9A7F0D',
+    'soft-yes': '#2eb401',
     'leave': '#9A7F0D',
     'hard-no': '#9a0d0d'
   }
@@ -49,14 +48,22 @@ function requirementsToEvents (requirements: EmployeeMonthRequirements): EventSo
 export const Requirements: React.FC = () => {
   const calendarRef = useRef<any>(null)
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange | null>(null)
-  const [requirements, setRequirements] = useState<EmployeeMonthRequirements>(getRequirements('bogus-user'))
+  const [requirements, setRequirements] = useState<EmployeeMonthRequirements | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const api = useApi()
 
   useEffect(() => {
     if (selectedDateRange === null && calendarRef.current) {
       calendarRef.current.getApi().unselect()
     }
   }, [selectedDateRange])
+
+  useEffect(() => {
+    if (requirements === null) {
+      api.requirements.get(2022, 10)
+        .then(setRequirements)
+    }
+  })
 
   const handleDateRangeSelect = (info: DateSelectArg) => {
     setSelectedDateRange({ from: moment(info.start), to: moment(info.end).add(-1, 'day') })
@@ -80,7 +87,7 @@ export const Requirements: React.FC = () => {
 
     setTimeout(() => {
       setLoading(false)
-      setRequirements(getRequirements('bogus-user'))
+      setRequirements(null)
       setSelectedDateRange(null)
     }, 500)
   }
@@ -95,7 +102,7 @@ export const Requirements: React.FC = () => {
 
     setTimeout(() => {
       setLoading(false)
-      setRequirements(getRequirements('bogus-user'))
+      setRequirements(null)
       setSelectedDateRange(null)
     }, 500)
   }
@@ -108,7 +115,7 @@ export const Requirements: React.FC = () => {
     setSelectedDateRange({ from: moment(event.event.start), to: moment(event.event.end) })
   }
 
-  const selectedDayRequirementType = selectedDateRange ? requirements[selectedDateRange?.from.format('yyyy-MM-DD')] : null
+  const selectedDayRequirementType = selectedDateRange && requirements ? requirements[selectedDateRange?.from.format('yyyy-MM-DD')] : null
 
   return (
     <>
@@ -155,31 +162,32 @@ export const Requirements: React.FC = () => {
           </Modal.Body>
 
           <Modal.Footer>
-            { selectedDayRequirementType && <Button variant="danger" className='me-auto' onClick={handleRemoveRequirement}>Odstranit</Button> }
+            {selectedDayRequirementType &&
+              <Button variant="danger" className="me-auto" onClick={handleRemoveRequirement}>Odstranit</Button>}
             <Button variant="outline-secondary" onClick={() => {closeModal()}}>Zavřít</Button>
           </Modal.Footer>
         </Modal>
       }
 
-      <div><FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
-        initialView="dayGridMonth"
-        initialDate={new Date(2022, 11, 1)}
-        themeSystem="bootstrap5"
-        headerToolbar={false}
-        firstDay={1}
-        showNonCurrentDates={false}
-        locale={csLocale}
-        dateClick={handleDateClick}
-
-        // selectable={true}
-        // select={handleDateRangeSelect}
-        unselect={handleDateRangeUnselect}
-        eventClick={handleEventClick}
-        ref={calendarRef}
-        height='auto'
-        events={requirementsToEvents(requirements)}
-      /></div>
+      {requirements
+        ? <div><FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
+          initialView="dayGridMonth"
+          initialDate={new Date(2022, 11, 1)}
+          themeSystem="bootstrap5"
+          headerToolbar={false}
+          firstDay={1}
+          showNonCurrentDates={false}
+          locale={csLocale}
+          dateClick={handleDateClick}
+          unselect={handleDateRangeUnselect}
+          eventClick={handleEventClick}
+          ref={calendarRef}
+          height="auto"
+          events={requirementsToEvents(requirements)}
+        /></div>
+        : <Spinner animation="border"/>
+      }
     </>
   )
 }
