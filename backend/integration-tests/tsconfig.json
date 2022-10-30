@@ -1,4 +1,6 @@
 {
-  "esModuleInterop": true,
-  "include": ["global.d.ts"]
+  "files": ["./global.d.ts"],
+  "compilerOptions": {
+    "esModuleInterop": true,
+  }
 }
