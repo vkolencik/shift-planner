@@ -35,8 +35,18 @@ public class RequirementsController : ControllerBase
     }
 
     [HttpPut("{year}/{month}/{day}")]
-    public void Put([FromBody] string requirementType)
+    public async Task<ActionResult> Put(
+        [FromRoute] string tenant,
+        [FromRoute] string userId,
+        [FromRoute] int year,
+        [FromRoute] int month,
+        [FromRoute] int day,
+        [FromBody] RequirementInputModel requirement)
     {
+        await _requirementsService.SetRequirement(new Tenant(tenant), userId, new Day(year, month, day), requirement.RequirementType);
 
+        return Ok();
     }
 }
+
+public record RequirementInputModel(string RequirementType);

@@ -14,6 +14,10 @@ public record Day(DateOnly Date) : IComparable<Day>
 
     public int Index() => Date.Day;
 
+    public int Year => Date.Year;
+    public int Month => Date.Month;
+    public int DayOfMonth => Date.Day;
+
     public static bool operator <(Day? left, Day? right)
     {
         return Comparer<Day>.Default.Compare(left, right) < 0;

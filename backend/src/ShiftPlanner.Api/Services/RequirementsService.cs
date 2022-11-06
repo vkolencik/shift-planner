@@ -16,6 +16,15 @@ public class RequirementsService : IRequirementsService
     {
         return _repository.GetRequirements(tenant, userId, month);
     }
+
+    public Task SetRequirement(
+        Tenant tenant,
+        string userId,
+        Day day,
+        string requirement)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 public interface IRequirementsRepository

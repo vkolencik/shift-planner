@@ -8,4 +8,6 @@ internal static class TestData
     {
         [new Day(2022, 10, 12)] = "hard-no"
     };
+
+    public static readonly Tenant Tenant = new Tenant("tenant-1");
 }
