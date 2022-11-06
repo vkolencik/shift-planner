@@ -31,7 +31,10 @@ public class RequirementsController : ControllerBase
         }
 
         var requirements = await _requirementsService.GetRequirements(new Tenant(tenant), userId, new ScheduledMonth(year, month));
-        return Ok(requirements);
+        var requirementsModel = requirements.ToDictionary(
+            kvp => kvp.Key.Date.ToString("yyyy-MM-dd"),
+            kvp => kvp.Value);
+        return Ok(requirementsModel);
     }
 
     [HttpPut("{year}/{month}/{day}")]

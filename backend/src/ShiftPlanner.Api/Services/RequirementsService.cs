@@ -17,19 +17,25 @@ public class RequirementsService : IRequirementsService
         return _repository.GetRequirements(tenant, userId, month);
     }
 
-    public Task SetRequirement(
+    public async Task SetRequirement(
         Tenant tenant,
         string userId,
         Day day,
         string requirement)
     {
-        throw new NotImplementedException();
+        await _repository.SetRequirement(tenant, userId, day, requirement);
     }
 }
 
 public interface IRequirementsRepository
 {
     Task<Dictionary<Day, string>> GetRequirements(Tenant tenant, string userId, ScheduledMonth month);
+
+    Task SetRequirement(
+        Tenant tenant,
+        string userId,
+        Day day,
+        string requirement);
 }
 
 internal class InMemoryRequirementsRepository : IRequirementsRepository
@@ -44,5 +50,15 @@ internal class InMemoryRequirementsRepository : IRequirementsRepository
     public Task<Dictionary<Day, string>> GetRequirements(Tenant tenant, string userId, ScheduledMonth month)
     {
         return Task.FromResult(_requirements);
+    }
+
+    public Task SetRequirement(
+        Tenant tenant,
+        string userId,
+        Day day,
+        string requirement)
+    {
+        _requirements[day] = requirement;
+        return Task.CompletedTask;
     }
 }

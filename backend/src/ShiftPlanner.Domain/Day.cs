@@ -44,4 +44,16 @@ public record Day(DateOnly Date) : IComparable<Day>
         if (ReferenceEquals(null, other)) return 1;
         return Date.CompareTo(other.Date);
     }
+
+    public virtual bool Equals(Day? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Date.Equals(other.Date);
+    }
+
+    public override int GetHashCode()
+    {
+        return Date.GetHashCode();
+    }
 }
