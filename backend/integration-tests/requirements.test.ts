@@ -87,7 +87,7 @@ describe('requirements resource should', () => {
     await putRequirement(testTenant, testUserId, 2022, 12, 6, 'hard-no')
     await putRequirement(testTenant, testUser2Id, 2022, 12, 7, 'soft-yes', token2)
 
-    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`, getHeaders(token))
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12`, getHeaders(token))
 
     expect(resp.status).toEqual(200)
     expect(await resp.json()).toEqual({
@@ -99,7 +99,7 @@ describe('requirements resource should', () => {
     await putRequirement(`${testTenant}`, testUserId, 2022, 12, 6, 'hard-no')
     await putRequirement(`${testTenant}-2`, testUserId, 2022, 12, 7, 'soft-yes')
 
-    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`, getHeaders(token))
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12`, getHeaders(token))
 
     expect(resp.status).toEqual(200)
     expect(await resp.json()).toEqual({
