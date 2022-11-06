@@ -32,7 +32,8 @@ async function getTestUserCredentials (): Promise<TestUserCredentials> {
   const secretArn = 'arn:aws:secretsmanager:eu-central-1:720500131615:secret:test-user-credentials-oNMZpk'
   const credentials = await getSecretValue<TestUserCredentials>(secretArn)
 
-  if (!credentials.username
+  if (!credentials
+    || !credentials.username
     || !credentials.password
     || !credentials.client_id
     || !credentials.client_secret) {

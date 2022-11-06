@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using ShiftPlanner.Api.Controllers;
+using ShiftPlanner.Api.Services;
 
 namespace ShiftPlanner.Api;
 
@@ -62,6 +63,7 @@ public class Startup
         services.AddControllers();
 
         services.AddTransient<IRequirementsService, RequirementsService>();
+        services.AddTransient<IRequirementsRepository, InMemoryRequirementsRepository>();
     }
     
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

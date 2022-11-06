@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Controllers;
 
@@ -29,7 +30,7 @@ public class RequirementsController : ControllerBase
             return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
 
-        var requirements = await _requirementsService.GetRequirements(userId, year, month);
+        var requirements = await _requirementsService.GetRequirements(new Tenant(tenant), userId, new ScheduledMonth(year, month));
         return Ok(requirements);
     }
 

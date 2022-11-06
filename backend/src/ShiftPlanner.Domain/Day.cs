@@ -4,7 +4,11 @@ public record Day(DateOnly Date) : IComparable<Day>
 {
     public DayOfWeek DayOfWeek => Date.DayOfWeek;
 
-    public Day(int year, int month, int day): this(new DateOnly(year, month, day))
+    public Day(int year, int month, int day) : this(new DateOnly(year, month, day))
+    {
+    }
+
+    public Day(ScheduledMonth month, int day) : this(month.Year, month.Month, day)
     {
     }
 

@@ -5,8 +5,8 @@ describe('requirements resource should', () => {
   let token: string
   const testTenant = `test-tenant-${new Date().getTime()}`
 
-  async function putRequirement (tenant: string, userId: string, day: number, requirementType: string): Promise<Response> {
-    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/2022/12/${String(day).padStart(2, '0')}`, {
+  async function putRequirement (tenant: string, userId: string, year: number, month: number, day: number, requirementType: string): Promise<Response> {
+    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}`, {
       ...getHeaders(token),
       method: 'put',
       body: JSON.stringify({ requirementType: requirementType })
@@ -22,7 +22,6 @@ describe('requirements resource should', () => {
 
   it('return unauthorized when auth token is not present in the request', async () => {
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`)
-    const respText = await resp.text()
     expect(resp.status).toEqual(401)
   })
 
@@ -40,7 +39,7 @@ describe('requirements resource should', () => {
   })
 
   it('put new requirement', async () => {
-    await putRequirement(testTenant, testUserId, 6, 'soft-yes')
+    await putRequirement(testTenant, testUserId, 2012, 12, 6, 'soft-yes')
 
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`, getHeaders(token))
 
@@ -49,15 +48,31 @@ describe('requirements resource should', () => {
       '2022-12-06': 'soft-yes'
     })
   })
+  it('return unauthorized when putting new requirement without auth header', async () => {
+    await putRequirement(testTenant, testUserId, 2012, 12, 6, 'soft-yes')
+
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`)
+
+    expect(resp.status).toEqual(401)
+  })
+
+  it('return unauthorized when putting new requirement for different user', async () => {
+    await putRequirement(testTenant, testUserId, 2012, 12, 6, 'soft-yes')
+
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/some-different-user/requirements/2022/10`, getHeaders(token))
+
+    expect(resp.status).toEqual(401)
+  })
 
   it('put new requirement to different tenant without influencing original tenant', async () => {
-    await putRequirement(`${testTenant}-2`, testUserId, 6, 'soft-yes')
+    await putRequirement(`${testTenant}`, testUserId, 2012, 12, 6, 'hard-no')
+    await putRequirement(`${testTenant}-2`, testUserId, 2012, 12, 6, 'soft-yes')
 
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`, getHeaders(token))
 
     expect(resp.status).toEqual(200)
     expect(await resp.json()).toEqual({
-      '2022-12-06': 'soft-yes'
+      '2022-12-06': 'hard-no'
     })
   })
 

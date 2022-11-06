@@ -1,6 +1,8 @@
-﻿namespace ShiftPlanner.Api.Controllers;
+﻿using ShiftPlanner.Domain;
+
+namespace ShiftPlanner.Api.Controllers;
 
 public interface IRequirementsService
 {
-    Task<Dictionary<string, string>> GetRequirements(string userId, int year, int month);
+    Task<Dictionary<Day, string>> GetRequirements(Tenant tenant, string userId, ScheduledMonth month);
 }
