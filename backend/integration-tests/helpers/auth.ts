@@ -21,30 +21,48 @@ function getSecretValue<T> (secretArn): Promise<T> {
   })
 }
 
-interface TestUserCredentials {
+export interface TestUserCredentials {
   username: string,
   password: string,
   client_id: string,
   client_secret: string
 }
 
-async function getTestUserCredentials (): Promise<TestUserCredentials> {
+interface UserCredentials {
+  username: string,
+  password: string
+}
+
+interface StoredTestUsersCredentials {
+  client_id: string,
+  client_secret: string,
+  testUser1: UserCredentials,
+  testUser2: UserCredentials
+}
+
+type TestUser = 'testUser1' | 'testUser2'
+
+async function getTestUserCredentials (testUser: TestUser): Promise<TestUserCredentials> {
   const secretArn = 'arn:aws:secretsmanager:eu-central-1:720500131615:secret:test-user-credentials-oNMZpk'
-  const credentials = await getSecretValue<TestUserCredentials>(secretArn)
+  const credentials = await getSecretValue<StoredTestUsersCredentials>(secretArn)
 
   if (!credentials
-    || !credentials.username
-    || !credentials.password
     || !credentials.client_id
     || !credentials.client_secret) {
     throw new Error('Invalid value of loaded client credentials')
   }
 
-  return credentials
+  return {
+    username: credentials[testUser].username,
+    password: credentials[testUser].password,
+    client_id: credentials.client_id,
+    client_secret: credentials.client_secret
+
+  }
 }
 
-export const getToken = (): Promise<string> =>
-  getTestUserCredentials()
+export const getToken = (testUser: TestUser = 'testUser1'): Promise<string> =>
+  getTestUserCredentials(testUser)
     .then(testUserCredentials =>
       fetch('https://krtek.eu.auth0.com/oauth/token', {
         method: 'POST',
