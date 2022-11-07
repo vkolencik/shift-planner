@@ -3,9 +3,16 @@ import type {Config} from 'jest'
 const config: Config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  silent: false,
+  setupFilesAfterEnv: ['jest-extended/all'],
   globals: {
-    backendBaseUrl: 'https://b.krtek.me'
-    // backendBaseUrl: 'http://localhost:65041'
+    backendBaseUrl: 'http://localhost:65041',
+    testUserId: 'auth0|633015ee115794a47e8166d8',
+    testUser2Id: 'auth0|6367b6f40df1e7bc1037834f',
+
+    'ts-jest': {
+      tsconfig: 'tsconfig.json'
+    }
   }
 };
 

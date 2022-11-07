@@ -1,8 +1,6 @@
+// Code adapted from here: https://docs.aws.amazon.com/code-samples/latest/catalog/javascript-secrets-secrets_getsecretvalue.js.html
 import { SecretsManager } from 'aws-sdk'
 
-declare var backendBaseUrl: string
-
-// Code adapted from here: https://docs.aws.amazon.com/code-samples/latest/catalog/javascript-secrets-secrets_getsecretvalue.js.html
 function getSecretValue<T> (secretArn): Promise<T> {
   const client = new SecretsManager({
     region: 'eu-central-1'
@@ -23,29 +21,48 @@ function getSecretValue<T> (secretArn): Promise<T> {
   })
 }
 
-interface TestUserCredentials {
+export interface TestUserCredentials {
   username: string,
   password: string,
   client_id: string,
   client_secret: string
 }
 
-async function getTestUserCredentials (): Promise<TestUserCredentials> {
-  const secretArn = 'arn:aws:secretsmanager:eu-central-1:720500131615:secret:test-user-credentials-oNMZpk'
-  const credentials = await getSecretValue<TestUserCredentials>(secretArn)
+interface UserCredentials {
+  username: string,
+  password: string
+}
 
-  if (!credentials.username
-    || !credentials.password
+interface StoredTestUsersCredentials {
+  client_id: string,
+  client_secret: string,
+  testUser1: UserCredentials,
+  testUser2: UserCredentials
+}
+
+type TestUser = 'testUser1' | 'testUser2'
+
+async function getTestUserCredentials (testUser: TestUser): Promise<TestUserCredentials> {
+  const secretArn = 'arn:aws:secretsmanager:eu-central-1:720500131615:secret:test-user-credentials-oNMZpk'
+  const credentials = await getSecretValue<StoredTestUsersCredentials>(secretArn)
+
+  if (!credentials
     || !credentials.client_id
     || !credentials.client_secret) {
     throw new Error('Invalid value of loaded client credentials')
   }
 
-  return credentials
+  return {
+    username: credentials[testUser].username,
+    password: credentials[testUser].password,
+    client_id: credentials.client_id,
+    client_secret: credentials.client_secret
+
+  }
 }
 
-const getToken = (): Promise<string> =>
-  getTestUserCredentials()
+export const getToken = (testUser: TestUser = 'testUser1'): Promise<string> =>
+  getTestUserCredentials(testUser)
     .then(testUserCredentials =>
       fetch('https://krtek.eu.auth0.com/oauth/token', {
         method: 'POST',
@@ -62,25 +79,10 @@ const getToken = (): Promise<string> =>
       if (respBody.error) {
         throw new Error(`${respBody.error} (${respBody.error_description})`)
       }
-      return respBody.access_token
-    })
-    .catch(e => console.error(e))
-
-describe('backend should', () => {
-  it('return unauthorized when auth token is not present in the request', async () => {
-    const resp = await fetch(`${backendBaseUrl}/api/values`)
-    expect(resp.status).toEqual(401)
-  })
-
-  it('return values', async () => {
-    const token: string = await getToken()
-    const resp = await fetch(`${backendBaseUrl}/api/values`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+      const accessToken = respBody.access_token
+      if (!accessToken) {
+        throw new Error('Empty access token')
       }
-    })
 
-    expect(resp.status).toEqual(200)
-    expect(await resp.json()).toEqual(['value1', 'value2'])
-  })
-})
+      return accessToken
+    })

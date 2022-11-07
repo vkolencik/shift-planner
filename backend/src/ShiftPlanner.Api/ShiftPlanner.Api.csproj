@@ -16,4 +16,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.22.1" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj" />
+  </ItemGroup>
 </Project>

@@ -11,6 +11,7 @@ executors:
       - image: node:18-alpine
 
 jobs:
+
   build-and-test-backend:
     description: Setup and run application tests
     executor: dotnet-sdk
@@ -42,6 +43,17 @@ jobs:
           # Must be relative path from root
           paths:
             - src/ShiftPlanner.Api/bin/Release/net6.0
+
+  test-frontend:
+    description: Test frontend
+    executor: node
+    working_directory: ~/project/frontend
+    steps:
+      - checkout:
+          path: ~/project
+      - run: npm i
+      - run: npm test
+
   build-cdk:
     description: Build CDK deployment script
     executor: node
@@ -51,6 +63,7 @@ jobs:
           path: ~/project
       - run: npm ci
       - run: npm run build
+
   deploy-cdk:
     description: Build CDK deployment script
     executor: node
@@ -63,6 +76,7 @@ jobs:
           at: ../backend
       - run: npm ci
       - run: npm run cdk deploy -- --require-approval never
+
   integration-test-backend:
     description: Runs integration test suite against deployed backend
     executor: node
@@ -71,13 +85,14 @@ jobs:
       - checkout:
           path: ~/project
       - run: npm ci
-      - run: npm test
+      - run: npm run test:prod
 
 workflows:
   test_and_build:
     jobs:
       - build-and-test-backend
       - build-cdk
+      - test-frontend
       - deploy-cdk:
           requires:
             - build-and-test-backend
