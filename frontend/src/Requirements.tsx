@@ -9,10 +9,9 @@ import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
 import {
-  addRequirement,
   EmployeeMonthRequirements,
   RequirementType,
-  requirementTypes, removeRequirement, useApi
+  requirementTypes, useApi, momentToDay
 } from './requirements/requirements-service'
 import { EventSourceInput } from '@fullcalendar/core'
 import { FormCheck, Spinner } from 'react-bootstrap'
@@ -60,7 +59,7 @@ export const Requirements: React.FC = () => {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.get(2022, 10)
+      api.requirements.get(2022, 12)
         .then(setRequirements)
     }
   })
@@ -82,14 +81,12 @@ export const Requirements: React.FC = () => {
       throw new Error('selectedDateRange is null')
     }
 
-    addRequirement('bogus-user', selectedDateRange?.from.format('yyyy-MM-DD'), type)
     setLoading(true)
-
-    setTimeout(() => {
+    api.requirements.put(momentToDay(selectedDateRange?.from), type).then(() => {
       setLoading(false)
       setRequirements(null)
       setSelectedDateRange(null)
-    }, 500)
+    })
   }
 
   const handleRemoveRequirement = () => {
@@ -97,25 +94,27 @@ export const Requirements: React.FC = () => {
       throw new Error('selectedDateRange is null')
     }
 
-    removeRequirement('bogus-user', selectedDateRange?.from.format('yyyy-MM-DD'))
     setLoading(true)
-
-    setTimeout(() => {
-      setLoading(false)
-      setRequirements(null)
-      setSelectedDateRange(null)
-    }, 500)
+    api.requirements.delete(momentToDay(selectedDateRange?.from))
+      .then(() => {
+        setLoading(false)
+        setRequirements(null)
+        setSelectedDateRange(null)
+      })
   }
 
   const oneDayRange = selectedDateRange !== null && selectedDateRange.from.isSame(selectedDateRange.to, 'day')
 
-  const closeModal = () => setSelectedDateRange(null)
+  const closeModal = () => {
+    setSelectedDateRange(null)
+    setLoading(false)
+  }
 
   function handleEventClick (event: EventClickArg) {
     setSelectedDateRange({ from: moment(event.event.start), to: moment(event.event.end) })
   }
 
-  const selectedDayRequirementType = selectedDateRange && requirements ? requirements[selectedDateRange?.from.format('yyyy-MM-DD')] : null
+  const selectedDayRequirementType = selectedDateRange && requirements ? requirements[momentToDay(selectedDateRange?.from)] : null
 
   return (
     <>
@@ -150,7 +149,7 @@ export const Requirements: React.FC = () => {
                   <FormCheck key={t.value}>
                     <FormCheckInput
                       type="radio"
-                      onClick={() => handleAddRequirement(t.value)}
+                      onChange={() => handleAddRequirement(t.value)}
                       checked={selectedDayRequirementType === t.value}
                       id={`requirement-type-input-${t.value}`}
                     />

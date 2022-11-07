@@ -25,7 +25,7 @@ function App () {
   return (
     <div className="d-flex flex-column min-vh-100">
       <NavHeader/>
-      <Container fluid>
+      <Container fluid={true}>
         <Row>
           <Col xs="12">
             <Routes>

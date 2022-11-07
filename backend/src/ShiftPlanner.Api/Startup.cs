@@ -34,7 +34,11 @@ public class Startup
                                 "http://localhost:3000",
                                 "https://krtek.me",
                                 "https://www.krtek.me")
-                            .WithHeaders(HeaderNames.Authorization);
+                            .WithHeaders(
+                                HeaderNames.Authorization,
+                                HeaderNames.ContentType
+                                )
+                            .WithMethods("GET", "POST", "PUT", "DELETE");
                     });
             });
 
