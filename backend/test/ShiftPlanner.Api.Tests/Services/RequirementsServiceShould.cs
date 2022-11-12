@@ -1,4 +1,5 @@
 ﻿using Moq;
+using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Api.Services;
 using ShiftPlanner.Domain;
 
@@ -45,18 +46,24 @@ public class RequirementsServiceShould
         _repositoryMock.Verify(_ => _.SetRequirement(tenant, userId, day, requirement));
     }
 
-    [Fact]
-    public async Task DeleteRequirement()
+    [Theory]
+    [InlineData(DeleteResult.Deleted)]
+    [InlineData(DeleteResult.NotFound)]
+    public async Task DeleteRequirement(DeleteResult repositoryResult)
     {
         var tenant = TestData.Tenant;
         var userId = "user-id";
         var day = new Day(2022, 10, 18);
+        _repositoryMock.Setup(_ => _.DeleteRequirement(tenant, userId, day))
+            .ReturnsAsync(repositoryResult)
+            .Verifiable();
         
         var service = CreateService();
 
-        await service.DeleteRequirement(tenant, userId, day);
+        var serviceResult = await service.DeleteRequirement(tenant, userId, day);
         
-        _repositoryMock.Verify(_ => _.DeleteRequirement(tenant, userId, day));
+        _repositoryMock.VerifyAll();
+        Assert.Equal(repositoryResult, serviceResult);
     }
 
     private RequirementsService CreateService()

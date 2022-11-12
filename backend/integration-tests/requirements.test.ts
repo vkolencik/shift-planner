@@ -130,7 +130,7 @@ describe('requirements resource should', () => {
   })
 
   it('return not found when deleting nonexistent requirement', async () => {
-    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12/06`, {
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2019/12/13`, {
       method: 'delete',
       ...getHeaders(token)
     })

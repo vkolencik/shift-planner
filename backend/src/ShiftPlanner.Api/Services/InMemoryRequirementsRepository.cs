@@ -1,4 +1,5 @@
-﻿using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Api.Controllers;
+using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Services;
 
@@ -33,9 +34,9 @@ internal class InMemoryRequirementsRepository : IRequirementsRepository
         return Task.CompletedTask;
     }
 
-    public Task DeleteRequirement(Tenant tenant, string userId, Day day)
+    public Task<DeleteResult> DeleteRequirement(Tenant tenant, string userId, Day day)
     {
-        _requirements.Remove((tenant, userId, day));
-        return Task.CompletedTask;
+        var deleted = _requirements.Remove((tenant, userId, day));
+        return Task.FromResult(deleted ? DeleteResult.Deleted : DeleteResult.NotFound);
     }
 }

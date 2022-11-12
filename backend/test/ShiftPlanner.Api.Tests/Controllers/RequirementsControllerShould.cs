@@ -81,6 +81,8 @@ public abstract class RequirementsControllerShould
         {
             var tenant = TestData.Tenant;
             var day = new Day(2022, 10, 18);
+            _requirementsServiceMock.Setup(_ => _.DeleteRequirement(tenant, _userId, day))
+                .ReturnsAsync(DeleteResult.Deleted);
             var controller = CreateController();
 
             var response = await controller.Delete(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth);
@@ -89,7 +91,21 @@ public abstract class RequirementsControllerShould
 
             Assert.IsType<OkResult>(response);
         }
-        
+
+        [Fact]
+        public async Task ReturnNotFound_GivenNonexistentRequirement()
+        {
+            var tenant = TestData.Tenant;
+            var day = new Day(2022, 10, 18);
+            _requirementsServiceMock.Setup(_ => _.DeleteRequirement(tenant, _userId, day))
+                .ReturnsAsync(DeleteResult.NotFound);
+            var controller = CreateController();
+            
+            var response = await controller.Delete(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth);
+            
+            Assert.IsType<NotFoundResult>(response);
+        }
+
         [Fact]
         public async Task ReturnUnauthorized_GivenTokenForDifferentUser()
         {

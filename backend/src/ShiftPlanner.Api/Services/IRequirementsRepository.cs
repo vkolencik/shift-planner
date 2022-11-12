@@ -1,4 +1,5 @@
-﻿using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Api.Controllers;
+using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Services;
 
@@ -15,7 +16,7 @@ public interface IRequirementsRepository
         Day day,
         string requirement);
 
-    Task DeleteRequirement(
+    Task<DeleteResult> DeleteRequirement(
         Tenant tenant,
         string userId,
         Day day);

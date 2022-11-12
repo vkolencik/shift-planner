@@ -26,7 +26,7 @@ public class RequirementsService : IRequirementsService
         await _repository.SetRequirement(tenant, userId, day, requirement);
     }
 
-    public Task DeleteRequirement(Tenant tenant, string userId, Day day)
+    public Task<DeleteResult> DeleteRequirement(Tenant tenant, string userId, Day day)
     {
         return _repository.DeleteRequirement(tenant, userId, day);
     }
