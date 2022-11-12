@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShiftPlanner.Domain;
@@ -46,9 +47,40 @@ public class RequirementsController : ControllerBase
         [FromRoute] int day,
         [FromBody] RequirementInputModel requirement)
     {
+        var loggedInUserId = User.Identity.Name;
+        
+        if (loggedInUserId != userId)
+        {
+            return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");
+        }
+
         await _requirementsService.SetRequirement(new Tenant(tenant), userId, new Day(year, month, day), requirement.RequirementType);
 
         return Ok();
+    }
+
+    [HttpDelete("{year}/{month}/{day}")]
+    public async Task<ActionResult> Delete(
+        [FromRoute] string tenant,
+        [FromRoute] string userId,
+        [FromRoute] int year,
+        [FromRoute] int month,
+        [FromRoute] int day)
+    {
+        var loggedInUserId = User.Identity.Name;
+        
+        if (loggedInUserId != userId)
+        {
+            return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");
+        }
+
+        DeleteResult result = await _requirementsService.DeleteRequirement(new Tenant(tenant), userId, new Day(year, month, day));
+
+        return result switch
+        {
+            DeleteResult.Deleted => Ok(),
+            DeleteResult.NotFound => NotFound()
+        };
     }
 }
 

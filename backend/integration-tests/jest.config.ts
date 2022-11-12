@@ -14,6 +14,6 @@ const config: Config = {
       tsconfig: 'tsconfig.json'
     }
   }
-};
+}
 
 export default config

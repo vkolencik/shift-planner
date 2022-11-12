@@ -80,7 +80,26 @@ export function useApi () {
         }
       },
       delete: async (date: Day): Promise<void> => {
-        throw new Error('Deletion not implemented yet')
+        const token = await getAccessTokenSilently({
+          audience: 'https://b.krtek.me',
+          scope: ''
+        })
+
+        if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          throw new Error(`Invalid date format ${date}`)
+        }
+
+        const response = await fetch(`${baseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${date.replace(/-/g, '/')}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            }
+          }
+        )
+
+        if (response.status !== 200) {
+          throw new Error(`Error deleting requirement: ${await response.text()}`)
+        }
       }
     }
   })
