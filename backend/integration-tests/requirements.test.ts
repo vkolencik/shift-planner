@@ -45,17 +45,19 @@ describe('requirements resource should', () => {
   })
 
   it('return unauthorized when putting new requirement without auth header', async () => {
-    await putRequirement(testTenant, testUserId, 2022, 12, 6, 'soft-yes')
-
-    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10`)
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10/12`, {
+      headers: {},
+      method: 'put'
+    })
 
     expect(resp.status).toEqual(401)
   })
 
   it('return unauthorized when putting new requirement for different user', async () => {
-    await putRequirement(testTenant, testUserId, 2022, 12, 6, 'soft-yes')
-
-    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/some-different-user/requirements/2022/10`, getHeaders(token))
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10/12`, {
+      ...getHeaders(token2),
+      method: 'put'
+    })
 
     expect(resp.status).toEqual(401)
   })
@@ -83,7 +85,7 @@ describe('requirements resource should', () => {
     })
   })
 
-  it('put new requirement to different user without influencing original tenant', async () => {
+  it('put new requirement to different user without influencing other users', async () => {
     await putRequirement(testTenant, testUserId, 2022, 12, 6, 'hard-no')
     await putRequirement(testTenant, testUser2Id, 2022, 12, 7, 'soft-yes', token2)
 
@@ -105,5 +107,49 @@ describe('requirements resource should', () => {
     expect(await resp.json()).toEqual({
       '2022-12-06': 'hard-no'
     })
+  })
+
+  it('return unauthorized when deleting new requirement without auth header', async () => {
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12/06`, {
+        method: 'delete'
+      }
+    )
+
+    expect(resp.status).toEqual(401)
+  })
+
+  it('return unauthorized when deleting new requirement for different user', async () => {
+    await putRequirement(testTenant, testUserId, 2022, 12, 6, 'soft-yes', token)
+
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12/06`, {
+      method: 'delete',
+      ...getHeaders(token2)
+    })
+
+    expect(resp.status).toEqual(401)
+  })
+
+  it('return not found when deleting nonexistent requirement', async () => {
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/some-different-user/requirements/2022/12/06`, {
+      method: 'delete',
+      ...getHeaders(token)
+    })
+
+    expect(resp.status).toEqual(404)
+  })
+
+  it('delete a requirement', async () => {
+    await putRequirement(testTenant, testUserId, 2022, 12, 6, 'soft-yes')
+
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12/06`, {
+      method: 'delete',
+      ...getHeaders(token)
+    })
+
+    expect(resp.status).toEqual(200)
+
+    const getResp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12`)
+
+    expect(await getResp.json()['2022-12-06']).toBeFalsy()
   })
 })
