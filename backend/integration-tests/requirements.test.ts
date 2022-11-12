@@ -148,8 +148,10 @@ describe('requirements resource should', () => {
 
     expect(resp.status).toEqual(200)
 
-    const getResp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12`)
+    const getResp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12`, getHeaders(token))
 
-    expect(await getResp.json()['2022-12-06']).toBeFalsy()
+    const requirements = await getResp.json()
+
+    expect(requirements['2022-12-06']).toBeFalsy()
   })
 })
