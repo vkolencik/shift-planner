@@ -74,6 +74,8 @@ public class RequirementsController : ControllerBase
             return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
 
+        await _requirementsService.DeleteRequirement(new Tenant(tenant), userId, new Day(year, month, day));
+
         return Ok();
     }
 }

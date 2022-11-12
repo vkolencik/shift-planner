@@ -77,6 +77,20 @@ public abstract class RequirementsControllerShould
     public class Delete : RequirementsControllerShould
     {
         [Fact]
+        public async Task DeleteRequirement()
+        {
+            var tenant = TestData.Tenant;
+            var day = new Day(2022, 10, 18);
+            var controller = CreateController();
+
+            var response = await controller.Delete(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth);
+            
+            _requirementsServiceMock.Verify(_ => _.DeleteRequirement(tenant, _userId, day));
+
+            Assert.IsType<OkResult>(response);
+        }
+        
+        [Fact]
         public async Task ReturnUnauthorized_GivenTokenForDifferentUser()
         {
             var controller = CreateController("user-id-1");

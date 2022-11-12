@@ -32,4 +32,10 @@ internal class InMemoryRequirementsRepository : IRequirementsRepository
         _requirements[(tenant, userId, day)] = requirement;
         return Task.CompletedTask;
     }
+
+    public Task DeleteRequirement(Tenant tenant, string userId, Day day)
+    {
+        _requirements.Remove((tenant, userId, day));
+        return Task.CompletedTask;
+    }
 }
