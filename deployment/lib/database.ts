@@ -14,7 +14,7 @@ export class Database extends Construct {
     })
 
     requirementsTable.addGlobalSecondaryIndex({
-      indexName: 'UserMonthIndex',
+      indexName: 'TenantUserMonthIndex',
       partitionKey: {
         name: 'TenantUserMonthKey',
         type: AttributeType.STRING
@@ -22,7 +22,7 @@ export class Database extends Construct {
     })
 
     requirementsTable.addGlobalSecondaryIndex({
-      indexName: 'UserMonthIndex',
+      indexName: 'TenantMonthIndex',
       partitionKey: {
         name: 'TenantMonthKey',
         type: AttributeType.STRING
