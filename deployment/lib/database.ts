@@ -1,5 +1,5 @@
 import { Construct } from 'constructs'
-import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb'
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb'
 import { IGrantable } from 'aws-cdk-lib/aws-iam'
 
 export class Database extends Construct {
@@ -13,7 +13,10 @@ export class Database extends Construct {
         name: 'Key',
         type: AttributeType.STRING
       },
-      tableName: 'Requirements'
+      tableName: 'Requirements',
+      pointInTimeRecovery: true,
+      billingMode: BillingMode.PAY_PER_REQUEST,
+
     })
     this.tables.push(requirementsTable)
 
