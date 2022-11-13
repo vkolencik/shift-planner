@@ -27,7 +27,7 @@ export class Backend extends Construct implements IGrantable {
     })
 
     const api = new LambdaRestApi(this, 'api-gateway', {
-      handler: backendLambdaFunction,
+      handler: this.backendLambdaFunction,
       endpointTypes: [EndpointType.REGIONAL],
       domainName: {
         domainName: 'b.krtek.me',
