@@ -1,7 +1,7 @@
 ﻿using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Api.Services;
+namespace ShiftPlanner.Api.Persistence;
 
 public interface IRequirementsRepository
 {
