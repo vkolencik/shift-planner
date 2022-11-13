@@ -4,12 +4,16 @@ import { Duration } from 'aws-cdk-lib'
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager'
 import { HostedZone } from 'aws-cdk-lib/aws-route53'
 import { EndpointType, LambdaRestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway'
+import { IGrantable, IPrincipal } from 'aws-cdk-lib/aws-iam'
 
-export class Backend extends Construct {
+export class Backend extends Construct implements IGrantable {
+  private backendLambdaFunction: Function
+  public get grantPrincipal (): IPrincipal { return this.backendLambdaFunction.grantPrincipal }
+
   constructor (scope: Construct, id: string) {
     super(scope, id)
 
-    const backendLambdaFunction = new Function(this, 'backend-lambda-function', {
+    this.backendLambdaFunction = new Function(this, 'backend-lambda-function', {
       code: Code.fromAsset('../backend/src/ShiftPlanner.Api/bin/Release/net6.0'),
       handler: 'ShiftPlanner.Api::ShiftPlanner.Api.LambdaEntryPoint::FunctionHandlerAsync',
       runtime: Runtime.DOTNET_6,

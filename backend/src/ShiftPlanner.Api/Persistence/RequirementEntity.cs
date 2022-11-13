@@ -1,8 +1,16 @@
-﻿namespace ShiftPlanner.Api.Persistence;
+﻿using Amazon.DynamoDBv2.DataModel;
 
+namespace ShiftPlanner.Api.Persistence;
+
+[DynamoDBTable("Requirements")]
 public class RequirementEntity
 {
-    public string Key { get; }
-    public string TenantUserMonthKey { get; }
-    public string TenantMonthKey { get; }
+    [DynamoDBHashKey]
+    public string? Key { get; set; }
+    public string? TenantUserMonthKey { get; set; }
+    public string? TenantMonthKey { get; set; }
+    public string? Tenant { get; set; }
+    public string? UserId { get; set; }
+    public string? Date { get; set; }
+    public string? Requirement { get; set; }
 }

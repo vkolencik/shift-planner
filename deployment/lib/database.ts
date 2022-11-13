@@ -1,7 +1,10 @@
 import { Construct } from 'constructs'
 import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb'
+import { IGrantable } from 'aws-cdk-lib/aws-iam'
 
 export class Database extends Construct {
+  private readonly tables: Table[]
+
   constructor (scope: Construct, id: string) {
     super(scope, id)
 
@@ -12,6 +15,7 @@ export class Database extends Construct {
       },
       tableName: 'Requirements'
     })
+    this.tables.push(requirementsTable)
 
     requirementsTable.addGlobalSecondaryIndex({
       indexName: 'TenantUserMonthIndex',
@@ -29,4 +33,12 @@ export class Database extends Construct {
       }
     })
   }
+
+  public grantAccess (grantee: IGrantable): void {
+    this.tables.forEach(table => {
+      table.grantReadWriteData(grantee)
+      table.grant(grantee, 'dynamodb:DescribeTable')
+    })
+  }
+
 }
