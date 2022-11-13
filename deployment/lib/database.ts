@@ -43,12 +43,7 @@ export class Database extends Construct {
 
     const backupPlan = new BackupPlan(this, 'db-backup', {
       backupPlanName: 'db-backup',
-      backupPlanRules: [
-        new BackupPlanRule({
-          scheduleExpression: Schedule.rate(Duration.days(1)),
-          deleteAfter: Duration.days(30)
-        })
-      ]
+      backupPlanRules: [BackupPlanRule.daily()]
     })
     backupPlan.addSelection('selection', {
       resources: this.tables.map(table => BackupResource.fromDynamoDbTable(table))
