@@ -9,7 +9,7 @@
 
     <ItemGroup>
       <PackageReference Include="Google.Apis.Auth" Version="1.57.0" />
-      <PackageReference Include="Google.Apis.Sheets.v4" Version="1.57.0.2657" />
+      <PackageReference Include="Google.Apis.Sheets.v4" Version="1.57.0.2826" />
     </ItemGroup>
 
     <ItemGroup>
