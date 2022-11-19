@@ -9,7 +9,7 @@ namespace ShiftPlanner.Api.Persistence;
 
 internal class DynamoRequirementsRepository : IRequirementsRepository
 {
-    private IAmazonDynamoDB _dynamo;
+    private readonly IAmazonDynamoDB _dynamo;
 
     public DynamoRequirementsRepository(IAmazonDynamoDB dynamo)
     {
@@ -18,28 +18,23 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
 
     public async Task<Dictionary<Day, string>> GetRequirements(Tenant tenant, string userId, ScheduledMonth month)
     {
-        var monthStr = $"{month.Year}-{month.Month}";
         var key = $"v1:{tenant.Name}:{userId}:{month.Year}-{month.Month}";
-        var context = new DynamoDBContext(_dynamo);
-        var x = context.FromQueryAsync<RequirementEntity>(
-            new QueryOperationConfig()
-            {
-                IndexName = "TenantUserMonthIndex",
-                Limit = 31,
-                Filter = new QueryFilter("TenantUserMonthKey", QueryOperator.Equal, new Primitive(key))
-            });
+        var context = GetContext();
 
-        var y = context.QueryAsync<RequirementEntity>(
+        var query = context.QueryAsync<RequirementEntity>(
             key, new DynamoDBOperationConfig()
             {
                 IndexName = "TenantUserMonthIndex"
             });
 
-        var entities = await y.GetRemainingAsync();
-        return entities.ToDictionary(e => DateToDay(e.Date), e => e.Requirement);
+        var entities = await query.GetRemainingAsync();
+        
+        return entities.ToDictionary(e => DateToDay(e.Date), e => StringToRequirement(e.Requirement));
     }
 
-    private static Day DateToDay(string date) => new Day(DateOnly.ParseExact(date, "yyyy-MM-dd"));
+    private string StringToRequirement(string? requirement) => requirement ?? throw new ArgumentNullException(nameof(requirement));
+
+    private static Day DateToDay(string? date) => date is not null ? new Day(DateOnly.ParseExact(date, "yyyy-MM-dd")) : throw new ArgumentNullException(nameof(date));
 
     public async Task SetRequirement(
         Tenant tenant,
@@ -54,7 +49,7 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
         await context.SaveAsync(
             new RequirementEntity
             {
-                Key = $"v1:{tenant.Name}:{userId}:{date}",
+                Key = GetKey(tenant, userId, day),
                 TenantUserMonthKey = $"v1:{tenant.Name}:{userId}:{month}",
                 TenantMonthKey = $"v1:{tenant.Name}:{month}",
                 Tenant = tenant.Name,
@@ -64,8 +59,28 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
             });
     }
 
-    public Task<DeleteResult> DeleteRequirement(Tenant tenant, string userId, Day day)
+    public async Task<DeleteResult> DeleteRequirement(Tenant tenant, string userId, Day day)
     {
-        throw new NotImplementedException();
+        var context = GetContext();
+        var key = GetKey(tenant, userId, day);
+        var existingRequirement = await context.LoadAsync<RequirementEntity>(key);
+        if (existingRequirement is null)
+        {
+            return DeleteResult.NotFound;
+        }
+        
+        await context.DeleteAsync<RequirementEntity>(key);
+        return DeleteResult.Deleted;
+    }
+
+    private static string GetKey(Tenant tenant, string userId, Day day)
+    {
+        var date = day.Date.ToString("yyyy-MM-dd");
+        return $"v1:{tenant.Name}:{userId}:{date}";
+    }
+
+    private DynamoDBContext GetContext()
+    {
+        return new DynamoDBContext(_dynamo);
     }
 }
