@@ -7,7 +7,9 @@ export class DeploymentStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
-    new Backend(this, 'backend')
-    new Database(this, 'database')
+    const backend = new Backend(this, 'backend')
+    const database = new Database(this, 'database')
+
+    database.grantAccess(backend)
   }
 }
