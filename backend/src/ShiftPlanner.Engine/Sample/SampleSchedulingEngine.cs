@@ -16,7 +16,7 @@ public static class SampleSchedulingEngine
                 Console.WriteLine(String.Format("Solution #{0}: time = {1:F2} s", solution_count_, WallTime()));
                 foreach (IntVar v in variables_)
                 {
-                    Console.WriteLine(String.Format("  {0} = {1}", v.ShortString(), Value(v)));
+                    Console.WriteLine(String.Format("  {0} = {1}", v.Name(), Value(v)));
                 }
                 solution_count_++;
             }
@@ -213,7 +213,7 @@ public static class SampleSchedulingEngine
                 }
             }
         }
-        model.Maximize(LinearExpr.ScalProd(flatShifts, flatShiftRequests));
+        model.Maximize(LinearExpr.WeightedSum(flatShifts, flatShiftRequests));
 
         // Solve
         CpSolver solver = new CpSolver();

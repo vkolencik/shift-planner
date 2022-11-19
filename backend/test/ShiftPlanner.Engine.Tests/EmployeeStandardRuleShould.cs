@@ -200,7 +200,7 @@ public class EmployeeStandardRuleShould
         // Assert.Equal(Math.Floor((double) workload.MaximumShiftsPerMonth / 2), gteBound);
     }
 
-    private static IEnumerable<object[]> GetAllWorkloads() => new []
+    public static IEnumerable<object[]> GetAllWorkloads() => new []
     {
         Workload.Workload04,
         Workload.Workload05,
