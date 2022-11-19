@@ -72,6 +72,7 @@ public class Startup
         services.AddControllers();
 
         services.AddTransient<IRequirementsService, RequirementsService>();
+        services.AddSingleton<IRequirementEntityConverter, RequirementEntityConverter>();
         services.AddSingleton<IRequirementsRepository, DynamoRequirementsRepository>();
     }
 
