@@ -7,11 +7,12 @@ using ShiftPlanner.Aws;
 
 namespace ShiftPlanner.Auth0;
 
+/*
 public class Auth0ManagementClient
 {
     public static async Task<User> GetUser()
     {
-        var credentials = await FetchAwsSecret.GetSecret();
+        var credentials = await AwsSecretsManagerClient.GetSecret();
         
         var client = new HttpClient();
         var payload = JsonSerializer.Serialize(
@@ -37,3 +38,4 @@ public class Auth0ManagementClient
         return tester;
     }
 }
+*/
