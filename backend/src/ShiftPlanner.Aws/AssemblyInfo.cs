@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("ShiftPlanner.Aws.Integration.Tests")]
+[assembly: InternalsVisibleTo("ShiftPlanner.Aws.Tests")]

@@ -16,6 +16,7 @@ public class AwsSecretsManagerClientShould
             .ReturnsAsync(new GetSecretValueResponse() {HttpStatusCode = HttpStatusCode.InternalServerError});
         
         var client = new AwsSecretsManagerClient(awsClientMock.Object);
+        
         await Assert.ThrowsAsync<InvalidOperationException>(() => client.FetchSecret<string>("some-arn"));
     }
     
