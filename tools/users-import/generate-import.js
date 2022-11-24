@@ -16,7 +16,7 @@ const generateImport = importString => importString
 fs.writeFile(
   path.join(__dirname, 'imports', `import-${new Date().toISOString().split('T')[0]}.json`),
   JSON.stringify(generateImport(importData)),
-  { encoding: 'utf8' },
+  {encoding: 'utf8'},
   err => {
     if (err) {
       console.error(err)

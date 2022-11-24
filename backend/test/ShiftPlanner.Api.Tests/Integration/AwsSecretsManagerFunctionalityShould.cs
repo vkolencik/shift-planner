@@ -1,4 +1,8 @@
-﻿namespace ShiftPlanner.Aws.Integration.Tests.Integration;
+﻿using Amazon;
+using Amazon.SecretsManager;
+using ShiftPlanner.Api.Services.Secrets;
+
+namespace ShiftPlanner.Api.Tests.Integration;
 
 public class AwsSecretsManagerFunctionalityShould
 {
@@ -9,7 +13,7 @@ public class AwsSecretsManagerFunctionalityShould
                 {"testPropertyString":"foo","testPropertyNumber":27,"testPropertyBoolean":true}
          */
 
-        var client = new AwsSecretsManagerClient();
+        var client = new AwsSecretsManagerClient(new AmazonSecretsManagerClient(RegionEndpoint.EUCentral1));
 
         var secret = await client
             .FetchSecret<DummySecret>("arn:aws:secretsmanager:eu-central-1:720500131615:secret:test-secret-for-integration-tests-cVDrui");

@@ -1,4 +1,4 @@
-import { getBaseUrl } from './get-base-url'
+import {getBaseUrl} from './get-base-url'
 
 describe('Base URL should', () => {
   [
@@ -14,7 +14,7 @@ describe('Base URL should', () => {
       frontendUrl: 'https://www.krtek.me/',
       expectedBackendUrl: 'https://b.krtek.me'
     }
-  ].forEach(({ frontendUrl, expectedBackendUrl }) =>
+  ].forEach(({frontendUrl, expectedBackendUrl}) =>
     it(`returns correct environment name for "${frontendUrl}"`, () => {
       // @ts-expect-error
       delete window.location

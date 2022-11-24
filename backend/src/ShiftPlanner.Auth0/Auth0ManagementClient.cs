@@ -1,11 +1,4 @@
-﻿using System.Text;
-using Auth0.ManagementApi;
-using System.Text.Json;
-using Auth0.ManagementApi.Models;
-using Auth0.ManagementApi.Paging;
-using ShiftPlanner.Aws;
-
-namespace ShiftPlanner.Auth0;
+﻿namespace ShiftPlanner.Auth0;
 
 /*
 public class Auth0ManagementClient

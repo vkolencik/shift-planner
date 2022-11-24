@@ -1,5 +1,4 @@
 ﻿using ShiftPlanner.Domain;
-using ShiftPlanner.Engine.SchedulingEngine;
 
 namespace ShiftPlanner.Engine;
 
@@ -23,7 +22,7 @@ public class ShiftScheduler
             Rules.NoAlternativeDayShiftsForEmployee(solverParameters, engine);
 
             Rules.LimitWeekendShifts(monthScheduleParameters, engine);
-            
+
             Rules.AlwaysScheduleAlternatesOverWeekends(monthScheduleParameters, engine);
 
             Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(
@@ -34,7 +33,7 @@ public class ShiftScheduler
             EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulerParameters, engine);
 
             EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulerParameters, engine);
-            
+
             EmployeeStandardRule.SpreadShiftsEvenlyThroughoutMonth(schedulerParameters, engine);
 
             Rules.TakeLeavesIntoAccount(monthScheduleParameters, engine);
@@ -54,8 +53,8 @@ public class ShiftScheduler
     {
         return new SchedulerParameters(
             monthScheduleParameters.Month,
-            monthScheduleParameters.EmployeeMonths, 
-            monthScheduleParameters.CompetenceGroups, 
+            monthScheduleParameters.EmployeeMonths,
+            monthScheduleParameters.CompetenceGroups,
             flexiblity);
     }
 

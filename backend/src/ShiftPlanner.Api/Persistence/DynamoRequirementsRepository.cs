@@ -1,6 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
-using ShiftPlanner.Api.Controllers;
+using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Persistence;
@@ -19,7 +19,7 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
     public async Task<Dictionary<Day, string>> GetRequirements(Tenant tenant, string userId, ScheduledMonth month)
     {
         var key = _requirementEntityConverter.GetUserMonthKey(tenant, userId, month);
-        
+
         using var context = GetContext();
 
         var query = context.QueryAsync<RequirementEntity>(

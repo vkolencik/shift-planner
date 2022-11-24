@@ -2,10 +2,11 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Api.Tests;
+namespace ShiftPlanner.Api.Tests.Controllers;
 
 public abstract class RequirementsControllerShould
 {
@@ -35,7 +36,7 @@ public abstract class RequirementsControllerShould
                     ["2022-10-12"] = "hard-no"
                 }, result.Value);
         }
-        
+
         [Fact]
         public async Task ReturnUnauthorized_GivenTokenForDifferentUser()
         {
@@ -86,7 +87,7 @@ public abstract class RequirementsControllerShould
             var controller = CreateController();
 
             var response = await controller.Delete(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth);
-            
+
             _requirementsServiceMock.Verify(_ => _.DeleteRequirement(tenant, _userId, day));
 
             Assert.IsType<OkResult>(response);
@@ -100,9 +101,9 @@ public abstract class RequirementsControllerShould
             _requirementsServiceMock.Setup(_ => _.DeleteRequirement(tenant, _userId, day))
                 .ReturnsAsync(DeleteResult.NotFound);
             var controller = CreateController();
-            
+
             var response = await controller.Delete(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth);
-            
+
             Assert.IsType<NotFoundResult>(response);
         }
 

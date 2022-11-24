@@ -15,7 +15,7 @@ public class LeaveShould
         var leave = new Leave(new Day(2022, 2, 15), new Day(2022, 2, dayOfMonth));
 
         var lengthDays = leave.LengthDays;
-        
+
         Assert.Equal(expectedLength, lengthDays);
     }
 
@@ -30,9 +30,9 @@ public class LeaveShould
     {
         var firstDay = new Day(2022, 2, 27);
         var secondDay = new Day(2022, 2, 28);
-        
+
         var leave = new Leave(firstDay, secondDay);
-        
-        Assert.Equal(new HashSet<Day> { firstDay, secondDay }, leave.Days);
+
+        Assert.Equal(new HashSet<Day> {firstDay, secondDay}, leave.Days);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Moq;
-using ShiftPlanner.Api.Controllers;
+using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
 using ShiftPlanner.Domain;
@@ -24,9 +24,9 @@ public class RequirementsServiceShould
         var requirements = TestData.Requirements;
 
         _repositoryMock.Setup(_ => _.GetRequirements(tenant, userId, month)).ReturnsAsync(requirements);
-        
+
         var service = CreateService();
-        
+
         var returnedRequirements = await service.GetRequirements(tenant, userId, month);
 
         Assert.Equal(requirements, returnedRequirements);
@@ -39,11 +39,11 @@ public class RequirementsServiceShould
         var userId = "user-id";
         var day = new Day(2022, 10, 18);
         var requirement = "hard-no";
-        
+
         var service = CreateService();
 
         await service.SetRequirement(tenant, userId, day, requirement);
-        
+
         _repositoryMock.Verify(_ => _.SetRequirement(tenant, userId, day, requirement));
     }
 
@@ -58,11 +58,11 @@ public class RequirementsServiceShould
         _repositoryMock.Setup(_ => _.DeleteRequirement(tenant, userId, day))
             .ReturnsAsync(repositoryResult)
             .Verifiable();
-        
+
         var service = CreateService();
 
         var serviceResult = await service.DeleteRequirement(tenant, userId, day);
-        
+
         _repositoryMock.VerifyAll();
         Assert.Equal(repositoryResult, serviceResult);
     }

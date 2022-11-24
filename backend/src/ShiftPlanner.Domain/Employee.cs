@@ -1,6 +1,7 @@
 namespace ShiftPlanner.Domain;
 
-public record Employee(string Name,
+public record Employee(
+    string Name,
     CompetenceLevel CompetenceLevel,
     Capabilities Capabilities,
     Workload Workload)

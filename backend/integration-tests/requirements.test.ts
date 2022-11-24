@@ -1,12 +1,12 @@
-import { getToken } from './helpers/auth'
-import { getHeaders } from './helpers/getHeaders'
+import {getToken} from './helpers/auth'
+import {getHeaders} from './helpers/getHeaders'
 
 describe('requirements resource should', () => {
   let token: string
   let token2: string
   const testTenant = `test-tenant-${new Date().getTime()}`
 
-  async function putRequirement (tenant: string, userId: string, year: number, month: number, day: number, requirementType: string, authToken: string | null = null): Promise<Response> {
+  async function putRequirement(tenant: string, userId: string, year: number, month: number, day: number, requirementType: string, authToken: string | null = null): Promise<Response> {
     if (authToken === null) {
       authToken = token
     }
@@ -14,7 +14,7 @@ describe('requirements resource should', () => {
     const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}`, {
       ...getHeaders(authToken),
       method: 'put',
-      body: JSON.stringify({ requirementType: requirementType })
+      body: JSON.stringify({requirementType: requirementType})
     })
     expect(resp.status).toEqual(200)
 

@@ -1,13 +1,13 @@
 // Code adapted from here: https://docs.aws.amazon.com/code-samples/latest/catalog/javascript-secrets-secrets_getsecretvalue.js.html
-import { SecretsManager } from 'aws-sdk'
+import {SecretsManager} from 'aws-sdk'
 
-function getSecretValue<T> (secretArn): Promise<T> {
+function getSecretValue<T>(secretArn): Promise<T> {
   const client = new SecretsManager({
     region: 'eu-central-1'
   })
 
   return new Promise((resolve, reject) => {
-    client.getSecretValue({ SecretId: secretArn }, (err, data) => {
+    client.getSecretValue({SecretId: secretArn}, (err, data) => {
       if (err) {
         reject(err)
       } else {
@@ -42,7 +42,7 @@ interface StoredTestUsersCredentials {
 
 type TestUser = 'testUser1' | 'testUser2'
 
-async function getTestUserCredentials (testUser: TestUser): Promise<TestUserCredentials> {
+async function getTestUserCredentials(testUser: TestUser): Promise<TestUserCredentials> {
   const secretArn = 'arn:aws:secretsmanager:eu-central-1:720500131615:secret:test-user-credentials-oNMZpk'
   const credentials = await getSecretValue<StoredTestUsersCredentials>(secretArn)
 
@@ -66,7 +66,7 @@ export const getToken = (testUser: TestUser = 'testUser1'): Promise<string> =>
     .then(testUserCredentials =>
       fetch('https://krtek.eu.auth0.com/oauth/token', {
         method: 'POST',
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        headers: {'content-type': 'application/x-www-form-urlencoded'},
         body: new URLSearchParams({
           grant_type: 'password',
           audience: 'https://b.krtek.me',

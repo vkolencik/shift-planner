@@ -2,8 +2,9 @@ using System.Net;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
 using Moq;
+using ShiftPlanner.Api.Services.Secrets;
 
-namespace ShiftPlanner.Aws.Integration.Tests;
+namespace ShiftPlanner.Api.Tests.Services;
 
 public class AwsSecretsManagerClientShould
 {
@@ -14,9 +15,9 @@ public class AwsSecretsManagerClientShould
         awsClientMock
             .Setup(_ => _.GetSecretValueAsync(It.IsAny<GetSecretValueRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new GetSecretValueResponse() {HttpStatusCode = HttpStatusCode.InternalServerError});
-        
+
         var client = new AwsSecretsManagerClient(awsClientMock.Object);
+
         await Assert.ThrowsAsync<InvalidOperationException>(() => client.FetchSecret<string>("some-arn"));
     }
-    
 }

@@ -22,10 +22,10 @@ internal class GoogleCpSolver : ISolver
         {
             throw new ArgumentException($"Variable {variableName.Value} was already created", nameof(variableName));
         }
-        
+
         var solverVariable = _model.NewBoolVar(variableName.Value);
-        
-        _variables.Add(variableName, solverVariable); 
+
+        _variables.Add(variableName, solverVariable);
     }
 
     public void Solve()
@@ -44,7 +44,7 @@ internal class GoogleCpSolver : ISolver
         {
             throw new InvalidOperationException($"Solver didn't find solution (solution status: {_status.ToString()}).");
         }
-        
+
         if (!_variables.TryGetValue(variableName, out var value))
         {
             throw new ArgumentException($"Variable {variableName.Value} not found in model", nameof(variableName));
@@ -67,7 +67,7 @@ internal class GoogleCpSolver : ISolver
             case Constraint.Lte:
                 _model.Add(LinearExpr.Sum(variables) <= bound);
                 break;
-            default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));                
+            default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));
         }
     }
 
@@ -117,5 +117,4 @@ internal class GoogleCpSolver : ISolver
         CpSolverStatus.Optimal => SolverStatus.Success,
         _ => throw new NotSupportedException($"Unsupported solver status {_solver.Response.Status}")
     };
-
 }

@@ -1,4 +1,3 @@
-using System.Net.NetworkInformation;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
 
@@ -75,7 +74,7 @@ namespace ShiftPlanner.Engine.SchedulingEngine
             var shiftVariables = shifts
                 .Select(s => VariableName.Schedule(_employees[s.Employee], _days[s.Shift.Day], _workplaces[s.Shift.Workplace]))
                 .ToArray();
-            
+
             _solver.AddSumConstraint(shiftVariables, constraint, bound);
         }
 

@@ -13,6 +13,6 @@ internal interface IRequirementEntityConverter
     Dictionary<Day, string> RequirementEntitiesToMonthRequirements(IEnumerable<RequirementEntity> entities);
 
     string GetPartitionKey(Tenant tenant, string userId, Day day);
-    
+
     string GetUserMonthKey(Tenant tenant, string userId, ScheduledMonth month);
 }

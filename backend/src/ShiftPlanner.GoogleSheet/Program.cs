@@ -4,7 +4,6 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
-using Google.Apis.Util.Store;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine;
 
@@ -87,7 +86,11 @@ static class Program
         }
     }
 
-    private static void WriteListToSheet<T>(SheetsService service, string rangeStart, IEnumerable<T> values, string dimension = "ROWS")
+    private static void WriteListToSheet<T>(
+        SheetsService service,
+        string rangeStart,
+        IEnumerable<T> values,
+        string dimension = "ROWS")
     {
         service.Spreadsheets.Values.BatchUpdate(
             new BatchUpdateValuesRequest()

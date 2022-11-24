@@ -16,6 +16,8 @@ jobs:
     description: Setup and run application tests
     executor: dotnet-sdk
     working_directory: ~/project/backend
+    environment:
+      AWS_DEFAULT_REGION: eu-central-1
     steps:
       - checkout:
           path: ~/project

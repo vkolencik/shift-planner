@@ -9,7 +9,7 @@ public record Capabilities
         {
             throw new ArgumentException("Percentual capabilities must add up to 100 %", nameof(workplaceCapabilities));
         }
-        
+
         this.WorkplaceCapabilities = workplaceCapabilities;
     }
 

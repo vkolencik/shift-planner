@@ -4,13 +4,13 @@ using Moq;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine;
 using Xunit;
-using Constraint = ShiftPlanner.Engine.SchedulingEngine.Constraint;
 
 namespace ShiftPlanner.Engine.Tests.SchedulingEngine;
 
 public class EngineShould
 {
     Mock<ISolver> _solverMock = new Mock<ISolver>();
+
     [Fact]
     public void CreateShiftSolverVariables()
     {
@@ -24,7 +24,7 @@ public class EngineShould
                 for (int workplaceIndex = 1; workplaceIndex <= input.Workplaces.Count; workplaceIndex++)
                 {
                     var (e, d, w) = (employeeIndex, day, workplaceIndex);
-                    
+
                     _solverMock.Verify(_ => _.NewBoolVar(new VariableName($"shifts_e{e}_d{d}_w{w}")));
                 }
             }
@@ -35,9 +35,9 @@ public class EngineShould
     public void RunSolver()
     {
         var engine = CreateEngine(CreateEmptyInput());
-        
+
         engine.Solve();
-        
+
         _solverMock.Verify(_ => _.Solve());
     }
 
@@ -48,24 +48,24 @@ public class EngineShould
         for (int day = 1; day <= input.Days.Count; day++)
         {
             var d = day;
-            
+
             // First employee is on the first workplace all the time:
             _solverMock.Setup(_ => _.Result(VariableName.Schedule(1, d, 1))).Returns(1);
             _solverMock.Setup(_ => _.Result(VariableName.Schedule(2, d, 1))).Returns(0);
             _solverMock.Setup(_ => _.Result(VariableName.Schedule(3, d, 1))).Returns(0);
-            
+
             // Other two employees take turns at the second workplace:
             _solverMock.Setup(_ => _.Result(VariableName.Schedule(1, d, 2))).Returns(0);
             _solverMock.Setup(_ => _.Result(VariableName.Schedule(2, d, 2))).Returns(day % 2);
             _solverMock.Setup(_ => _.Result(VariableName.Schedule(3, d, 2))).Returns((day + 1) % 2);
-            
         }
+
         var engine = CreateEngine(input);
 
         var result = engine.Solve();
 
         var schedule = Assert.IsType<Schedule>(result);
-        
+
         for (int d = 1; d <= input.Days.Count; d++)
         {
             Assert.Equal(
@@ -94,12 +94,12 @@ public class EngineShould
         var input = CreateBasicInput();
         var engine = CreateEngine(input);
 
-        var shifts = new []
+        var shifts = new[]
         {
             new ShiftAssignment(input.Employees.ElementAt(0), input.Days.ElementAt(0), input.Workplaces.ElementAt(0)),
             new ShiftAssignment(input.Employees.ElementAt(1), input.Days.ElementAt(1), input.Workplaces.ElementAt(1))
         };
-        
+
         engine.AddSumConstraint(shifts, Constraint.Gte, 2);
 
         _solverMock.Verify(
@@ -114,8 +114,8 @@ public class EngineShould
 
         var shift = new ShiftAssignment(
             input.Employees.ElementAt(0), input.Days.ElementAt(0), input.Workplaces.ElementAt(0));
-        
-        engine.AddVariableConstraint( shift, Constraint.Lte, 7);
+
+        engine.AddVariableConstraint(shift, Constraint.Lte, 7);
 
         _solverMock.Verify(
             s => s.AddVariableConstraint(VariableName.Schedule(1, 1, 1), Constraint.Lte, 7));
@@ -135,22 +135,22 @@ public class EngineShould
             input.Employees.ElementAt(1), input.Days.ElementAt(0), input.Workplaces.ElementAt(0));
         var shiftB2 = new ShiftAssignment(
             input.Employees.ElementAt(1), input.Days.ElementAt(1), input.Workplaces.ElementAt(0));
-        
-        engine.AddSumRelationConstraint(new [] {shiftA1, shiftA2}, Constraint.Eq, new [] {shiftB1, shiftB2});
+
+        engine.AddSumRelationConstraint(new[] {shiftA1, shiftA2}, Constraint.Eq, new[] {shiftB1, shiftB2});
 
         _solverMock.Verify(
-            s => s.AddSumRelationConstraint(new [] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(1, 2, 1)}, Constraint.Eq, new [] {VariableName.Schedule(2, 1, 1), VariableName.Schedule(2, 2, 1)}));
+            s => s.AddSumRelationConstraint(new[] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(1, 2, 1)}, Constraint.Eq, new[] {VariableName.Schedule(2, 1, 1), VariableName.Schedule(2, 2, 1)}));
     }
 
     [Fact]
     public void ReturnNull_WhenSolverDoesntFindSolution()
     {
         var engine = CreateEngine(CreateEmptyInput());
-        
+
         _solverMock.Setup(_ => _.SolverStatus).Returns(SolverStatus.NotFound);
 
         var schedulingResult = engine.Solve();
-        
+
         Assert.Null(schedulingResult);
     }
 
@@ -167,15 +167,15 @@ public class EngineShould
             workplace1,
             new Workplace("JIP"),
         };
-        
+
         return new SolverParameters(
             Enumerable.Range(1, 5).Select(d => new Day(2022, 2, d)).ToArray(),
             new Employee[]
             {
-                new Employee("Hynek", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(workplace1, 100)})),
-                new Employee("Vilem", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(workplace1, 100)})),
-                new Employee("Jarmila", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(workplace1, 100)})),
-            }, 
+                new Employee("Hynek", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(workplace1, 100)})),
+                new Employee("Vilem", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(workplace1, 100)})),
+                new Employee("Jarmila", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(workplace1, 100)})),
+            },
             workplaces);
     }
 

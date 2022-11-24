@@ -11,11 +11,11 @@ public class SchedulingParametersShould
     {
         var workplace1 = new Workplace("1");
         var workplace2 = new Workplace("2");
-        
+
         var parameters = new MonthScheduleParameters(
             new ScheduledMonth(2022, 2),
             Array.Empty<EmployeeMonth>(),
-            new [] { new CompetenceGroup(new [] {workplace1}), new CompetenceGroup(new [] {workplace2})});
+            new[] {new CompetenceGroup(new[] {workplace1}), new CompetenceGroup(new[] {workplace2})});
 
         Assert.Equal(new HashSet<Workplace> {workplace1, workplace2}, parameters.Workplaces);
     }

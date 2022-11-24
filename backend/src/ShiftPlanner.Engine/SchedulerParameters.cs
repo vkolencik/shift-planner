@@ -2,7 +2,8 @@
 
 namespace ShiftPlanner.Engine;
 
-internal record SchedulerParameters(ScheduledMonth Month,
+internal record SchedulerParameters(
+    ScheduledMonth Month,
     IReadOnlyCollection<EmployeeMonth> EmployeeMonths,
     IReadOnlyCollection<CompetenceGroup> CompetenceGroups,
     ScheduleFlexibility Flexibility

@@ -8,7 +8,7 @@ describe('backend should', () => {
 
   describe('CORS', () => {
     ['http://localhost:3000', 'https://krtek.me', 'https://www.krtek.me']
-      .forEach(origin=>
+      .forEach(origin =>
         it(`allow origin ${origin}`, async () => {
           const response = await fetch(backendBaseUrl, {
             headers: {

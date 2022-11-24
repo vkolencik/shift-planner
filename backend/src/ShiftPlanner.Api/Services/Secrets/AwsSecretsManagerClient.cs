@@ -1,26 +1,15 @@
 ﻿using System.Net;
 using System.Text.Json;
-
-namespace ShiftPlanner.Aws;
-
-using Amazon;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
+
+namespace ShiftPlanner.Api.Services.Secrets;
 
 public class AwsSecretsManagerClient
 {
     private readonly IAmazonSecretsManager _client;
 
-    public AwsSecretsManagerClient() : this("eu-central-1")
-    {
-    }
-
-    public AwsSecretsManagerClient(string region)
-    {
-        _client = new AmazonSecretsManagerClient(RegionEndpoint.GetBySystemName(region));
-    }
-
-    internal AwsSecretsManagerClient(IAmazonSecretsManager client)
+    public AwsSecretsManagerClient(IAmazonSecretsManager client)
     {
         _client = client;
     }

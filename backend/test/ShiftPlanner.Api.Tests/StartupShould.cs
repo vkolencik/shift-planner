@@ -20,10 +20,7 @@ public class StartupShould
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.ConfigureServices(
-                        serviceCollection =>
-                        {
-                            serviceCollection.AddTransient<RequirementsController>();
-                        });
+                        serviceCollection => { serviceCollection.AddTransient<RequirementsController>(); });
                     webBuilder.ConfigureAppConfiguration(configurationBuilder => { configurationBuilder.AddJsonStream(ms); });
                 });
 
@@ -40,5 +37,4 @@ public class StartupShould
         MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(s));
         return ms;
     }
-
 }
