@@ -18,6 +18,9 @@ import {FormCheck, Spinner} from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 
+const year = 2023
+const month = 0
+
 type DayDate = moment.Moment
 
 interface DateRange {
@@ -59,7 +62,7 @@ export const Requirements: React.FC = () => {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.get(2022, 12)
+      api.requirements.get(year, month)
         .then(setRequirements)
     }
   })
@@ -118,7 +121,7 @@ export const Requirements: React.FC = () => {
 
   return (
     <>
-      <h1>Prosinec 2022</h1>
+      <h1>{new Date(year, month, 1).toLocaleString('defualt', { month: 'long' })} {year}</h1>
 
       {selectedDateRange &&
         <Modal
@@ -176,7 +179,7 @@ export const Requirements: React.FC = () => {
         ? <div><FullCalendar
           plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
           initialView="dayGridMonth"
-          initialDate={new Date(2022, 11, 1)}
+          initialDate={new Date(year, month, 1)}
           themeSystem="bootstrap5"
           headerToolbar={false}
           firstDay={1}
