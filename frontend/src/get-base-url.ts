@@ -1,4 +1,4 @@
-function getWindowLocation (): Location {
+function getWindowLocation(): Location {
   if (window == null || window.location == null) {
     throw new Error('Unable to determine location. Not running in browser?')
   }
@@ -6,7 +6,7 @@ function getWindowLocation (): Location {
   return window.location
 }
 
-export function getBaseUrl (): string {
+export function getBaseUrl(): string {
   const hostname = getWindowLocation().hostname
 
   if (hostname === 'localhost') {

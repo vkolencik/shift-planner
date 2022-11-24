@@ -11,7 +11,7 @@ namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
         public void ComputeBasicSchedule()
         {
             var aro = new Workplace("ARO");
-            var vojta = new Employee("Vojta", CompetenceLevel.Level1, new Capabilities(new[] { new WorkplaceCapability.Green(aro, 100) }));
+            var vojta = new Employee("Vojta", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(aro, 100)}));
 
             var inputParams = new SolverParameters(
                 new ScheduledMonth(2022, 2).Days,
@@ -22,7 +22,7 @@ namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
 
             for (int d = 1; d <= 28; d++)
             {
-                engine.AddSumConstraint(new [] {new ShiftAssignment(vojta, new Day(new DateOnly(2022, 2, d)), aro)}, Constraint.Eq, 1);
+                engine.AddSumConstraint(new[] {new ShiftAssignment(vojta, new Day(new DateOnly(2022, 2, d)), aro)}, Constraint.Eq, 1);
             }
 
             var result = engine.Solve();

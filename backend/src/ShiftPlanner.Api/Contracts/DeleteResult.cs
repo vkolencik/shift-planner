@@ -1,4 +1,4 @@
-﻿namespace ShiftPlanner.Api.Controllers;
+﻿namespace ShiftPlanner.Api.Contracts;
 
 public enum DeleteResult
 {

@@ -1,6 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Controllers;
@@ -25,7 +26,7 @@ public class RequirementsController : ControllerBase
         [FromRoute] int month)
     {
         var loggedInUserId = User.Identity.Name;
-        
+
         if (loggedInUserId != userId)
         {
             return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");
@@ -48,7 +49,7 @@ public class RequirementsController : ControllerBase
         [FromBody] RequirementInputModel requirement)
     {
         var loggedInUserId = User.Identity.Name;
-        
+
         if (loggedInUserId != userId)
         {
             return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");
@@ -68,7 +69,7 @@ public class RequirementsController : ControllerBase
         [FromRoute] int day)
     {
         var loggedInUserId = User.Identity.Name;
-        
+
         if (loggedInUserId != userId)
         {
             return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");

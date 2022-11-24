@@ -4,4 +4,3 @@ using ShiftPlanner.Engine;
 using ShiftPlanner.Engine.Sample;
 
 SampleSchedulingEngine.CalculateSchedule();
-                                                                                                                                                                                                                                                                                                                                                                     

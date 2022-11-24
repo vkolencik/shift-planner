@@ -45,19 +45,20 @@ internal static class EmployeeStandardRule
                     .Count();
 
                 var standard = ComputeStandard(schedulingParams, employeeMonth, (double) workingDaysInRange / workingDaysInMonth, 0.1);
-                
+
                 var shiftsInRange = schedulingParams.Month.Days
                     .Where(d => from <= d.Date.Day && d.Date.Day <= to)
                     .SelectMany(d => schedulingParams.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, d, w)))
                     .ToArray();
-                
+
                 engine.AddSumConstraint(shiftsInRange, Constraint.Lte, standard.Maximum);
                 engine.AddSumConstraint(shiftsInRange, Constraint.Gte, standard.Minimum);
             }
         }
     }
 
-    private static void AddEmployeeStandardRules(SchedulerParameters monthScheduleParameters,
+    private static void AddEmployeeStandardRules(
+        SchedulerParameters monthScheduleParameters,
         ISchedulingEngine engine,
         EmployeeMonth employeeMonth)
     {
@@ -71,7 +72,8 @@ internal static class EmployeeStandardRule
         engine.AddSumConstraint(employeeShiftsInMonth, Constraint.Lte, employeeStandard.Maximum);
     }
 
-    private static void AddEmployeePreferencePercentages(SchedulerParameters monthScheduleParameters,
+    private static void AddEmployeePreferencePercentages(
+        SchedulerParameters monthScheduleParameters,
         ISchedulingEngine engine,
         EmployeeMonth employeeMonth)
     {

@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 public class Startup
 {
     private readonly string _myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+    private readonly RegionEndpoint _awsRegionEndpoint = RegionEndpoint.EUCentral1;
 
     public Startup(IConfiguration configuration)
     {
@@ -67,7 +68,7 @@ public class Startup
 
         services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
-        services.AddAWSService<IAmazonDynamoDB>(new AWSOptions() {Region = RegionEndpoint.EUCentral1});
+        services.AddAWSService<IAmazonDynamoDB>(new AWSOptions() {Region = _awsRegionEndpoint});
 
         services.AddControllers();
 

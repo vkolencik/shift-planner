@@ -1,5 +1,5 @@
-import React, { FC } from 'react'
-import { Col, Container, Row } from 'react-bootstrap'
+import React, {FC} from 'react'
+import {Col, Container, Row} from 'react-bootstrap'
 
 export const Footer: FC = () =>
   <footer className='footer pl-3 text-bg-light w-100 d-none d-sm-block mt-auto sticky-bottom border-top'>

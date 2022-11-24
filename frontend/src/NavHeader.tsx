@@ -1,11 +1,11 @@
-import React, { FC } from 'react'
-import { useAuth0 } from '@auth0/auth0-react'
-import { Button, Container, Nav, Navbar } from 'react-bootstrap'
-import { UserBadge } from './UserBadge'
-import { LinkContainer } from 'react-router-bootstrap'
+import React, {FC} from 'react'
+import {useAuth0} from '@auth0/auth0-react'
+import {Button, Container, Nav, Navbar} from 'react-bootstrap'
+import {UserBadge} from './UserBadge'
+import {LinkContainer} from 'react-router-bootstrap'
 
 export const NavHeader: FC = () => {
-  const { logout } = useAuth0()
+  const {logout} = useAuth0()
 
   const displayLogoutButton = false // TODO: Enable once random logout issue on mobile is resolved
 
@@ -31,7 +31,7 @@ export const NavHeader: FC = () => {
       <UserBadge/>
       {displayLogoutButton &&
         <Button
-          onClick={() => logout({ returnTo: window.location.protocol + '//' + window.location.host })} className='ms-3'>
+          onClick={() => logout({returnTo: window.location.protocol + '//' + window.location.host})} className='ms-3'>
           Logout
         </Button>
       }

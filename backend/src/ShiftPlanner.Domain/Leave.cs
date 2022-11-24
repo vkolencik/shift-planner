@@ -25,7 +25,7 @@ public record Leave
             }
         }
     }
-    
+
     public Day From { get; init; }
     public Day To { get; init; }
 

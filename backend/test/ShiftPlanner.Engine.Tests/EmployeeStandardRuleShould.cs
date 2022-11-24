@@ -45,7 +45,7 @@ public class EmployeeStandardRuleShould
         Assert.All(
             schedulingParams.Employees,
             employee => Assert.Contains(
-                schedulingParams.Month.Days.SelectMany(d => new [] {Workplace1, Workplace2}.Select(w => new ShiftAssignment(employee, d, w))).ToHashSet(),
+                schedulingParams.Month.Days.SelectMany(d => new[] {Workplace1, Workplace2}.Select(w => new ShiftAssignment(employee, d, w))).ToHashSet(),
                 capturedShiftsLte.Select(x => new HashSet<ShiftAssignment>(x))));
     }
 
@@ -61,7 +61,7 @@ public class EmployeeStandardRuleShould
             new ScheduledMonth(2022, 2),
             new[]
             {
-                new EmployeeMonth(Employee1, new [] { new Leave(new Day(2022, 2, 1), new Day(2022, 2, 14)) }),
+                new EmployeeMonth(Employee1, new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 14))}),
                 new EmployeeMonth(Employee2),
                 new EmployeeMonth(Employee2),
             },
@@ -90,7 +90,7 @@ public class EmployeeStandardRuleShould
                 .SelectMany(d => new[] {Workplace1, Workplace2}.Select(w => new ShiftAssignment(Employee1, d, w)))
                 .ToHashSet(),
             capturedShiftsHalfMonthOffLte.Select(_ => _.ToHashSet()));
-        
+
         Assert.Contains(
             schedulingParams.Month.Days
                 .SelectMany(d => new[] {Workplace1, Workplace2}.Select(w => new ShiftAssignment(Employee2, d, w)))
@@ -104,7 +104,7 @@ public class EmployeeStandardRuleShould
         var capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
 
-        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 20), new WorkplaceCapability.Green(Workplace2, 80) }), Workload.Infinite);
+        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Workplace1, 20), new WorkplaceCapability.Green(Workplace2, 80)}), Workload.Infinite);
         var schedulingParams = new SchedulerParameters(
             new ScheduledMonth(2022, 2),
             new[]
@@ -125,17 +125,17 @@ public class EmployeeStandardRuleShould
 
         EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulingParams, _engineMock.Object);
 
-        Assert.Equal(capturedShiftsGte.ToHashSet(), capturedShiftsLte.ToHashSet()); 
+        Assert.Equal(capturedShiftsGte.ToHashSet(), capturedShiftsLte.ToHashSet());
         Assert.Contains(
-                schedulingParams.Month.Days.Select(d => new ShiftAssignment(employee, d, Workplace1)).ToHashSet(),
-                capturedShiftsLte.Select(x => new HashSet<ShiftAssignment>(x)));
+            schedulingParams.Month.Days.Select(d => new ShiftAssignment(employee, d, Workplace1)).ToHashSet(),
+            capturedShiftsLte.Select(x => new HashSet<ShiftAssignment>(x)));
     }
 
     [Theory]
     [MemberData(nameof(GetAllWorkloads))]
     public void TakeEmployeeMaxStandardIntoAccount(Workload workload)
     {
-        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), workload);
+        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Workplace1, 100)}), workload);
         var capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedBoundsLte = new List<uint>();
 
@@ -159,7 +159,7 @@ public class EmployeeStandardRuleShould
 
         var lteBound = Assert.Single(capturedBoundsLte);
         var lteShifts = Assert.Single(capturedShiftsLte);
-        
+
         Assert.Equal(workload.MaximumShiftsPerMonth, lteBound);
         Assert.Equal(month.Days.Select(d => new ShiftAssignment(employee, d, Workplace1)), lteShifts);
     }
@@ -168,7 +168,7 @@ public class EmployeeStandardRuleShould
     [MemberData(nameof(GetAllWorkloads))]
     public void TakeEmployeeMaxStandardIntoAccountIncludingLeave(Workload workload)
     {
-        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), workload);
+        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Workplace1, 100)}), workload);
         var capturedBoundsLte = new List<uint>();
         var capturedBoundsGte = new List<uint>();
 
@@ -177,7 +177,7 @@ public class EmployeeStandardRuleShould
             month,
             new[]
             {
-                new EmployeeMonth(employee, new [] { new Leave(new Day(2022, 2, 1), new Day(2022, 2, 14))})
+                new EmployeeMonth(employee, new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 14))})
             },
             new[]
             {
@@ -193,14 +193,14 @@ public class EmployeeStandardRuleShould
 
         var lteBound = Assert.Single(capturedBoundsLte);
         var gteBound = Assert.Single(capturedBoundsGte);
-        
+
         Assert.Equal(Math.Ceiling((double) workload.MaximumShiftsPerMonth / 2), lteBound);
-        
+
         // TODO: create a separate test for upper bound as well
         // Assert.Equal(Math.Floor((double) workload.MaximumShiftsPerMonth / 2), gteBound);
     }
 
-    public static IEnumerable<object[]> GetAllWorkloads() => new []
+    public static IEnumerable<object[]> GetAllWorkloads() => new[]
     {
         Workload.Workload04,
         Workload.Workload05,
@@ -213,7 +213,7 @@ public class EmployeeStandardRuleShould
     [Fact]
     public void SpreadShiftsEvenlyThroughoutMonth()
     {
-        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) }), Workload.Infinite);
+        var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Workplace1, 100)}), Workload.Infinite);
 
         var leave = new Leave(new Day(2022, 2, 1), new Day(2022, 2, 3));
         var schedulingParams = new SchedulerParameters(

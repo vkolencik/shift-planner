@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Google.OrTools" Version="9.4.1874" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.OrTools" Version="9.4.1874"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj"/>
+  </ItemGroup>
 
 </Project>

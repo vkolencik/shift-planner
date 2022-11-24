@@ -19,7 +19,7 @@ public class ComputedScheduleShould
     static readonly Workplace Res1 = new Workplace("res1");
     static readonly Workplace Res2 = new Workplace("res2");
     static readonly Workplace Res3 = new Workplace("res3");
-        
+
     private readonly IReadOnlyCollection<CompetenceGroup> _competenceGroups = new[]
     {
         new CompetenceGroup(new[] {Aro1, Aro2, Aro3}),
@@ -51,39 +51,43 @@ public class ComputedScheduleShould
                     new WorkplaceCapability.Red(Aro2), new WorkplaceCapability.Red(Res2),
                     new WorkplaceCapability.Green(Aro3, 80), new WorkplaceCapability.Green(Res3, 20),
                 }),
-            Workload.Infinite   
+            Workload.Infinite
         ),
         new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 15))}
     );
 
-    private IEnumerable<EmployeeMonth> EmployeeMonthsWithTimeOff => _employeeMonths.Take(_employeesWithTimeOffCount).Concat(new [] { _percentualCapabilitiesEmployee2WithLeave});    
+    private IEnumerable<EmployeeMonth> EmployeeMonthsWithTimeOff => _employeeMonths.Take(_employeesWithTimeOffCount).Concat(new[] {_percentualCapabilitiesEmployee2WithLeave});
     private IEnumerable<Employee> EmployeesWithTimeOff => EmployeeMonthsWithTimeOff.Select(em => em.Employee);
     private IEnumerable<Employee> EmployeesWithoutTimeOff => Employees.Except(EmployeesWithTimeOff);
+
     public ComputedScheduleShould()
     {
-        var capableForFirstWorkplaces = new Capabilities(new WorkplaceCapability[]
-        {
-            new WorkplaceCapability.Green(Aro1, 30), new WorkplaceCapability.Green(Res1, 40),
-            new WorkplaceCapability.Green(Aro2, 30), new WorkplaceCapability.Red(Res2),  
-            new WorkplaceCapability.Red(Aro3), new WorkplaceCapability.Red(Res3),  
-        });
+        var capableForFirstWorkplaces = new Capabilities(
+            new WorkplaceCapability[]
+            {
+                new WorkplaceCapability.Green(Aro1, 30), new WorkplaceCapability.Green(Res1, 40),
+                new WorkplaceCapability.Green(Aro2, 30), new WorkplaceCapability.Red(Res2),
+                new WorkplaceCapability.Red(Aro3), new WorkplaceCapability.Red(Res3),
+            });
 
-        var capableForSecondWorkplaces = new Capabilities(new WorkplaceCapability[]
-        {
-            new WorkplaceCapability.Red(Aro1), new WorkplaceCapability.Red(Res1),
-            new WorkplaceCapability.Red(Aro2), new WorkplaceCapability.Green(Res2, 40),
-            new WorkplaceCapability.Green(Aro3, 30), new WorkplaceCapability.Green(Res3, 30),
-        });
-       
+        var capableForSecondWorkplaces = new Capabilities(
+            new WorkplaceCapability[]
+            {
+                new WorkplaceCapability.Red(Aro1), new WorkplaceCapability.Red(Res1),
+                new WorkplaceCapability.Red(Aro2), new WorkplaceCapability.Green(Res2, 40),
+                new WorkplaceCapability.Green(Aro3, 30), new WorkplaceCapability.Green(Res3, 30),
+            });
+
         _employeeMonths = Enumerable.Range(1, 42)
-            .Select(i => new EmployeeMonth(
-                new Employee(
-                    Name: $"Employee{i}",
-                    CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
-                    Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces,
-                    Workload: Workload.Infinite),
-                i <= _employeesWithTimeOffCount ? new [] { new Leave(new Day(2022, 2, 1 + i * 2), new Day(2022, 2, 1 + i * 2 + 14)) } : Array.Empty<Leave>()                
-            ))
+            .Select(
+                i => new EmployeeMonth(
+                    new Employee(
+                        Name: $"Employee{i}",
+                        CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
+                        Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces,
+                        Workload: Workload.Infinite),
+                    i <= _employeesWithTimeOffCount ? new[] {new Leave(new Day(2022, 2, 1 + i * 2), new Day(2022, 2, 1 + i * 2 + 14))} : Array.Empty<Leave>()
+                ))
             .Concat(new[] {_percentualCapabilitiesEmployee1, _percentualCapabilitiesEmployee2WithLeave})
             .ToArray();
     }
@@ -98,7 +102,7 @@ public class ComputedScheduleShould
             var employeeShifts = schedule.Shifts
                 .Where(s => s.Employee == employee)
                 .ToArray();
-            
+
             if (employeeShifts.Length > 1)
             {
                 var minDaysBetweenShifts = employeeShifts
@@ -165,7 +169,7 @@ public class ComputedScheduleShould
             var shiftsPerDay = Enumerable.Range(1, 28)
                 .Select(d => competenceGroupShifts.Where(s => s.Shift.Day.Date.Day == d))
                 .ToArray();
-        
+
             Assert.All(shiftsPerDay, dayShifts => Assert.Contains(dayShifts, s => s.Employee.CompetenceLevel == CompetenceLevel.Level1));
         }
     }
@@ -195,12 +199,12 @@ public class ComputedScheduleShould
         var maxShiftsPerMonth = shiftNumbers.Max();
         var minShiftsPerMonth = shiftNumbers.Min();
         Assert.True(maxShiftsPerMonth - minShiftsPerMonth <= 2, $"Minimum number of shifts {minShiftsPerMonth} is too different from maximum {maxShiftsPerMonth}");
-        
+
         var shiftNumbersForEmployeesWithTimeOff = EmployeesWithTimeOff.Select(e => schedule.Shifts.Count(s => s.Employee == e)).ToList();
         var maxShiftsTimeOffPerMonth = shiftNumbersForEmployeesWithTimeOff.Max();
         var minShiftsTimeOffPerMonth = shiftNumbersForEmployeesWithTimeOff.Min();
         Assert.True(maxShiftsTimeOffPerMonth - minShiftsTimeOffPerMonth <= 2, $"Minimum number of shifts {minShiftsTimeOffPerMonth} is too different from maximum {maxShiftsTimeOffPerMonth}");
-        
+
         Assert.True(Math.Abs(2 * maxShiftsTimeOffPerMonth - maxShiftsPerMonth) <= 1, $"Employees with half of month off should have about half the number of total shifts, but had {maxShiftsTimeOffPerMonth} which is not half of {maxShiftsPerMonth}");
     }
 
@@ -216,7 +220,7 @@ public class ComputedScheduleShould
         var shiftsOnAro2 = percentualShifts.Count(s => s.Shift.Workplace == Aro2);
         var shiftsOnAro3 = percentualShifts.Count(s => s.Shift.Workplace == Aro3);
         var shiftsOnRes1 = percentualShifts.Count(s => s.Shift.Workplace == Res1);
-        
+
         Assert.Equal(totalShiftCount, shiftsOnAro1 + shiftsOnAro2 + shiftsOnAro3 + shiftsOnRes1);
         Assert.True(Math.Abs(totalShiftCount * 0.2 - shiftsOnAro1) <= 1, $"Shifts on the workplace should be about 20 % of total shifts ({totalShiftCount}) but is {shiftsOnAro1}");
         Assert.True(Math.Abs(totalShiftCount * 0.2 - shiftsOnAro2) <= 1, $"Shifts on the workplace should be about 20 % of total shifts ({totalShiftCount}) but is {shiftsOnAro2}");
@@ -234,7 +238,7 @@ public class ComputedScheduleShould
 
         var shiftsOnAro3 = percentualShifts.Count(s => s.Shift.Workplace == Aro3);
         var shiftsOnRes3 = percentualShifts.Count(s => s.Shift.Workplace == Res3);
-        
+
         Assert.Equal(totalShiftCount, shiftsOnAro3 + shiftsOnRes3);
         Assert.True(Math.Abs(totalShiftCount * 0.8 - shiftsOnAro3) <= 1, $"Shifts on the workplace should be about 80 % of total shifts ({totalShiftCount}) but is {shiftsOnAro3}");
         Assert.True(Math.Abs(totalShiftCount * 0.2 - shiftsOnRes3) <= 1, $"Shifts on the workplace should be about 20 % of total shifts ({totalShiftCount}) but is {shiftsOnRes3}");
@@ -253,7 +257,7 @@ public class ComputedScheduleShould
                 .Where(s => s.Employee == employeeMonthWithTimeOff.Employee)
                 .Where(s => leave.From <= s.Shift.Day && s.Shift.Day <= leave.To)
                 .ToList();
-            
+
             Assert.Empty(assignedShifts);
         }
     }
@@ -270,7 +274,7 @@ public class ComputedScheduleShould
             var weekendDayShifts = schedule.Shifts
                 .Where(s => s.Employee == employee && s.Shift.Day.DayOfWeek == weekendDay)
                 .ToArray();
-            
+
             Assert.True(weekendDayShifts.Length <= 1, $"More than one shift for {employee.Name} on {weekendDay.ToString()}: {string.Join(", ", weekendDayShifts.Select(s => s.Shift.Day))}");
         }
     }
@@ -284,7 +288,7 @@ public class ComputedScheduleShould
         {
             var employeeShifts = schedule.Shifts.Where(s => s.Employee == employee);
 
-            var boundaries = new [] { 1, 8, 15, 22, 29 };
+            var boundaries = new[] {1, 8, 15, 22, 29};
             var shiftCounts = boundaries.Take(boundaries.Length - 1)
                 .Zip(boundaries.Skip(1), (dayFrom, dayTo) => employeeShifts.Count(s => dayFrom <= s.Shift.Day.Date.Day && s.Shift.Day.Date.Day < dayTo))
                 .ToArray();
@@ -305,14 +309,14 @@ public class ComputedScheduleShould
 
         var boundaries = new[] {week1start, week2start, week3start, week4start, 29};
 
-        var oddWeekLeaves = new []
+        var oddWeekLeaves = new[]
         {
-            new Leave(new Day(2022, 2, week1start), new Day(2022, 2, week1start + 3)), 
+            new Leave(new Day(2022, 2, week1start), new Day(2022, 2, week1start + 3)),
             new Leave(new Day(2022, 2, week3start), new Day(2022, 2, week3start + 3))
         };
-        var evenWeekLeaves = new []
+        var evenWeekLeaves = new[]
         {
-            new Leave(new Day(2022, 2, week2start), new Day(2022, 2, week2start + 3)), 
+            new Leave(new Day(2022, 2, week2start), new Day(2022, 2, week2start + 3)),
             new Leave(new Day(2022, 2, week4start), new Day(2022, 2, week4start + 3))
         };
 
@@ -336,39 +340,39 @@ public class ComputedScheduleShould
             new MonthScheduleParameters(
                 new ScheduledMonth(2022, 2),
                 oddWeekLeaveEmployees.Concat(evenWeekLeaveEmployees).ToArray(),
-                new [] {new CompetenceGroup(new [] {Aro1})}
+                new[] {new CompetenceGroup(new[] {Aro1})}
             ));
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
         Assert.Equal(successResult.Flexibility, ScheduleFlexibility.Strict);
         var schedule = successResult.Schedule;
-        
+
         foreach (var employeeMonth in oddWeekLeaveEmployees)
         {
             var employeeShifts = schedule.Shifts.Where(s => s.Employee == employeeMonth.Employee);
-        
+
             var shiftCounts = boundaries.Take(boundaries.Length - 1)
                 .Zip(boundaries.Skip(1), (dayFrom, dayTo) => employeeShifts.Count(s => dayFrom <= s.Shift.Day.Date.Day && s.Shift.Day.Date.Day < dayTo))
                 .ToArray();
 
             var calibratedShiftCounts = shiftCounts.Zip(new[] {2, 1, 2, 1}, (int x, int y) => x * y).ToArray();
-        
+
             Assert.True(calibratedShiftCounts.Max() - calibratedShiftCounts.Min() <= 2, $"Too large differences between shift counts for {employeeMonth.Employee.Name}: {string.Join(", ", shiftCounts)}");
         }
 
         foreach (var employeeMonth in evenWeekLeaveEmployees)
         {
             var employeeShifts = schedule.Shifts.Where(s => s.Employee == employeeMonth.Employee);
-        
+
             var shiftCounts = boundaries.Take(boundaries.Length - 1)
                 .Zip(boundaries.Skip(1), (dayFrom, dayTo) => employeeShifts.Count(s => dayFrom <= s.Shift.Day.Date.Day && s.Shift.Day.Date.Day < dayTo))
                 .ToArray();
 
             var calibratedShiftCounts = shiftCounts.Zip(new[] {1, 2, 1, 2}, (int x, int y) => x * y).ToArray();
-        
+
             Assert.True(calibratedShiftCounts.Max() - calibratedShiftCounts.Min() <= 2, $"Too large differences between shift counts for {employeeMonth.Employee.Name}: {string.Join(", ", shiftCounts)}");
         }
     }
-    
+
     [Fact]
     public void AlwaysScheduleWeekendsWithAlternates()
     {
@@ -395,7 +399,7 @@ public class ComputedScheduleShould
                 Assert.Equal(expectedSundayShifts, scheduledSundayShifts);
             });
     }
-    
+
     private Schedule ComputeSchedule()
     {
         var scheduler = new Engine.ShiftScheduler();

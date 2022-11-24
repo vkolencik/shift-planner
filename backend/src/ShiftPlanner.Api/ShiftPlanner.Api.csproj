@@ -12,14 +12,15 @@
     <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="7.2.0" />
-    <PackageReference Include="AWSSDK.Core" Version="3.7.100.21" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.100.21" />
-    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.11" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.0" />
+    <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="7.2.0"/>
+    <PackageReference Include="AWSSDK.Core" Version="3.7.100.21"/>
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.100.21"/>
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.2"/>
+    <PackageReference Include="AWSSDK.SecretsManager" Version="3.7.100.21"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.11"/>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.0"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj" />
+    <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj"/>
   </ItemGroup>
 </Project>

@@ -4,8 +4,12 @@ namespace ShiftPlanner.Engine.Sample;
 
 public class SolutionPrinter : CpSolverSolutionCallback
 {
-    public SolutionPrinter(int[] allNurses, int[] allDays, int[] allShifts,
-        Dictionary<Tuple<int, int, int>, IntVar> shifts, int limit)
+    public SolutionPrinter(
+        int[] allNurses,
+        int[] allDays,
+        int[] allShifts,
+        Dictionary<Tuple<int, int, int>, IntVar> shifts,
+        int limit)
     {
         solutionCount_ = 0;
         allNurses_ = allNurses;
@@ -33,12 +37,14 @@ public class SolutionPrinter : CpSolverSolutionCallback
                         Console.WriteLine($"  Nurse {n} work shift {s}");
                     }
                 }
+
                 if (!isWorking)
                 {
                     Console.WriteLine($"  Nurse {d} does not work");
                 }
             }
         }
+
         solutionCount_++;
         if (solutionCount_ >= solutionLimit_)
         {

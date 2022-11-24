@@ -1,16 +1,19 @@
-import { Construct } from 'constructs'
-import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda'
-import { Duration } from 'aws-cdk-lib'
-import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager'
-import { HostedZone } from 'aws-cdk-lib/aws-route53'
-import { EndpointType, LambdaRestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway'
-import { IGrantable, IPrincipal } from 'aws-cdk-lib/aws-iam'
+import {Construct} from 'constructs'
+import {Code, Function, Runtime} from 'aws-cdk-lib/aws-lambda'
+import {Duration} from 'aws-cdk-lib'
+import {Certificate, CertificateValidation} from 'aws-cdk-lib/aws-certificatemanager'
+import {HostedZone} from 'aws-cdk-lib/aws-route53'
+import {EndpointType, LambdaRestApi, SecurityPolicy} from 'aws-cdk-lib/aws-apigateway'
+import {IGrantable, IPrincipal} from 'aws-cdk-lib/aws-iam'
 
 export class Backend extends Construct implements IGrantable {
   private backendLambdaFunction: Function
-  public get grantPrincipal (): IPrincipal { return this.backendLambdaFunction.grantPrincipal }
 
-  constructor (scope: Construct, id: string) {
+  public get grantPrincipal(): IPrincipal {
+    return this.backendLambdaFunction.grantPrincipal
+  }
+
+  constructor(scope: Construct, id: string) {
     super(scope, id)
 
     this.backendLambdaFunction = new Function(this, 'backend-lambda-function', {

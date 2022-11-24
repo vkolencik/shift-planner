@@ -17,7 +17,7 @@ public class RulesShould
         new ScheduledMonth(2022, 2),
         new[]
         {
-            new EmployeeMonth(Employee1, new [] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 2))}),
+            new EmployeeMonth(Employee1, new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 2))}),
             new EmployeeMonth(Employee2),
             new EmployeeMonth(Employee3)
         },
@@ -43,10 +43,10 @@ public class RulesShould
         Rules.EveryDayAtEveryWorkplaceIsCovered(SolverParametersTwoDays, _engineMock.Object);
 
         Assert.Equal(4, capturedShifts.Count);
-        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day1, Workplace1), new ShiftAssignment(Employee2, Day1, Workplace1)}, capturedShifts);
-        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day1, Workplace2), new ShiftAssignment(Employee2, Day1, Workplace2)}, capturedShifts);
-        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day2, Workplace1), new ShiftAssignment(Employee2, Day2, Workplace1)}, capturedShifts);
-        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day2, Workplace2), new ShiftAssignment(Employee2, Day2, Workplace2)}, capturedShifts);
+        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day1, Workplace1), new ShiftAssignment(Employee2, Day1, Workplace1)}, capturedShifts);
+        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day1, Workplace2), new ShiftAssignment(Employee2, Day1, Workplace2)}, capturedShifts);
+        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day2, Workplace1), new ShiftAssignment(Employee2, Day2, Workplace1)}, capturedShifts);
+        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day2, Workplace2), new ShiftAssignment(Employee2, Day2, Workplace2)}, capturedShifts);
     }
 
     [Fact]
@@ -54,14 +54,14 @@ public class RulesShould
     {
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
-        
+
         Rules.EveryEmployeeHasOneShiftAtATime(SolverParametersTwoDays, _engineMock.Object);
-        
+
         Assert.Equal(4, capturedShifts.Count);
-        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day1, Workplace1), new ShiftAssignment(Employee1, Day1, Workplace2)}, capturedShifts);
-        Assert.Contains(new [] { new ShiftAssignment(Employee1, Day2, Workplace1), new ShiftAssignment(Employee1, Day2, Workplace2)}, capturedShifts);
-        Assert.Contains(new [] { new ShiftAssignment(Employee2, Day1, Workplace1), new ShiftAssignment(Employee2, Day1, Workplace2)}, capturedShifts);
-        Assert.Contains(new [] { new ShiftAssignment(Employee2, Day2, Workplace1), new ShiftAssignment(Employee2, Day2, Workplace2)}, capturedShifts);
+        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day1, Workplace1), new ShiftAssignment(Employee1, Day1, Workplace2)}, capturedShifts);
+        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day2, Workplace1), new ShiftAssignment(Employee1, Day2, Workplace2)}, capturedShifts);
+        Assert.Contains(new[] {new ShiftAssignment(Employee2, Day1, Workplace1), new ShiftAssignment(Employee2, Day1, Workplace2)}, capturedShifts);
+        Assert.Contains(new[] {new ShiftAssignment(Employee2, Day2, Workplace1), new ShiftAssignment(Employee2, Day2, Workplace2)}, capturedShifts);
     }
 
     [Fact]
@@ -71,21 +71,25 @@ public class RulesShould
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
 
         Rules.NoConsecutiveShiftsForEmployee(SolverParametersTwoDays, _engineMock.Object);
-        
-        Assert.Equal(2, capturedShifts.Count);
-        Assert.Contains(new HashSet<ShiftAssignment> {
-            new ShiftAssignment(Employee1, Day1, Workplace1),
-            new ShiftAssignment(Employee1, Day1, Workplace2),
-            new ShiftAssignment(Employee1, Day2, Workplace1),
-            new ShiftAssignment(Employee1, Day2, Workplace2)
-        }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
 
-        Assert.Contains(new HashSet<ShiftAssignment> {
-            new ShiftAssignment(Employee2, Day1, Workplace1),
-            new ShiftAssignment(Employee2, Day1, Workplace2),
-            new ShiftAssignment(Employee2, Day2, Workplace1),
-            new ShiftAssignment(Employee2, Day2, Workplace2)
-        }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
+        Assert.Equal(2, capturedShifts.Count);
+        Assert.Contains(
+            new HashSet<ShiftAssignment>
+            {
+                new ShiftAssignment(Employee1, Day1, Workplace1),
+                new ShiftAssignment(Employee1, Day1, Workplace2),
+                new ShiftAssignment(Employee1, Day2, Workplace1),
+                new ShiftAssignment(Employee1, Day2, Workplace2)
+            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
+
+        Assert.Contains(
+            new HashSet<ShiftAssignment>
+            {
+                new ShiftAssignment(Employee2, Day1, Workplace1),
+                new ShiftAssignment(Employee2, Day1, Workplace2),
+                new ShiftAssignment(Employee2, Day2, Workplace1),
+                new ShiftAssignment(Employee2, Day2, Workplace2)
+            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
     }
 
     [Fact]
@@ -121,8 +125,8 @@ public class RulesShould
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Gte, 1));
 
-        Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(MonthScheduleParameters, new [] {Day1, Day2}, _engineMock.Object);
-        
+        Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(MonthScheduleParameters, new[] {Day1, Day2}, _engineMock.Object);
+
         Assert.Equal(4, capturedShifts.Count);
 
         Assert.Contains(
@@ -161,7 +165,7 @@ public class RulesShould
         _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShifts), Constraint.Eq, 0));
 
         Rules.TakeLeavesIntoAccount(MonthScheduleParameters, _engineMock.Object);
-        
+
         Assert.Equal(
             new HashSet<ShiftAssignment>
             {
@@ -178,7 +182,7 @@ public class RulesShould
     {
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
-        
+
         Rules.LimitWeekendShifts(MonthScheduleParameters, _engineMock.Object);
 
         Assert.All(
@@ -199,24 +203,25 @@ public class RulesShould
     {
         var capturedShiftsLhs = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedShiftsRhs = new List<IReadOnlyCollection<ShiftAssignment>>();
-        
+
         _engineMock.Setup(_ => _.AddSumRelationConstraint(Capture.In(capturedShiftsLhs), Constraint.Eq, Capture.In(capturedShiftsRhs)));
-        
+
         Rules.AlwaysScheduleAlternatesOverWeekends(MonthScheduleParameters, _engineMock.Object);
 
         Assert.All(
             new[] {Employee1, Employee2, Employee3}, employee =>
             {
-                Assert.All<(int, int)>(_fridays.Zip(_sundays), tuple =>
-                {
-                    var (friday, sunday) = tuple;
-                    Assert.Contains(
-                        Workplaces.Select(w => new ShiftAssignment(employee, new Day(2022, 2, friday), w)),
-                        capturedShiftsLhs.Select(_ => _.ToHashSet()));
-                    Assert.Contains(
-                        Workplaces.Select(w => new ShiftAssignment(employee, new Day(2022, 2, sunday), w)),
-                        capturedShiftsRhs.Select(_ => _.ToHashSet()));
-                });
+                Assert.All<(int, int)>(
+                    _fridays.Zip(_sundays), tuple =>
+                    {
+                        var (friday, sunday) = tuple;
+                        Assert.Contains(
+                            Workplaces.Select(w => new ShiftAssignment(employee, new Day(2022, 2, friday), w)),
+                            capturedShiftsLhs.Select(_ => _.ToHashSet()));
+                        Assert.Contains(
+                            Workplaces.Select(w => new ShiftAssignment(employee, new Day(2022, 2, sunday), w)),
+                            capturedShiftsRhs.Select(_ => _.ToHashSet()));
+                    });
             });
     }
 }

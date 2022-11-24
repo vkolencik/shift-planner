@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react'
-import FullCalendar, { EventClickArg } from '@fullcalendar/react' // must go before plugins
+import React, {useEffect, useRef, useState} from 'react'
+import FullCalendar, {EventClickArg} from '@fullcalendar/react' // must go before plugins
 import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
+import interactionPlugin, {DateClickArg} from '@fullcalendar/interaction'
 import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import csLocale from '@fullcalendar/core/locales/cs'
-import { DateSelectArg, DateUnselectArg } from '@fullcalendar/common'
+import {DateSelectArg, DateUnselectArg} from '@fullcalendar/common'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
@@ -13,8 +13,8 @@ import {
   RequirementType,
   requirementTypes, useApi, momentToDay
 } from './requirements/requirements-service'
-import { EventSourceInput } from '@fullcalendar/core'
-import { FormCheck, Spinner } from 'react-bootstrap'
+import {EventSourceInput} from '@fullcalendar/core'
+import {FormCheck, Spinner} from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 
@@ -25,9 +25,9 @@ interface DateRange {
   to: DayDate
 }
 
-const DisplayDate: React.FC<{ date: DayDate }> = ({ date }: { date: DayDate }) => <>{date.format('D. M. YYYY')}</>
+const DisplayDate: React.FC<{ date: DayDate }> = ({date}: { date: DayDate }) => <>{date.format('D. M. YYYY')}</>
 
-function requirementsToEvents (requirements: EmployeeMonthRequirements): EventSourceInput {
+function requirementsToEvents(requirements: EmployeeMonthRequirements): EventSourceInput {
   const colorMapping: { [key in RequirementType]: string | undefined } = {
     'only-afternoon': '#0696c4',
     'only-morning': '#9A7F0D',
@@ -65,11 +65,11 @@ export const Requirements: React.FC = () => {
   })
 
   const handleDateRangeSelect = (info: DateSelectArg) => {
-    setSelectedDateRange({ from: moment(info.start), to: moment(info.end).add(-1, 'day') })
+    setSelectedDateRange({from: moment(info.start), to: moment(info.end).add(-1, 'day')})
   }
 
   const handleDateClick = (info: DateClickArg) => {
-    setSelectedDateRange({ from: moment(info.date), to: moment(info.date) })
+    setSelectedDateRange({from: moment(info.date), to: moment(info.date)})
   }
 
   const handleDateRangeUnselect = (info: DateUnselectArg) => {
@@ -110,8 +110,8 @@ export const Requirements: React.FC = () => {
     setLoading(false)
   }
 
-  function handleEventClick (event: EventClickArg) {
-    setSelectedDateRange({ from: moment(event.event.start), to: moment(event.event.end) })
+  function handleEventClick(event: EventClickArg) {
+    setSelectedDateRange({from: moment(event.event.start), to: moment(event.event.end)})
   }
 
   const selectedDayRequirementType = selectedDateRange && requirements ? requirements[momentToDay(selectedDateRange?.from)] : null
@@ -123,7 +123,9 @@ export const Requirements: React.FC = () => {
       {selectedDateRange &&
         <Modal
           show={true}
-          onHide={() => {closeModal()}}>
+          onHide={() => {
+            closeModal()
+          }}>
 
           <Modal.Header closeButton>
             <Modal.Title>
@@ -138,7 +140,7 @@ export const Requirements: React.FC = () => {
             {loading &&
               <div
                 className="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center bg-white justify-content-center opacity-50"
-                style={{ 'zIndex': 1000 }}>
+                style={{'zIndex': 1000}}>
                 <Spinner animation="border"/>
               </div>
             }
@@ -163,7 +165,9 @@ export const Requirements: React.FC = () => {
           <Modal.Footer>
             {selectedDayRequirementType &&
               <Button variant="danger" className="me-auto" onClick={handleRemoveRequirement}>Odstranit</Button>}
-            <Button variant="outline-secondary" onClick={() => {closeModal()}}>Zavřít</Button>
+            <Button variant="outline-secondary" onClick={() => {
+              closeModal()
+            }}>Zavřít</Button>
           </Modal.Footer>
         </Modal>
       }

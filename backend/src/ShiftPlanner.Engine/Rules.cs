@@ -29,7 +29,7 @@ internal static class Rules
                 var employeesShiftsThatDay = schedulingParameters.Workplaces
                     .Select(w => new ShiftAssignment(employee, day, w))
                     .ToArray();
- 
+
                 engine.AddSumConstraint(employeesShiftsThatDay, Constraint.Lte, 1);
             }
         }
@@ -42,9 +42,9 @@ internal static class Rules
             foreach (var (day1, day2) in schedulingParameters.Days.Zip(schedulingParameters.Days.Skip(1)))
             {
                 var employeesShiftsInTwoDays = schedulingParameters.Workplaces
-                    .SelectMany(w => new [] {new ShiftAssignment(employee, day1, w), new ShiftAssignment(employee, day2, w)})
+                    .SelectMany(w => new[] {new ShiftAssignment(employee, day1, w), new ShiftAssignment(employee, day2, w)})
                     .ToArray();
- 
+
                 engine.AddSumConstraint(employeesShiftsInTwoDays, Constraint.Lte, 1);
             }
         }
@@ -60,15 +60,14 @@ internal static class Rules
                 {
                     continue;
                 }
-                
+
                 var employeesShiftsInAlternateDays = schedulingParameters.Workplaces
-                    .SelectMany(w => new [] {new ShiftAssignment(employee, day1, w), new ShiftAssignment(employee, day3, w)})
+                    .SelectMany(w => new[] {new ShiftAssignment(employee, day1, w), new ShiftAssignment(employee, day3, w)})
                     .ToArray();
- 
+
                 engine.AddSumConstraint(employeesShiftsInAlternateDays, Constraint.Lte, 1);
             }
         }
-        
     }
 
 
@@ -82,7 +81,7 @@ internal static class Rules
                     .Where(e => e.CompetenceLevel == CompetenceLevel.Level1)
                     .SelectMany(e => competenceGroup.Workplaces.Select(w => new ShiftAssignment(e, day, w)))
                     .ToArray();
-                
+
                 engine.AddSumConstraint(employeesLevel1AndWorkplacesCombinations, Constraint.Gte, 1);
             }
         }
@@ -131,20 +130,24 @@ internal static class Rules
     {
         var fridays = monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek == DayOfWeek.Friday).ToArray();
         var sundaysAfterFridays = fridays.Select(d => new Day(d.Date.AddDays(2))).Where(d => d.Date.Month == monthScheduleParameters.Month.Month).ToArray();
-        
+
         foreach (var employeeMonth in monthScheduleParameters.EmployeeMonths)
         {
             foreach (var (friday, sunday) in fridays.Zip(sundaysAfterFridays))
             {
                 engine.AddSumRelationConstraint(
                     monthScheduleParameters.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, friday, w)).ToArray(),
-                    Constraint.Eq, 
+                    Constraint.Eq,
                     monthScheduleParameters.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, sunday, w)).ToArray());
             }
         }
     }
 
-    private static void LimitShiftsOnDays(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine, IEnumerable<Day> days, uint limit)
+    private static void LimitShiftsOnDays(
+        MonthScheduleParameters monthScheduleParameters,
+        ISchedulingEngine engine,
+        IEnumerable<Day> days,
+        uint limit)
     {
         foreach (var employeeMonth in monthScheduleParameters.EmployeeMonths)
         {

@@ -1,21 +1,15 @@
 ﻿using System.Net;
 using System.Text.Json;
-
-namespace ShiftPlanner.Aws;
-
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
+
+namespace ShiftPlanner.Api.Services.Secrets;
 
 public class AwsSecretsManagerClient
 {
     private readonly IAmazonSecretsManager _client;
 
-    public AwsSecretsManagerClient()
-    {
-        _client = new AmazonSecretsManagerClient();
-    }
-
-    internal AwsSecretsManagerClient(IAmazonSecretsManager client)
+    public AwsSecretsManagerClient(IAmazonSecretsManager client)
     {
         _client = client;
     }

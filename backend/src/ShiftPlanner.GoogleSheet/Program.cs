@@ -87,7 +87,11 @@ static class Program
         }
     }
 
-    private static void WriteListToSheet<T>(SheetsService service, string rangeStart, IEnumerable<T> values, string dimension = "ROWS")
+    private static void WriteListToSheet<T>(
+        SheetsService service,
+        string rangeStart,
+        IEnumerable<T> values,
+        string dimension = "ROWS")
     {
         service.Spreadsheets.Values.BatchUpdate(
             new BatchUpdateValuesRequest()

@@ -1,17 +1,17 @@
 // const baseUrl = 'https://b.krtek.me'
-import { useAuth0 } from '@auth0/auth0-react'
-import { getBaseUrl } from '../get-base-url'
-import { Moment } from 'moment'
+import {useAuth0} from '@auth0/auth0-react'
+import {getBaseUrl} from '../get-base-url'
+import {Moment} from 'moment'
 
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'
 
 export const requirementTypes: { [key in RequirementType]: { name: string, value: RequirementType } } = {
-  'leave': { name: 'Dovolená', value: 'leave' },
-  'soft-yes': { name: 'Chci', value: 'soft-yes' },
-  'hard-no': { name: 'Nemůžu', value: 'hard-no' },
-  'only-morning': { name: 'Pouze R', value: 'only-morning' },
-  'only-afternoon': { name: 'Až odpoledne', value: 'only-afternoon' }
+  'leave': {name: 'Dovolená', value: 'leave'},
+  'soft-yes': {name: 'Chci', value: 'soft-yes'},
+  'hard-no': {name: 'Nemůžu', value: 'hard-no'},
+  'only-morning': {name: 'Pouze R', value: 'only-morning'},
+  'only-afternoon': {name: 'Až odpoledne', value: 'only-afternoon'}
 }
 
 export type RequirementType = 'leave' | 'hard-no' | 'soft-yes' | 'only-morning' | 'only-afternoon'
@@ -20,12 +20,16 @@ export type EmployeeMonthRequirements = { [key: Day]: RequirementType }
 
 export type Day = string & { __isDay: true }
 
-export function toDay (date: string): Day { return date as Day }
+export function toDay(date: string): Day {
+  return date as Day
+}
 
-export function momentToDay (date: Moment): Day { return toDay(date.format('yyyy-MM-DD'))}
+export function momentToDay(date: Moment): Day {
+  return toDay(date.format('yyyy-MM-DD'))
+}
 
-export function useApi () {
-  const { user, getAccessTokenSilently, isAuthenticated } = useAuth0()
+export function useApi() {
+  const {user, getAccessTokenSilently, isAuthenticated} = useAuth0()
 
   if (!isAuthenticated || user === undefined || user.sub === undefined) {
     throw new Error('User is not logged in')
@@ -67,7 +71,7 @@ export function useApi () {
 
         const response = await fetch(`${baseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${date.replace(/-/g, '/')}`, {
             method: 'PUT',
-            body: JSON.stringify({ requirementType: requirementType }),
+            body: JSON.stringify({requirementType: requirementType}),
             headers: {
               Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',

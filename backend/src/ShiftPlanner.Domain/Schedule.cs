@@ -6,9 +6,9 @@ public record Schedule
     {
         Shifts = shifts.ToArray();
     }
-    
+
     public IEnumerable<ShiftAssignment> Shifts { get; private init; }
-    
+
     public Employee GetAssignedEmployee(Shift shift) =>
         Shifts.Single(s => s.Shift == shift).Employee;
 

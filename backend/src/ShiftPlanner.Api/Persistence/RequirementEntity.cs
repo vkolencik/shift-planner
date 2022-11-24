@@ -5,8 +5,7 @@ namespace ShiftPlanner.Api.Persistence;
 [DynamoDBTable("Requirements")]
 public class RequirementEntity
 {
-    [DynamoDBHashKey]
-    public string? Key { get; set; }
+    [DynamoDBHashKey] public string? Key { get; set; }
     public string? TenantUserMonthKey { get; set; }
     public string? TenantMonthKey { get; set; }
     public string? Tenant { get; set; }

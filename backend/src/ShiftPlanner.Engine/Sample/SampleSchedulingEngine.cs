@@ -1,6 +1,7 @@
 using Google.OrTools.Sat;
 
 namespace ShiftPlanner.Engine.Sample;
+
 public static class SampleSchedulingEngine
 {
     private class VarArraySolutionPrinter : CpSolverSolutionCallback
@@ -18,6 +19,7 @@ public static class SampleSchedulingEngine
                 {
                     Console.WriteLine(String.Format("  {0} = {1}", v.Name(), Value(v)));
                 }
+
                 solution_count_++;
             }
         }
@@ -34,29 +36,29 @@ public static class SampleSchedulingEngine
     public static void Test()
     {
         CpModel model = new CpModel();
-        
+
         IntVar x = model.NewIntVar(0, 10, "x");
         IntVar y = model.NewIntVar(0, 20, "y");
         IntVar z = model.NewIntVar(0, 30, "z");
-        
+
         model.Add(x != y);
         model.Add(y != z);
         model.Add(x != z);
 
         model.Add(x + y + z == 13);
-        
+
         model.Maximize(z);
-        
+
         CpSolver solver = new CpSolver();
         solver.StringParameters = "enumerate_all_solutions:true";
-        
-        VarArraySolutionPrinter cb = new VarArraySolutionPrinter(new IntVar[] { x, y, z });
+
+        VarArraySolutionPrinter cb = new VarArraySolutionPrinter(new IntVar[] {x, y, z});
 
         CpSolverStatus status = solver.Solve(model, cb);
-        
+
         Console.WriteLine(status);
         Console.WriteLine($"{solver.Value(x)}, {solver.Value(y)}, {solver.Value(z)}");
-        
+
         Console.WriteLine("Statistics");
         Console.WriteLine($"  conflicts : {solver.NumConflicts()}");
         Console.WriteLine($"  branches  : {solver.NumBranches()}");
@@ -74,51 +76,52 @@ public static class SampleSchedulingEngine
         int[] allDays = Enumerable.Range(0, numDays).ToArray();
         int[] allShifts = Enumerable.Range(0, numShifts).ToArray();
 
-        int[,,] shiftRequests = new int[,,] {
+        int[,,] shiftRequests = new int[,,]
+        {
             {
-                { 0, 0, 1 },
-                { 0, 0, 0 },
-                { 0, 0, 0 },
-                { 0, 0, 0 },
-                { 0, 0, 1 },
-                { 0, 1, 0 },
-                { 0, 0, 1 },
+                {0, 0, 1},
+                {0, 0, 0},
+                {0, 0, 0},
+                {0, 0, 0},
+                {0, 0, 1},
+                {0, 1, 0},
+                {0, 0, 1},
             },
             {
-                { 0, 0, 0 },
-                { 0, 0, 0 },
-                { 0, 1, 0 },
-                { 0, 1, 0 },
-                { 1, 0, 0 },
-                { 0, 0, 0 },
-                { 0, 0, 1 },
+                {0, 0, 0},
+                {0, 0, 0},
+                {0, 1, 0},
+                {0, 1, 0},
+                {1, 0, 0},
+                {0, 0, 0},
+                {0, 0, 1},
             },
             {
-                { 0, 1, 0 },
-                { 0, 1, 0 },
-                { 0, 0, 0 },
-                { 1, 0, 0 },
-                { 0, 0, 0 },
-                { 0, 1, 0 },
-                { 0, 0, 0 },
+                {0, 1, 0},
+                {0, 1, 0},
+                {0, 0, 0},
+                {1, 0, 0},
+                {0, 0, 0},
+                {0, 1, 0},
+                {0, 0, 0},
             },
             {
-                { 0, 0, 1 },
-                { 0, 0, 0 },
-                { 1, 0, 0 },
-                { 0, 1, 0 },
-                { 0, 0, 0 },
-                { 1, 0, 0 },
-                { 0, 0, 0 },
+                {0, 0, 1},
+                {0, 0, 0},
+                {1, 0, 0},
+                {0, 1, 0},
+                {0, 0, 0},
+                {1, 0, 0},
+                {0, 0, 0},
             },
             {
-                { 0, 0, 0 },
-                { 0, 0, 1 },
-                { 0, 1, 0 },
-                { 0, 0, 0 },
-                { 1, 0, 0 },
-                { 0, 1, 0 },
-                { 0, 0, 0 },
+                {0, 0, 0},
+                {0, 0, 1},
+                {0, 1, 0},
+                {0, 0, 0},
+                {1, 0, 0},
+                {0, 1, 0},
+                {0, 0, 0},
             },
         };
 
@@ -150,6 +153,7 @@ public static class SampleSchedulingEngine
                     var key = Tuple.Create(n, d, s);
                     x[n] = shifts[key];
                 }
+
                 model.Add(LinearExpr.Sum(x) == 1);
             }
         }
@@ -165,6 +169,7 @@ public static class SampleSchedulingEngine
                     var key = Tuple.Create(n, d, s);
                     x[s] = shifts[key];
                 }
+
                 model.Add(LinearExpr.Sum(x) <= 1);
             }
         }
@@ -185,6 +190,7 @@ public static class SampleSchedulingEngine
         {
             maxShiftsPerNurse = minShiftsPerNurse + 1;
         }
+
         foreach (int n in allNurses)
         {
             IntVar[] numShiftsWorked = new IntVar[numDays * numShifts];
@@ -196,6 +202,7 @@ public static class SampleSchedulingEngine
                     numShiftsWorked[d * numShifts + s] = shifts[key];
                 }
             }
+
             model.AddLinearConstraint(LinearExpr.Sum(numShiftsWorked), minShiftsPerNurse, maxShiftsPerNurse);
         }
 
@@ -213,6 +220,7 @@ public static class SampleSchedulingEngine
                 }
             }
         }
+
         model.Maximize(LinearExpr.WeightedSum(flatShifts, flatShiftRequests));
 
         // Solve
@@ -248,6 +256,7 @@ public static class SampleSchedulingEngine
                     }
                 }
             }
+
             Console.WriteLine(
                 $"Number of shift requests met = {solver.ObjectiveValue} (out of {numNurses * minShiftsPerNurse}).");
         }
