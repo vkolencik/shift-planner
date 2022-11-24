@@ -1,5 +1,4 @@
 ﻿using ShiftPlanner.Api.Contracts;
-using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Persistence;

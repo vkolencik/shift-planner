@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.Extensions.NETCore.Setup;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
@@ -10,8 +11,6 @@ using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
 
 namespace ShiftPlanner.Api;
-
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 public class Startup
 {

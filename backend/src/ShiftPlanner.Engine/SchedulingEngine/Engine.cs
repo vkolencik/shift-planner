@@ -1,4 +1,3 @@
-using System.Net.NetworkInformation;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
 
