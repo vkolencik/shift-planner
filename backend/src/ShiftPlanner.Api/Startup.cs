@@ -40,7 +40,8 @@ public class Startup
                             .WithOrigins(
                                 "http://localhost:3000",
                                 "https://krtek.me",
-                                "https://www.krtek.me")
+                                "https://www.krtek.me",
+                                "https://*.d13dc8ck6htkvt.amplifyapp.com")
                             .WithHeaders(
                                 HeaderNames.Authorization,
                                 HeaderNames.ContentType
