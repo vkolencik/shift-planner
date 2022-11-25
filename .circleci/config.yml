@@ -65,6 +65,7 @@ jobs:
           path: ~/project
       - run: npm ci
       - run: npm run build
+      - run: npm test
 
   deploy-cdk:
     description: Build CDK deployment script
