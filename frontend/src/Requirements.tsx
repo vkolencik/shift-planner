@@ -62,7 +62,7 @@ export const Requirements: React.FC = () => {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.get(year, month)
+      api.requirements.get(year, month + 1)
         .then(setRequirements)
     }
   })
