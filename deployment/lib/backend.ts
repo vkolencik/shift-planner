@@ -8,7 +8,7 @@ import { IGrantable, IPrincipal } from 'aws-cdk-lib/aws-iam'
 import { Environment } from './deployment-stack'
 
 export class Backend extends Construct implements IGrantable {
-  private backendLambdaFunction: Function
+  private readonly backendLambdaFunction: Function
 
   public get grantPrincipal (): IPrincipal {
     return this.backendLambdaFunction.grantPrincipal
