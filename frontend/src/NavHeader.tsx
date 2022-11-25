@@ -1,13 +1,11 @@
-import React, {FC} from 'react'
-import {useAuth0} from '@auth0/auth0-react'
-import {Button, Container, Nav, Navbar} from 'react-bootstrap'
-import {UserBadge} from './UserBadge'
-import {LinkContainer} from 'react-router-bootstrap'
+import React, { FC } from 'react'
+import { useAuth0 } from '@auth0/auth0-react'
+import { Button, Container, Nav, Navbar } from 'react-bootstrap'
+import { UserBadge } from './UserBadge'
+import { LinkContainer } from 'react-router-bootstrap'
 
 export const NavHeader: FC = () => {
-  const {logout} = useAuth0()
-
-  const displayLogoutButton = false // TODO: Enable once random logout issue on mobile is resolved
+  const { logout } = useAuth0()
 
   return (<Navbar bg="light" expand="sm" sticky="top" className="border-bottom">
     <Container>
@@ -16,7 +14,7 @@ export const NavHeader: FC = () => {
           className="rounded-circle img-fluid"
           width="64" height="64"
           src="https://krtek-assets-720500131615.s3.eu-central-1.amazonaws.com/mole2.svg"
-          alt='logo'/>
+          alt="logo"/>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav"/>
       <Navbar.Collapse id="basic-navbar-nav">
@@ -29,12 +27,10 @@ export const NavHeader: FC = () => {
         </Nav>
       </Navbar.Collapse>
       <UserBadge/>
-      {displayLogoutButton &&
-        <Button
-          onClick={() => logout({returnTo: window.location.protocol + '//' + window.location.host})} className='ms-3'>
-          Logout
-        </Button>
-      }
+      <Button
+        onClick={() => logout({ returnTo: window.location.protocol + '//' + window.location.host })} className="ms-3">
+        Logout
+      </Button>
     </Container>
   </Navbar>)
 }

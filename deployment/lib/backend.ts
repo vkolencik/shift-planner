@@ -39,6 +39,7 @@ export class Backend extends Construct implements IGrantable {
     new LambdaRestApi(this, 'api-gateway', {
       handler: this.backendLambdaFunction,
       endpointTypes: [EndpointType.REGIONAL],
+      restApiName: environment === Environment.Production ? 'krtek-api' : '_preview-krtek-api',
       domainName: {
         domainName: environment === Environment.Production ? 'b.krtek.me' : 'b.preview.krtek.me',
         certificate: cert,
