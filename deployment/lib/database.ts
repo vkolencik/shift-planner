@@ -2,14 +2,13 @@ import {Construct} from 'constructs'
 import {AttributeType, BillingMode, Table} from 'aws-cdk-lib/aws-dynamodb'
 import {IGrantable} from 'aws-cdk-lib/aws-iam'
 import {BackupPlan, BackupPlanRule, BackupResource} from 'aws-cdk-lib/aws-backup'
-import {Schedule} from 'aws-cdk-lib/aws-events'
-import {Duration} from 'aws-cdk-lib'
+import { Environment } from './deployment-stack'
 
 export class Database extends Construct {
   private readonly tables: Table[]
 
-  constructor(scope: Construct, id: string) {
-    super(scope, id)
+  constructor (scope: Construct, environment: Environment) {
+    super(scope, 'database')
 
     this.tables = []
 
@@ -18,7 +17,7 @@ export class Database extends Construct {
         name: 'Key',
         type: AttributeType.STRING
       },
-      tableName: 'Requirements',
+      tableName: environment === Environment.Production ? 'Requirements' : '_preview-Requirements',
       pointInTimeRecovery: true,
       billingMode: BillingMode.PAY_PER_REQUEST,
 
@@ -42,7 +41,7 @@ export class Database extends Construct {
     })
 
     const backupPlan = new BackupPlan(this, 'db-backup', {
-      backupPlanName: 'db-backup',
+      backupPlanName: environment === Environment.Production ? 'db-backup' : '_preview-db-backup',
       backupPlanRules: [BackupPlanRule.daily()]
     })
     backupPlan.addSelection('selection', {

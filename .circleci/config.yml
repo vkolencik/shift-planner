@@ -65,6 +65,7 @@ jobs:
           path: ~/project
       - run: npm ci
       - run: npm run build
+      - run: npm test
 
   deploy-cdk:
     description: Build CDK deployment script
@@ -87,7 +88,17 @@ jobs:
       - checkout:
           path: ~/project
       - run: npm ci
-      - run: npm run test:prod
+      - when:
+          condition:
+            equal: [main, << pipeline.git.branch >>]
+          steps:
+            - run: npm run test:prod
+      - when:
+          condition:
+            not:
+              equal: [main, << pipeline.git.branch >>]
+          steps:
+            - run: npm run test:prev
 
 workflows:
   test_and_build:

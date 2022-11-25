@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "test:prev": "jest -c jest.prev.config.ts",
     "test:prod": "jest -c jest.prod.config.ts"
   },
   "keywords": [],

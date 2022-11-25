@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Microsoft.Extensions.Options;
 using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Domain;
 
@@ -7,13 +8,15 @@ namespace ShiftPlanner.Api.Persistence;
 
 internal class DynamoRequirementsRepository : IRequirementsRepository
 {
+    private readonly DynamoOptions _options;
     private readonly IAmazonDynamoDB _dynamo;
     private readonly IRequirementEntityConverter _requirementEntityConverter;
 
-    public DynamoRequirementsRepository(IAmazonDynamoDB dynamo, IRequirementEntityConverter requirementEntityConverter)
+    public DynamoRequirementsRepository(IAmazonDynamoDB dynamo, IRequirementEntityConverter requirementEntityConverter, IOptions<DynamoOptions> options)
     {
         _dynamo = dynamo;
         _requirementEntityConverter = requirementEntityConverter;
+        _options = options.Value;
     }
 
     public async Task<Dictionary<Day, string>> GetRequirements(Tenant tenant, string userId, ScheduledMonth month)
@@ -59,6 +62,9 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
 
     private DynamoDBContext GetContext()
     {
-        return new DynamoDBContext(_dynamo);
+        return new DynamoDBContext(_dynamo, new DynamoDBContextConfig
+        {
+            TableNamePrefix = _options.TableNamePrefix
+        });
     }
 }
