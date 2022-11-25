@@ -33,9 +33,9 @@ const DisplayDate: React.FC<{ date: DayDate }> = ({date}: { date: DayDate }) => 
 function requirementsToEvents(requirements: EmployeeMonthRequirements): EventSourceInput {
   const colorMapping: { [key in RequirementType]: string | undefined } = {
     'only-afternoon': '#0696c4',
-    'only-morning': '#9A7F0D',
+    'only-morning': '#f1d567',
     'soft-yes': '#2eb401',
-    'leave': '#9A7F0D',
+    'leave': '#c985de',
     'hard-no': '#9a0d0d'
   }
 
