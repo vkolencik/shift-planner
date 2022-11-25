@@ -9,6 +9,7 @@ const productionParams = {
   backendFunctionName: 'krtek-backend',
   backendCertificate: '*.krtek.me',
   backendUrl: 'b.krtek.me',
+  lambdaEnvVar: 'Production',
   dbBackupPlanName: 'db-backup'
 }
 
@@ -20,6 +21,7 @@ const previewParams: EnvironmentParams = {
   backendFunctionName: '_preview-krtek-backend',
   backendCertificate: '*.preview.krtek.me',
   backendUrl: 'b.preview.krtek.me',
+  lambdaEnvVar: 'Staging',
   dbBackupPlanName: '_preview-db-backup'
 }
 
@@ -48,7 +50,14 @@ const previewParams: EnvironmentParams = {
     })
     template.hasResourceProperties('AWS::Backup::BackupPlan', { BackupPlan: { BackupPlanName: environmentParams.dbBackupPlanName } })
 
-    template.hasResourceProperties('AWS::Lambda::Function', { FunctionName: environmentParams.backendFunctionName })
+    template.hasResourceProperties('AWS::Lambda::Function', {
+      FunctionName: environmentParams.backendFunctionName,
+      Environment: {
+        Variables: {
+          ASPNETCORE_ENVIRONMENT: environmentParams.lambdaEnvVar
+        }
+      }
+    })
 
     template.hasResourceProperties('AWS::CertificateManager::Certificate', { DomainName: environmentParams.backendCertificate })
     template.hasResourceProperties('AWS::ApiGateway::DomainName', { DomainName: environmentParams.backendUrl })

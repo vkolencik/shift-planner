@@ -23,6 +23,9 @@ export class Backend extends Construct implements IGrantable {
       functionName: environment === Environment.Production ? 'krtek-backend' : '_preview-krtek-backend',
       code: runningInTest ? dummyCode : Code.fromAsset('../backend/src/ShiftPlanner.Api/bin/Release/net6.0'),
       handler: 'ShiftPlanner.Api::ShiftPlanner.Api.LambdaEntryPoint::FunctionHandlerAsync',
+      environment: {
+        ASPNETCORE_ENVIRONMENT: environment === Environment.Production ? 'Production' : 'Staging'
+      },
       runtime: Runtime.DOTNET_6,
       timeout: Duration.seconds(15)
     })
