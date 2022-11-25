@@ -7,7 +7,7 @@ import {LinkContainer} from 'react-router-bootstrap'
 export const NavHeader: FC = () => {
   const {logout} = useAuth0()
 
-  const displayLogoutButton = false // TODO: Enable once random logout issue on mobile is resolved
+  const displayLogoutButton = true // TODO: Enable once random logout issue on mobile is resolved
 
   return (<Navbar bg="light" expand="sm" sticky="top" className="border-bottom">
     <Container>
