@@ -3,6 +3,8 @@ import { Template } from 'aws-cdk-lib/assertions'
 import * as Deployment from '../lib/deployment-stack'
 
 it('Contains resources', () => {
+  process.env.RUNNING_IN_TEST = 'true'
+
   const app = new cdk.App()
   // WHEN
   const stack = new Deployment.DeploymentStack(app, 'MyTestStack', { env: { region: 'eu-central-1' } })
