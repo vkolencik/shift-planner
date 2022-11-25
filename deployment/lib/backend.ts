@@ -5,6 +5,7 @@ import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatem
 import { HostedZone } from 'aws-cdk-lib/aws-route53'
 import { EndpointType, LambdaRestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway'
 import { IGrantable, IPrincipal } from 'aws-cdk-lib/aws-iam'
+import { Environment } from './deployment-stack'
 
 export class Backend extends Construct implements IGrantable {
   private backendLambdaFunction: Function
@@ -13,13 +14,13 @@ export class Backend extends Construct implements IGrantable {
     return this.backendLambdaFunction.grantPrincipal
   }
 
-  constructor (scope: Construct, id: string) {
-    super(scope, id)
+  constructor (scope: Construct, environment: Environment) {
+    super(scope, 'backend')
 
     const runningInTest = process.env.RUNNING_IN_TEST === 'true'
 
     this.backendLambdaFunction = new Function(this, 'backend-lambda-function', {
-      functionName: 'krtek-backend',
+      functionName: environment === Environment.Production ? 'krtek-backend' : '_preview-krtek-backend',
       code: runningInTest ? dummyCode : Code.fromAsset('../backend/src/ShiftPlanner.Api/bin/Release/net6.0'),
       handler: 'ShiftPlanner.Api::ShiftPlanner.Api.LambdaEntryPoint::FunctionHandlerAsync',
       runtime: Runtime.DOTNET_6,
@@ -28,7 +29,7 @@ export class Backend extends Construct implements IGrantable {
 
     const hostedZoneId = 'Z10312824UKCHIHP3DBN'
     const cert = new Certificate(this, 'domain-certificate', {
-      domainName: '*.krtek.me',
+      domainName: environment === Environment.Production ? '*.krtek.me' : '*.preview.krtek.me',
       validation: CertificateValidation.fromDns(HostedZone.fromHostedZoneId(this, 'hosted-zone-id', hostedZoneId))
     })
 
@@ -36,7 +37,7 @@ export class Backend extends Construct implements IGrantable {
       handler: this.backendLambdaFunction,
       endpointTypes: [EndpointType.REGIONAL],
       domainName: {
-        domainName: 'b.krtek.me',
+        domainName: environment === Environment.Production ? 'b.krtek.me' : 'b.preview.krtek.me',
         certificate: cert,
         endpointType: EndpointType.REGIONAL,
         securityPolicy: SecurityPolicy.TLS_1_2
@@ -46,6 +47,6 @@ export class Backend extends Construct implements IGrantable {
 }
 
 const dummyCode: Code = {
-  bind (scope: Construct): CodeConfig { return { s3Location: { bucketName: 'dummy', objectKey: 'dummy' } }},
+  bind (_: Construct): CodeConfig { return { s3Location: { bucketName: 'dummy', objectKey: 'dummy' } }},
   bindToResource (_resource: CfnResource, _options?: ResourceBindOptions): void {}
 }

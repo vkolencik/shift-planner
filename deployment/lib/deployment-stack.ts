@@ -3,12 +3,17 @@ import {Construct} from 'constructs'
 import {Backend} from './backend'
 import {Database} from './database'
 
-export class DeploymentStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props)
+export enum Environment {
+  Production = 'prod',
+  Preview = 'prev'
+}
 
-    const backend = new Backend(this, 'backend')
-    const database = new Database(this, 'database')
+export class DeploymentStack extends cdk.Stack {
+  constructor(scope: Construct, environment: Environment, props?: cdk.StackProps) {
+    super(scope, environment === Environment.Production ? 'KrtekStack' : 'KrtekStackPreview', props)
+
+    const backend = new Backend(this, environment)
+    const database = new Database(this, environment)
 
     database.grantAccess(backend)
   }

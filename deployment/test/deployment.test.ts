@@ -1,30 +1,56 @@
 import * as cdk from 'aws-cdk-lib'
 import { Template } from 'aws-cdk-lib/assertions'
 import * as Deployment from '../lib/deployment-stack'
+import { Environment } from '../lib/deployment-stack'
 
-it('Contains resources', () => {
-  process.env.RUNNING_IN_TEST = 'true'
+const productionParams = {
+  stackName: 'KrtekStack',
+  requirementsTableName: 'Requirements',
+  backendFunctionName: 'krtek-backend',
+  backendCertificate: '*.krtek.me',
+  backendUrl: 'b.krtek.me',
+  dbBackupPlanName: 'db-backup'
+}
 
-  const app = new cdk.App()
-  // WHEN
-  const stack = new Deployment.DeploymentStack(app, 'MyTestStack', { env: { region: 'eu-central-1' } })
-  // THEN
-  const template = Template.fromStack(stack)
+type EnvironmentParams = typeof productionParams
 
-  template.hasResourceProperties('AWS::DynamoDB::Table', {
-    TableName: 'Requirements',
-    GlobalSecondaryIndexes: [
-      { IndexName: 'TenantUserMonthIndex' },
-      { IndexName: 'TenantMonthIndex' },
-    ],
-    PointInTimeRecoverySpecification: { PointInTimeRecoveryEnabled: true }
+const previewParams: EnvironmentParams = {
+  stackName: 'KrtekStackPreview',
+  requirementsTableName: '_preview-Requirements',
+  backendFunctionName: '_preview-krtek-backend',
+  backendCertificate: '*.preview.krtek.me',
+  backendUrl: 'b.preview.krtek.me',
+  dbBackupPlanName: '_preview-db-backup'
+}
+
+;[
+  { environment: Environment.Preview, environmentParams: previewParams },
+  { environment: Environment.Production, environmentParams: productionParams },
+].forEach(({ environment, environmentParams }) =>
+  it(`Contains resources for environment ${environment}`, () => {
+    process.env.RUNNING_IN_TEST = 'true'
+
+    const app = new cdk.App()
+    // WHEN
+    const stack = new Deployment.DeploymentStack(app, environment, { env: { region: 'eu-central-1' } })
+    expect(stack.stackName).toEqual(environmentParams.stackName)
+
+    // THEN
+    const template = Template.fromStack(stack)
+
+    template.hasResourceProperties('AWS::DynamoDB::Table', {
+      TableName: environmentParams.requirementsTableName,
+      GlobalSecondaryIndexes: [
+        { IndexName: 'TenantUserMonthIndex' },
+        { IndexName: 'TenantMonthIndex' },
+      ],
+      PointInTimeRecoverySpecification: { PointInTimeRecoveryEnabled: true }
+    })
+    template.hasResourceProperties('AWS::Backup::BackupPlan', { BackupPlan: { BackupPlanName: environmentParams.dbBackupPlanName } })
+
+    template.hasResourceProperties('AWS::Lambda::Function', { FunctionName: environmentParams.backendFunctionName })
+
+    template.hasResourceProperties('AWS::CertificateManager::Certificate', { DomainName: environmentParams.backendCertificate })
+    template.hasResourceProperties('AWS::ApiGateway::DomainName', { DomainName: environmentParams.backendUrl })
   })
-  template.hasResource('AWS::Backup::BackupPlan', {})
-
-  template.hasResourceProperties('AWS::Lambda::Function', {FunctionName: 'krtek-backend'})
-
-  template.hasResourceProperties('AWS::CertificateManager::Certificate', {DomainName: '*.krtek.me'})
-  template.hasResourceProperties('AWS::ApiGateway::DomainName', {DomainName: 'b.krtek.me'})
-
-  expect(1).toBe(2)
-})
+)
