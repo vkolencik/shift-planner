@@ -13,6 +13,10 @@ describe('Base URL should', () => {
     {
       frontendUrl: 'https://www.krtek.me/',
       expectedBackendUrl: 'https://b.krtek.me'
+    },
+    {
+      frontendUrl: 'https://pr-56.d13dc8ck6htkvt.amplifyapp.com/',
+      expectedBackendUrl: 'https://b.preview.krtek.me'
     }
   ].forEach(({frontendUrl, expectedBackendUrl}) =>
     it(`returns correct environment name for "${frontendUrl}"`, () => {

@@ -13,6 +13,10 @@ export function getBaseUrl(): string {
     return 'http://localhost:65041'
   }
 
+  if (hostname.startsWith('pr-') && hostname.endsWith('amplifyapp.com')) {
+    return 'https://b.preview.krtek.me'
+  }
+
   if (hostname.endsWith('krtek.me')) {
     return 'https://b.krtek.me'
   }
