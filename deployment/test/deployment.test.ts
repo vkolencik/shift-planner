@@ -61,11 +61,13 @@ const previewParams: EnvironmentParams = {
         }
       })
 
+/*
       if (environmentParams.syntheticCanaryName !== null) {
         template.hasResourceProperties('AWS::Synthetics::Canary', {
           Name: environmentParams.syntheticCanaryName
         })
       }
+*/
 
       template.hasResourceProperties('AWS::CertificateManager::Certificate', { DomainName: environmentParams.backendCertificate })
       template.hasResourceProperties('AWS::ApiGateway::DomainName', { DomainName: environmentParams.backendUrl })

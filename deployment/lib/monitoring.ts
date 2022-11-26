@@ -11,6 +11,7 @@ export class Monitoring extends Construct {
   constructor (scope: Construct, environment: Environment, backend: Backend, database: Database) {
     super(scope, 'monitoring')
 
+/*
     const canary = new Canary(this, 'LivenessCheckCanary', {
       canaryName: environment === Environment.Production ? 'krtek-live-check' : '_p-krtek-live-check',
       schedule: Schedule.rate(Duration.minutes(5)),
@@ -31,5 +32,6 @@ export class Monitoring extends Construct {
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       treatMissingData: TreatMissingData.BREACHING
     })
+*/
   }
 }
