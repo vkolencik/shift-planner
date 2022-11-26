@@ -36,7 +36,7 @@ export class Backend extends Construct implements IGrantable {
 
     const version = this.backendLambdaFunction.currentVersion;
     const alias = new Alias(this, 'LambdaAlias', {
-      aliasName: 'Prod',
+      aliasName: 'Provisioned',
       version,
       provisionedConcurrentExecutions: 2
     })
