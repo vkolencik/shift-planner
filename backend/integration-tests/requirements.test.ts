@@ -5,7 +5,7 @@ import { putRequirement, RequirementParams } from './helpers/api'
 describe('users requirements resource should', () => {
   let token: string
   let token2: string
-  const testTenant = `test-tenant-${new Date().getTime()}`
+  const testTenant = `test-tenant-requirements-${new Date().getTime()}`
 
   const requirementParams: RequirementParams = {
     tenant: testTenant,
