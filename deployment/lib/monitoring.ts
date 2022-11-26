@@ -9,7 +9,7 @@ import { Alarm, ComparisonOperator, TreatMissingData } from 'aws-cdk-lib/aws-clo
 
 export class Monitoring extends Construct {
   constructor (scope: Construct, environment: Environment, backend: Backend, database: Database) {
-    super(scope, 'backend')
+    super(scope, 'monitoring')
 
     const canary = new Canary(this, 'LivenessCheckCanary', {
       schedule: Schedule.rate(Duration.minutes(5)),
