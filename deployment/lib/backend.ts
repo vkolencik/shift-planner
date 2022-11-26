@@ -34,12 +34,14 @@ export class Backend extends Construct implements IGrantable {
      logRetention: RetentionDays.ONE_MONTH,
     })
 
-    const version = this.backendLambdaFunction.currentVersion;
-    const alias = new Alias(this, 'LambdaAlias', {
-      aliasName: 'Provisioned',
-      version,
-      provisionedConcurrentExecutions: 2
-    })
+    if (environment === Environment.Production) {
+      const version = this.backendLambdaFunction.currentVersion
+      const alias = new Alias(this, 'LambdaAlias', {
+        aliasName: 'Provisioned',
+        version,
+        provisionedConcurrentExecutions: 2
+      })
+    }
 
     const hostedZoneId = 'Z10312824UKCHIHP3DBN'
     const cert = new Certificate(this, 'domain-certificate', {
