@@ -1,4 +1,5 @@
-﻿using Amazon.DynamoDBv2;
+﻿using System.Diagnostics;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.Extensions.Options;
 using ShiftPlanner.Api.Contracts;
@@ -29,7 +30,11 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
             key,
             new DynamoDBOperationConfig {IndexName = "TenantUserMonthIndex"});
 
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
         var entities = await query.GetRemainingAsync();
+        stopWatch.Stop();
+        Console.Out.WriteLine($"Fetched ${entities.Count} items from database in ${stopWatch.ElapsedMilliseconds} ms");
 
         return _requirementEntityConverter.RequirementEntitiesToMonthRequirements(entities);
     }

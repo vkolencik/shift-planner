@@ -14,6 +14,8 @@ export class Backend extends Construct implements IGrantable {
     return this.backendLambdaFunction.grantPrincipal
   }
 
+  public readonly backendDomain: string
+
   constructor (scope: Construct, environment: Environment) {
     super(scope, 'backend')
 
@@ -36,12 +38,14 @@ export class Backend extends Construct implements IGrantable {
       validation: CertificateValidation.fromDns(HostedZone.fromHostedZoneId(this, 'hosted-zone-id', hostedZoneId))
     })
 
+    this.backendDomain = environment === Environment.Production ? 'b.krtek.me' : 'b.preview.krtek.me'
+
     new LambdaRestApi(this, 'api-gateway', {
       handler: this.backendLambdaFunction,
       endpointTypes: [EndpointType.REGIONAL],
       restApiName: environment === Environment.Production ? 'krtek-api' : '_preview-krtek-api',
       domainName: {
-        domainName: environment === Environment.Production ? 'b.krtek.me' : 'b.preview.krtek.me',
+        domainName: this.backendDomain,
         certificate: cert,
         endpointType: EndpointType.REGIONAL,
         securityPolicy: SecurityPolicy.TLS_1_2

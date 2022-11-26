@@ -1,7 +1,8 @@
 import * as cdk from 'aws-cdk-lib'
-import {Construct} from 'constructs'
-import {Backend} from './backend'
-import {Database} from './database'
+import { Construct } from 'constructs'
+import { Backend } from './backend'
+import { Database } from './database'
+import { Monitoring } from './monitoring'
 
 export enum Environment {
   Production = 'prod',
@@ -14,7 +15,9 @@ export class DeploymentStack extends cdk.Stack {
 
     const backend = new Backend(this, environment)
     const database = new Database(this, environment)
-
     database.grantAccess(backend)
+
+    const monitoring = new Monitoring(this, environment, backend, database)
   }
 }
+
