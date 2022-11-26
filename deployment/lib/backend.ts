@@ -1,11 +1,12 @@
 import { Construct } from 'constructs'
-import { Code, CodeConfig, Function, ResourceBindOptions, Runtime } from 'aws-cdk-lib/aws-lambda'
+import { Alias, Code, CodeConfig, Function, ResourceBindOptions, Runtime } from 'aws-cdk-lib/aws-lambda'
 import { CfnResource, Duration } from 'aws-cdk-lib'
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager'
 import { HostedZone } from 'aws-cdk-lib/aws-route53'
 import { EndpointType, LambdaRestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway'
 import { IGrantable, IPrincipal } from 'aws-cdk-lib/aws-iam'
 import { Environment } from './deployment-stack'
+import { RetentionDays } from 'aws-cdk-lib/aws-logs'
 
 export class Backend extends Construct implements IGrantable {
   private readonly backendLambdaFunction: Function
@@ -29,7 +30,15 @@ export class Backend extends Construct implements IGrantable {
         ASPNETCORE_ENVIRONMENT: environment === Environment.Production ? 'Production' : 'Staging'
       },
       runtime: Runtime.DOTNET_6,
-      timeout: Duration.seconds(15)
+      timeout: Duration.seconds(30),
+     logRetention: RetentionDays.ONE_MONTH,
+    })
+
+    const version = this.backendLambdaFunction.currentVersion;
+    const alias = new Alias(this, 'LambdaAlias', {
+      aliasName: 'Prod',
+      version,
+      provisionedConcurrentExecutions: 2
     })
 
     const hostedZoneId = 'Z10312824UKCHIHP3DBN'
