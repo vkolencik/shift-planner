@@ -10,7 +10,7 @@ const productionParams = {
   backendCertificate: '*.krtek.me',
   backendUrl: 'b.krtek.me',
   lambdaEnvVar: 'Production',
-  syntheticCanaryName: 'krtek-backend-live-check-canary' as string | null,
+  syntheticCanaryName: 'krtek-live-check' as string | null,
   dbBackupPlanName: 'db-backup'
 }
 

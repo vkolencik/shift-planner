@@ -12,6 +12,7 @@ export class Monitoring extends Construct {
     super(scope, 'monitoring')
 
     const canary = new Canary(this, 'LivenessCheckCanary', {
+      canaryName: environment === Environment.Production ? 'krtek-live-check' : '_p-krtek-live-check',
       schedule: Schedule.rate(Duration.minutes(5)),
       test: Test.custom({
         code: Code.fromAsset(path.join(__dirname, 'canary')),
