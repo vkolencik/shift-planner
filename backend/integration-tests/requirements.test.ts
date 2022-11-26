@@ -1,24 +1,19 @@
 import {getToken} from './helpers/auth'
 import {getHeaders} from './helpers/getHeaders'
+import { putRequirement, RequirementParams } from './helpers/api'
 
-describe('requirements resource should', () => {
+describe('users requirements resource should', () => {
   let token: string
   let token2: string
   const testTenant = `test-tenant-${new Date().getTime()}`
 
-  async function putRequirement(tenant: string, userId: string, year: number, month: number, day: number, requirementType: string, authToken: string | null = null): Promise<Response> {
-    if (authToken === null) {
-      authToken = token
-    }
-
-    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${year}/${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}`, {
-      ...getHeaders(authToken),
-      method: 'put',
-      body: JSON.stringify({requirementType: requirementType})
-    })
-    expect(resp.status).toEqual(200)
-
-    return resp
+  const requirementParams: RequirementParams = {
+    tenant: testTenant,
+    userId: testUserId,
+    year: 2022,
+    month: 12,
+    day: 6,
+    requirementType: 'soft-yes'
   }
 
   beforeAll(async () => {
@@ -63,7 +58,7 @@ describe('requirements resource should', () => {
   })
 
   it('put new requirement', async () => {
-    await putRequirement(testTenant, testUserId, 2022, 12, 6, 'soft-yes')
+    await putRequirement(requirementParams, token)
 
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12`, getHeaders(token))
 
@@ -74,8 +69,8 @@ describe('requirements resource should', () => {
   })
 
   it('only return requirements for the specified month', async () => {
-    await putRequirement(testTenant, testUserId, 2022, 12, 6, 'soft-yes')
-    await putRequirement(testTenant, testUserId, 2022, 11, 6, 'hard-no')
+    await putRequirement({...requirementParams, year: 2022, month: 12, day: 6}, token)
+    await putRequirement({...requirementParams, year: 2022, month: 11}, token)
 
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12`, getHeaders(token))
 
@@ -86,8 +81,8 @@ describe('requirements resource should', () => {
   })
 
   it('put new requirement to different user without influencing other users', async () => {
-    await putRequirement(testTenant, testUserId, 2022, 12, 6, 'hard-no')
-    await putRequirement(testTenant, testUser2Id, 2022, 12, 7, 'soft-yes', token2)
+    await putRequirement({ ...requirementParams, userId: testUserId, requirementType: 'hard-no' }, token)
+    await putRequirement({ ...requirementParams, userId: testUser2Id, requirementType: 'soft-yes' }, token2)
 
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12`, getHeaders(token))
 
@@ -98,8 +93,8 @@ describe('requirements resource should', () => {
   })
 
   it('put new requirement to different tenant without influencing original tenant', async () => {
-    await putRequirement(`${testTenant}`, testUserId, 2022, 12, 6, 'hard-no')
-    await putRequirement(`${testTenant}-2`, testUserId, 2022, 12, 7, 'soft-yes')
+    await putRequirement({ ...requirementParams, tenant: testTenant, requirementType: 'hard-no' }, token)
+    await putRequirement({ ...requirementParams, tenant: testTenant + '-2', requirementType: 'soft-yes' }, token)
 
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12`, getHeaders(token))
 
@@ -119,7 +114,7 @@ describe('requirements resource should', () => {
   })
 
   it('return unauthorized when deleting new requirement for different user', async () => {
-    await putRequirement(testTenant, testUserId, 2022, 12, 6, 'soft-yes', token)
+    await putRequirement(requirementParams, token)
 
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12/06`, {
       method: 'delete',
@@ -139,7 +134,7 @@ describe('requirements resource should', () => {
   })
 
   it('delete a requirement', async () => {
-    await putRequirement(testTenant, testUserId, 2022, 12, 6, 'soft-yes')
+    await putRequirement(requirementParams, token)
 
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12/06`, {
       method: 'delete',

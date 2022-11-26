@@ -34,7 +34,7 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
         stopWatch.Start();
         var entities = await query.GetRemainingAsync();
         stopWatch.Stop();
-        Console.Out.WriteLine($"Fetched ${entities.Count} items from database in ${stopWatch.ElapsedMilliseconds} ms");
+        Console.Out.WriteLine($"Fetched {entities.Count} items from database in {stopWatch.ElapsedMilliseconds} ms");
 
         return _requirementEntityConverter.RequirementEntitiesToMonthRequirements(entities);
     }

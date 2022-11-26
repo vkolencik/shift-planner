@@ -67,7 +67,12 @@ public class Startup
                     };
                 });
 
-        services.AddAuthorization(options => { options.AddPolicy("user", policy => policy.Requirements.Add(new HasScopeRequirement("user", domain))); });
+        services.AddAuthorization(
+            options =>
+            {
+                options.AddPolicy("read:requirements_of_others", policy => policy.RequireClaim("permissions", "read:requirements_of_others"));
+                options.AddPolicy("approve:requirements_of_others", policy => policy.RequireClaim("permissions", "approve:requirements_of_others"));
+            });
 
         services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 

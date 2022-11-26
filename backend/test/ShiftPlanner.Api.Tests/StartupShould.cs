@@ -20,14 +20,14 @@ public class StartupShould
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.ConfigureServices(
-                        serviceCollection => { serviceCollection.AddTransient<RequirementsController>(); });
+                        serviceCollection => { serviceCollection.AddTransient<UsersRequirementsController>(); });
                     webBuilder.ConfigureAppConfiguration(configurationBuilder => { configurationBuilder.AddJsonStream(ms); });
                 });
 
         using IHost host = builder.Build();
         IServiceProvider services = host.Services;
 
-        Assert.NotNull(services.GetService<RequirementsController>());
+        Assert.NotNull(services.GetService<UsersRequirementsController>());
     }
 
     private static MemoryStream CreateConfigurationStream()
