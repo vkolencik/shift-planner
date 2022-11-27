@@ -11,7 +11,7 @@ namespace ShiftPlanner.Api.Contracts
 namespace ShiftPlanner.Api.Controllers
 {
     [Route("api/{tenant}/requirements")]
-    [Authorize("read:requirements_of_others")]
+    [Authorize(Claims.ReadRequirementsOfOthers)]
     public class RequirementsController : ControllerBase
     {
         private readonly IRequirementsService _requirementsService;

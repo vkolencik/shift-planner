@@ -61,7 +61,7 @@ public abstract class UsersRequirementsControllerShould
 
             _requirementsServiceMock.Setup(_ => _.GetRequirements(tenant, _userId, month)).ReturnsAsync(requirements);
 
-            var controller = CreateController("user-id-1", new[] {"read:requirements_of_others"});
+            var controller = CreateController("user-id-1", new[] {Claims.ReadRequirementsOfOthers});
 
             var response = await controller.Get(tenant.Name, _userId, month.Year, month.Month);
 
@@ -147,7 +147,7 @@ public abstract class UsersRequirementsControllerShould
             var day = new Day(2022, 10, 18);
             _requirementsServiceMock.Setup(_ => _.DeleteRequirement(tenant, "userId2", day))
                 .ReturnsAsync(DeleteResult.Deleted);
-            var controller = CreateController(_userId, new[] {"approve:requirements_of_others"});
+            var controller = CreateController(_userId, new[] {Claims.ApproveRequirementsOfOthers});
 
             var response = await controller.Delete(tenant.Name, "userId2", day.Year, day.Month, day.DayOfMonth);
 
