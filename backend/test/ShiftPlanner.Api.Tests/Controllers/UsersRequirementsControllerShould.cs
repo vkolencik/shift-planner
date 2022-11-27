@@ -39,13 +39,33 @@ public abstract class UsersRequirementsControllerShould
         }
 
         [Fact]
-        public async Task ReturnUnauthorized_GivenTokenForDifferentUser()
+        public async Task ReturnForbidden_GivenTokenForDifferentUser()
         {
             var controller = CreateController("user-id-1");
 
             var response = await controller.Get("tenant-1", "user-id-2", 2022, 10);
 
-            Assert.IsType<UnauthorizedObjectResult>(response.Result);
+            var result = Assert.IsType<ObjectResult>(response.Result);
+            Assert.Equal(403, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task ReturnOkReadingRequirementsOfDifferentUser_WhenCallerIsManager()
+        {
+            var tenant = TestData.Tenant;
+            var month = new ScheduledMonth(2020, 10);
+            var requirements = new Dictionary<Day, string>
+            {
+                [new Day(2022, 10, 12)] = "hard-no"
+            };
+
+            _requirementsServiceMock.Setup(_ => _.GetRequirements(tenant, _userId, month)).ReturnsAsync(requirements);
+
+            var controller = CreateController("user-id-1", new[] {"read:requirements_of_others"});
+
+            var response = await controller.Get(tenant.Name, _userId, month.Year, month.Month);
+
+            Assert.IsType<OkObjectResult>(response.Result);
         }
     }
 
@@ -66,13 +86,14 @@ public abstract class UsersRequirementsControllerShould
         }
 
         [Fact]
-        public async Task ReturnUnauthorized_GivenTokenForDifferentUser()
+        public async Task ReturnForbidden_GivenTokenForDifferentUser()
         {
             var controller = CreateController("user-id-1");
 
             var response = await controller.Put("tenant-1", "user-id-2", 2022, 10, 12, new RequirementInputModel("hard-no"));
 
-            Assert.IsType<UnauthorizedObjectResult>(response);
+            var result = Assert.IsType<ObjectResult>(response);
+            Assert.Equal(403, result.StatusCode);
         }
     }
 
@@ -109,27 +130,47 @@ public abstract class UsersRequirementsControllerShould
         }
 
         [Fact]
-        public async Task ReturnUnauthorized_GivenTokenForDifferentUser()
+        public async Task ReturnForbidden_GivenTokenForDifferentUser()
         {
             var controller = CreateController("user-id-1");
 
             var response = await controller.Delete("tenant-1", "user-id-2", 2022, 10, 12);
 
-            Assert.IsType<UnauthorizedObjectResult>(response);
+            var result = Assert.IsType<ObjectResult>(response);
+            Assert.Equal(403, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteOtherUserRequirement_WhenDeletedByManager()
+        {
+            var tenant = TestData.Tenant;
+            var day = new Day(2022, 10, 18);
+            _requirementsServiceMock.Setup(_ => _.DeleteRequirement(tenant, "userId2", day))
+                .ReturnsAsync(DeleteResult.Deleted);
+            var controller = CreateController(_userId, new[] {"approve:requirements_of_others"});
+
+            var response = await controller.Delete(tenant.Name, "userId2", day.Year, day.Month, day.DayOfMonth);
+
+            _requirementsServiceMock.Verify(_ => _.DeleteRequirement(tenant, "userId2", day));
+
+            Assert.IsType<OkResult>(response);
         }
     }
 
     private UsersRequirementsController CreateController() => CreateController(_userId);
+    
+    private UsersRequirementsController CreateController(string userId) => CreateController(userId, Array.Empty<string>());
 
-    private UsersRequirementsController CreateController(string userId)
+    private UsersRequirementsController CreateController(string userId, string[] permissions)
     {
         var user = new ClaimsPrincipal(
             new ClaimsIdentity(
                 new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, userId),
-                }, "mock"));
-
+                    new Claim(ClaimTypes.Name, userId)
+                }.Concat(permissions.Select(p => new Claim("permissions", p))),
+                "mock"));
+        
         var controller = new UsersRequirementsController(_requirementsServiceMock.Object)
         {
             ControllerContext = new ControllerContext

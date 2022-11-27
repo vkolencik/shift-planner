@@ -73,8 +73,8 @@ public class Startup
         services.AddAuthorization(
             options =>
             {
-                options.AddPolicy("read:requirements_of_others", policy => policy.RequireClaim("permissions", "read:requirements_of_others"));
-                options.AddPolicy("approve:requirements_of_others", policy => policy.RequireClaim("permissions", "approve:requirements_of_others"));
+                options.AddPolicy(Claims.ReadRequirementsOfOthers, policy => policy.RequireClaim("permissions", Claims.ReadRequirementsOfOthers));
+                options.AddPolicy(Claims.ApproveRequirementsOfOthers, policy => policy.RequireClaim("permissions", Claims.ApproveRequirementsOfOthers));
             });
 
         services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();

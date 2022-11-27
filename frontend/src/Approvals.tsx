@@ -3,7 +3,7 @@ import { MonthRequirements, useApi } from './requirements/requirements-service'
 import { currentMonth, currentYear, formatDate, getCurrentMonthString } from './dates'
 import { LoadingSpinner } from './components/LoadingSpinner'
 import { aggregateRequirements } from './requirements/aggregate-requirements'
-import { Alert, Badge, Table } from 'react-bootstrap'
+import { Alert, Badge, Button, Table } from 'react-bootstrap'
 import { FaUser } from "react-icons/fa";
 
 export function Approvals () {
@@ -29,11 +29,19 @@ export function Approvals () {
     {userNames.map(userName => (<>
       <h2 key={'header-' + userName}><FaUser style={{fontSize: '80%'}} /> {userName}</h2>
       <Table striped bordered hover className='table-fit' key={'table' + userName}>
+        <thead>
+          <tr>
+            <th>Datum</th>
+            <th>Stav</th>
+            <th></th>
+          </tr>
+        </thead>
         <tbody>
         {requirementsDisplayModel[userName].map(leave =>
           <tr key={leave.day}>
             <td>{formatDate(leave.day)}</td>
             <td><Badge bg="secondary">Čeká na schválení</Badge></td>
+            <td><Button variant='danger'>Smazat</Button></td>
           </tr>
         )}
         </tbody>
