@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.Extensions.NETCore.Setup;
+using Amazon.SecretsManager;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +10,8 @@ using Microsoft.Net.Http.Headers;
 using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
+using ShiftPlanner.Api.Services.Secrets;
+using ShiftPlanner.Api.Services.Users;
 
 namespace ShiftPlanner.Api;
 
@@ -67,7 +70,12 @@ public class Startup
                     };
                 });
 
-        services.AddAuthorization(options => { options.AddPolicy("user", policy => policy.Requirements.Add(new HasScopeRequirement("user", domain))); });
+        services.AddAuthorization(
+            options =>
+            {
+                options.AddPolicy("read:requirements_of_others", policy => policy.RequireClaim("permissions", "read:requirements_of_others"));
+                options.AddPolicy("approve:requirements_of_others", policy => policy.RequireClaim("permissions", "approve:requirements_of_others"));
+            });
 
         services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
@@ -75,9 +83,15 @@ public class Startup
 
         services.AddControllers();
 
+        services.AddHttpClient();
+        services.AddAWSService<IAmazonSecretsManager>(new AWSOptions() {Region = _awsRegionEndpoint});
+        services.AddSingleton<IAwsSecretsManagerClient, AwsSecretsManagerClient>();
+        services.AddSingleton<IAuth0TokenProvider, Auth0TokenProvider>();
+        services.AddSingleton<IUserService, Auth0UserService>();
+        
         services.AddTransient<IRequirementsService, RequirementsService>();
-        services.AddSingleton<IRequirementEntityConverter, RequirementEntityConverter>();
-        services.AddSingleton<IRequirementsRepository, DynamoRequirementsRepository>();
+        services.AddTransient<IRequirementEntityConverter, RequirementEntityConverter>();
+        services.AddTransient<IRequirementsRepository, DynamoRequirementsRepository>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

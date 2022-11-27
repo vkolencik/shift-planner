@@ -1,4 +1,5 @@
-﻿using ShiftPlanner.Api.Persistence;
+﻿using ShiftPlanner.Api.Contracts;
+using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Tests.Persistence;
@@ -45,6 +46,30 @@ public class RequirementEntityConverterShould
     }
 
     [Fact]
+    public void ConvertEntitiesToModel()
+    {
+        var entities = new[]
+        {
+            new RequirementEntity
+            {
+                UserId = "user1",
+                Date = "2022-11-19",
+                Requirement = "hard-no"
+            }
+        };
+        IEnumerable<RequirementModel> expectedModel = new[]
+        {
+            new RequirementModel("user1", new Day(2022, 11, 19), "hard-no")
+        };
+
+        var converter = new RequirementEntityConverter();
+
+        var requirements = converter.RequirementEntitiesToRequirements(entities);
+
+        Assert.Equal(expectedModel, requirements);
+    }
+
+    [Fact]
     public void ComputePartitionKey()
     {
         var converter = new RequirementEntityConverter();
@@ -62,5 +87,15 @@ public class RequirementEntityConverterShould
         var key = converter.GetUserMonthKey(new Tenant("tenant1"), "user-id-abc", new ScheduledMonth(2023, 2));
 
         Assert.Equal("v1:tenant1:user-id-abc:2023-02", key);
+    }
+
+    [Fact]
+    public void ComputeMonthKey()
+    {
+        var converter = new RequirementEntityConverter();
+
+        var key = converter.GetMonthKey(new Tenant("tenant1"), new ScheduledMonth(2023, 2));
+
+        Assert.Equal("v1:tenant1:2023-02", key);
     }
 }

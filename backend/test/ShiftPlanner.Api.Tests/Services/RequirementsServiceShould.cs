@@ -2,6 +2,7 @@
 using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
+using ShiftPlanner.Api.Services.Users;
 using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Tests.Services;
@@ -9,10 +10,12 @@ namespace ShiftPlanner.Api.Tests.Services;
 public class RequirementsServiceShould
 {
     private readonly Mock<IRequirementsRepository> _repositoryMock;
+    private readonly Mock<IUserService> _userServiceMock;
 
     public RequirementsServiceShould()
     {
         _repositoryMock = new Mock<IRequirementsRepository>();
+        _userServiceMock = new Mock<IUserService>();
     }
 
     [Fact]
@@ -67,8 +70,43 @@ public class RequirementsServiceShould
         Assert.Equal(repositoryResult, serviceResult);
     }
 
+    [Fact]
+    public async Task GetRequirementsOverviewForMonth()
+    {
+        var tenant = TestData.Tenant;
+        var month = TestData.Month;
+        
+        var expectedRequirements = new[]
+        {
+            new UserRequirementModel("user1", "User 1", new Day(2022, 12, 2), "hard-no"),
+            new UserRequirementModel("user2", "User 2", new Day(2022, 12, 3), "soft-yes"),
+        };
+
+        _repositoryMock
+            .Setup(_ => _.GetRequirementsForMonth(tenant, month))
+            .ReturnsAsync(
+                new[]
+                {
+                    new RequirementModel("user1", new Day(2022, 12, 2), "hard-no"),
+                    new RequirementModel("user2", new Day(2022, 12, 3), "soft-yes"),
+                });
+
+        _userServiceMock
+            .Setup(_ => _.GetAllUsers())
+            .ReturnsAsync(new []
+            {
+                new User("user1", "User 1", "user1@krtek.me"), 
+                new User("user2", "User 2", "user2@krtek.me"), 
+            });
+        var service = CreateService();
+
+        var requirements = await service.GetRequirementsOverviewForMonth(tenant, month);
+
+        Assert.Equal(expectedRequirements, requirements);
+    }
+
     private RequirementsService CreateService()
     {
-        return new RequirementsService(_repositoryMock.Object);
+        return new RequirementsService(_repositoryMock.Object, _userServiceMock.Object);
     }
 }

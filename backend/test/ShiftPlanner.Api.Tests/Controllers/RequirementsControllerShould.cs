@@ -1,142 +1,52 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Controllers;
+using ShiftPlanner.Api.Services;
 using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Tests.Controllers;
 
-public abstract class RequirementsControllerShould
+public class RequirementsControllerShould
 {
-    private readonly string _userId = "user-id-1";
-    private readonly Mock<IRequirementsService> _requirementsServiceMock = new Mock<IRequirementsService>();
+    private Mock<IRequirementsService> _requirementsServiceMock;
 
-    public class Get : RequirementsControllerShould
+    public RequirementsControllerShould()
     {
-        [Fact]
-        public async Task ReturnListOfRequirementsForAGivenMonth()
-        {
-            var tenant = TestData.Tenant;
-            var month = new ScheduledMonth(2020, 10);
-            var requirements = new Dictionary<Day, string>
-            {
-                [new Day(2022, 10, 12)] = "hard-no"
-            };
-
-            _requirementsServiceMock.Setup(_ => _.GetRequirements(tenant, _userId, month)).ReturnsAsync(requirements);
-            var controller = CreateController();
-
-            var response = await controller.Get(tenant.Name, _userId, month.Year, month.Month);
-            var result = Assert.IsType<OkObjectResult>(response.Result);
-            Assert.Equal(
-                new Dictionary<string, string>()
-                {
-                    ["2022-10-12"] = "hard-no"
-                }, result.Value);
-        }
-
-        [Fact]
-        public async Task ReturnUnauthorized_GivenTokenForDifferentUser()
-        {
-            var controller = CreateController("user-id-1");
-
-            var response = await controller.Get("tenant-1", "user-id-2", 2022, 10);
-
-            Assert.IsType<UnauthorizedObjectResult>(response.Result);
-        }
+        _requirementsServiceMock = new Mock<IRequirementsService>();
     }
 
-    public class Put : RequirementsControllerShould
+    [Fact]
+    public async Task ReturnRequirementsForMonth()
     {
-        [Fact]
-        public async Task CreateNewRequirement()
+        var tenant = TestData.Tenant;
+        var month = new ScheduledMonth(2023, 6);
+        var requirements = new []
         {
-            var tenant = TestData.Tenant;
-            var day = new Day(2022, 10, 18);
-            var controller = CreateController();
-            var requirement = "hard-no";
-
-            var response = await controller.Put(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth, new RequirementInputModel(requirement));
-            Assert.IsType<OkResult>(response);
-
-            _requirementsServiceMock.Verify(_ => _.SetRequirement(tenant, _userId, day, requirement));
-        }
-
-        [Fact]
-        public async Task ReturnUnauthorized_GivenTokenForDifferentUser()
-        {
-            var controller = CreateController("user-id-1");
-
-            var response = await controller.Put("tenant-1", "user-id-2", 2022, 10, 12, new RequirementInputModel("hard-no"));
-
-            Assert.IsType<UnauthorizedObjectResult>(response);
-        }
-    }
-
-    public class Delete : RequirementsControllerShould
-    {
-        [Fact]
-        public async Task DeleteRequirement()
-        {
-            var tenant = TestData.Tenant;
-            var day = new Day(2022, 10, 18);
-            _requirementsServiceMock.Setup(_ => _.DeleteRequirement(tenant, _userId, day))
-                .ReturnsAsync(DeleteResult.Deleted);
-            var controller = CreateController();
-
-            var response = await controller.Delete(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth);
-
-            _requirementsServiceMock.Verify(_ => _.DeleteRequirement(tenant, _userId, day));
-
-            Assert.IsType<OkResult>(response);
-        }
-
-        [Fact]
-        public async Task ReturnNotFound_GivenNonexistentRequirement()
-        {
-            var tenant = TestData.Tenant;
-            var day = new Day(2022, 10, 18);
-            _requirementsServiceMock.Setup(_ => _.DeleteRequirement(tenant, _userId, day))
-                .ReturnsAsync(DeleteResult.NotFound);
-            var controller = CreateController();
-
-            var response = await controller.Delete(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth);
-
-            Assert.IsType<NotFoundResult>(response);
-        }
-
-        [Fact]
-        public async Task ReturnUnauthorized_GivenTokenForDifferentUser()
-        {
-            var controller = CreateController("user-id-1");
-
-            var response = await controller.Delete("tenant-1", "user-id-2", 2022, 10, 12);
-
-            Assert.IsType<UnauthorizedObjectResult>(response);
-        }
-    }
-
-    private RequirementsController CreateController() => CreateController(_userId);
-
-    private RequirementsController CreateController(string userId)
-    {
-        var user = new ClaimsPrincipal(
-            new ClaimsIdentity(
-                new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, userId),
-                }, "mock"));
-
-        var controller = new RequirementsController(_requirementsServiceMock.Object)
-        {
-            ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext() {User = user}
-            }
+            new UserRequirementModel("user1", "User 1", new Day(month, 2), "hard-no"), 
+            new UserRequirementModel("user2", "User 2", new Day(month, 3), "soft-yes"), 
         };
 
-        return controller;
+        var expectedOutputModel = new []
+        {
+            new UserRequirementOutputModel("user1", "User 1", "2023-06-02", "hard-no"), 
+            new UserRequirementOutputModel("user2", "User 2", "2023-06-03", "soft-yes"), 
+        };
+        
+        _requirementsServiceMock
+            .Setup(_ => _.GetRequirementsOverviewForMonth(tenant, month))
+            .ReturnsAsync(requirements);
+
+        var controller = CreateController();
+
+        var response = await controller.Get(tenant.Name, month.Year, month.Month);
+        
+        var result = Assert.IsType<OkObjectResult>(response.Result);
+        Assert.Equal(expectedOutputModel, result.Value);
+    }
+
+    private RequirementsController CreateController()
+    {
+        return new RequirementsController(_requirementsServiceMock.Object);
     }
 }

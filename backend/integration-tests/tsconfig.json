@@ -2,6 +2,9 @@
   "files": [
     "./global.d.ts"
   ],
+  "include": [
+    "**/*.ts"
+  ],
   "compilerOptions": {
     "esModuleInterop": true
   }

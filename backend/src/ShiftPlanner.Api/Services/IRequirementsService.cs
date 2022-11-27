@@ -1,7 +1,7 @@
 ﻿using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Api.Controllers;
+namespace ShiftPlanner.Api.Services;
 
 public interface IRequirementsService
 {
@@ -14,4 +14,6 @@ public interface IRequirementsService
         string requirement);
 
     Task<DeleteResult> DeleteRequirement(Tenant tenant, string userId, Day day);
+    
+    Task<IReadOnlyCollection<UserRequirementModel>> GetRequirementsOverviewForMonth(Tenant tenant, ScheduledMonth month);
 }
