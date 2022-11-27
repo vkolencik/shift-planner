@@ -27,15 +27,16 @@ public class UsersRequirementsController : ControllerBase
     {
         var loggedInUserId = User.Identity.Name;
 
-        if (loggedInUserId != userId)
+        if (loggedInUserId != userId && !User.Claims.Any(c => c.Type == "permissions" && c.Value == Claims.ReadRequirementsOfOthers))
         {
-            return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");
+            return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
 
         var requirements = await _requirementsService.GetRequirements(new Tenant(tenant), userId, new ScheduledMonth(year, month));
         var requirementsModel = requirements.ToDictionary(
             kvp => kvp.Key.Date.ToString("yyyy-MM-dd"),
             kvp => kvp.Value);
+        
         return Ok(requirementsModel);
     }
 
@@ -52,7 +53,7 @@ public class UsersRequirementsController : ControllerBase
 
         if (loggedInUserId != userId)
         {
-            return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");
+            return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
 
         await _requirementsService.SetRequirement(new Tenant(tenant), userId, new Day(year, month, day), requirement.RequirementType);
@@ -70,9 +71,9 @@ public class UsersRequirementsController : ControllerBase
     {
         var loggedInUserId = User.Identity.Name;
 
-        if (loggedInUserId != userId)
+        if (loggedInUserId != userId && !User.Claims.Any(c => c.Type == "permissions" && c.Value == Claims.ApproveRequirementsOfOthers))
         {
-            return Unauthorized($"User {loggedInUserId} cannot fetch requirements of user {userId}");
+            return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
 
         DeleteResult result = await _requirementsService.DeleteRequirement(new Tenant(tenant), userId, new Day(year, month, day));

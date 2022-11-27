@@ -12,3 +12,8 @@ export const formatDate = (date: string) => {
 
   return `${day}. ${month}. ${year}`
 }
+export type Day = string & { __isDay: true }
+
+export function toDay (date: string): Day {
+  return date as Day
+}

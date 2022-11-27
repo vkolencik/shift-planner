@@ -1,5 +1,5 @@
-import {getToken} from './helpers/auth'
-import {getHeaders} from './helpers/getHeaders'
+import { getToken } from './helpers/auth'
+import { getHeaders } from './helpers/getHeaders'
 import { putRequirement, RequirementParams } from './helpers/api'
 
 describe('users requirements resource should', () => {
@@ -26,11 +26,11 @@ describe('users requirements resource should', () => {
     expect(resp.status).toEqual(401)
   })
 
-  it('return unauthorized when asking for requirements of a different user', async () => {
+  it('return forbidden when asking for requirements of a different user', async () => {
     const token: string = await getToken()
-    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/some-different-user-id/requirements/2022/10`, getHeaders(token))
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/some-different-user-id/requirements/2022/10`, getHeaders(token2))
 
-    expect(resp.status).toEqual(401)
+    expect(resp.status).toEqual(403)
   })
 
   it('return empty array of requirements when none were created', async () => {
@@ -48,13 +48,13 @@ describe('users requirements resource should', () => {
     expect(resp.status).toEqual(401)
   })
 
-  it('return unauthorized when putting new requirement for different user', async () => {
+  it('return forbidden when putting new requirement for different user', async () => {
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/10/12`, {
       ...getHeaders(token2),
       method: 'put'
     })
 
-    expect(resp.status).toEqual(401)
+    expect(resp.status).toEqual(403)
   })
 
   it('put new requirement', async () => {
@@ -69,8 +69,8 @@ describe('users requirements resource should', () => {
   })
 
   it('only return requirements for the specified month', async () => {
-    await putRequirement({...requirementParams, year: 2022, month: 12, day: 6}, token)
-    await putRequirement({...requirementParams, year: 2022, month: 11}, token)
+    await putRequirement({ ...requirementParams, year: 2022, month: 12, day: 6 }, token)
+    await putRequirement({ ...requirementParams, year: 2022, month: 11 }, token)
 
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12`, getHeaders(token))
 
@@ -113,7 +113,7 @@ describe('users requirements resource should', () => {
     expect(resp.status).toEqual(401)
   })
 
-  it('return unauthorized when deleting new requirement for different user', async () => {
+  it('return forbidden when deleting new requirement for different user', async () => {
     await putRequirement(requirementParams, token)
 
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2022/12/06`, {
@@ -121,7 +121,25 @@ describe('users requirements resource should', () => {
       ...getHeaders(token2)
     })
 
-    expect(resp.status).toEqual(401)
+    expect(resp.status).toEqual(403)
+  })
+
+  it('delete other users\'s requirement when deleted by manager', async () => {
+    await putRequirement({ ...requirementParams, userId: testUser2Id }, token2)
+
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12/06`, {
+      method: 'delete',
+      ...getHeaders(token)
+    })
+
+    expect(resp.status).toEqual(200)
+
+    const getResp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12`, getHeaders(token))
+
+    const requirements = await getResp.json()
+
+    expect(requirements['2022-12-06']).toBeFalsy()
+
   })
 
   it('return not found when deleting nonexistent requirement', async () => {
