@@ -1,26 +1,22 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import './App.css'
-import {useAuth0} from '@auth0/auth0-react'
-import Button from 'react-bootstrap/Button'
-import {Col, Container, Row} from 'react-bootstrap'
-import {Route, Routes} from 'react-router-dom'
-import {Requirements} from './Requirements'
-import {NavHeader} from './NavHeader'
-import {Footer} from './Footer'
+import { Col, Container, Row } from 'react-bootstrap'
+import { Route, Routes, useNavigate } from 'react-router-dom'
+import { Requirements } from './Requirements'
+import { NavHeader } from './NavHeader'
+import { Footer } from './Footer'
+import { Permission, usePermissions } from './auth/auth'
 
-function App() {
-  const {loginWithRedirect, isAuthenticated, isLoading, getAccessTokenSilently} = useAuth0()
+function App () {
+  const navigate = useNavigate()
+  const permissions = usePermissions()
 
   useEffect(() => {
-    if (!isLoading)
-      getAccessTokenSilently()
-  }, [isLoading, getAccessTokenSilently])
-
-  if (!isAuthenticated) {
-    return <div className="d-flex flex-column min-vh-100 h-100 d-flex align-items-center justify-content-center">
-      <Button onClick={() => loginWithRedirect()}>Login</Button>
-    </div>
-  }
+    const defaultPath = permissions.includes(Permission.readRequirementsOfOthers) ? 'schvalovani' : 'pozadavky'
+    if (window.location.pathname === '/') {
+      navigate(defaultPath)
+    }
+  }, [])
 
   return (
     <div className="d-flex flex-column min-vh-100">

@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
-import {Auth0Provider} from '@auth0/auth0-react'
-import {BrowserRouter} from 'react-router-dom'
+import { Auth0Provider } from '@auth0/auth0-react'
+import { BrowserRouter } from 'react-router-dom'
+import { WithAuth } from './auth/auth'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -17,9 +18,11 @@ root.render(
         clientId="DJath43A1oSS9KeuPbr0x5PiSG57ZcEv"
         redirectUri={window.location.origin}
         audience="https://b.krtek.me"
-        cacheLocation='localstorage'
+        cacheLocation="localstorage"
         scope="">
-        <App/>
+        <WithAuth>
+          <App/>
+        </WithAuth>
       </Auth0Provider>
     </BrowserRouter>
   </React.StrictMode>

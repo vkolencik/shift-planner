@@ -1,22 +1,26 @@
-import React, {useEffect, useRef, useState} from 'react'
-import FullCalendar, {EventClickArg} from '@fullcalendar/react' // must go before plugins
+import React, { useEffect, useRef, useState } from 'react'
+import FullCalendar, { EventClickArg } from '@fullcalendar/react' // must go before plugins
 import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
-import interactionPlugin, {DateClickArg} from '@fullcalendar/interaction'
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
 import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import csLocale from '@fullcalendar/core/locales/cs'
-import {DateSelectArg, DateUnselectArg} from '@fullcalendar/common'
+import { DateSelectArg, DateUnselectArg } from '@fullcalendar/common'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
 import {
   EmployeeMonthRequirements,
+  momentToDay,
   RequirementType,
-  requirementTypes, useApi, momentToDay
+  requirementTypes,
+  useApi
 } from './requirements/requirements-service'
-import {EventSourceInput} from '@fullcalendar/core'
-import {FormCheck, Spinner} from 'react-bootstrap'
+import { EventSourceInput } from '@fullcalendar/core'
+import { FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
+import { LoadingSpinner } from './components/LoadingSpinner'
+import { usePermissions } from './auth/auth'
 
 const year = 2023
 const month = 0
@@ -140,13 +144,7 @@ export const Requirements: React.FC = () => {
           </Modal.Header>
 
           <Modal.Body>
-            {loading &&
-              <div
-                className="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center bg-white justify-content-center opacity-50"
-                style={{'zIndex': 1000}}>
-                <Spinner animation="border"/>
-              </div>
-            }
+            {loading && <LoadingSpinner/>}
 
             {Object.values(requirementTypes).map(t => {
               return (

@@ -3,9 +3,11 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { Button, Container, Nav, Navbar } from 'react-bootstrap'
 import { UserBadge } from './UserBadge'
 import { LinkContainer } from 'react-router-bootstrap'
+import { Permission, usePermissions } from './auth/auth'
 
 export const NavHeader: FC = () => {
   const { logout } = useAuth0()
+  const permissions = usePermissions()
 
   return (<Navbar bg="light" expand="sm" sticky="top" className="border-bottom">
     <Container>
@@ -20,10 +22,10 @@ export const NavHeader: FC = () => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
           <LinkContainer to="/pozadavky"><Nav.Link>Požadavky</Nav.Link></LinkContainer>
-          <LinkContainer to="/tydenik"><Nav.Link>Týdeník</Nav.Link></LinkContainer>
-          <LinkContainer to="/schvalovani"><Nav.Link>Schvalování</Nav.Link></LinkContainer>
-          <LinkContainer to="/sluzby"><Nav.Link>Služby</Nav.Link></LinkContainer>
-          <LinkContainer to="/konference"><Nav.Link>Konference</Nav.Link></LinkContainer>
+          {false && <LinkContainer to="/tydenik"><Nav.Link>Týdeník</Nav.Link></LinkContainer>}
+          {permissions.includes(Permission.readRequirementsOfOthers) && <LinkContainer to="/schvalovani"><Nav.Link>Schvalování</Nav.Link></LinkContainer>}
+          {false && <LinkContainer to="/sluzby"><Nav.Link>Služby</Nav.Link></LinkContainer>}
+          {false && <LinkContainer to="/konference"><Nav.Link>Konference</Nav.Link></LinkContainer>}
         </Nav>
       </Navbar.Collapse>
       <UserBadge/>
