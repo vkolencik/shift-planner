@@ -4,13 +4,14 @@ import { currentMonth, currentYear, formatDate, getCurrentMonthString } from './
 import { LoadingSpinner } from './components/LoadingSpinner'
 import { aggregateRequirements } from './requirements/aggregate-requirements'
 import { Alert, Badge, Table } from 'react-bootstrap'
+import { FaUser } from "react-icons/fa";
 
 export function Approvals () {
   const [requirements, setRequirements] = useState<MonthRequirements | null>(null)
   const api = useApi()
 
   useEffect(() => {
-    api.requirements.getMonth(currentYear, currentMonth + 1)
+    api.requirements.getMonth(currentYear, currentMonth)
       .then(r => setRequirements(r))
   }, [])
 
@@ -26,7 +27,7 @@ export function Approvals () {
     <h1>Schvalování dovolených pro {getCurrentMonthString()}</h1>
     {userNames.length === 0 && <Alert variant="dark">Nejsou žádné dovolené ke schválení</Alert>}
     {userNames.map(userName => (<>
-      <h2 key={'header-' + userName}>{userName}</h2>
+      <h2 key={'header-' + userName}><FaUser style={{fontSize: '80%'}} /> {userName}</h2>
       <Table striped bordered hover className='table-fit' key={'table' + userName}>
         <tbody>
         {requirementsDisplayModel[userName].map(leave =>

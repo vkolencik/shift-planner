@@ -20,7 +20,7 @@ import { FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from './components/LoadingSpinner'
-import { currentMonth, currentYear, getCurrentMonthString } from './dates'
+import { currentMonth, currentYear, getCurrentMonthString, getStartOfCurrentMonth } from './dates'
 
 type DayDate = moment.Moment
 
@@ -63,7 +63,7 @@ export const Requirements: React.FC = () => {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.get(currentYear, currentMonth + 1)
+      api.requirements.get(currentYear, currentMonth)
         .then(setRequirements)
     }
   })
@@ -174,7 +174,7 @@ export const Requirements: React.FC = () => {
         ? <div><FullCalendar
           plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
           initialView="dayGridMonth"
-          initialDate={new Date(currentYear, currentMonth, 1)}
+          initialDate={getStartOfCurrentMonth()}
           themeSystem="bootstrap5"
           headerToolbar={false}
           firstDay={1}
