@@ -6,6 +6,7 @@ import { Requirements } from './Requirements'
 import { NavHeader } from './NavHeader'
 import { Footer } from './Footer'
 import { Permission, usePermissions } from './auth/auth'
+import { Approvals } from './Approvals'
 
 function App () {
   const navigate = useNavigate()
@@ -28,7 +29,7 @@ function App () {
               <Route path="/" element={<h1>Home</h1>}/>
               <Route path="/pozadavky" element={<Requirements/>}/>
               <Route path="/tydenik" element={<h1>Týdeník</h1>}/>
-              <Route path="/schvalovani" element={<h1>Schvalování</h1>}/>
+              <Route path="/schvalovani" element={<Approvals/>}/>
               <Route path="/sluzby" element={<h1>Služby</h1>}/>
               <Route path="/konference" element={<h1>Konference</h1>}/>
             </Routes>
