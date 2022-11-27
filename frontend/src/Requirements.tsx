@@ -1,25 +1,26 @@
-import React, {useEffect, useRef, useState} from 'react'
-import FullCalendar, {EventClickArg} from '@fullcalendar/react' // must go before plugins
+import React, { useEffect, useRef, useState } from 'react'
+import FullCalendar, { EventClickArg } from '@fullcalendar/react' // must go before plugins
 import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
-import interactionPlugin, {DateClickArg} from '@fullcalendar/interaction'
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
 import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import csLocale from '@fullcalendar/core/locales/cs'
-import {DateSelectArg, DateUnselectArg} from '@fullcalendar/common'
+import { DateSelectArg, DateUnselectArg } from '@fullcalendar/common'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
 import {
   EmployeeMonthRequirements,
+  momentToDay,
   RequirementType,
-  requirementTypes, useApi, momentToDay
+  requirementTypes,
+  useApi
 } from './requirements/requirements-service'
-import {EventSourceInput} from '@fullcalendar/core'
-import {FormCheck, Spinner} from 'react-bootstrap'
+import { EventSourceInput } from '@fullcalendar/core'
+import { FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
-
-const year = 2023
-const month = 0
+import { LoadingSpinner } from './components/LoadingSpinner'
+import { currentMonth, currentYear, getCurrentMonthString, getStartOfCurrentMonth } from './dates'
 
 type DayDate = moment.Moment
 
@@ -62,7 +63,7 @@ export const Requirements: React.FC = () => {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.get(year, month + 1)
+      api.requirements.get(currentYear, currentMonth)
         .then(setRequirements)
     }
   })
@@ -121,7 +122,7 @@ export const Requirements: React.FC = () => {
 
   return (
     <>
-      <h1>{new Date(year, month, 1).toLocaleString('defualt', { month: 'long' })} {year}</h1>
+      <h1>{getCurrentMonthString()}</h1>
 
       {selectedDateRange &&
         <Modal
@@ -140,13 +141,7 @@ export const Requirements: React.FC = () => {
           </Modal.Header>
 
           <Modal.Body>
-            {loading &&
-              <div
-                className="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center bg-white justify-content-center opacity-50"
-                style={{'zIndex': 1000}}>
-                <Spinner animation="border"/>
-              </div>
-            }
+            {loading && <LoadingSpinner/>}
 
             {Object.values(requirementTypes).map(t => {
               return (
@@ -179,7 +174,7 @@ export const Requirements: React.FC = () => {
         ? <div><FullCalendar
           plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
           initialView="dayGridMonth"
-          initialDate={new Date(year, month, 1)}
+          initialDate={getStartOfCurrentMonth()}
           themeSystem="bootstrap5"
           headerToolbar={false}
           firstDay={1}

@@ -16,6 +16,15 @@ export const requirementTypes: { [key in RequirementType]: { name: string, value
 
 export type RequirementType = 'leave' | 'hard-no' | 'soft-yes' | 'only-morning' | 'only-afternoon'
 
+interface UserRequirement {
+  userId: string,
+  userName: string,
+  date: string,
+  requirementType: RequirementType
+}
+
+export type MonthRequirements = UserRequirement[]
+
 export type EmployeeMonthRequirements = { [key: Day]: RequirementType }
 
 export type Day = string & { __isDay: true }
@@ -46,6 +55,26 @@ export function useApi() {
         })
           .then(token => fetch(
             `${baseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${year}/${month}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          ))
+          .then(resp => {
+            if (resp.status !== 200) {
+              throw new Error('')
+            }
+
+            return resp.json()
+          }),
+      getMonth: async (year: number, month: number): Promise<MonthRequirements> =>
+        getAccessTokenSilently({
+          audience: 'https://b.krtek.me',
+          scope: '',
+        })
+          .then(token => fetch(
+            `${baseUrl}/api/${tenant}/requirements/${year}/${month}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`
