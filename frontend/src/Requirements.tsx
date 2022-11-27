@@ -20,7 +20,7 @@ import { FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from './components/LoadingSpinner'
-import { currentMonth, currentYear } from './CurrentMonth'
+import { currentMonth, currentYear, getCurrentMonthString } from './dates'
 
 type DayDate = moment.Moment
 
@@ -122,7 +122,7 @@ export const Requirements: React.FC = () => {
 
   return (
     <>
-      <h1>{new Date(currentYear, currentMonth, 1).toLocaleString('defualt', { month: 'long' })} {currentYear}</h1>
+      <h1>{getCurrentMonthString()}</h1>
 
       {selectedDateRange &&
         <Modal

@@ -17,10 +17,10 @@ export const requirementTypes: { [key in RequirementType]: { name: string, value
 export type RequirementType = 'leave' | 'hard-no' | 'soft-yes' | 'only-morning' | 'only-afternoon'
 
 interface UserRequirement {
-  UserId: string,
-  UserName: string,
-  Date: string,
-  RequirementType: string
+  userId: string,
+  userName: string,
+  date: string,
+  requirementType: RequirementType
 }
 
 export type MonthRequirements = UserRequirement[]
