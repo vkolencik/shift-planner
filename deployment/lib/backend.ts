@@ -4,7 +4,7 @@ import { CfnResource, Duration } from 'aws-cdk-lib'
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager'
 import { HostedZone } from 'aws-cdk-lib/aws-route53'
 import { EndpointType, LambdaRestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway'
-import { IGrantable, IPrincipal } from 'aws-cdk-lib/aws-iam'
+import { IGrantable, IPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam'
 import { Environment } from './deployment-stack'
 import { RetentionDays } from 'aws-cdk-lib/aws-logs'
 
@@ -42,6 +42,11 @@ export class Backend extends Construct implements IGrantable {
         provisionedConcurrentExecutions: 2
       })
     }
+
+    this.backendLambdaFunction.addToRolePolicy(new PolicyStatement({
+      resources: ['arn:aws:secretsmanager:eu-central-1:720500131615:secret:auth0-mgmt-api-key-vdXHOP'],
+      actions: ['secretsmanager:GetSecretValue']
+    }))
 
     const hostedZoneId = 'Z10312824UKCHIHP3DBN'
     const cert = new Certificate(this, 'domain-certificate', {
