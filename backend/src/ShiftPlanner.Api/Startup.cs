@@ -9,6 +9,7 @@ using Microsoft.Net.Http.Headers;
 using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
+using ShiftPlanner.Api.Services.Users;
 
 namespace ShiftPlanner.Api;
 
@@ -80,6 +81,8 @@ public class Startup
 
         services.AddControllers();
 
+        services.AddTransient<IUserService, Auth0UserService>();
+        
         services.AddTransient<IRequirementsService, RequirementsService>();
         services.AddSingleton<IRequirementEntityConverter, RequirementEntityConverter>();
         services.AddSingleton<IRequirementsRepository, DynamoRequirementsRepository>();

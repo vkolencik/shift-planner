@@ -1,9 +1,10 @@
-﻿namespace ShiftPlanner.Auth0;
+﻿using ShiftPlanner.Api.Contracts;
 
-/*
-public class Auth0ManagementClient
+namespace ShiftPlanner.Api.Services.Users;
+
+internal class Auth0UserService : IUserService
 {
-    public static async Task<User> GetUser()
+/*    public static async Task<User> GetUser()
     {
         var credentials = await AwsSecretsManagerClient.GetSecret();
         
@@ -30,5 +31,9 @@ public class Auth0ManagementClient
 
         return tester;
     }
-}
 */
+    public Task<IReadOnlyCollection<User>> GetAllUsers()
+    {
+        throw new NotImplementedException();
+    }
+}
