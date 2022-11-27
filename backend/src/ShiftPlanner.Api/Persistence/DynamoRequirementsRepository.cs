@@ -65,6 +65,11 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
         return DeleteResult.Deleted;
     }
 
+    public Task<IReadOnlyCollection<RequirementModel>> GetRequirementsForMonth()
+    {
+        throw new NotImplementedException();
+    }
+
     private DynamoDBContext GetContext()
     {
         return new DynamoDBContext(_dynamo, new DynamoDBContextConfig

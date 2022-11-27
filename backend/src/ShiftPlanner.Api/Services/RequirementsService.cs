@@ -33,8 +33,10 @@ public class RequirementsService : IRequirementsService
         return _repository.DeleteRequirement(tenant, userId, day);
     }
 
-    public Task<IReadOnlyCollection<UserRequirementModel>> GetRequirementsOverviewForMonth()
+    public async Task<IReadOnlyCollection<UserRequirementModel>> GetRequirementsOverviewForMonth()
     {
-        throw new NotImplementedException();
+        var requirements = await _repository.GetRequirementsForMonth();
+        var userRequirements = requirements.Select(r => new UserRequirementModel(r.UserId, "dunno", r.Date, r.RequirementType)).ToArray();
+        return userRequirements;
     }
 }

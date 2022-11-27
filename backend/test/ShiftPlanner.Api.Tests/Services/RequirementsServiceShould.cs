@@ -70,8 +70,26 @@ public class RequirementsServiceShould
     [Fact]
     public async Task GetRequirementsOverviewForMonth()
     {
+        var expectedRequirements = new []
+        {
+            new UserRequirementModel("user1", "User 1", new Day(2022, 12, 2), "hard-no"), 
+            new UserRequirementModel("user2", "User 2", new Day(2022, 12, 3), "soft-yes"), 
+        };
+        
+        _repositoryMock
+            .Setup(_ => _.GetRequirementsForMonth())
+            .ReturnsAsync(
+                new[]
+                {
+                    new RequirementModel("user1", new Day(2022, 12, 2), "hard-no"),
+                    new RequirementModel("user2", new Day(2022, 12, 3), "soft-yes"),
+                });
+        
         var service = CreateService();
-        await service.GetRequirementsOverviewForMonth();
+
+        var requirements = await service.GetRequirementsOverviewForMonth();
+        
+        Assert.Equal(expectedRequirements, requirements);
     }
 
     private RequirementsService CreateService()
