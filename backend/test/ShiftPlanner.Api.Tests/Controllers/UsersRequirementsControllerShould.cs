@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Controllers;
+using ShiftPlanner.Api.Services;
 using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Tests.Controllers;

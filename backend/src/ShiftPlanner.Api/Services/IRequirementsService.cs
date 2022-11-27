@@ -1,7 +1,7 @@
 ﻿using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Api.Controllers;
+namespace ShiftPlanner.Api.Services;
 
 public interface IRequirementsService
 {
