@@ -67,6 +67,13 @@ public class RequirementsServiceShould
         Assert.Equal(repositoryResult, serviceResult);
     }
 
+    [Fact]
+    public async Task GetRequirementsOverviewForMonth()
+    {
+        var service = CreateService();
+        await service.GetRequirementsOverviewForMonth();
+    }
+
     private RequirementsService CreateService()
     {
         return new RequirementsService(_repositoryMock.Object);

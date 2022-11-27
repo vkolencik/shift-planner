@@ -14,4 +14,6 @@ public interface IRequirementsService
         string requirement);
 
     Task<DeleteResult> DeleteRequirement(Tenant tenant, string userId, Day day);
+    
+    Task<IReadOnlyCollection<UserRequirementModel>> GetRequirementsOverviewForMonth();
 }

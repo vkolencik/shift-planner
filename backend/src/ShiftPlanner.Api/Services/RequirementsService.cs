@@ -32,4 +32,9 @@ public class RequirementsService : IRequirementsService
     {
         return _repository.DeleteRequirement(tenant, userId, day);
     }
+
+    public Task<IReadOnlyCollection<UserRequirementModel>> GetRequirementsOverviewForMonth()
+    {
+        throw new NotImplementedException();
+    }
 }

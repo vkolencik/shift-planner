@@ -43,8 +43,8 @@ describe('requirements overview endpoint should', () => {
     const requirements = await resp.json()
     expect(requirements).toHaveLength(2)
     expect(requirements).toEqual(expect.arrayContaining([
-      {userId: testUserId, date: '2022-12-06', requirementType: 'hard-no'},
-      {userId: testUser2Id, date: '2022-12-06', requirementType: 'soft-yes'}
+      {userId: testUserId, userName: testUserName,  date: '2022-12-06', requirementType: 'hard-no'},
+      {userId: testUser2Id, userName: testUser2Name, date: '2022-12-06', requirementType: 'soft-yes'}
     ]))
   })
 })
