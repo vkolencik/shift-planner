@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.Extensions.NETCore.Setup;
+using Amazon.SecretsManager;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +10,7 @@ using Microsoft.Net.Http.Headers;
 using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
+using ShiftPlanner.Api.Services.Secrets;
 using ShiftPlanner.Api.Services.Users;
 
 namespace ShiftPlanner.Api;
@@ -81,6 +83,10 @@ public class Startup
 
         services.AddControllers();
 
+        services.AddHttpClient();
+        services.AddAWSService<IAmazonSecretsManager>(new AWSOptions() {Region = _awsRegionEndpoint});
+        services.AddSingleton<IAwsSecretsManagerClient, AwsSecretsManagerClient>();
+        services.AddSingleton<IAuth0TokenProvider, Auth0TokenProvider>();
         services.AddSingleton<IUserService, Auth0UserService>();
         
         services.AddTransient<IRequirementsService, RequirementsService>();
