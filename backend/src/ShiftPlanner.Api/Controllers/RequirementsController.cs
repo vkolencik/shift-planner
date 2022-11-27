@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShiftPlanner.Api.Contracts;
+using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Contracts
 {
@@ -25,7 +26,7 @@ namespace ShiftPlanner.Api.Controllers
             [FromRoute] int year,
             [FromRoute] int month)
         {
-            var requirements = await _requirementsService.GetRequirementsOverviewForMonth();
+            var requirements = await _requirementsService.GetRequirementsOverviewForMonth(new Tenant(tenant), new ScheduledMonth(year, month));
             return Ok(requirements);
         }
     }

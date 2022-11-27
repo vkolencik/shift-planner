@@ -34,6 +34,11 @@ internal class Auth0UserService : IUserService
 */
     public Task<IReadOnlyCollection<User>> GetAllUsers()
     {
-        throw new NotImplementedException();
+        return Task.FromResult(
+            (IReadOnlyCollection<User>) new[]
+            {
+                new User("auth0|633015ee115794a47e8166d8", "Test User 1", "test_user_1@krtek.me"),
+                new User("auth0|6367b6f40df1e7bc1037834f", "Test User 2", "test_user_2@krtek.me"),
+            });
     }
 }

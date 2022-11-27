@@ -45,6 +45,22 @@ public class RequirementEntityConverterShould
     }
 
     [Fact]
+    public void ConvertEntitiesToModel()
+    {
+        var entities = new[]
+        {
+            new RequirementEntity
+            {
+                Date = "2022-11-19",
+                Requirement = "hard-no"
+            }
+        };
+        var converter = new RequirementEntityConverter();
+        
+        var requirements = converter.RequirementEntitiesToRequirements(entities);
+    }
+
+    [Fact]
     public void ComputePartitionKey()
     {
         var converter = new RequirementEntityConverter();
@@ -62,5 +78,15 @@ public class RequirementEntityConverterShould
         var key = converter.GetUserMonthKey(new Tenant("tenant1"), "user-id-abc", new ScheduledMonth(2023, 2));
 
         Assert.Equal("v1:tenant1:user-id-abc:2023-02", key);
+    }
+
+    [Fact]
+    public void ComputeMonthKey()
+    {
+        var converter = new RequirementEntityConverter();
+
+        var key = converter.GetMonthKey(new Tenant("tenant1"), new ScheduledMonth(2023, 2));
+
+        Assert.Equal("v1:tenant1:2023-02", key);
     }
 }

@@ -1,4 +1,5 @@
-﻿using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Api.Contracts;
+using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Persistence;
 
@@ -33,6 +34,11 @@ internal class RequirementEntityConverter : IRequirementEntityConverter
         return entities.ToDictionary(e => DateToDay(e.Date), e => StringToRequirement(e.Requirement));
     }
 
+    public IReadOnlyCollection<RequirementModel> RequirementEntitiesToRequirements(IEnumerable<RequirementEntity> entities)
+    {
+        throw new NotImplementedException();
+    }
+
     public string GetPartitionKey(Tenant tenant, string userId, Day day)
     {
         return GetPartitionKey(tenant, userId, GetDateString(day));
@@ -41,6 +47,11 @@ internal class RequirementEntityConverter : IRequirementEntityConverter
     public string GetUserMonthKey(Tenant tenant, string userId, ScheduledMonth month)
     {
         return GetUserMonthKey(tenant, userId, GetMonthString(month));
+    }
+
+    public string GetMonthKey(Tenant tenant, ScheduledMonth month)
+    {
+        throw new NotImplementedException();
     }
 
     private static string GetPartitionKey(Tenant tenant, string userId, string date) => $"v1:{tenant.Name}:{userId}:{date}";

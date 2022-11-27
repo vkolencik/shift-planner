@@ -73,6 +73,9 @@ public class RequirementsServiceShould
     [Fact]
     public async Task GetRequirementsOverviewForMonth()
     {
+        var tenant = TestData.Tenant;
+        var month = TestData.Month;
+        
         var expectedRequirements = new[]
         {
             new UserRequirementModel("user1", "User 1", new Day(2022, 12, 2), "hard-no"),
@@ -80,7 +83,7 @@ public class RequirementsServiceShould
         };
 
         _repositoryMock
-            .Setup(_ => _.GetRequirementsForMonth())
+            .Setup(_ => _.GetRequirementsForMonth(tenant, month))
             .ReturnsAsync(
                 new[]
                 {
@@ -97,7 +100,7 @@ public class RequirementsServiceShould
             });
         var service = CreateService();
 
-        var requirements = await service.GetRequirementsOverviewForMonth();
+        var requirements = await service.GetRequirementsOverviewForMonth(tenant, month);
 
         Assert.Equal(expectedRequirements, requirements);
     }

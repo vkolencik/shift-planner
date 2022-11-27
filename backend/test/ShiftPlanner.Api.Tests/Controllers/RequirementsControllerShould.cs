@@ -19,20 +19,21 @@ public class RequirementsControllerShould
     public async Task ReturnRequirementsForMonth()
     {
         var tenant = TestData.Tenant;
-        var month = new ScheduledMonth(2020, 10);
+        var month = TestData.Month;
         var requirements = new []
         {
-            new UserRequirementModel("user1", "User 1", new Day(2022, 12, 2), "hard-no"), 
-            new UserRequirementModel("user2", "User 2", new Day(2022, 12, 3), "soft-yes"), 
+            new UserRequirementModel("user1", "User 1", new Day(month, 2), "hard-no"), 
+            new UserRequirementModel("user2", "User 2", new Day(month, 3), "soft-yes"), 
         };
         
         _requirementsServiceMock
-            .Setup(_ => _.GetRequirementsOverviewForMonth())
+            .Setup(_ => _.GetRequirementsOverviewForMonth(tenant, month))
             .ReturnsAsync(requirements);
 
         var controller = CreateController();
 
         var response = await controller.Get(tenant.Name, month.Year, month.Month);
+        
         var result = Assert.IsType<OkObjectResult>(response.Result);
         Assert.Equal(requirements, result.Value);
     }

@@ -81,11 +81,11 @@ public class Startup
 
         services.AddControllers();
 
-        services.AddTransient<IUserService, Auth0UserService>();
+        services.AddSingleton<IUserService, Auth0UserService>();
         
         services.AddTransient<IRequirementsService, RequirementsService>();
-        services.AddSingleton<IRequirementEntityConverter, RequirementEntityConverter>();
-        services.AddSingleton<IRequirementsRepository, DynamoRequirementsRepository>();
+        services.AddTransient<IRequirementEntityConverter, RequirementEntityConverter>();
+        services.AddTransient<IRequirementsRepository, DynamoRequirementsRepository>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline

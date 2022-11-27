@@ -65,9 +65,24 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
         return DeleteResult.Deleted;
     }
 
-    public Task<IReadOnlyCollection<RequirementModel>> GetRequirementsForMonth()
+    public async Task<IReadOnlyCollection<RequirementModel>> GetRequirementsForMonth(Tenant tenant, ScheduledMonth month)
     {
-        throw new NotImplementedException();
+        var key = _requirementEntityConverter.GetMonthKey(tenant, month);
+
+        using var context = GetContext();
+
+        var query = context.QueryAsync<RequirementEntity>(
+            key,
+            new DynamoDBOperationConfig {IndexName = "TenantMonthIndex"});
+
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+        var entities = await query.GetRemainingAsync();
+        stopWatch.Stop();
+        
+        Console.Out.WriteLine($"Fetched {entities.Count} items from database in {stopWatch.ElapsedMilliseconds} ms");
+
+        return _requirementEntityConverter.RequirementEntitiesToRequirements(entities);
     }
 
     private DynamoDBContext GetContext()

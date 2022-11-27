@@ -36,9 +36,9 @@ public class RequirementsService : IRequirementsService
         return _repository.DeleteRequirement(tenant, userId, day);
     }
 
-    public async Task<IReadOnlyCollection<UserRequirementModel>> GetRequirementsOverviewForMonth()
+    public async Task<IReadOnlyCollection<UserRequirementModel>> GetRequirementsOverviewForMonth(Tenant tenant, ScheduledMonth month)
     {
-        var requirements = await _repository.GetRequirementsForMonth();
+        var requirements = await _repository.GetRequirementsForMonth(tenant, month);
         var users = await _userService.GetAllUsers();
         var userRequirements = requirements.Select(r => new UserRequirementModel(r.UserId, users.Single(u => u.UserId == r.UserId).UserName, r.Date, r.RequirementType)).ToArray();
         return userRequirements;
