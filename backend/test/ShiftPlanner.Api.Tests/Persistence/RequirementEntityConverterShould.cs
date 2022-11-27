@@ -1,4 +1,5 @@
-﻿using ShiftPlanner.Api.Persistence;
+﻿using ShiftPlanner.Api.Contracts;
+using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Tests.Persistence;
@@ -51,13 +52,21 @@ public class RequirementEntityConverterShould
         {
             new RequirementEntity
             {
+                UserId = "user1",
                 Date = "2022-11-19",
                 Requirement = "hard-no"
             }
         };
+        IEnumerable<RequirementModel> expectedModel = new[]
+        {
+            new RequirementModel("user1", new Day(2022, 11, 19), "hard-no")
+        };
+
         var converter = new RequirementEntityConverter();
-        
+
         var requirements = converter.RequirementEntitiesToRequirements(entities);
+
+        Assert.Equal(expectedModel, requirements);
     }
 
     [Fact]

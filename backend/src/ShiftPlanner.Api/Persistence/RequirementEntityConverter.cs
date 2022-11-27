@@ -28,16 +28,24 @@ internal class RequirementEntityConverter : IRequirementEntityConverter
 
     public Dictionary<Day, string> RequirementEntitiesToMonthRequirements(IEnumerable<RequirementEntity> entities)
     {
-        string StringToRequirement(string? requirement) => requirement ?? throw new ArgumentNullException(nameof(requirement));
-        static Day DateToDay(string? date) => date is not null ? new Day(DateOnly.ParseExact(date, "yyyy-MM-dd")) : throw new ArgumentNullException(nameof(date));
-
         return entities.ToDictionary(e => DateToDay(e.Date), e => StringToRequirement(e.Requirement));
     }
 
     public IReadOnlyCollection<RequirementModel> RequirementEntitiesToRequirements(IEnumerable<RequirementEntity> entities)
     {
-        throw new NotImplementedException();
+        return entities
+            .Select(e => new RequirementModel(
+                UserId: StringToUserId(e.UserId),
+                Date: DateToDay(e.Date),
+                RequirementType: StringToRequirement(e.Requirement)))
+            .ToArray();
     }
+
+    private string StringToUserId(string? userId) => userId ?? throw new ArgumentNullException(nameof(userId));
+    
+    private string StringToRequirement(string? requirement) => requirement ?? throw new ArgumentNullException(nameof(requirement));
+
+    private static Day DateToDay(string? date) => date is not null ? new Day(DateOnly.ParseExact(date, "yyyy-MM-dd")) : throw new ArgumentNullException(nameof(date));
 
     public string GetPartitionKey(Tenant tenant, string userId, Day day)
     {
@@ -51,7 +59,7 @@ internal class RequirementEntityConverter : IRequirementEntityConverter
 
     public string GetMonthKey(Tenant tenant, ScheduledMonth month)
     {
-        throw new NotImplementedException();
+        return GetMonthKey(tenant, GetMonthString(month));
     }
 
     private static string GetPartitionKey(Tenant tenant, string userId, string date) => $"v1:{tenant.Name}:{userId}:{date}";
