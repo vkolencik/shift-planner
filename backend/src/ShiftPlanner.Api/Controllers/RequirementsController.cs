@@ -21,13 +21,16 @@ namespace ShiftPlanner.Api.Controllers
         }
 
         [HttpGet("{year}/{month}")]
-        public async Task<ActionResult<IReadOnlyCollection<UserRequirementModel>>> Get(
+        public async Task<ActionResult<IReadOnlyCollection<UserRequirementOutputModel>>> Get(
             [FromRoute] string tenant,
             [FromRoute] int year,
             [FromRoute] int month)
         {
             var requirements = await _requirementsService.GetRequirementsOverviewForMonth(new Tenant(tenant), new ScheduledMonth(year, month));
-            return Ok(requirements);
+            var outputModel = requirements
+                .Select(r => new UserRequirementOutputModel(r.UserId, r.UserName, r.Date.Date.ToString("yyyy-MM-dd"), r.RequirementType))
+                .ToArray();
+            return Ok(outputModel);
         }
     }
 }
