@@ -22,4 +22,6 @@ public interface IRequirementsRepository
         Day day);
 
     Task<IReadOnlyCollection<RequirementModel>> GetRequirementsForMonth(Tenant tenant, ScheduledMonth month);
+    
+    Task<RequirementModel> GetRequirement(Tenant tenant, string userId, Day day);
 }

@@ -46,7 +46,26 @@ public class RequirementEntityConverterShould
     }
 
     [Fact]
-    public void ConvertEntitiesToModel()
+    public void ConvertEntityToModel()
+    {
+        var entity = new RequirementEntity
+            {
+                UserId = "user1",
+                Date = "2022-11-19",
+                Requirement = "hard-no"
+            };
+
+        var expectedModel = new RequirementModel("user1", new Day(2022, 11, 19), "hard-no");
+
+        var converter = new RequirementEntityConverter();
+
+        var requirements = converter.EntityToModel(entity);
+
+        Assert.Equal(expectedModel, requirements);
+    }
+
+    [Fact]
+    public void ConvertEntitiesToModels()
     {
         var entities = new[]
         {

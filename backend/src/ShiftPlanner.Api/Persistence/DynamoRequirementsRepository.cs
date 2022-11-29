@@ -85,6 +85,22 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
         return _requirementEntityConverter.RequirementEntitiesToRequirements(entities);
     }
 
+    public async Task<RequirementModel?> GetRequirement(Tenant tenant, string userId, Day day)
+    {
+        var key = _requirementEntityConverter.GetPartitionKey(tenant, userId, day);
+
+        using var context = GetContext();
+
+        var entity = await context.LoadAsync<RequirementEntity>(key);
+
+        if (entity == null)
+        {
+            return null;
+        }
+
+        return _requirementEntityConverter.EntityToModel(entity);
+    }
+    
     private DynamoDBContext GetContext()
     {
         return new DynamoDBContext(_dynamo, new DynamoDBContextConfig

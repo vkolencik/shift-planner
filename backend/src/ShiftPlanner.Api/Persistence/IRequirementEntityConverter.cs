@@ -20,4 +20,5 @@ internal interface IRequirementEntityConverter
     string GetUserMonthKey(Tenant tenant, string userId, ScheduledMonth month);
     
     string GetMonthKey(Tenant tenant, ScheduledMonth month);
+    RequirementModel EntityToModel(RequirementEntity entity);
 }

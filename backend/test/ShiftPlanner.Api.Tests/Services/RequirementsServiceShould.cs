@@ -108,9 +108,20 @@ public class RequirementsServiceShould
     [Fact]
     public async Task ApproveRequirement()
     {
+        Tenant tenant = TestData.Tenant;
+        string userId = "user-123";
+        Day day = TestData.Day;
+        RequirementModel requirement = new RequirementModel("user-123", day, "leave");
+        
+        _repositoryMock
+            .Setup(_ => _.GetRequirement(tenant, userId, day))
+            .ReturnsAsync(requirement);
         var service = CreateService();
 
         var result = service.Approve(TestData.Tenant, "userId", TestData.Day);
+        
+        
+        
     }
 
     private RequirementsService CreateService()

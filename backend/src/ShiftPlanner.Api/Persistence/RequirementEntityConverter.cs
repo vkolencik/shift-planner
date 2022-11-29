@@ -34,11 +34,16 @@ internal class RequirementEntityConverter : IRequirementEntityConverter
     public IReadOnlyCollection<RequirementModel> RequirementEntitiesToRequirements(IEnumerable<RequirementEntity> entities)
     {
         return entities
-            .Select(e => new RequirementModel(
-                UserId: StringToUserId(e.UserId),
-                Date: DateToDay(e.Date),
-                RequirementType: StringToRequirement(e.Requirement)))
+            .Select(EntityToModel)
             .ToArray();
+    }
+
+    public RequirementModel EntityToModel(RequirementEntity entity)
+    {
+        return new RequirementModel(
+            UserId: StringToUserId(entity.UserId),
+            Date: DateToDay(entity.Date),
+            RequirementType: StringToRequirement(entity.Requirement));
     }
 
     private string StringToUserId(string? userId) => userId ?? throw new ArgumentNullException(nameof(userId));
