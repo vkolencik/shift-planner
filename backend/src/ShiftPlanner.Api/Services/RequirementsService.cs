@@ -44,4 +44,9 @@ public class RequirementsService : IRequirementsService
         var userRequirements = requirements.Select(r => new UserRequirementModel(r.UserId, users.Single(u => u.UserId == r.UserId).UserName, r.Date, r.RequirementType)).ToArray();
         return userRequirements;
     }
+
+    public Task<ApproveResult> Approve(Tenant tenant, string userId, Day day)
+    {
+        throw new NotImplementedException();
+    }
 }

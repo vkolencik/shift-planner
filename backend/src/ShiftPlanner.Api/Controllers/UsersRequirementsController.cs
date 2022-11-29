@@ -84,6 +84,28 @@ public class UsersRequirementsController : ControllerBase
             DeleteResult.NotFound => NotFound()
         };
     }
+    
+    [HttpPut("{year}/{month}/{day}/approval")]
+    [Authorize(Claims.ReadRequirementsOfOthers)]
+    public async Task<ActionResult> Approve(
+        [FromRoute] string tenant,
+        [FromRoute] string userId,
+        [FromRoute] int year,
+        [FromRoute] int month,
+        [FromRoute] int day,
+        [FromBody] ApprovalInputModel requirement)
+    {
+        if (!requirement.Approved)
+        {
+            return Ok();
+        }
+        
+        await _requirementsService.Approve(new Tenant(tenant), userId, new Day(year, month, day));
+
+        return Ok();
+    }
 }
+
+public record ApprovalInputModel(bool Approved);
 
 public record RequirementInputModel(string RequirementType);

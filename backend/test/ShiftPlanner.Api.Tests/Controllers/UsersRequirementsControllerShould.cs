@@ -157,8 +157,28 @@ public abstract class UsersRequirementsControllerShould
         }
     }
 
+    public class Approval : UsersRequirementsControllerShould
+    {
+        [Fact]
+        public async Task ApproveRequirement()
+        {
+            var tenant = TestData.Tenant;
+            var day = new Day(2022, 10, 18);
+            _requirementsServiceMock
+                .Setup(_ => _.Approve(tenant, _userId, day))
+                .ReturnsAsync(ApproveResult.Success)
+                .Verifiable(); 
+            var controller = CreateController(_userId, new[] {Claims.ApproveRequirementsOfOthers});
+
+            var result = await controller.Approve(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth, new ApprovalInputModel(true));
+
+            Assert.IsType<OkResult>(result);
+            _requirementsServiceMock.VerifyAll();
+        }
+    }
+
     private UsersRequirementsController CreateController() => CreateController(_userId);
-    
+
     private UsersRequirementsController CreateController(string userId) => CreateController(userId, Array.Empty<string>());
 
     private UsersRequirementsController CreateController(string userId, string[] permissions)
@@ -170,7 +190,7 @@ public abstract class UsersRequirementsControllerShould
                     new Claim(ClaimTypes.Name, userId)
                 }.Concat(permissions.Select(p => new Claim("permissions", p))),
                 "mock"));
-        
+
         var controller = new UsersRequirementsController(_requirementsServiceMock.Object)
         {
             ControllerContext = new ControllerContext

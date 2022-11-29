@@ -105,6 +105,14 @@ public class RequirementsServiceShould
         Assert.Equal(expectedRequirements, requirements);
     }
 
+    [Fact]
+    public async Task ApproveRequirement()
+    {
+        var service = CreateService();
+
+        var result = service.Approve(TestData.Tenant, "userId", TestData.Day);
+    }
+
     private RequirementsService CreateService()
     {
         return new RequirementsService(_repositoryMock.Object, _userServiceMock.Object);
