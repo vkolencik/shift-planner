@@ -180,6 +180,22 @@ public abstract class UsersRequirementsControllerShould
             Assert.IsType<OkResult>(result);
             _requirementsServiceMock.VerifyAll();
         }
+
+        [Theory]
+        [InlineData(ApproveResult.NotFound, typeof (NotFoundResult))]
+        [InlineData(ApproveResult.Failure, typeof (BadRequestResult))]
+        public async Task ReturnErrorStatus_WhenApprovalNotsuccessful(ApproveResult approvalResult, Type expectedResultType)
+        {
+            var controller = CreateController(_userId, new[] {Claims.ApproveRequirementsOfOthers});
+
+            _requirementsServiceMock
+                .Setup(_ => _.Approve(It.IsAny<Tenant>(), It.IsAny<string>(), It.IsAny<Day>()))
+                .ReturnsAsync(approvalResult);
+            
+            var result = await controller.Approve(TestData.Tenant.Name, _userId, TestData.Day.Year, TestData.Day.Month, TestData.Day.DayOfMonth, new ApprovalInputModel(true));
+            
+            Assert.IsType(expectedResultType, result);
+        } 
     }
 
     private UsersRequirementsController CreateController() => CreateController(_userId);

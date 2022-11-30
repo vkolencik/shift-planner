@@ -43,7 +43,18 @@ public class RequirementsService : IRequirementsService
 
     public async Task<ApproveResult> Approve(Tenant tenant, string userId, Day day)
     {
-        await _repository.GetRequirement(tenant, userId, day);
+        var existingRequirement = await _repository.GetRequirement(tenant, userId, day);
+
+        if (existingRequirement is null)
+        {
+            return ApproveResult.NotFound;
+        }
+
+        if (existingRequirement.RequirementType != "leave")
+        {
+            return ApproveResult.Failure;
+        }
+        
         await _repository.SetRequirement(new RequirementModel(tenant, userId, day, "leave", true));
         
         return ApproveResult.Success;

@@ -100,9 +100,14 @@ public class UsersRequirementsController : ControllerBase
             return Ok();
         }
         
-        await _requirementsService.Approve(new Tenant(tenant), userId, new Day(year, month, day));
+        var result = await _requirementsService.Approve(new Tenant(tenant), userId, new Day(year, month, day));
 
-        return Ok();
+        return result switch
+        {
+            ApproveResult.Success => Ok(),
+            ApproveResult.NotFound => NotFound(),
+            ApproveResult.Failure => BadRequest()
+        };
     }
 }
 
