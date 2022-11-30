@@ -128,6 +128,33 @@ public class RequirementsServiceShould
         Assert.Equal(ApproveResult.Success, result);
     }
 
+    [Fact]
+    async Task ReturnError_WhenApprovingRequirementThatIsNotLeave()
+    {
+        
+        _repositoryMock
+            .Setup(_ => _.GetRequirement(It.IsAny<Tenant>(), It.IsAny<string>(), It.IsAny<Day>()))
+            .ReturnsAsync(TestData.Requirement with {RequirementType = "hard-no"});
+        var service = CreateService();
+        
+        var result = await service.Approve(TestData.Tenant, "user-1", TestData.Day);
+
+        Assert.Equal(ApproveResult.Failure, result);
+    }
+
+    [Fact]
+    async Task ReturnNotFound_WhenRequirementDoesNotExist()
+    {
+        _repositoryMock
+            .Setup(_ => _.GetRequirement(It.IsAny<Tenant>(), It.IsAny<string>(), It.IsAny<Day>()))
+            .ReturnsAsync((RequirementModel?) null);
+        var service = CreateService();
+        
+        var result = await service.Approve(TestData.Tenant, "user-1", TestData.Day);
+
+        Assert.Equal(ApproveResult.NotFound, result);
+    }
+
     private RequirementsService CreateService()
     {
         return new RequirementsService(_repositoryMock.Object, _userServiceMock.Object);
