@@ -6,17 +6,23 @@ namespace ShiftPlanner.Api.Tests.Persistence;
 
 public class RequirementEntityConverterShould
 {
-    [Fact]
-    public void ConvertRequirementToEntity()
+    [Theory]
+    [InlineData("hard-no", null)]
+    [InlineData("leave", true)]
+    public void ConvertRequirementToEntity(string requirementType, bool? approved)
     {
+        var model = new RequirementModel(new Tenant("tenant1"), "user-id-abc", new Day(2023, 2, 21), requirementType, approved);
         var converter = new RequirementEntityConverter();
-        var entity = converter.ToEntity(new RequirementModel(new Tenant("tenant1"), "user-id-abc", new Day(2023, 2, 21), "hard-no"));
+
+        var entity = converter.ToEntity(model);
 
         Assert.Equal("v1:tenant1:user-id-abc:2023-02-21", entity.Key);
         Assert.Equal("2023-02-21", entity.Date);
-        Assert.Equal("hard-no", entity.Requirement);
+        Assert.Equal(requirementType, entity.Requirement);
         Assert.Equal("tenant1", entity.Tenant);
         Assert.Equal("user-id-abc", entity.UserId);
+        Assert.Equal(approved, entity.Approved);
+        
         Assert.Equal("v1:tenant1:2023-02", entity.TenantMonthKey);
         Assert.Equal("v1:tenant1:user-id-abc:2023-02", entity.TenantUserMonthKey);
     }
@@ -45,18 +51,21 @@ public class RequirementEntityConverterShould
         Assert.Equal(expectedResult, dictionary);
     }
 
-    [Fact]
-    public void ConvertEntityToModel()
+    [Theory]
+    [InlineData("hard-no", null)]
+    [InlineData("leave", true)]
+    public void ConvertEntityToModel(string requirementType, bool? approved)
     {
         var entity = new RequirementEntity
             {
                 Tenant = "tenant1",
                 UserId = "user1",
                 Date = "2022-11-19",
-                Requirement = "hard-no"
+                Requirement = requirementType,
+                Approved = approved
             };
 
-        var expectedModel = new RequirementModel(new Tenant("tenant1"),"user1", new Day(2022, 11, 19), "hard-no");
+        var expectedModel = new RequirementModel(new Tenant("tenant1"),"user1", new Day(2022, 11, 19), requirementType, approved);
 
         var converter = new RequirementEntityConverter();
 

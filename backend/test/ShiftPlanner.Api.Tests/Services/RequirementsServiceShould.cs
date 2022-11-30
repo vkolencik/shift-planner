@@ -74,8 +74,9 @@ public class RequirementsServiceShould
         
         var expectedRequirements = new[]
         {
-            new UserRequirementModel("user1", "User 1", new Day(2022, 12, 2), "hard-no"),
-            new UserRequirementModel("user2", "User 2", new Day(2022, 12, 3), "soft-yes"),
+            new UserRequirementModel("user1", "User 1", new Day(2022, 12, 2), "hard-no", null),
+            new UserRequirementModel("user2", "User 2", new Day(2022, 12, 3), "soft-yes", null),
+            new UserRequirementModel("user2", "User 2", new Day(2022, 12, 4), "leave", true),
         };
 
         _repositoryMock
@@ -85,6 +86,7 @@ public class RequirementsServiceShould
                 {
                     new RequirementModel(TestData.Tenant, "user1", new Day(2022, 12, 2), "hard-no"),
                     new RequirementModel(TestData.Tenant, "user2", new Day(2022, 12, 3), "soft-yes"),
+                    new RequirementModel(TestData.Tenant, "user2", new Day(2022, 12, 4), "leave", true),
                 });
 
         _userServiceMock

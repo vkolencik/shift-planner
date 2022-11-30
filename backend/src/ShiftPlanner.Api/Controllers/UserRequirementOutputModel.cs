@@ -4,4 +4,5 @@ public record UserRequirementOutputModel(
     string UserId,
     string UserName,
     string Date,
-    string RequirementType);
+    string RequirementType,
+    bool? Approved);

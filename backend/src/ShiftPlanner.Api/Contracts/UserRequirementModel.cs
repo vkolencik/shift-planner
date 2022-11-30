@@ -2,4 +2,4 @@
 
 namespace ShiftPlanner.Api.Contracts;
 
-public record UserRequirementModel(string UserId, string UserName, Day Date, string RequirementType);
+public record UserRequirementModel(string UserId, string UserName, Day Date, string RequirementType, bool? Approved);

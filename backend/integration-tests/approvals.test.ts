@@ -44,8 +44,8 @@ describe('approval workflow', () => {
       const requirements = await resp.json()
       expect(requirements).toHaveLength(2)
       expect(requirements).toEqual(expect.arrayContaining([
-        { userId: testUserId, userName: testUserName, date: '2022-12-06', requirementType: 'hard-no' },
-        { userId: testUser2Id, userName: testUser2Name, date: '2022-12-06', requirementType: 'soft-yes' }
+        expect.objectContaining({ userId: testUserId, userName: testUserName, date: '2022-12-06', requirementType: 'hard-no' }),
+        expect.objectContaining({ userId: testUser2Id, userName: testUser2Name, date: '2022-12-06', requirementType: 'soft-yes' })
       ]))
     })
   })
@@ -64,12 +64,13 @@ describe('approval workflow', () => {
 
       const getResp = await fetch(`${backendBaseUrl}/api/${testTenant}/requirements/2022/12`, getHeaders(token))
       const requirements = await getResp.json()
-      expect(requirements).toContain(expect.objectContaining({
-        date: '2022-12-06',
-        userId: testUser2Id,
-        requirementType: 'leave',
-        approved: true
-      }))
+      expect(requirements).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          date: '2022-12-06',
+          userId: testUser2Id,
+          requirementType: 'leave',
+          approved: true
+        })]))
     })
 
     it('return bad request when requirement is not leave', async () => {

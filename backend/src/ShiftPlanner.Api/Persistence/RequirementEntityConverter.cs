@@ -22,7 +22,8 @@ internal class RequirementEntityConverter : IRequirementEntityConverter
             Tenant = tenant.Name,
             UserId = userId,
             Date = date,
-            Requirement = requirement.RequirementType
+            Requirement = requirement.RequirementType,
+            Approved = requirement.Approved
         };
     }
 
@@ -37,7 +38,8 @@ internal class RequirementEntityConverter : IRequirementEntityConverter
             Tenant: StringToTenant(entity.Tenant),
             UserId: StringToUserId(entity.UserId),
             Date: DateToDay(entity.Date),
-            RequirementType: StringToRequirement(entity.Requirement));
+            RequirementType: StringToRequirement(entity.Requirement),
+            Approved: entity.Approved);
     }
 
     private Tenant StringToTenant(string? tenant) => tenant is not null ? new Tenant(tenant) : throw new ArgumentNullException(nameof(tenant));
