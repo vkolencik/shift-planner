@@ -10,11 +10,7 @@ public interface IRequirementsRepository
         string userId,
         ScheduledMonth month);
 
-    Task SetRequirement(
-        Tenant tenant,
-        string userId,
-        Day day,
-        string requirement);
+    Task SetRequirement(RequirementModel requirement);
 
     Task<DeleteResult> DeleteRequirement(
         Tenant tenant,
@@ -23,5 +19,5 @@ public interface IRequirementsRepository
 
     Task<IReadOnlyCollection<RequirementModel>> GetRequirementsForMonth(Tenant tenant, ScheduledMonth month);
     
-    Task<RequirementModel> GetRequirement(Tenant tenant, string userId, Day day);
+    Task<RequirementModel?> GetRequirement(Tenant tenant, string userId, Day day);
 }

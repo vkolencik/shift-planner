@@ -24,7 +24,7 @@ public class RequirementsServiceShould
         var tenant = TestData.Tenant;
         var userId = "user-id";
         var month = new ScheduledMonth(2022, 10);
-        var requirements = TestData.Requirements;
+        var requirements = TestData.MonthRequirements;
 
         _repositoryMock.Setup(_ => _.GetRequirements(tenant, userId, month)).ReturnsAsync(requirements);
 
@@ -38,16 +38,12 @@ public class RequirementsServiceShould
     [Fact]
     public async Task SetRequirement()
     {
-        var tenant = TestData.Tenant;
-        var userId = "user-id";
-        var day = new Day(2022, 10, 18);
-        var requirement = "hard-no";
-
+        var requirement = TestData.Requirement;
         var service = CreateService();
 
-        await service.SetRequirement(tenant, userId, day, requirement);
+        await service.SetRequirement(requirement);
 
-        _repositoryMock.Verify(_ => _.SetRequirement(tenant, userId, day, requirement));
+        _repositoryMock.Verify(_ => _.SetRequirement(requirement));
     }
 
     [Theory]
@@ -87,8 +83,8 @@ public class RequirementsServiceShould
             .ReturnsAsync(
                 new[]
                 {
-                    new RequirementModel("user1", new Day(2022, 12, 2), "hard-no"),
-                    new RequirementModel("user2", new Day(2022, 12, 3), "soft-yes"),
+                    new RequirementModel(TestData.Tenant, "user1", new Day(2022, 12, 2), "hard-no"),
+                    new RequirementModel(TestData.Tenant, "user2", new Day(2022, 12, 3), "soft-yes"),
                 });
 
         _userServiceMock
@@ -98,6 +94,7 @@ public class RequirementsServiceShould
                 new User("user1", "User 1", "user1@krtek.me"), 
                 new User("user2", "User 2", "user2@krtek.me"), 
             });
+        
         var service = CreateService();
 
         var requirements = await service.GetRequirementsOverviewForMonth(tenant, month);
@@ -108,20 +105,25 @@ public class RequirementsServiceShould
     [Fact]
     public async Task ApproveRequirement()
     {
-        Tenant tenant = TestData.Tenant;
-        string userId = "user-123";
-        Day day = TestData.Day;
-        RequirementModel requirement = new RequirementModel("user-123", day, "leave");
+        var tenant = TestData.Tenant;
+        var userId = "user-123";
+        var day = TestData.Day;
+        var requirementFromDb = new RequirementModel(TestData.Tenant, userId, day, "leave");
+        var updatedRequirement = new RequirementModel(TestData.Tenant, userId, day, "leave", true);
         
         _repositoryMock
             .Setup(_ => _.GetRequirement(tenant, userId, day))
-            .ReturnsAsync(requirement);
+            .ReturnsAsync(requirementFromDb);
+        _repositoryMock
+            .Setup(_ => _.SetRequirement(updatedRequirement))
+            .Verifiable();
+
         var service = CreateService();
 
-        var result = service.Approve(TestData.Tenant, "userId", TestData.Day);
+        var result = await service.Approve(TestData.Tenant, userId, TestData.Day);
         
-        
-        
+        _repositoryMock.VerifyAll();
+        Assert.Equal(ApproveResult.Success, result);
     }
 
     private RequirementsService CreateService()

@@ -10,7 +10,7 @@ public class RequirementEntityConverterShould
     public void ConvertRequirementToEntity()
     {
         var converter = new RequirementEntityConverter();
-        var entity = converter.ToEntity(new Tenant("tenant1"), "user-id-abc", new Day(2023, 2, 21), "hard-no");
+        var entity = converter.ToEntity(new RequirementModel(new Tenant("tenant1"), "user-id-abc", new Day(2023, 2, 21), "hard-no"));
 
         Assert.Equal("v1:tenant1:user-id-abc:2023-02-21", entity.Key);
         Assert.Equal("2023-02-21", entity.Date);
@@ -50,40 +50,17 @@ public class RequirementEntityConverterShould
     {
         var entity = new RequirementEntity
             {
+                Tenant = "tenant1",
                 UserId = "user1",
                 Date = "2022-11-19",
                 Requirement = "hard-no"
             };
 
-        var expectedModel = new RequirementModel("user1", new Day(2022, 11, 19), "hard-no");
+        var expectedModel = new RequirementModel(new Tenant("tenant1"),"user1", new Day(2022, 11, 19), "hard-no");
 
         var converter = new RequirementEntityConverter();
 
         var requirements = converter.EntityToModel(entity);
-
-        Assert.Equal(expectedModel, requirements);
-    }
-
-    [Fact]
-    public void ConvertEntitiesToModels()
-    {
-        var entities = new[]
-        {
-            new RequirementEntity
-            {
-                UserId = "user1",
-                Date = "2022-11-19",
-                Requirement = "hard-no"
-            }
-        };
-        IEnumerable<RequirementModel> expectedModel = new[]
-        {
-            new RequirementModel("user1", new Day(2022, 11, 19), "hard-no")
-        };
-
-        var converter = new RequirementEntityConverter();
-
-        var requirements = converter.RequirementEntitiesToRequirements(entities);
 
         Assert.Equal(expectedModel, requirements);
     }

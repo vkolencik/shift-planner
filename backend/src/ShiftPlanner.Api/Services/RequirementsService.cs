@@ -22,13 +22,9 @@ public class RequirementsService : IRequirementsService
         return _repository.GetRequirements(tenant, userId, month);
     }
 
-    public async Task SetRequirement(
-        Tenant tenant,
-        string userId,
-        Day day,
-        string requirement)
+    public async Task SetRequirement(RequirementModel requirement)
     {
-        await _repository.SetRequirement(tenant, userId, day, requirement);
+        await _repository.SetRequirement(requirement);
     }
 
     public Task<DeleteResult> DeleteRequirement(Tenant tenant, string userId, Day day)
@@ -45,8 +41,11 @@ public class RequirementsService : IRequirementsService
         return userRequirements;
     }
 
-    public Task<ApproveResult> Approve(Tenant tenant, string userId, Day day)
+    public async Task<ApproveResult> Approve(Tenant tenant, string userId, Day day)
     {
-        throw new NotImplementedException();
+        await _repository.GetRequirement(tenant, userId, day);
+        await _repository.SetRequirement(new RequirementModel(tenant, userId, day, "leave", true));
+        
+        return ApproveResult.Success;
     }
 }

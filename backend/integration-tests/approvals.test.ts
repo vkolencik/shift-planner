@@ -84,7 +84,7 @@ describe('approval workflow', () => {
       expect(resp.status).toEqual(400)
     })
 
-    it('return not found when requirement does not exist, async () => {
+    it('return not found when requirement does not exist', async () => {
       const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${testUser2Id}/requirements/2022/01/06/approval`, {
         ...getHeaders(token),
         method: 'put',

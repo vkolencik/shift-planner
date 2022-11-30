@@ -74,15 +74,20 @@ public abstract class UsersRequirementsControllerShould
         [Fact]
         public async Task CreateNewRequirement()
         {
-            var tenant = TestData.Tenant;
-            var day = new Day(2022, 10, 18);
+            var requirement = TestData.Requirement with { UserId = _userId };
+
             var controller = CreateController();
-            var requirement = "hard-no";
 
-            var response = await controller.Put(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth, new RequirementInputModel(requirement));
+            var response = await controller.Put(
+                requirement.Tenant.Name,
+                requirement.UserId,
+                requirement.Date.Year,
+                requirement.Date.Month,
+                requirement.Date.DayOfMonth,
+                new RequirementInputModel(requirement.RequirementType));
+            
             Assert.IsType<OkResult>(response);
-
-            _requirementsServiceMock.Verify(_ => _.SetRequirement(tenant, _userId, day, requirement));
+            _requirementsServiceMock.Verify(_ => _.SetRequirement(requirement));
         }
 
         [Fact]
@@ -167,7 +172,7 @@ public abstract class UsersRequirementsControllerShould
             _requirementsServiceMock
                 .Setup(_ => _.Approve(tenant, _userId, day))
                 .ReturnsAsync(ApproveResult.Success)
-                .Verifiable(); 
+                .Verifiable();
             var controller = CreateController(_userId, new[] {Claims.ApproveRequirementsOfOthers});
 
             var result = await controller.Approve(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth, new ApprovalInputModel(true));
