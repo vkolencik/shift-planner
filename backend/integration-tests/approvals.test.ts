@@ -105,6 +105,7 @@ describe('approval workflow', () => {
     })
 
     it('return forbidden when user is not admin', async () => {
+      await putRequirement({ ...requirementParams, requirementType: 'leave', userId: testUser2Id }, token2)
       const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${testUser2Id}/requirements/2022/12/06/approval`, {
         ...getHeaders(token2),
         method: 'put',

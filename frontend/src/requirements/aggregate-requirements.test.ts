@@ -17,9 +17,9 @@ describe('Requirements aggregation should', () => {
 
   it('aggregate by user and filter leaves', () => {
     const requirements: MonthRequirements = [
-      { userId: 'user2', userName: 'User 2', date: '2022-11-30', requirementType: 'leave' },
-      { userId: 'user1', userName: 'User 1', date: '2022-11-27', requirementType: 'leave' },
-      { userId: 'user1', userName: 'User 1', date: '2022-11-29', requirementType: 'leave' },
+      { userId: 'user2', userName: 'User 2', date: '2022-11-30', requirementType: 'leave', approved: false },
+      { userId: 'user1', userName: 'User 1', date: '2022-11-27', requirementType: 'leave', approved: false },
+      { userId: 'user1', userName: 'User 1', date: '2022-11-29', requirementType: 'leave', approved: true },
       { userId: 'user1', userName: 'User 1', date: '2022-11-28', requirementType: 'hard-no' },
     ]
 
@@ -27,11 +27,11 @@ describe('Requirements aggregation should', () => {
 
     expect(aggregatedLeaves).toEqual({
       'User 1': [
-        { day: '2022-11-27' },
-        { day: '2022-11-29' }
+        { day: '2022-11-27', approved: false },
+        { day: '2022-11-29', approved: true }
       ],
       'User 2': [
-        { day: '2022-11-30' },
+        { day: '2022-11-30', approved: false },
       ]
     })
   })
@@ -39,14 +39,14 @@ describe('Requirements aggregation should', () => {
   it('hide approved', () => {
     const requirements: MonthRequirements = [
       { userId: 'user2', userName: 'User 2', date: '2022-11-29', requirementType: 'leave', approved: true },
-      { userId: 'user2', userName: 'User 2', date: '2022-11-30', requirementType: 'leave' },
+      { userId: 'user2', userName: 'User 2', date: '2022-11-30', requirementType: 'leave', approved: false },
     ]
 
     const aggregatedLeaves = aggregateRequirements(requirements, true)
 
     expect(aggregatedLeaves).toEqual({
       'User 2': [
-        { day: '2022-11-30' },
+        { day: '2022-11-30', approved: false },
       ]
     })
 
