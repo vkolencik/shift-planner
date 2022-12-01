@@ -54,7 +54,7 @@ describe('approval workflow', () => {
     it('approve requirement', async () => {
       await putRequirement({ ...requirementParams, requirementType: 'leave', userId: testUser2Id }, token2)
 
-      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${testUser2Id}/requirements/2022/12/06/approval`, {
+      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12/06/approval`, {
         ...getHeaders(token),
         method: 'put',
         body: JSON.stringify({ approved: true })
@@ -76,7 +76,7 @@ describe('approval workflow', () => {
     it('return bad request when requirement is not leave', async () => {
       await putRequirement({ ...requirementParams, requirementType: 'hard-no', userId: testUser2Id }, token2)
 
-      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${testUser2Id}/requirements/2022/12/06/approval`, {
+      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12/06/approval`, {
         ...getHeaders(token),
         method: 'put',
         body: JSON.stringify({ approved: true })
@@ -86,7 +86,7 @@ describe('approval workflow', () => {
     })
 
     it('return not found when requirement does not exist', async () => {
-      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${testUser2Id}/requirements/2022/01/06/approval`, {
+      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/01/06/approval`, {
         ...getHeaders(token),
         method: 'put',
         body: JSON.stringify({ approved: true })
@@ -96,7 +96,7 @@ describe('approval workflow', () => {
     })
 
     it('return unauthorized when auth token is not present in the request', async () => {
-      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${testUser2Id}/requirements/2022/12/06/approval`, {
+      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12/06/approval`, {
         method: 'put',
         body: JSON.stringify({ approved: true })
       })
@@ -106,7 +106,7 @@ describe('approval workflow', () => {
 
     it('return forbidden when user is not admin', async () => {
       await putRequirement({ ...requirementParams, requirementType: 'leave', userId: testUser2Id }, token2)
-      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${testUser2Id}/requirements/2022/12/06/approval`, {
+      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12/06/approval`, {
         ...getHeaders(token2),
         method: 'put',
         body: JSON.stringify({ approved: true })
