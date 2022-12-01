@@ -39,15 +39,11 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
         return _requirementEntityConverter.RequirementEntitiesToMonthRequirements(entities);
     }
 
-    public async Task SetRequirement(
-        Tenant tenant,
-        string userId,
-        Day day,
-        string requirement)
+    public async Task SetRequirement(RequirementModel updatedRequirement)
     {
         using var context = GetContext();
 
-        var entity = _requirementEntityConverter.ToEntity(tenant, userId, day, requirement);
+        var entity = _requirementEntityConverter.ToEntity(updatedRequirement);
         await context.SaveAsync(entity);
     }
 
@@ -82,9 +78,25 @@ internal class DynamoRequirementsRepository : IRequirementsRepository
         
         Console.Out.WriteLine($"Fetched {entities.Count} items from database in {stopWatch.ElapsedMilliseconds} ms");
 
-        return _requirementEntityConverter.RequirementEntitiesToRequirements(entities);
+        return entities.Select(e => _requirementEntityConverter.EntityToModel(e)).ToArray();
     }
 
+    public async Task<RequirementModel?> GetRequirement(Tenant tenant, string userId, Day day)
+    {
+        var key = _requirementEntityConverter.GetPartitionKey(tenant, userId, day);
+
+        using var context = GetContext();
+
+        var entity = await context.LoadAsync<RequirementEntity>(key);
+
+        if (entity == null)
+        {
+            return null;
+        }
+
+        return _requirementEntityConverter.EntityToModel(entity);
+    }
+    
     private DynamoDBContext GetContext()
     {
         return new DynamoDBContext(_dynamo, new DynamoDBContextConfig

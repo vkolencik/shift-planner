@@ -11,6 +11,7 @@ type RequirementCoords = { userName: string, day: string }
 
 export function Approvals () {
   const [requirements, setRequirements] = useState<MonthRequirements | null>(null)
+  const [hideApproved, setHideApproved] = useState<boolean>(false)
   const api = useApi()
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export function Approvals () {
     return <LoadingSpinner/>
   }
 
-  const requirementsDisplayModel = aggregateRequirements(requirements)
+  const requirementsDisplayModel = aggregateRequirements(requirements, hideApproved)
 
   const userNames = Object.keys(requirementsDisplayModel)
 
@@ -52,8 +53,29 @@ export function Approvals () {
       })
   }
 
+  function handleApproval (userName: string, day: string) {
+    const userId = requirements?.find(r => r.userName === userName)?.userId
+
+    if (!userId) {
+      throw new Error('Cannot find user to approve for')
+    }
+
+    api.requirements.approve(userId, toDay(day))
+      .then(() => {
+        setRequirements(null)
+      })
+  }
+
+  function handleChangeHideApproved (e: React.ChangeEvent<HTMLInputElement>) {
+    setHideApproved(e.target.checked)
+  }
+
   return <>
     <h1>Schvalování dovolených pro {getCurrentMonthString()}</h1>
+    <div className="form-check form-switch mb-3">
+      <input className="form-check-input" type="checkbox" id="switchHideApproved" onChange={handleChangeHideApproved}/>
+      <label className="form-check-label" htmlFor="switchHideApproved">Skrýt schválené</label>
+    </div>
     {userNames.length === 0 && <Alert variant="dark">Nejsou žádné dovolené ke schválení</Alert>}
     {userNames.map(userName => (<>
       <h2 key={'header-' + userName}><FaUser style={{ fontSize: '80%' }}/> {userName}</h2>
@@ -69,11 +91,22 @@ export function Approvals () {
         {requirementsDisplayModel[userName].map(leave =>
           <tr key={leave.day}>
             <td>{formatDate(leave.day)}</td>
-            <td><Badge bg="secondary">Čeká na schválení</Badge></td>
+            <td className='align-middle'>
+              {leave.approved
+                ? <Badge bg="success" pill>Schváleno</Badge>
+                : <Badge bg="warning" text='dark' pill>Čeká na schválení</Badge>
+              }
+
+            </td>
             <td>
-              <Button variant="danger" onClick={() => setRequirementToDelete({ userName: userName, day: leave.day })}>
-                Smazat
-              </Button>
+              {leave.approved || <>
+                <Button variant="success" onClick={() => handleApproval(userName, leave.day)} className='me-1'>
+                  Schválit
+                </Button>
+                <Button variant="danger" onClick={() => setRequirementToDelete({ userName: userName, day: leave.day })}>
+                  Smazat
+                </Button>
+              </>}
             </td>
           </tr>
         )}
@@ -89,7 +122,7 @@ export function Approvals () {
         }}>
 
         <Modal.Header closeButton>
-          <Modal.Title>Zamítnutí (odstranění) požadavku </Modal.Title>
+          <Modal.Title>Zamítnutí (smazání) požadavku </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -99,7 +132,7 @@ export function Approvals () {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="danger" className="me-auto" onClick={handleDeclineRequirement}>Zamítnout (Odstranit)</Button>
+          <Button variant="danger" className="me-auto" onClick={handleDeclineRequirement}>Smazat</Button>
           <Button variant="outline-secondary" onClick={() => {
             closeModal()
           }}>Zavřít</Button>

@@ -23,14 +23,16 @@ public class RequirementsControllerShould
         var month = new ScheduledMonth(2023, 6);
         var requirements = new []
         {
-            new UserRequirementModel("user1", "User 1", new Day(month, 2), "hard-no"), 
-            new UserRequirementModel("user2", "User 2", new Day(month, 3), "soft-yes"), 
+            new UserRequirementModel("user1", "User 1", new Day(month, 2), "hard-no", null), 
+            new UserRequirementModel("user2", "User 2", new Day(month, 3), "soft-yes", null), 
+            new UserRequirementModel("user2", "User 2", new Day(month, 4), "leave", true), 
         };
 
         var expectedOutputModel = new []
         {
-            new UserRequirementOutputModel("user1", "User 1", "2023-06-02", "hard-no"), 
-            new UserRequirementOutputModel("user2", "User 2", "2023-06-03", "soft-yes"), 
+            new UserRequirementOutputModel("user1", "User 1", "2023-06-02", "hard-no", null), 
+            new UserRequirementOutputModel("user2", "User 2", "2023-06-03", "soft-yes", null), 
+            new UserRequirementOutputModel("user2", "User 2", "2023-06-04", "leave", true), 
         };
         
         _requirementsServiceMock

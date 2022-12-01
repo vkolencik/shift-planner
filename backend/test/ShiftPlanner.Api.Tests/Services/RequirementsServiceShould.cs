@@ -24,7 +24,7 @@ public class RequirementsServiceShould
         var tenant = TestData.Tenant;
         var userId = "user-id";
         var month = new ScheduledMonth(2022, 10);
-        var requirements = TestData.Requirements;
+        var requirements = TestData.MonthRequirements;
 
         _repositoryMock.Setup(_ => _.GetRequirements(tenant, userId, month)).ReturnsAsync(requirements);
 
@@ -38,16 +38,12 @@ public class RequirementsServiceShould
     [Fact]
     public async Task SetRequirement()
     {
-        var tenant = TestData.Tenant;
-        var userId = "user-id";
-        var day = new Day(2022, 10, 18);
-        var requirement = "hard-no";
-
+        var requirement = TestData.Requirement;
         var service = CreateService();
 
-        await service.SetRequirement(tenant, userId, day, requirement);
+        await service.SetRequirement(requirement);
 
-        _repositoryMock.Verify(_ => _.SetRequirement(tenant, userId, day, requirement));
+        _repositoryMock.Verify(_ => _.SetRequirement(requirement));
     }
 
     [Theory]
@@ -78,8 +74,9 @@ public class RequirementsServiceShould
         
         var expectedRequirements = new[]
         {
-            new UserRequirementModel("user1", "User 1", new Day(2022, 12, 2), "hard-no"),
-            new UserRequirementModel("user2", "User 2", new Day(2022, 12, 3), "soft-yes"),
+            new UserRequirementModel("user1", "User 1", new Day(2022, 12, 2), "hard-no", null),
+            new UserRequirementModel("user2", "User 2", new Day(2022, 12, 3), "soft-yes", null),
+            new UserRequirementModel("user2", "User 2", new Day(2022, 12, 4), "leave", true),
         };
 
         _repositoryMock
@@ -87,8 +84,9 @@ public class RequirementsServiceShould
             .ReturnsAsync(
                 new[]
                 {
-                    new RequirementModel("user1", new Day(2022, 12, 2), "hard-no"),
-                    new RequirementModel("user2", new Day(2022, 12, 3), "soft-yes"),
+                    new RequirementModel(TestData.Tenant, "user1", new Day(2022, 12, 2), "hard-no"),
+                    new RequirementModel(TestData.Tenant, "user2", new Day(2022, 12, 3), "soft-yes"),
+                    new RequirementModel(TestData.Tenant, "user2", new Day(2022, 12, 4), "leave", true),
                 });
 
         _userServiceMock
@@ -98,11 +96,63 @@ public class RequirementsServiceShould
                 new User("user1", "User 1", "user1@krtek.me"), 
                 new User("user2", "User 2", "user2@krtek.me"), 
             });
+        
         var service = CreateService();
 
         var requirements = await service.GetRequirementsOverviewForMonth(tenant, month);
 
         Assert.Equal(expectedRequirements, requirements);
+    }
+
+    [Fact]
+    public async Task ApproveRequirement()
+    {
+        var tenant = TestData.Tenant;
+        var userId = "user-123";
+        var day = TestData.Day;
+        var requirementFromDb = new RequirementModel(TestData.Tenant, userId, day, "leave");
+        var updatedRequirement = new RequirementModel(TestData.Tenant, userId, day, "leave", true);
+        
+        _repositoryMock
+            .Setup(_ => _.GetRequirement(tenant, userId, day))
+            .ReturnsAsync(requirementFromDb);
+        _repositoryMock
+            .Setup(_ => _.SetRequirement(updatedRequirement))
+            .Verifiable();
+
+        var service = CreateService();
+
+        var result = await service.Approve(TestData.Tenant, userId, TestData.Day);
+        
+        _repositoryMock.VerifyAll();
+        Assert.Equal(ApproveResult.Success, result);
+    }
+
+    [Fact]
+    async Task ReturnError_WhenApprovingRequirementThatIsNotLeave()
+    {
+        
+        _repositoryMock
+            .Setup(_ => _.GetRequirement(It.IsAny<Tenant>(), It.IsAny<string>(), It.IsAny<Day>()))
+            .ReturnsAsync(TestData.Requirement with {RequirementType = "hard-no"});
+        var service = CreateService();
+        
+        var result = await service.Approve(TestData.Tenant, "user-1", TestData.Day);
+
+        Assert.Equal(ApproveResult.Failure, result);
+    }
+
+    [Fact]
+    async Task ReturnNotFound_WhenRequirementDoesNotExist()
+    {
+        _repositoryMock
+            .Setup(_ => _.GetRequirement(It.IsAny<Tenant>(), It.IsAny<string>(), It.IsAny<Day>()))
+            .ReturnsAsync((RequirementModel?) null);
+        var service = CreateService();
+        
+        var result = await service.Approve(TestData.Tenant, "user-1", TestData.Day);
+
+        Assert.Equal(ApproveResult.NotFound, result);
     }
 
     private RequirementsService CreateService()

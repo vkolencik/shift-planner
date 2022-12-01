@@ -56,7 +56,7 @@ public class UsersRequirementsController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
 
-        await _requirementsService.SetRequirement(new Tenant(tenant), userId, new Day(year, month, day), requirement.RequirementType);
+        await _requirementsService.SetRequirement(new RequirementModel(new Tenant(tenant), userId, new Day(year, month, day), requirement.RequirementType));
 
         return Ok();
     }
@@ -84,6 +84,33 @@ public class UsersRequirementsController : ControllerBase
             DeleteResult.NotFound => NotFound()
         };
     }
+    
+    [HttpPut("{year}/{month}/{day}/approval")]
+    [Authorize(Claims.ReadRequirementsOfOthers)]
+    public async Task<ActionResult> Approve(
+        [FromRoute] string tenant,
+        [FromRoute] string userId,
+        [FromRoute] int year,
+        [FromRoute] int month,
+        [FromRoute] int day,
+        [FromBody] ApprovalInputModel requirement)
+    {
+        if (!requirement.Approved)
+        {
+            return Ok();
+        }
+        
+        var result = await _requirementsService.Approve(new Tenant(tenant), userId, new Day(year, month, day));
+
+        return result switch
+        {
+            ApproveResult.Success => Ok(),
+            ApproveResult.NotFound => NotFound(),
+            ApproveResult.Failure => BadRequest()
+        };
+    }
 }
+
+public record ApprovalInputModel(bool Approved);
 
 public record RequirementInputModel(string RequirementType);

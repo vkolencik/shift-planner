@@ -29,7 +29,7 @@ namespace ShiftPlanner.Api.Controllers
         {
             var requirements = await _requirementsService.GetRequirementsOverviewForMonth(new Tenant(tenant), new ScheduledMonth(year, month));
             var outputModel = requirements
-                .Select(r => new UserRequirementOutputModel(r.UserId, r.UserName, r.Date.Date.ToString("yyyy-MM-dd"), r.RequirementType))
+                .Select(r => new UserRequirementOutputModel(r.UserId, r.UserName, r.Date.Date.ToString("yyyy-MM-dd"), r.RequirementType, r.Approved))
                 .ToArray();
             return Ok(outputModel);
         }

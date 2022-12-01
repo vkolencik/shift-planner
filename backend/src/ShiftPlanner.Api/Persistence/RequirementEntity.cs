@@ -12,4 +12,5 @@ public class RequirementEntity
     public string? UserId { get; set; }
     public string? Date { get; set; }
     public string? Requirement { get; set; }
+    public bool? Approved { get; set; }
 }

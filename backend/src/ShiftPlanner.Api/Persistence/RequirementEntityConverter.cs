@@ -5,12 +5,12 @@ namespace ShiftPlanner.Api.Persistence;
 
 internal class RequirementEntityConverter : IRequirementEntityConverter
 {
-    public RequirementEntity ToEntity(
-        Tenant tenant,
-        string userId,
-        Day day,
-        string requirement)
+    public RequirementEntity ToEntity(RequirementModel requirement)
     {
+        var tenant = requirement.Tenant;
+        var day = requirement.Date;
+        var userId = requirement.UserId;
+        
         var date = GetDateString(day);
         var month = GetMonthString(day);
 
@@ -22,7 +22,8 @@ internal class RequirementEntityConverter : IRequirementEntityConverter
             Tenant = tenant.Name,
             UserId = userId,
             Date = date,
-            Requirement = requirement
+            Requirement = requirement.RequirementType,
+            Approved = requirement.Approved
         };
     }
 
@@ -31,16 +32,17 @@ internal class RequirementEntityConverter : IRequirementEntityConverter
         return entities.ToDictionary(e => DateToDay(e.Date), e => StringToRequirement(e.Requirement));
     }
 
-    public IReadOnlyCollection<RequirementModel> RequirementEntitiesToRequirements(IEnumerable<RequirementEntity> entities)
+    public RequirementModel EntityToModel(RequirementEntity entity)
     {
-        return entities
-            .Select(e => new RequirementModel(
-                UserId: StringToUserId(e.UserId),
-                Date: DateToDay(e.Date),
-                RequirementType: StringToRequirement(e.Requirement)))
-            .ToArray();
+        return new RequirementModel(
+            Tenant: StringToTenant(entity.Tenant),
+            UserId: StringToUserId(entity.UserId),
+            Date: DateToDay(entity.Date),
+            RequirementType: StringToRequirement(entity.Requirement),
+            Approved: entity.Approved);
     }
 
+    private Tenant StringToTenant(string? tenant) => tenant is not null ? new Tenant(tenant) : throw new ArgumentNullException(nameof(tenant));
     private string StringToUserId(string? userId) => userId ?? throw new ArgumentNullException(nameof(userId));
     
     private string StringToRequirement(string? requirement) => requirement ?? throw new ArgumentNullException(nameof(requirement));

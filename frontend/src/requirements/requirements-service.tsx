@@ -21,7 +21,8 @@ interface UserRequirement {
   userId: string,
   userName: string,
   date: string,
-  requirementType: RequirementType
+  requirementType: RequirementType,
+  approved?: boolean | null
 }
 
 export type MonthRequirements = UserRequirement[]
@@ -133,7 +134,32 @@ export function useApi () {
 
       deleteForUser: deleteForUser,
 
-      delete: async (date: Day): Promise<void> => deleteForUser(loggedInUserId, date)
+      delete: async (date: Day): Promise<void> => deleteForUser(loggedInUserId, date),
+
+      approve: async (userId: string, date: Day) => {
+        const token = await getAccessTokenSilently({
+          audience: 'https://b.krtek.me',
+          scope: ''
+        })
+
+        if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          throw new Error(`Invalid date format ${date}`)
+        }
+
+        const response = await fetch(`${baseUrl}/api/${tenant}/users/${encodeURIComponent(loggedInUserId)}/requirements/${date.replace(/-/g, '/')}/approval`, {
+            method: 'PUT',
+            body: JSON.stringify({ approved: true }),
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            }
+          }
+        )
+
+        if (response.status !== 200) {
+          throw new Error(`Error approving requirement: ${await response.text()}`)
+        }
+      }
     }
   })
 }
