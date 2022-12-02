@@ -47,7 +47,7 @@ export const MonthlyOverview: React.FC = () => {
   const weekends: number[] = days.filter(day => isWeekend(new Date(currentYear, currentMonth - 1, day)))
 
 
-  return <div style={{ position: 'fixed', height: '100%', overflow: 'scroll' }}>
+  return <div style={{ position: 'fixed', height: '90%', overflow: 'scroll' }}>
     <Table bordered hover className="table-fit table-sm">
       <thead className="thead-light sticky-top table-primary">
       <tr>
