@@ -14,14 +14,16 @@ export const formatDate = (date: string) => {
 }
 export type Day = string & { __isDay: true }
 
-export function toDay (date: string): Day {
-  return date as Day
-}
-
-export function getDay(date: string) {
+export const parseDate = (date: string) => {
   const [year, month, day] = date.split('-').map(dateComponent => parseInt(dateComponent, 10))
 
-  return day
+  return new Date(year, month - 1, day)
+}
+
+export const isWeekend = (date: Date) => date.getDay() == 0 || date.getDay() == 6
+
+export function toDay (date: string): Day {
+  return date as Day
 }
 
 export function getNumberOfDaysOfCurrentMonth() {
