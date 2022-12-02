@@ -34,7 +34,7 @@ export const MonthlyOverview: React.FC = () => {
   const daysInMonth = getNumberOfDaysOfCurrentMonth()
   const days = new Array(daysInMonth).fill(1).map((_, i) => i + 1)
 
-  const dailySums = new Array(daysInMonth).fill(users.length)
+  const dailySums = new Array(daysInMonth).fill(users.length - 6)
   const absences = requirements.filter(r => r.requirementType === 'leave' || r.requirementType === 'hard-no')
   const absenceKeys: string[] = []
   for (const requirement of absences) {
