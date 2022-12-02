@@ -2,11 +2,12 @@ import React, { useEffect } from 'react'
 import './App.css'
 import { Col, Container, Row } from 'react-bootstrap'
 import { Route, Routes, useNavigate } from 'react-router-dom'
-import { Requirements } from './Requirements'
+import { Requirements } from './pages/Requirements'
 import { NavHeader } from './NavHeader'
 import { Footer } from './Footer'
 import { Permission, usePermissions } from './auth/auth'
-import { Approvals } from './Approvals'
+import { Approvals } from './pages/Approvals'
+import { MonthlyOverview } from './pages/MonthlyOverview'
 
 function App () {
   const navigate = useNavigate()
@@ -29,6 +30,7 @@ function App () {
               <Route path="/" element={<h1>Home</h1>}/>
               <Route path="/pozadavky" element={<Requirements/>}/>
               <Route path="/tydenik" element={<h1>Týdeník</h1>}/>
+              <Route path="/mesicnik" element={<MonthlyOverview/>}/>
               <Route path="/schvalovani" element={<Approvals/>}/>
               <Route path="/sluzby" element={<h1>Služby</h1>}/>
               <Route path="/konference" element={<h1>Konference</h1>}/>
@@ -36,7 +38,7 @@ function App () {
           </Col>
         </Row>
       </Container>
-      <Footer/>
+      {/*<Footer/>*/}
     </div>
   )
 }

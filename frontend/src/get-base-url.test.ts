@@ -1,4 +1,4 @@
-import {getBaseUrl} from './get-base-url'
+import { getBaseUrl, getInstance, Instance } from './instance-config'
 
 describe('Base URL should', () => {
   [
@@ -28,6 +28,35 @@ describe('Base URL should', () => {
       const backendUrl = getBaseUrl()
 
       expect(backendUrl).toEqual(expectedBackendUrl)
+    }))
+
+  ;[
+    {
+      frontendUrl: 'http://localhost:3000',
+      expectedInstance: Instance.Dev
+    },
+    {
+      frontendUrl: 'https://krtek.me/',
+      expectedInstance: Instance.Production
+    },
+    {
+      frontendUrl: 'https://www.krtek.me/',
+      expectedInstance: Instance.Production
+    },
+    {
+      frontendUrl: 'https://pr-56.d13dc8ck6htkvt.amplifyapp.com/',
+      expectedInstance: Instance.Preview
+    }
+  ].forEach(({frontendUrl, expectedInstance}) =>
+    it(`returns correct environment name for "${frontendUrl}"`, () => {
+      // @ts-expect-error
+      delete window.location
+      // @ts-expect-error
+      window.location = new URL(frontendUrl)
+
+      const instance = getInstance()
+
+      expect(instance).toEqual(expectedInstance )
     }))
 })
 

@@ -1,4 +1,5 @@
-import { MonthRequirements } from './requirements-service'
+import { MonthRequirements } from './api'
+import { sortArrayBy } from '../sort-array-by'
 
 interface Leave {
   day: string,
@@ -31,7 +32,3 @@ export function aggregateRequirements (requirements: MonthRequirements, hideAppr
   return Object.fromEntries(entries)
 }
 
-function sortArrayBy<T>(array: T[], func: (val: T) => any) {
-  array.sort((a, b) => func(a) > func(b) ? 1 : (func(a) < func(b) ? -1 : 0))
-
-}
