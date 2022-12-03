@@ -4,7 +4,8 @@ public record Employee(
     string Name,
     CompetenceLevel CompetenceLevel,
     Capabilities Capabilities,
-    Workload Workload)
+    Workload Workload,
+    bool Disabled = false)
 {
     public Employee(
         string name,
