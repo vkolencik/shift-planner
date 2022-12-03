@@ -2,17 +2,15 @@ namespace ShiftPlanner.Domain;
 
 public record Employee(
     string Name,
-    string Email,
     CompetenceLevel CompetenceLevel,
     Capabilities Capabilities,
-    Workload Workload,
-    bool Disabled = false)
+    Workload Workload)
 {
     public Employee(
         string name,
         CompetenceLevel competenceLevel,
         Capabilities capabilities)
-        : this(name, "", competenceLevel, capabilities, Workload.Full)
+        : this(name, competenceLevel, capabilities, Workload.Full)
     {
     }
 }

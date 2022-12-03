@@ -12,7 +12,7 @@ public class GoogleSheetsEmployeeService : IEmployeeService
     private static readonly string ApplicationName = "Krtek";
     private static readonly string SpreadsheetId = "1iLE1TDFKrUbnzTVX8PmjP5AvvccD2dsFjomD5c5yiJs";
 
-    public async Task<IReadOnlyCollection<Employee>> GetEmployees(IList<Workplace> workplaces)
+    public async Task<IReadOnlyCollection<EmployeeInfo>> GetEmployees(IList<Workplace> workplaces)
     {
         using var service = GetGoogleSheetsService();
 
@@ -30,7 +30,7 @@ public class GoogleSheetsEmployeeService : IEmployeeService
             throw new Exception("No data found.");
         }
 
-        var employees = new List<Employee>();
+        var employees = new List<EmployeeInfo>();
 
         foreach (var row in values)
         {
@@ -66,7 +66,7 @@ public class GoogleSheetsEmployeeService : IEmployeeService
                             : new WorkplaceCapability.Green(workplaces[i], uint.Parse((string) cellValue)))
                 .ToArray();
 
-            employees.Add(new Employee(name, email, competenceLevel, new Capabilities(capabilities), Workload.Full, disabled));
+            employees.Add(new EmployeeInfo(name, email, competenceLevel, new Capabilities(capabilities), Workload.Full, disabled));
         }
 
         return employees;

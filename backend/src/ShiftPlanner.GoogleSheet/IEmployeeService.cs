@@ -4,5 +4,5 @@ namespace ShiftPlanner.GoogleSheet;
 
 public interface IEmployeeService
 {
-    Task<IReadOnlyCollection<Employee>> GetEmployees(IList<Workplace> workplaces);
+    Task<IReadOnlyCollection<EmployeeInfo>> GetEmployees(IList<Workplace> workplaces);
 }
