@@ -93,7 +93,7 @@ export class Backend extends Construct implements IGrantable {
       serviceName: '_preview-krtek',
       taskImageOptions: {
         // `deployment/cdk.out` must be ignored in `.dockerignore`
-        image: runningInTest ? new DummyImage() : ContainerImage.fromAsset('..backend'),
+        image: runningInTest ? new DummyImage() : ContainerImage.fromAsset('../backend'),
         environment: {
           ASPNETCORE_ENVIRONMENT: environment === Environment.Production ? 'Production' : 'Staging'
         }
