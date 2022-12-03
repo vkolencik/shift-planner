@@ -13,6 +13,7 @@ import { Vpc } from 'aws-cdk-lib/aws-ec2'
 
 export class Backend extends Construct implements IGrantable {
   private readonly backendLambdaFunction: Function
+  public readonly service: ApplicationLoadBalancedFargateService
 
   public get grantPrincipal (): IPrincipal {
     return this.backendLambdaFunction.grantPrincipal
@@ -79,8 +80,7 @@ export class Backend extends Construct implements IGrantable {
       })
     })
 
-
-    const loadBalancedService = new ApplicationLoadBalancedFargateService(this, 'service', {
+    this.service = new ApplicationLoadBalancedFargateService(this, 'service', {
       domainName: 'b2.preview.krtek.me',
       domainZone: HostedZone.fromHostedZoneAttributes(this, `hosted-zone`, {
         zoneName: 'preview.krtek.me',
