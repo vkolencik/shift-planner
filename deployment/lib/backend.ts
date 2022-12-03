@@ -8,7 +8,7 @@ import { IGrantable, IPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam'
 import { Environment } from './deployment-stack'
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs'
 import { ApplicationLoadBalancedFargateService } from 'aws-cdk-lib/aws-ecs-patterns'
-import { Cluster, ContainerImage, LogDrivers } from 'aws-cdk-lib/aws-ecs'
+import { Cluster, ContainerDefinition, ContainerImage, ContainerImageConfig, LogDrivers } from 'aws-cdk-lib/aws-ecs'
 import { Vpc } from 'aws-cdk-lib/aws-ec2'
 
 export class Backend extends Construct implements IGrantable {
