@@ -9,14 +9,13 @@ using ShiftPlanner.Engine;
 
 namespace ShiftPlanner.GoogleSheet;
 
+[Obsolete]
 static class Program
 {
     private const string SpreadsheetId = "1iLE1TDFKrUbnzTVX8PmjP5AvvccD2dsFjomD5c5yiJs";
 
-    /* Global instance of the scopes required by this quickstart.
-     If modifying these scopes, delete your previously saved token.json/ folder. */
     static string[] Scopes = {SheetsService.Scope.Spreadsheets};
-    static string ApplicationName = "Google Sheets API .NET Quickstart";
+    static string ApplicationName = "Krtek";
 
     static void Main(string[] args)
     {
