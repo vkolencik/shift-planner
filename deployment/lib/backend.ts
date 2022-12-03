@@ -6,7 +6,10 @@ import { HostedZone } from 'aws-cdk-lib/aws-route53'
 import { EndpointType, LambdaRestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway'
 import { IGrantable, IPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam'
 import { Environment } from './deployment-stack'
-import { RetentionDays } from 'aws-cdk-lib/aws-logs'
+import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs'
+import { ApplicationLoadBalancedFargateService } from 'aws-cdk-lib/aws-ecs-patterns'
+import { Cluster, ContainerImage, LogDrivers } from 'aws-cdk-lib/aws-ecs'
+import { Vpc } from 'aws-cdk-lib/aws-ec2'
 
 export class Backend extends Construct implements IGrantable {
   private readonly backendLambdaFunction: Function
@@ -67,10 +70,48 @@ export class Backend extends Construct implements IGrantable {
         securityPolicy: SecurityPolicy.TLS_1_2
       }
     })
+
+    const cluster = new Cluster(this, 'cluster', {
+      clusterName: '_preview-krtek-cluster',
+      vpc: new Vpc(this, 'vpc', {
+        vpcName: '_preview-krtek-vpc',
+        availabilityZones: ['eu-central-1a', 'eu-central-1b']
+      })
+    })
+
+
+    const loadBalancedService = new ApplicationLoadBalancedFargateService(this, 'service', {
+      domainName: 'b2.preview.krtek.me',
+      domainZone: HostedZone.fromHostedZoneAttributes(this, `hosted-zone`, {
+        zoneName: 'preview.krtek.me',
+        hostedZoneId: hostedZoneId
+      }),
+      certificate: cert,
+      publicLoadBalancer: true,
+      desiredCount: 2,
+      cluster: cluster,
+      serviceName: '_preview-krtek',
+      taskImageOptions: {
+        // `deployment/cdk.out` must be ignored in `.dockerignore`
+        image: runningInTest ? new DummyImage() : ContainerImage.fromAsset('..backend'),
+        environment: {
+          ASPNETCORE_ENVIRONMENT: environment === Environment.Production ? 'Production' : 'Staging'
+        }
+      }
+    })
+
   }
 }
 
 const dummyCode: Code = {
   bind (_: Construct): CodeConfig { return { s3Location: { bucketName: 'dummy', objectKey: 'dummy' } }},
   bindToResource (_resource: CfnResource, _options?: ResourceBindOptions): void {}
+}
+
+class DummyImage extends ContainerImage {
+  bind (scope: Construct, containerDefinition: ContainerDefinition): ContainerImageConfig {
+    return {
+      imageName: 'dummy'
+    }
+  }
 }
