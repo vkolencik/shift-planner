@@ -23,7 +23,7 @@ public class GoogleSheetsEmployeeService : IEmployeeService
 
         ValueRange response = await request.ExecuteAsync();
 
-        IList<IList<Object>> values = response.Values;
+        IList<IList<object>> values = response.Values;
 
         if (values == null || values.Count == 0)
         {

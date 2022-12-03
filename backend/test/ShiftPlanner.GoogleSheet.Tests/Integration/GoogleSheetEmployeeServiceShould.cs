@@ -11,6 +11,8 @@ public class GoogleSheetEmployeeServiceShould
 
         var employees = await service.GetEmployees(Workplace.Workplaces);
 
+        Assert.True(employees.Select(e => !e.Disabled).Count() > 20);
+        
         var firstEmployee = employees.First();
         Assert.Equal("Tester Testovič", firstEmployee.Name);
         Assert.Equal(CompetenceLevel.Level2, firstEmployee.CompetenceLevel);
