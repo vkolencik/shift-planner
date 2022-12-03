@@ -66,7 +66,7 @@ public class GoogleSheetsEmployeeService : IEmployeeService
                             : new WorkplaceCapability.Green(workplaces[i], uint.Parse((string) cellValue)))
                 .ToArray();
 
-            employees.Add(new Employee(name, competenceLevel, new Capabilities(capabilities), Workload.Full, disabled));
+            employees.Add(new Employee(name, email, competenceLevel, new Capabilities(capabilities), Workload.Full, disabled));
         }
 
         return employees;

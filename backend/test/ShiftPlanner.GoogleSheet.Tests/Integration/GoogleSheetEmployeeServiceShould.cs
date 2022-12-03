@@ -15,6 +15,7 @@ public class GoogleSheetEmployeeServiceShould
         
         var firstEmployee = employees.First();
         Assert.Equal("Tester Testovič", firstEmployee.Name);
+        Assert.Equal("e2e-test-user-1@krtek.me", firstEmployee.Email);
         Assert.Equal(CompetenceLevel.Level2, firstEmployee.CompetenceLevel);
         Assert.Equal(
             new WorkplaceCapability[]
@@ -31,6 +32,7 @@ public class GoogleSheetEmployeeServiceShould
 
         var lastEmployee = employees.Last();
         Assert.Equal("Tester Testovič 2", lastEmployee.Name);
+        Assert.Equal("e2e-test-user-2@krtek.me", lastEmployee.Email);
         Assert.Equal(CompetenceLevel.Level4, lastEmployee.CompetenceLevel);
         Assert.Equal(
             new WorkplaceCapability[]
