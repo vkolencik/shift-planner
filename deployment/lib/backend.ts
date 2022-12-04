@@ -6,10 +6,10 @@ import { HostedZone } from 'aws-cdk-lib/aws-route53'
 import { EndpointType, LambdaRestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway'
 import { IGrantable, IPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam'
 import { Environment } from './deployment-stack'
-import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs'
+import { RetentionDays } from 'aws-cdk-lib/aws-logs'
 import { ApplicationLoadBalancedFargateService } from 'aws-cdk-lib/aws-ecs-patterns'
-import { Cluster, ContainerDefinition, ContainerImage, ContainerImageConfig, LogDrivers } from 'aws-cdk-lib/aws-ecs'
-import { Vpc } from 'aws-cdk-lib/aws-ec2'
+import { Cluster, ContainerDefinition, ContainerImage, ContainerImageConfig } from 'aws-cdk-lib/aws-ecs'
+import { SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2'
 
 export class Backend extends Construct implements IGrantable {
   private readonly backendLambdaFunction: Function
@@ -76,7 +76,9 @@ export class Backend extends Construct implements IGrantable {
       clusterName: '_preview-krtek-cluster',
       vpc: new Vpc(this, 'vpc', {
         vpcName: '_preview-krtek-vpc',
-        availabilityZones: ['eu-central-1a', 'eu-central-1b']
+        availabilityZones: ['eu-central-1a', 'eu-central-1b'],
+        natGateways: 0,
+        // subnetConfiguration: [{ subnetType: SubnetType.PRIVATE_WITH_EGRESS } ]
       })
     })
 
