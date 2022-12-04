@@ -24,12 +24,14 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
     {
         var employeeInfos = await _employeeInfoService.GetEmployees(Workplace.Workplaces);
 
+        var activeEmployeeInfos = employeeInfos.Where(e => !e.Disabled);
+
         var employeeRequirements = await _requirementsService.GetRequirementsOverviewForMonth(tenant, month);
 
         var users = await _userService.GetAllUsers();
         var userIdsByEmail = users.ToDictionary(u => u.Email, u => u.UserId);
 
-        var employeeMonths = employeeInfos.Select(
+        var employeeMonths = activeEmployeeInfos.Select(
                 ei => new EmployeeMonth(
                     new Employee(ei.Name, ei.CompetenceLevel, ei.Capabilities, ei.Workload),
                     GetLeavesForEmployee(employeeRequirements, userIdsByEmail[ei.Email])

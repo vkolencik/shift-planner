@@ -7,7 +7,7 @@ using User = ShiftPlanner.Api.Contracts.User;
 
 namespace ShiftPlanner.Api.Services.Users;
 
-internal class Auth0UserService : IUserService
+public class Auth0UserService : IUserService
 {
     private readonly IAuth0TokenProvider _auth0TokenProvider;
     private readonly IAwsSecretsManagerClient _secretsManagerClient;

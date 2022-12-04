@@ -7,7 +7,7 @@ using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Persistence;
 
-internal class DynamoRequirementsRepository : IRequirementsRepository
+public class DynamoRequirementsRepository : IRequirementsRepository
 {
     private readonly DynamoOptions _options;
     private readonly IAmazonDynamoDB _dynamo;
