@@ -1,9 +1,9 @@
 ﻿using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Api.Tests;
+namespace ShiftPlanner.TestHelpers;
 
-internal static class TestData
+public static class TestData
 {
     public static readonly Dictionary<Day, string> MonthRequirements = new Dictionary<Day, string>
     {

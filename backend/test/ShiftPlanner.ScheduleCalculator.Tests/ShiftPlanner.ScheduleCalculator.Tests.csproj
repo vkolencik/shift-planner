@@ -26,6 +26,7 @@
       <ProjectReference Include="..\..\src\ShiftPlanner.Api\ShiftPlanner.Api.csproj" />
       <ProjectReference Include="..\..\src\ShiftPlanner.GoogleSheet\ShiftPlanner.GoogleSheet.csproj" />
       <ProjectReference Include="..\..\src\ShiftPlanner.ScheduleCalculator\ShiftPlanner.ScheduleCalculator.csproj" />
+      <ProjectReference Include="..\ShiftPlanner.TestHelpers\ShiftPlanner.TestHelpers.csproj" />
     </ItemGroup>
 
 </Project>
