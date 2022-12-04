@@ -30,7 +30,7 @@ class Program
                 auth0UserService),
                 auth0UserService);
 
-        var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), new ScheduledMonth(2022, 6));
+        var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), new ScheduledMonth(2023, 1));
         
         var scheduler = new ShiftScheduler();
 
