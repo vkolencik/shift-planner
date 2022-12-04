@@ -100,6 +100,10 @@ export class Backend extends Construct implements IGrantable {
       }
     })
 
+    this.service.taskDefinition.taskRole.addToPrincipalPolicy(new PolicyStatement({
+      resources: ['arn:aws:secretsmanager:eu-central-1:720500131615:secret:auth0-mgmt-api-key-vdXHOP'],
+      actions: ['secretsmanager:GetSecretValue']
+    }))
   }
 }
 
