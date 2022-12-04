@@ -78,12 +78,12 @@ export class Backend extends Construct implements IGrantable {
       vpnGateway: true
     })
 
-    const cluster = new Cluster(this, 'cluster', {
+    const cluster = new Cluster(this, 'cluster2', {
       clusterName: '_preview-krtek-cluster',
       vpc
     })
 
-    this.service = new ApplicationLoadBalancedFargateService(this, 'service', {
+    this.service = new ApplicationLoadBalancedFargateService(this, 'service2', {
       domainName: 'b2.preview.krtek.me',
       domainZone: HostedZone.fromHostedZoneAttributes(this, `hosted-zone`, {
         zoneName: 'preview.krtek.me',
