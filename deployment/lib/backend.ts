@@ -73,18 +73,18 @@ export class Backend extends Construct implements IGrantable {
     })
 
     const vpc = new Vpc(this, 'vpc2', {
-      vpcName: '_preview-krtek-vpc',
+      vpcName: '_preview-krtek-vpc2',
       natGateways: 0,
       vpnGateway: true
     })
 
     const cluster = new Cluster(this, 'cluster2', {
-      clusterName: '_preview-krtek-cluster',
+      clusterName: '_preview-krtek-cluster2',
       vpc
     })
 
     this.service = new ApplicationLoadBalancedFargateService(this, 'service2', {
-      domainName: 'b2.preview.krtek.me',
+      domainName: 'b3.preview.krtek.me',
       domainZone: HostedZone.fromHostedZoneAttributes(this, `hosted-zone`, {
         zoneName: 'preview.krtek.me',
         hostedZoneId: hostedZoneId
@@ -93,7 +93,7 @@ export class Backend extends Construct implements IGrantable {
       publicLoadBalancer: true,
       desiredCount: 2,
       cluster: cluster,
-      serviceName: '_preview-krtek',
+      serviceName: '_preview-krtek2',
       taskImageOptions: {
         // `deployment/cdk.out` must be ignored in `.dockerignore`
         image: runningInTest ? new DummyImage() : ContainerImage.fromAsset('../backend'),
