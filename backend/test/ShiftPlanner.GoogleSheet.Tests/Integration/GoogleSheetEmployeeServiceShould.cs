@@ -7,7 +7,7 @@ public class GoogleSheetEmployeeServiceShould
     [Fact(Skip = "Will be enabled after implementing secret storage for Google credentials")]
     public async Task FetchEmployees()
     {
-        var service = new GoogleSheetsEmployeeService();
+        var service = new GoogleSheetsEmployeeInfoService();
 
         var employees = await service.GetEmployees(Workplace.Workplaces);
 

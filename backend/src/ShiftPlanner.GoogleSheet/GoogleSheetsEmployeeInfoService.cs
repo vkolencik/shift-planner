@@ -6,7 +6,7 @@ using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.GoogleSheet;
 
-public class GoogleSheetsEmployeeService : IEmployeeService
+public class GoogleSheetsEmployeeInfoService : IEmployeeInfoService
 {
     private static readonly string[] Scopes = {SheetsService.Scope.Spreadsheets};
     private static readonly string ApplicationName = "Krtek";
