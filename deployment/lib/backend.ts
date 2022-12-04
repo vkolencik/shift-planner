@@ -72,7 +72,7 @@ export class Backend extends Construct implements IGrantable {
       }
     })
 
-    const vpc = new Vpc(this, 'vpc', {
+    const vpc = new Vpc(this, 'vpc2', {
       vpcName: '_preview-krtek-vpc',
       natGateways: 0,
       vpnGateway: true
