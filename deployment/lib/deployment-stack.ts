@@ -16,7 +16,7 @@ export class DeploymentStack extends cdk.Stack {
     const backend = new Backend(this, environment)
     const database = new Database(this, environment)
     database.grantAccess(backend)
-    // database.grantAccess(backend.service.taskDefinition.taskRole)
+    database.grantAccess(backend.service.taskDefinition.taskRole)
 
     const monitoring = new Monitoring(this, environment, backend, database)
   }
