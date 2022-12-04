@@ -35,7 +35,7 @@ export class Backend extends Construct implements IGrantable {
       },
       runtime: Runtime.DOTNET_6,
       timeout: Duration.seconds(30),
-     logRetention: RetentionDays.ONE_MONTH,
+      logRetention: RetentionDays.ONE_MONTH,
     })
 
     if (environment === Environment.Production) {
@@ -78,7 +78,10 @@ export class Backend extends Construct implements IGrantable {
         vpcName: '_preview-krtek-vpc',
         availabilityZones: ['eu-central-1a', 'eu-central-1b'],
         natGateways: 0,
-        // subnetConfiguration: [{ subnetType: SubnetType.PRIVATE_WITH_EGRESS } ]
+        subnetConfiguration: [
+          { name: 'private-1', subnetType: SubnetType.PRIVATE_WITH_EGRESS },
+          { name: 'private-2', subnetType: SubnetType.PRIVATE_WITH_EGRESS }
+        ]
       })
     })
 
