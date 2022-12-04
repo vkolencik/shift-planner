@@ -27,7 +27,6 @@ describe('users requirements resource should', () => {
   })
 
   it('return forbidden when asking for requirements of a different user', async () => {
-    const token: string = await getToken()
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/some-different-user-id/requirements/2022/10`, getHeaders(token2))
 
     expect(resp.status).toEqual(403)
