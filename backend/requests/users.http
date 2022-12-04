@@ -1,0 +1,19 @@
+### Auth
+POST https://krtek.eu.auth0.com/oauth/token
+Content-Type: application/json
+
+{
+  "grant_type": "password",
+  "audience": "https://b.krtek.me",
+  "scope": "",
+  "username": "{{testUserName}}",
+  "password": "{{testUserPassword}}",
+  "client_id": "{{clientId}}",
+  "client_secret": "{{clientSecret}}"
+}
+
+> {% client.global.set('accessToken', response.body.access_token); %}
+
+### Get list of users
+GET {{backendBaseUrl}}/api/fnb/users/
+Authorization: Bearer {{accessToken}}
