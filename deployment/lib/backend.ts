@@ -72,41 +72,41 @@ export class Backend extends Construct implements IGrantable {
       }
     })
 
-    const vpc = new Vpc(this, 'vpc2', {
-      vpcName: '_preview-krtek-vpc2',
-      natGateways: 0,
-      vpnGateway: true
-    })
-
-    const cluster = new Cluster(this, 'cluster2', {
-      clusterName: '_preview-krtek-cluster2',
-      vpc
-    })
-
-    this.service = new ApplicationLoadBalancedFargateService(this, 'service2', {
-      domainName: 'b3.preview.krtek.me',
-      domainZone: HostedZone.fromHostedZoneAttributes(this, `hosted-zone`, {
-        zoneName: 'preview.krtek.me',
-        hostedZoneId: hostedZoneId
-      }),
-      certificate: cert,
-      publicLoadBalancer: true,
-      desiredCount: 2,
-      cluster: cluster,
-      serviceName: '_preview-krtek2',
-      taskImageOptions: {
-        // `deployment/cdk.out` must be ignored in `.dockerignore`
-        image: runningInTest ? new DummyImage() : ContainerImage.fromAsset('../backend'),
-        environment: {
-          ASPNETCORE_ENVIRONMENT: environment === Environment.Production ? 'Production' : 'Staging'
-        }
-      }
-    })
-
-    this.service.taskDefinition.taskRole.addToPrincipalPolicy(new PolicyStatement({
-      resources: ['arn:aws:secretsmanager:eu-central-1:720500131615:secret:auth0-mgmt-api-key-vdXHOP'],
-      actions: ['secretsmanager:GetSecretValue']
-    }))
+    // const vpc = new Vpc(this, 'vpc', {
+    //   vpcName: '_preview-krtek-vpc',
+    //   availabilityZones: ['eu-central-1a', 'eu-central-1b'],
+    //   natGateways: 0
+    // })
+    //
+    // const cluster = new Cluster(this, 'cluster2', {
+    //   clusterName: '_preview-krtek-cluster2',
+    //   vpc
+    // })
+    //
+    // this.service = new ApplicationLoadBalancedFargateService(this, 'service2', {
+    //   domainName: 'b3.preview.krtek.me',
+    //   domainZone: HostedZone.fromHostedZoneAttributes(this, `hosted-zone`, {
+    //     zoneName: 'preview.krtek.me',
+    //     hostedZoneId: hostedZoneId
+    //   }),
+    //   certificate: cert,
+    //   publicLoadBalancer: true,
+    //   desiredCount: 2,
+    //   cluster: cluster,
+    //   serviceName: '_preview-krtek2',
+    //   taskImageOptions: {
+    //     // `deployment/cdk.out` must be ignored in `.dockerignore`
+    //     image: runningInTest ? new DummyImage() : ContainerImage.fromAsset('../backend'),
+    //     environment: {
+    //       ASPNETCORE_ENVIRONMENT: environment === Environment.Production ? 'Production' : 'Staging'
+    //     }
+    //   }
+    // })
+    //
+    // this.service.taskDefinition.taskRole.addToPrincipalPolicy(new PolicyStatement({
+    //   resources: ['arn:aws:secretsmanager:eu-central-1:720500131615:secret:auth0-mgmt-api-key-vdXHOP'],
+    //   actions: ['secretsmanager:GetSecretValue']
+    // }))
   }
 }
 
