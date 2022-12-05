@@ -135,10 +135,13 @@ internal static class Rules
         {
             foreach (var (friday, sunday) in fridays.Zip(sundaysAfterFridays))
             {
-                engine.AddSumRelationConstraint(
-                    monthScheduleParameters.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, friday, w)).ToArray(),
-                    Constraint.Eq,
-                    monthScheduleParameters.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, sunday, w)).ToArray());
+                foreach (var workplace in monthScheduleParameters.Workplaces)
+                {
+                    engine.AddSumRelationConstraint(
+                        new[] {new ShiftAssignment(employeeMonth.Employee, friday, workplace)},
+                        Constraint.Eq,
+                        new[] {new ShiftAssignment(employeeMonth.Employee, sunday, workplace)});
+                }
             }
         }
     }

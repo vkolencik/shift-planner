@@ -1,6 +1,4 @@
-﻿using ShiftPlanner.Domain;
-
-namespace ShiftPlanner.GoogleSheet;
+﻿namespace ShiftPlanner.Domain;
 
 public record EmployeeInfo(
     string Name,

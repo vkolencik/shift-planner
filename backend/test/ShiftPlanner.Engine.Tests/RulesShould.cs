@@ -210,16 +210,20 @@ public class RulesShould
         Assert.All(
             new[] {Employee1, Employee2, Employee3}, employee =>
             {
-                Assert.All<(int, int)>(
-                    _fridays.Zip(_sundays), tuple =>
+                Assert.All(
+                    Workplaces, workplace =>
                     {
-                        var (friday, sunday) = tuple;
-                        Assert.Contains(
-                            Workplaces.Select(w => new ShiftAssignment(employee, new Day(2022, 2, friday), w)),
-                            capturedShiftsLhs.Select(_ => _.ToHashSet()));
-                        Assert.Contains(
-                            Workplaces.Select(w => new ShiftAssignment(employee, new Day(2022, 2, sunday), w)),
-                            capturedShiftsRhs.Select(_ => _.ToHashSet()));
+                        Assert.All<(int, int)>(
+                            _fridays.Zip(_sundays), tuple =>
+                            {
+                                var (friday, sunday) = tuple;
+                                Assert.Contains(
+                                    new HashSet<ShiftAssignment> { new ShiftAssignment(employee, new Day(2022, 2, friday), workplace)},
+                                    capturedShiftsLhs.Select(_ => _.ToHashSet()));
+                                Assert.Contains(
+                                    new HashSet<ShiftAssignment> { new ShiftAssignment(employee, new Day(2022, 2, sunday), workplace)},
+                                    capturedShiftsRhs.Select(_ => _.ToHashSet()));
+                            });
                     });
             });
     }

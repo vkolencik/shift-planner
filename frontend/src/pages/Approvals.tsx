@@ -49,7 +49,7 @@ export function Approvals () {
     api.requirements.deleteForUser(userId, toDay(requirementToDelete.day))
       .then(() => {
         setRequirementToDelete(null)
-        setRequirements(null)
+        setRequirements(oldRequirements => oldRequirements?.filter(r => !(r.userId === userId && r.date === requirementToDelete.day)) || null)
       })
   }
 
@@ -62,7 +62,19 @@ export function Approvals () {
 
     api.requirements.approve(userId, toDay(day))
       .then(() => {
-        setRequirements(null)
+        setRequirements(oldRequirements => {
+          if (oldRequirements === null) {
+            return null
+          }
+
+          const newRequirements = [...oldRequirements]
+          const approvedRequirement = newRequirements.find(r => r.userId === userId && r.date === day)
+          if (approvedRequirement === undefined) {
+            throw new Error('Cannot find the approved requirement')
+          }
+          approvedRequirement.approved = true
+          return newRequirements
+        })
       })
   }
 

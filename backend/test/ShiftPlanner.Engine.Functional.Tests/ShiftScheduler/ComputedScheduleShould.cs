@@ -383,17 +383,17 @@ public class ComputedScheduleShould
             {
                 var scheduledFridayShifts = schedule.Shifts
                     .Where(s => s.Employee == employee && s.Shift.Day.DayOfWeek == DayOfWeek.Friday)
-                    .Select(s => s.Shift.Day.Date.Day)
+                    .Select(s => (s.Shift.Day.Date.Day, s.Shift.Workplace))
                     .ToArray();
 
                 var scheduledSundayShifts = schedule.Shifts
                     .Where(s => s.Employee == employee && s.Shift.Day.DayOfWeek == DayOfWeek.Sunday)
-                    .Select(s => s.Shift.Day.Date.Day)
+                    .Select(s => (s.Shift.Day.Date.Day, s.Shift.Workplace))
                     .ToArray();
 
                 var expectedSundayShifts = scheduledFridayShifts
-                    .Select(d => d + 2)
-                    .Where(d => d <= 28)
+                    .Select(s => s with {Day = s.Day + 2})
+                    .Where(s => s.Day <= 28)
                     .ToArray();
 
                 Assert.Equal(expectedSundayShifts, scheduledSundayShifts);

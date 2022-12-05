@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ShiftPlanner.Api\ShiftPlanner.Api.csproj" />
+    <ProjectReference Include="..\ShiftPlanner.TestHelpers\ShiftPlanner.TestHelpers.csproj" />
   </ItemGroup>
 
 </Project>
