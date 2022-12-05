@@ -9,7 +9,7 @@ import { Environment } from './deployment-stack'
 import { RetentionDays } from 'aws-cdk-lib/aws-logs'
 import { ApplicationLoadBalancedFargateService } from 'aws-cdk-lib/aws-ecs-patterns'
 import { Cluster, ContainerDefinition, ContainerImage, ContainerImageConfig } from 'aws-cdk-lib/aws-ecs'
-import { CfnInternetGateway, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2'
+import { InstanceType, NatProvider, Vpc } from 'aws-cdk-lib/aws-ec2'
 
 export class Backend extends Construct implements IGrantable {
   private readonly backendLambdaFunction: Function
@@ -72,12 +72,23 @@ export class Backend extends Construct implements IGrantable {
       }
     })
 
-    const vpc = Vpc.fromVpcAttributes(this, 'asdf', {
-      vpcId: 'vpc-084d5cbc6198a7dee',
-      availabilityZones: ['eu-central-1a', 'eu-central-1b'],
-      publicSubnetIds: ['subnet-04b3761eb14587693', 'subnet-0c6c12377543a7d6c'],
-      isolatedSubnetIds: ['subnet-0acc106e478550384', 'subnet-0364123ff4247136b']
-    })
+    // const vpc = Vpc.fromVpcAttributes(this, 'asdf', {
+    //   vpcId: 'vpc-084d5cbc6198a7dee',
+    //   availabilityZones: ['eu-central-1a', 'eu-central-1b'],
+    //   publicSubnetIds: ['subnet-04b3761eb14587693', 'subnet-0c6c12377543a7d6c'],
+    //   isolatedSubnetIds: ['subnet-0acc106e478550384', 'subnet-0364123ff4247136b']
+    // })
+
+    // Configure the `natGatewayProvider` when defining a Vpc
+    const natGatewayProvider = NatProvider.instance({
+      instanceType: new InstanceType('t3.micro')
+    });
+
+    const vpc = new Vpc(this, 'MyVpc', {
+      natGatewayProvider: natGatewayProvider,
+      // The 'natGateways' parameter now controls the number of NAT instances
+      natGateways: 2
+    });
 
     const cluster = new Cluster(this, 'cluster2', {
       clusterName: '_preview-krtek-cluster2',
@@ -95,6 +106,7 @@ export class Backend extends Construct implements IGrantable {
       desiredCount: 2,
       cluster: cluster,
       serviceName: '_preview-krtek2',
+      taskSubnets: { },
       taskImageOptions: {
         // `deployment/cdk.out` must be ignored in `.dockerignore`
         image: runningInTest ? new DummyImage() : ContainerImage.fromAsset('../backend'),
