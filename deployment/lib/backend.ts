@@ -72,12 +72,10 @@ export class Backend extends Construct implements IGrantable {
       }
     })
 
-    const vpc = new Vpc(this, 'vpc', {
-      vpcName: '_preview-krtek-vpc',
-      availabilityZones: ['eu-central-1a', 'eu-central-1b'],
-      natGateways: 1
+    const vpc = Vpc.fromVpcAttributes(this, 'asdf', {
+      vpcId: 'vpc-00d4d24df806f5ea9',
+      availabilityZones: ['eu-central-1a', 'eu-central-1b']
     })
-
 
     const cluster = new Cluster(this, 'cluster2', {
       clusterName: '_preview-krtek-cluster2',
