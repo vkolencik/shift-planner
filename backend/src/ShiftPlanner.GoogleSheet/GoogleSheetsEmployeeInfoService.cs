@@ -3,14 +3,12 @@ using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Domain.Services;
 
 namespace ShiftPlanner.GoogleSheet;
 
-public class GoogleSheetsEmployeeService : IEmployeeService
+public class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeInfoService
 {
-    private static readonly string[] Scopes = {SheetsService.Scope.Spreadsheets};
-    private static readonly string ApplicationName = "Krtek";
-    private static readonly string SpreadsheetId = "1iLE1TDFKrUbnzTVX8PmjP5AvvccD2dsFjomD5c5yiJs";
 
     public async Task<IReadOnlyCollection<EmployeeInfo>> GetEmployees(IList<Workplace> workplaces)
     {
@@ -71,8 +69,15 @@ public class GoogleSheetsEmployeeService : IEmployeeService
 
         return employees;
     }
+}
 
-    private static SheetsService GetGoogleSheetsService()
+public abstract class GoogleSheetsService
+{
+    protected static readonly string[] Scopes = {SheetsService.Scope.Spreadsheets};
+    protected static readonly string ApplicationName = "Krtek";
+    protected static readonly string SpreadsheetId = "1iLE1TDFKrUbnzTVX8PmjP5AvvccD2dsFjomD5c5yiJs";
+
+    protected static SheetsService GetGoogleSheetsService()
     {
         var credential = GoogleCredential.FromFile("credentials/krtekpoc-credentials.json").CreateScoped(Scopes);
 

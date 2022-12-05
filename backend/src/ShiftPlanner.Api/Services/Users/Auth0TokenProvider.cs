@@ -4,7 +4,7 @@ using ShiftPlanner.Api.Services.Secrets;
 
 namespace ShiftPlanner.Api.Services.Users;
 
-class Auth0TokenProvider : IAuth0TokenProvider
+public class Auth0TokenProvider : IAuth0TokenProvider
 {
     private IHttpClientFactory _httpClientFactory;
 

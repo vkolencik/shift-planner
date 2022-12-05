@@ -52,7 +52,7 @@ internal static class EmployeeStandardRule
                     .ToArray();
 
                 engine.AddSumConstraint(shiftsInRange, Constraint.Lte, standard.Maximum);
-                engine.AddSumConstraint(shiftsInRange, Constraint.Gte, standard.Minimum);
+                // engine.AddSumConstraint(shiftsInRange, Constraint.Gte, standard.Minimum);
             }
         }
     }
@@ -86,7 +86,7 @@ internal static class EmployeeStandardRule
                 .Select(d => new ShiftAssignment(employeeMonth.Employee, d, capability.Workplace))
                 .ToList();
 
-            engine.AddSumConstraint(employeeShiftsInMonthForWorkspace, Constraint.Gte, employeeStandardForWorkplace.Minimum);
+            // engine.AddSumConstraint(employeeShiftsInMonthForWorkspace, Constraint.Gte, employeeStandardForWorkplace.Minimum);
             engine.AddSumConstraint(employeeShiftsInMonthForWorkspace, Constraint.Lte, employeeStandardForWorkplace.Maximum);
         }
     }

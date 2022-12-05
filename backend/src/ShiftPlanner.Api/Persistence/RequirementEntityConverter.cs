@@ -3,7 +3,7 @@ using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Api.Persistence;
 
-internal class RequirementEntityConverter : IRequirementEntityConverter
+public class RequirementEntityConverter : IRequirementEntityConverter
 {
     public RequirementEntity ToEntity(RequirementModel requirement)
     {

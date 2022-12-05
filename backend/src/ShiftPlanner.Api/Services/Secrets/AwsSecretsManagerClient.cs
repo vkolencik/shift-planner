@@ -5,7 +5,7 @@ using Amazon.SecretsManager.Model;
 
 namespace ShiftPlanner.Api.Services.Secrets;
 
-internal class AwsSecretsManagerClient : IAwsSecretsManagerClient
+public class AwsSecretsManagerClient : IAwsSecretsManagerClient
 {
     private readonly IAmazonSecretsManager _client;
 

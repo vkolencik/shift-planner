@@ -62,7 +62,7 @@ static class Program
 
         Console.Out.WriteLine(successResult.Schedule.Shifts.First());
 
-        WriteScheduleToGoogleSheet(scheduledMonth, workplaces, successResult.Schedule);
+        // WriteScheduleToGoogleSheet(scheduledMonth, workplaces, successResult.Schedule);
     }
 
     private static void WriteScheduleToGoogleSheet(ScheduledMonth month, IReadOnlyCollection<Workplace> workplaces, Schedule schedule)
@@ -112,7 +112,7 @@ static class Program
         var service = GetGoogleSheetsService();
 
         // Define request parameters.
-        String range = "Kose!A3:I38";
+        String range = "Kose!B4:J49";
         SpreadsheetsResource.ValuesResource.GetRequest request =
             service.Spreadsheets.Values.Get(SpreadsheetId, range);
 
@@ -128,14 +128,18 @@ static class Program
         foreach (var row in values)
         {
             var name = (string) row[0];
-            var competenceLevel = (CompetenceLevel) (int.Parse((string) row[1]));
+            if (row.Count <= 2 || string.IsNullOrEmpty((string) row[2]))
+            {
+                continue;
+            }
+            var competenceLevel = (CompetenceLevel) (int.Parse((string) row[2]));
 
             var capabilities = workplaces
                 .Select(
                     (w, i) =>
-                        string.IsNullOrWhiteSpace((string) row[i + 2])
+                        row.Count <= i + 3 || string.IsNullOrWhiteSpace((string) row[i + 3])
                             ? new WorkplaceCapability.Red(w) as WorkplaceCapability
-                            : new WorkplaceCapability.Green(w, uint.Parse((string) row[i + 2])))
+                            : new WorkplaceCapability.Green(w, uint.Parse((string) row[i + 3])))
                 .ToArray();
 
             employees.Add(new Employee(name, competenceLevel, new Capabilities(capabilities)));
