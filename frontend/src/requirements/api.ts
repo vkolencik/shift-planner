@@ -156,7 +156,7 @@ export function useApi () {
           throw new Error(`Invalid date format ${date}`)
         }
 
-        const response = await fetch(`${baseUrl}/api/${tenant}/users/${encodeURIComponent(loggedInUserId)}/requirements/${date.replace(/-/g, '/')}/approval`, {
+        const response = await fetch(`${baseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${date.replace(/-/g, '/')}/approval`, {
             method: 'PUT',
             body: JSON.stringify({ approved: true }),
             headers: {
