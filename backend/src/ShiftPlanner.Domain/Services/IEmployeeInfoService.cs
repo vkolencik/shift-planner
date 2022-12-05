@@ -1,6 +1,4 @@
-﻿using ShiftPlanner.Domain;
-
-namespace ShiftPlanner.GoogleSheet;
+﻿namespace ShiftPlanner.Domain.Services;
 
 public interface IEmployeeInfoService
 {

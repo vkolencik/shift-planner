@@ -3,18 +3,19 @@
 using Amazon.DynamoDBv2;
 using Amazon.SecretsManager;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using ShiftPlanner.Api;
 using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
 using ShiftPlanner.Api.Services.Secrets;
 using ShiftPlanner.Api.Services.Users;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Domain.Services;
 using ShiftPlanner.Engine;
 using ShiftPlanner.GoogleSheet;
-using ShiftPlanner.ScheduleCalculator;
 
-class Program
+namespace ShiftPlanner.ScheduleCalculator;
+
+static class Program
 {
     public static async Task Main(string[] args)
     {
@@ -28,9 +29,10 @@ class Program
                     new RequirementEntityConverter(),
                     Options.Create(new DynamoOptions() {TableNamePrefix = ""})),
                 auth0UserService),
-                auth0UserService);
+            auth0UserService);
 
-        var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), new ScheduledMonth(2023, 1));
+        var month = new ScheduledMonth(2023, 1);
+        var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
         
         var scheduler = new ShiftScheduler();
 
@@ -50,9 +52,11 @@ class Program
         {
             var successResult = (SuccessfulSchedulingResult) result;
 
+            IScheduleRepository resultRepository = new GoogleSheetsScheduleRepository();
             Console.Out.WriteLine("Solution found");
             Console.Out.WriteLine($"Flexibility: {successResult.Flexibility.Degree}");
-            Console.Out.WriteLine(JsonConvert.SerializeObject(successResult.Schedule.Shifts));
+            
+            await resultRepository.StoreComputedSchedule(month, successResult);
         }
     }
 }
