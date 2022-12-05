@@ -9,7 +9,8 @@ import { Environment } from './deployment-stack'
 import { RetentionDays } from 'aws-cdk-lib/aws-logs'
 import { ApplicationLoadBalancedFargateService } from 'aws-cdk-lib/aws-ecs-patterns'
 import { Cluster, ContainerDefinition, ContainerImage, ContainerImageConfig } from 'aws-cdk-lib/aws-ecs'
-import { InstanceType, NatProvider, Vpc } from 'aws-cdk-lib/aws-ec2'
+import { InstanceClass, InstanceSize, InstanceType, NatProvider, Vpc } from 'aws-cdk-lib/aws-ec2'
+import { FckNatInstanceProvider } from 'cdk-fck-nat'
 
 export class Backend extends Construct implements IGrantable {
   private readonly backendLambdaFunction: Function
@@ -79,16 +80,11 @@ export class Backend extends Construct implements IGrantable {
     //   isolatedSubnetIds: ['subnet-0acc106e478550384', 'subnet-0364123ff4247136b']
     // })
 
-    // Configure the `natGatewayProvider` when defining a Vpc
-    const natGatewayProvider = NatProvider.instance({
-      instanceType: new InstanceType('t3.micro')
-    });
-
-    const vpc = new Vpc(this, 'MyVpc', {
-      natGatewayProvider: natGatewayProvider,
-      // The 'natGateways' parameter now controls the number of NAT instances
-      natGateways: 2
-    });
+    const vpc = new Vpc(this, 'vpc', {
+      natGatewayProvider: new FckNatInstanceProvider({
+        instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
+      }),
+    })
 
     const cluster = new Cluster(this, 'cluster2', {
       clusterName: '_preview-krtek-cluster2',

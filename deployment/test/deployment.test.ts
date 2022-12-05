@@ -36,7 +36,7 @@ const previewParams: EnvironmentParams = {
 
       const app = new cdk.App()
       // WHEN
-      const stack = new Deployment.DeploymentStack(app, environment, { env: { region: 'eu-central-1' } })
+      const stack = new Deployment.DeploymentStack(app, environment, { env: { region: 'eu-central-1', account: '720500131615' } })
       expect(stack.stackName).toEqual(environmentParams.stackName)
 
       // THEN
