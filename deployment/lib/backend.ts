@@ -73,8 +73,10 @@ export class Backend extends Construct implements IGrantable {
     })
 
     const vpc = Vpc.fromVpcAttributes(this, 'asdf', {
-      vpcId: 'vpc-00d4d24df806f5ea9',
-      availabilityZones: ['eu-central-1a', 'eu-central-1b']
+      vpcId: 'vpc-084d5cbc6198a7dee',
+      availabilityZones: ['eu-central-1a', 'eu-central-1b'],
+      publicSubnetIds: ['subnet-04b3761eb14587693', 'subnet-0c6c12377543a7d6c'],
+      isolatedSubnetIds: ['subnet-0acc106e478550384', 'subnet-0364123ff4247136b']
     })
 
     const cluster = new Cluster(this, 'cluster2', {
