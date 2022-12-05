@@ -86,7 +86,7 @@ public class UsersRequirementsController : ControllerBase
     }
     
     [HttpPut("{year}/{month}/{day}/approval")]
-    [Authorize(Claims.ReadRequirementsOfOthers)]
+    [Authorize(Claims.ApproveRequirementsOfOthers)]
     public async Task<ActionResult> Approve(
         [FromRoute] string tenant,
         [FromRoute] string userId,
@@ -106,7 +106,8 @@ public class UsersRequirementsController : ControllerBase
         {
             ApproveResult.Success => Ok(),
             ApproveResult.NotFound => NotFound(),
-            ApproveResult.Failure => BadRequest()
+            ApproveResult.Failure => BadRequest(),
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
 }
