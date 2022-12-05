@@ -44,7 +44,7 @@ public class GoogleSheetEmployeeServiceShould
                 new WorkplaceCapability.Red(Workplace.Kpr),
                 new WorkplaceCapability.Red(Workplace.Urg),
             }, lastEmployee.Capabilities.WorkplaceCapabilities);
-        Assert.Equal(Workload.Full, lastEmployee.Workload);
+        Assert.Equal(Workload.Workload07, lastEmployee.Workload);
         Assert.True(lastEmployee.Disabled);
     }
 }
