@@ -20,5 +20,9 @@ export class DeploymentStack extends cdk.Stack {
 
     const monitoring = new Monitoring(this, environment, backend, database)
   }
+
+  get availabilityZones (): string[] {
+    return ['eu-central-1a', 'eu-central-1b']
+  }
 }
 

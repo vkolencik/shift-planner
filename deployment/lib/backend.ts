@@ -86,6 +86,7 @@ export class Backend extends Construct implements IGrantable {
       }),
       natGateways: 1,
       availabilityZones: ['eu-central-1a', 'eu-central-1b']
+      //maxAzs: 2
     })
 
     const cluster = new Cluster(this, 'cluster2', {
