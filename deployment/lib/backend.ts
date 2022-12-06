@@ -84,8 +84,8 @@ export class Backend extends Construct implements IGrantable {
       natGatewayProvider: new FckNatInstanceProvider({
         instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
       }),
-      natGateways: 1,
-      availabilityZones: ['eu-central-1a', 'eu-central-1b']
+      // natGateways: 1,
+      // availabilityZones: ['eu-central-1a', 'eu-central-1b']
       //maxAzs: 2
     })
 
