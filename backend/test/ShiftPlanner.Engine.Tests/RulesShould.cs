@@ -265,13 +265,23 @@ public class RulesShould
     {
         var capturedShiftsLhs = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedShiftsRhs = new List<IReadOnlyCollection<ShiftAssignment>>();
+        var capturedShiftsVariable = new List<ShiftAssignment>();
 
         _engineMock.Setup(_ => _.AddSumRelationConstraint(Capture.In(capturedShiftsLhs), Constraint.Eq, Capture.In(capturedShiftsRhs)));
+        _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShiftsVariable), Constraint.Eq, 1));
 
-        var month = new ScheduledMonth(2021, 1);
+        var month = new ScheduledMonth(2022, 1);
         var fridays = month.Days.Where(d => d.DayOfWeek == DayOfWeek.Friday).Select(d => d.DayOfMonth);
         var sundays = month.Days.SkipWhile(d => d.DayOfWeek != DayOfWeek.Friday).Where(d => d.DayOfWeek == DayOfWeek.Sunday).Select(d => d.DayOfMonth);
-        var monthScheduleParameters = MonthScheduleParameters with {Month = month};
+        
+        var monthScheduleParameters = MonthScheduleParameters with
+        {
+            Month = month,
+            LastMonthShifts = new []
+            {
+                new ShiftAssignment(Employee1, new Day(2021, 12, 31), Workplace1), // Friday 
+            }
+        };
         
         Rules.AlwaysScheduleAlternatesOverWeekends(monthScheduleParameters, _engineMock.Object);
 
@@ -294,6 +304,9 @@ public class RulesShould
                             });
                     });
             });
+
+        Assert.Equal(DayOfWeek.Friday, month.Previous.Days.Last().DayOfWeek);
+        Assert.Contains(new ShiftAssignment(Employee1, new Day(month, 2), Workplace1), capturedShiftsVariable);
     }
 
     [Fact]

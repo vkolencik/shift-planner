@@ -182,6 +182,23 @@ internal static class Rules
                 }
             }
         }
+
+        void EnforceAlternatesFromLastMonth(Day lastMonthDay)
+        {
+            if (lastMonthDay.DayOfWeek == DayOfWeek.Friday)
+            {
+                var shiftsOnFriday = monthScheduleParameters.LastMonthShifts.Where(s => s.Shift.Day == lastMonthDay);
+                var sunday = new Day(lastMonthDay.Date.AddDays(2));
+                foreach (var fridayShift in shiftsOnFriday)
+                {
+                    engine.AddVariableConstraint(new ShiftAssignment(fridayShift.Employee, sunday, fridayShift.Shift.Workplace), Constraint.Eq, 1);
+                }
+            }
+        }
+
+        var previousMonthDays = monthScheduleParameters.Month.Previous.Days;
+        EnforceAlternatesFromLastMonth(previousMonthDays.Last());
+        EnforceAlternatesFromLastMonth(previousMonthDays.ElementAt(previousMonthDays.Count - 2));
     }
 
     private static void LimitShiftsOnDays(
