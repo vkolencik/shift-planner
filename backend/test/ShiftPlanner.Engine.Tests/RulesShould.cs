@@ -124,10 +124,28 @@ public class RulesShould
     public void DisallowShiftsOnAlternateDaysExceptWeekends()
     {
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
+        var capturedShiftsZero = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsZero), Constraint.Eq, 0));
 
-        Rules.NoAlternativeDayShiftsForEmployee(SolverParametersOneWeek, _engineMock.Object);
+        var day1 = _scheduledMonth.Days.ElementAt(0);
+        var day2 = _scheduledMonth.Days.ElementAt(1);
+        var firstFriday = _scheduledMonth.Days.First(d => d.DayOfWeek == DayOfWeek.Friday);
+        var firstSunday = _scheduledMonth.Days.SkipWhile(d => d.DayOfWeek != DayOfWeek.Friday).First(d => d.DayOfWeek == DayOfWeek.Sunday);
+        var previousMonthDays = _scheduledMonth.Previous.Days;
+        
+        var monthScheduleParameters = MonthScheduleParameters with
+        {
+            LastMonthShifts = new []
+            {
+                new ShiftAssignment(Employee1, previousMonthDays.ElementAt(previousMonthDays.Count - 1), Workplace1),
+                new ShiftAssignment(Employee2, previousMonthDays.ElementAt(previousMonthDays.Count - 2), Workplace1),
+            }
+        };
 
+        Rules.NoAlternativeDayShiftsForEmployee(monthScheduleParameters, _engineMock.Object);
+
+        // alternating shift within month:
         Assert.Contains(
             new HashSet<ShiftAssignment>
             {
@@ -137,14 +155,30 @@ public class RulesShould
                 new ShiftAssignment(Employee1, Day3, Workplace2)
             }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
 
+        // alternating shift within month:
         Assert.DoesNotContain(
             new HashSet<ShiftAssignment>
             {
-                new ShiftAssignment(Employee1, Day4Friday, Workplace1),
-                new ShiftAssignment(Employee1, Day4Friday, Workplace2),
-                new ShiftAssignment(Employee1, Day6Sunday, Workplace1),
-                new ShiftAssignment(Employee1, Day6Sunday, Workplace2)
+                new ShiftAssignment(Employee1, firstFriday, Workplace1),
+                new ShiftAssignment(Employee1, firstFriday, Workplace2),
+                new ShiftAssignment(Employee1, firstSunday, Workplace1),
+                new ShiftAssignment(Employee1, firstSunday, Workplace2)
             }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
+
+        // alternating shifts from last month:
+        Assert.Contains(
+            new HashSet<ShiftAssignment>
+            {
+                new ShiftAssignment(Employee1, Day2, Workplace1),
+                new ShiftAssignment(Employee1, Day2, Workplace2),
+            }, capturedShiftsZero.Select(x => new HashSet<ShiftAssignment>(x)));
+
+        Assert.Contains(
+            new HashSet<ShiftAssignment>
+            {
+                new ShiftAssignment(Employee2, Day1, Workplace1),
+                new ShiftAssignment(Employee2, Day1, Workplace2),
+            }, capturedShiftsZero.Select(x => new HashSet<ShiftAssignment>(x)));
     }
 
     [Fact]

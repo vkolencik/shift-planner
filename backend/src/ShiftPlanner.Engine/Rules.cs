@@ -62,11 +62,11 @@ internal static class Rules
         }
     }
 
-    public static void NoAlternativeDayShiftsForEmployee(SolverParameters schedulingParameters, ISchedulingEngine engine)
+    public static void NoAlternativeDayShiftsForEmployee(MonthScheduleParameters schedulingParameters, ISchedulingEngine engine)
     {
         foreach (var employee in schedulingParameters.Employees)
         {
-            foreach (var (day1, day3) in schedulingParameters.Days.Zip(schedulingParameters.Days.Skip(2)))
+            foreach (var (day1, day3) in schedulingParameters.Month.Days.Zip(schedulingParameters.Month.Days.Skip(2)))
             {
                 if (day1.Date.DayOfWeek == DayOfWeek.Friday)
                 {
@@ -80,8 +80,34 @@ internal static class Rules
                 engine.AddSumConstraint(employeesShiftsInAlternateDays, Constraint.Lte, 1);
             }
         }
-    }
+        
+        var previousMonthDays = schedulingParameters.Month.Previous.Days;
+        
+        var lastDayOfPreviousMonth = previousMonthDays.Last();
+        if (lastDayOfPreviousMonth.DayOfWeek != DayOfWeek.Friday)
+        {
+            ForbidShiftsOnDayWhenDay(lastDayOfPreviousMonth, schedulingParameters.Month.Days.ElementAt(1));
+        }
 
+        var penultimateDayOfPreviousMonth = previousMonthDays.ElementAt(previousMonthDays.Count - 2);
+        if (lastDayOfPreviousMonth.DayOfWeek != DayOfWeek.Friday)
+        {
+            ForbidShiftsOnDayWhenDay(penultimateDayOfPreviousMonth, schedulingParameters.Month.Days.ElementAt(0));
+        }
+
+        void ForbidShiftsOnDayWhenDay(Day previousMonthDay, Day thisMonthDay)
+        {
+            var shiftsOnPreviousMonthDay = schedulingParameters.LastMonthShifts.Where(s => s.Shift.Day == previousMonthDay);
+            foreach (var employee in new HashSet<Employee>(shiftsOnPreviousMonthDay.Select(s => s.Employee)))
+            {
+                var shiftsOnFirstDay = schedulingParameters.Workplaces
+                    .Select(w => new ShiftAssignment(employee, thisMonthDay, w))
+                    .ToArray();
+
+                engine.AddSumConstraint(shiftsOnFirstDay, Constraint.Eq, 0);
+            }
+        }
+    }
 
     public static void EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(MonthScheduleParameters monthScheduleParameters, IReadOnlyCollection<Day> days, ISchedulingEngine engine)
     {

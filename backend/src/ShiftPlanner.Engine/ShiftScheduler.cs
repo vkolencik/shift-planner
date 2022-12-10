@@ -19,7 +19,7 @@ public class ShiftScheduler
 
             Rules.NoConsecutiveShiftsForEmployee(monthScheduleParameters, engine);
 
-            Rules.NoAlternativeDayShiftsForEmployee(solverParameters, engine);
+            Rules.NoAlternativeDayShiftsForEmployee(monthScheduleParameters, engine);
 
             Rules.LimitWeekendShifts(monthScheduleParameters, engine);
 
