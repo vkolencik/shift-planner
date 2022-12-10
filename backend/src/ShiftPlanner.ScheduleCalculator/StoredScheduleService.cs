@@ -15,7 +15,7 @@ class StoredScheduleService : IStoredScheduleService
         _lastMonthSchedule = lastMonthSchedule;
     }
 
-    public async Task<Schedule> GetSchedule(ScheduledMonth month)
+    public async Task<IReadOnlyCollection<ShiftAssignment>> GetSchedule(ScheduledMonth month)
     {
         if (month != new ScheduledMonth(2022, 12))
         {
@@ -24,7 +24,7 @@ class StoredScheduleService : IStoredScheduleService
         
         var employeeInfos = (await _employeeInfoService.GetEmployees(Workplace.Workplaces)).ToArray();
 
-        return Schedule.CreateSchedule(_lastMonthSchedule.Select(sbe => GetShiftAssignment(sbe, employeeInfos)));
+        return _lastMonthSchedule.Select(sbe => GetShiftAssignment(sbe, employeeInfos)).ToArray();
     }
 
     private ShiftAssignment GetShiftAssignment(ShiftAssignmentByEmail assignmentByEmail, IReadOnlyList<EmployeeInfo> employeeInfos)

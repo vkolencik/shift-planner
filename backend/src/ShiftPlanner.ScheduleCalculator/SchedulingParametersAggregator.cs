@@ -44,11 +44,15 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
                 ))
             .ToArray();
 
+        var previousMonth = month.Previous;
+        var existingShifts = await _storedScheduleService.GetSchedule(previousMonth);
+        
         return new MonthScheduleParameters(
             month,
             employeeMonths,
             CompetenceGroup.CompetenceGroups,
-            await _storedScheduleService.GetSchedule(month.Previous));
+            existingShifts.Where(s => s.Shift.Day.Month == previousMonth.Month).ToArray(),
+            existingShifts.Where(s => s.Shift.Day.Month == month.Month).ToArray());
     }
 
     private IReadOnlyCollection<Leave> GetLeavesForEmployee(IReadOnlyCollection<UserRequirementModel> employeeRequirements, string userId) =>

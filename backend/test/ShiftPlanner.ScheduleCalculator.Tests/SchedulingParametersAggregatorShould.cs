@@ -45,11 +45,17 @@ public class SchedulingParametersAggregatorShould
         var leave2 = new Leave(month.Days.Skip(10).First(), month.Days.Skip(10).First());
         var leave3 = new Leave(month.Days.Skip(20).First(), month.Days.Skip(20).First());
 
-        var lastMonthSchedule = Schedule.CreateSchedule(
-            new[]
-            {
-                new ShiftAssignment(employee1, new Day(lastMonth, 30), workplace)
-            });
+        var lastMonthShifts = new[]
+        {
+            new ShiftAssignment(employee1, new Day(lastMonth, 30), workplace)
+        };
+
+        var fixedShifts = new[]
+        {
+            new ShiftAssignment(employee1, new Day(month, 1), workplace)
+        };
+        
+        var lastMonthSchedule = lastMonthShifts.Concat(fixedShifts).ToArray();
 
         _employeeInfoServiceMock
             .Setup(_ => _.GetEmployees(Workplace.Workplaces))
@@ -66,20 +72,20 @@ public class SchedulingParametersAggregatorShould
                 new UserRequirementModel[]
                 {
                     // Counted as "not available":
-                    new UserRequirementModel(user1.UserId, "", leave1.From, "leave", true), 
-                    new UserRequirementModel(user1.UserId, "", leave2.From, "hard-no", true), 
-                    new UserRequirementModel(user1.UserId, "", leave3.From, "only-morning", true), 
-                    
+                    new UserRequirementModel(user1.UserId, "", leave1.From, "leave", true),
+                    new UserRequirementModel(user1.UserId, "", leave2.From, "hard-no", true),
+                    new UserRequirementModel(user1.UserId, "", leave3.From, "only-morning", true),
+
                     // Counted as "available":
-                    new UserRequirementModel(user1.UserId, "", month.Days.Skip(7).First(), "only-afternoon", true), 
-                    new UserRequirementModel(user1.UserId, "", month.Days.Skip(8).First(), "soft-yes", true), 
-                    new UserRequirementModel(user2.UserId, "", month.Days.Skip(17).First(), "only-afternoon", true), 
-                    new UserRequirementModel(user2.UserId, "", month.Days.Skip(18).First(), "soft-yes", true), 
+                    new UserRequirementModel(user1.UserId, "", month.Days.Skip(7).First(), "only-afternoon", true),
+                    new UserRequirementModel(user1.UserId, "", month.Days.Skip(8).First(), "soft-yes", true),
+                    new UserRequirementModel(user2.UserId, "", month.Days.Skip(17).First(), "only-afternoon", true),
+                    new UserRequirementModel(user2.UserId, "", month.Days.Skip(18).First(), "soft-yes", true),
                 });
 
         _usersServiceMock
             .Setup(_ => _.GetAllUsers())
-            .ReturnsAsync(new [] { new User(user1.UserId, user1.UserName, user1.Email), new User(user2.UserId, user2.UserName, user2.Email)});
+            .ReturnsAsync(new[] {new User(user1.UserId, user1.UserName, user1.Email), new User(user2.UserId, user2.UserName, user2.Email)});
 
         _storedScheduleServiceMock.Setup(_ => _.GetSchedule(lastMonth)).ReturnsAsync(lastMonthSchedule);
 
@@ -99,6 +105,7 @@ public class SchedulingParametersAggregatorShould
         Assert.Equal(expectedEmployeeMonths.Skip(1).First().Employee, parameters.EmployeeMonths.Skip(1).First().Employee);
         Assert.Equal(expectedEmployeeMonths.Skip(1).First().Leaves, parameters.EmployeeMonths.Skip(1).First().Leaves);
         Assert.Equal(CompetenceGroup.CompetenceGroups, parameters.CompetenceGroups);
-        Assert.Equal(new HashSet<ShiftAssignment>(lastMonthSchedule.Shifts), new HashSet<ShiftAssignment>(parameters.LastMonthSchedule.Shifts));
+        Assert.Equal(new HashSet<ShiftAssignment>(lastMonthShifts), new HashSet<ShiftAssignment>(parameters.LastMonthShifts));
+        Assert.Equal(new HashSet<ShiftAssignment>(fixedShifts), new HashSet<ShiftAssignment>(parameters.FixedShifts));
     }
 }

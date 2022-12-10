@@ -32,7 +32,8 @@ public class EmployeeStandardRuleShould
                 new EmployeeMonth(Employee2)
             },
             new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})},
-            Schedule.Empty,
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ShiftAssignment>(),
             ScheduleFlexibility.Strict);
 
         var standard = (double) schedulingParams.Month.Days.Count * schedulingParams.Workplaces.Count / schedulingParams.Employees.Count;
@@ -67,7 +68,8 @@ public class EmployeeStandardRuleShould
                 new EmployeeMonth(Employee2),
             },
             new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})},
-            Schedule.Empty,
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ShiftAssignment>(),
             ScheduleFlexibility.Strict);
 
         var v = (double) 2 * 28;
@@ -117,7 +119,8 @@ public class EmployeeStandardRuleShould
             {
                 new CompetenceGroup(new[] {Workplace1, Workplace2})
             },
-            Schedule.Empty,
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ShiftAssignment>(),
             ScheduleFlexibility.Strict
         );
 
@@ -154,7 +157,8 @@ public class EmployeeStandardRuleShould
             {
                 new CompetenceGroup(new[] {Workplace1})
             },
-            Schedule.Empty,
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ShiftAssignment>(),
             ScheduleFlexibility.Strict
         );
 
@@ -188,7 +192,8 @@ public class EmployeeStandardRuleShould
             {
                 new CompetenceGroup(new[] {Workplace1})
             },
-            Schedule.Empty,
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ShiftAssignment>(),
             ScheduleFlexibility.Strict
         );
 
@@ -234,7 +239,8 @@ public class EmployeeStandardRuleShould
             {
                 new CompetenceGroup(new[] {Workplace1})
             },
-            Schedule.Empty,
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ShiftAssignment>(),
             ScheduleFlexibility.Strict
         );
 
