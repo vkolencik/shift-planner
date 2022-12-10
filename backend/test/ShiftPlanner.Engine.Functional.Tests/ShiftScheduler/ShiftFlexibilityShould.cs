@@ -42,7 +42,8 @@ public class ShiftFlexibilityShould
                                     }),
                                 Workload.Infinite)))
                 ).ToArray(),
-            new[] {new CompetenceGroup(new[] {workplaceA, workplaceB})});
+            new[] {new CompetenceGroup(new[] {workplaceA, workplaceB})},
+            Schedule.Empty);
 
         var result = scheduler.ComputeSchedule(parameters);
 
