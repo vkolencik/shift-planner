@@ -55,7 +55,8 @@ public class ShiftScheduler
             monthScheduleParameters.Month,
             monthScheduleParameters.EmployeeMonths,
             monthScheduleParameters.CompetenceGroups,
-            monthScheduleParameters.LastMonthSchedule,
+            monthScheduleParameters.LastMonthShifts,
+            monthScheduleParameters.FixedShifts,
             flexiblity);
     }
 

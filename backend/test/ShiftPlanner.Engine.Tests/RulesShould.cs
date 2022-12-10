@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using ShiftPlanner.Domain;
@@ -21,7 +22,8 @@ public class RulesShould
             new EmployeeMonth(Employee3)
         },
         new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})},
-        Schedule.Empty);
+        Array.Empty<ShiftAssignment>(),
+        Array.Empty<ShiftAssignment>());
 
     private static IEnumerable<Workplace> Workplaces => new[] {Workplace1, Workplace2};
 

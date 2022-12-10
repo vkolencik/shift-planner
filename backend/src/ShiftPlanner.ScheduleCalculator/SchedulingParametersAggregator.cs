@@ -3,7 +3,6 @@ using ShiftPlanner.Api.Services;
 using ShiftPlanner.Api.Services.Users;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Domain.Services;
-using ShiftPlanner.GoogleSheet;
 
 namespace ShiftPlanner.ScheduleCalculator;
 
@@ -45,11 +44,15 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
                 ))
             .ToArray();
 
+        var previousMonth = month.Previous;
+        var existingShifts = await _storedScheduleService.GetSchedule(previousMonth);
+        
         return new MonthScheduleParameters(
             month,
             employeeMonths,
             CompetenceGroup.CompetenceGroups,
-            _storedScheduleService.GetSchedule(month.Previous));
+            existingShifts.Where(s => s.Shift.Day.Month == previousMonth.Month).ToArray(),
+            existingShifts.Where(s => s.Shift.Day.Month == month.Month).ToArray());
     }
 
     private IReadOnlyCollection<Leave> GetLeavesForEmployee(IReadOnlyCollection<UserRequirementModel> employeeRequirements, string userId) =>
@@ -58,9 +61,4 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
             .Where(req => AbsenceRequirementTypes.Contains(req.RequirementType))
             .Select(req => new Leave(req.Date, req.Date))
             .ToArray();
-}
-
-public interface IStoredScheduleService
-{
-    Schedule GetSchedule(ScheduledMonth month);
 }

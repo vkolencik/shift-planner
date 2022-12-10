@@ -341,7 +341,8 @@ public class ComputedScheduleShould
                 new ScheduledMonth(2022, 2),
                 oddWeekLeaveEmployees.Concat(evenWeekLeaveEmployees).ToArray(),
                 new[] {new CompetenceGroup(new[] {Aro1})},
-                Schedule.Empty
+                Array.Empty<ShiftAssignment>(),
+                Array.Empty<ShiftAssignment>()
             ));
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
         Assert.Equal(successResult.Flexibility, ScheduleFlexibility.Strict);
@@ -410,7 +411,8 @@ public class ComputedScheduleShould
                 new ScheduledMonth(2022, 2),
                 _employeeMonths,
                 _competenceGroups,
-                Schedule.Empty
+                Array.Empty<ShiftAssignment>(),
+                Array.Empty<ShiftAssignment>()
             ));
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
         Assert.True(successResult.Flexibility.Degree <= 1, $"Scheduler was forced to use too much flexibility (flexibility degree: {successResult.Flexibility.Degree})");

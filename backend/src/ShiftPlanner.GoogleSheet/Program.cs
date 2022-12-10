@@ -45,7 +45,8 @@ static class Program
             scheduledMonth,
             employees.Select(e => new EmployeeMonth(e)).ToArray(),
             competenceGroups,
-            Schedule.Empty);
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ShiftAssignment>());
 
         var scheduler = new ShiftScheduler();
 
@@ -133,6 +134,7 @@ static class Program
             {
                 continue;
             }
+
             var competenceLevel = (CompetenceLevel) (int.Parse((string) row[2]));
 
             var capabilities = workplaces
