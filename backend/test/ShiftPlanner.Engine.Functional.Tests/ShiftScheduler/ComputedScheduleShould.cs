@@ -441,6 +441,7 @@ public class ComputedScheduleShould
         var schedule = ComputeSchedule(monthScheduleParameters);
 
         Assert.Equal(Aro1, schedule.Shifts.Single(s => s.Employee == lastMonthFridayEmployee && s.Shift.Day == new Day(_scheduledMonth, 2)).Shift.Workplace);
+        Assert.Empty(schedule.Shifts.Where(s => s.Employee == lastMonthFridayEmployee && s.Shift.Day == new Day(_scheduledMonth, 1)));
         Assert.Empty(schedule.Shifts.Where(s => s.Employee == lastMonthThursdayEmployee && s.Shift.Day == new Day(_scheduledMonth, 1)));
     }
 

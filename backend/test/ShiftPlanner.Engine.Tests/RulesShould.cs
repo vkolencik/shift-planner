@@ -67,33 +67,57 @@ public class RulesShould
         Assert.Contains(new[] {new ShiftAssignment(Employee2, Day1, Workplace1), new ShiftAssignment(Employee2, Day1, Workplace2)}, capturedShifts);
         Assert.Contains(new[] {new ShiftAssignment(Employee2, Day2, Workplace1), new ShiftAssignment(Employee2, Day2, Workplace2)}, capturedShifts);
     }
-
+    
     [Fact]
     public void DisallowConsecutiveShiftsForEmployee()
     {
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
+        var capturedShiftsZero = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsZero), Constraint.Eq, 0));
 
-        Rules.NoConsecutiveShiftsForEmployee(MonthScheduleParameters, _engineMock.Object);
+        var previousMonthDays = _scheduledMonth.Previous.Days;
+        var parameters = MonthScheduleParameters with
+        {
+            LastMonthShifts = new []
+            {
+                new ShiftAssignment(Employee1, previousMonthDays.ElementAt(previousMonthDays.Count - 1), Workplace1),
+            }
+        };
+        
+        Rules.NoConsecutiveShiftsForEmployee(parameters, _engineMock.Object);
 
-        Assert.Equal(MonthScheduleParameters.Employees.Count * (_scheduledMonth.Days.Count - 1), capturedShifts.Count);
+        Assert.Equal(parameters.Employees.Count * (_scheduledMonth.Days.Count - 1), capturedShifts.Count);
+        var day1 = _scheduledMonth.Days.ElementAt(0);
+        var day2 = _scheduledMonth.Days.ElementAt(1);
+        
+        // consecutive shift within month:
+        Assert.Contains(
+            new HashSet<ShiftAssignment>
+            {
+                new ShiftAssignment(Employee1, day1, Workplace1),
+                new ShiftAssignment(Employee1, day1, Workplace2),
+                new ShiftAssignment(Employee1, day2, Workplace1),
+                new ShiftAssignment(Employee1, day2, Workplace2)
+            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
+
+        // consecutive shift within month:
+        Assert.Contains(
+            new HashSet<ShiftAssignment>
+            {
+                new ShiftAssignment(Employee2, day1, Workplace1),
+                new ShiftAssignment(Employee2, day1, Workplace2),
+                new ShiftAssignment(Employee2, day2, Workplace1),
+                new ShiftAssignment(Employee2, day2, Workplace2)
+            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
+
+        // consecutive shift from last month:
         Assert.Contains(
             new HashSet<ShiftAssignment>
             {
                 new ShiftAssignment(Employee1, Day1, Workplace1),
                 new ShiftAssignment(Employee1, Day1, Workplace2),
-                new ShiftAssignment(Employee1, Day2, Workplace1),
-                new ShiftAssignment(Employee1, Day2, Workplace2)
-            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
-
-        Assert.Contains(
-            new HashSet<ShiftAssignment>
-            {
-                new ShiftAssignment(Employee2, Day1, Workplace1),
-                new ShiftAssignment(Employee2, Day1, Workplace2),
-                new ShiftAssignment(Employee2, Day2, Workplace1),
-                new ShiftAssignment(Employee2, Day2, Workplace2)
-            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
+            }, capturedShiftsZero.Select(x => new HashSet<ShiftAssignment>(x)));
     }
 
     [Fact]

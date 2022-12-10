@@ -48,6 +48,18 @@ internal static class Rules
                 engine.AddSumConstraint(employeesShiftsInTwoDays, Constraint.Lte, 1);
             }
         }
+
+        var firstDayOfMonth = schedulingParameters.Month.Days.First();
+        var lastDayOfPreviousMonth = schedulingParameters.Month.Previous.Days.Last();
+        var shiftsOnTheLastDayOfPreviousMonth = schedulingParameters.LastMonthShifts.Where(s => s.Shift.Day == lastDayOfPreviousMonth);
+        foreach (var employee in new HashSet<Employee>(shiftsOnTheLastDayOfPreviousMonth.Select(s => s.Employee)))
+        {
+            var shiftsOnFirstDay = schedulingParameters.Workplaces
+                .Select(w => new ShiftAssignment(employee, firstDayOfMonth, w))
+                .ToArray();
+            
+            engine.AddSumConstraint(shiftsOnFirstDay, Constraint.Eq, 0);
+        }
     }
 
     public static void NoAlternativeDayShiftsForEmployee(SolverParameters schedulingParameters, ISchedulingEngine engine)
