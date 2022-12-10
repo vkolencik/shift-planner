@@ -161,4 +161,12 @@ internal static class Rules
             engine.AddSumConstraint(shiftsOnTheWeekday, Constraint.Lte, limit);
         }
     }
+
+    public static void EnforceFixedShifts(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
+    {
+        foreach (var fixedShift in monthScheduleParameters.FixedShifts)
+        {
+            engine.AddVariableConstraint(fixedShift, Constraint.Eq, 1);
+        }
+    }
 }
