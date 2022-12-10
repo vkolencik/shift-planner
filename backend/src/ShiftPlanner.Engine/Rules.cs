@@ -100,11 +100,11 @@ internal static class Rules
             var shiftsOnPreviousMonthDay = schedulingParameters.LastMonthShifts.Where(s => s.Shift.Day == previousMonthDay);
             foreach (var employee in new HashSet<Employee>(shiftsOnPreviousMonthDay.Select(s => s.Employee)))
             {
-                var shiftsOnFirstDay = schedulingParameters.Workplaces
+                var shiftsOnDay = schedulingParameters.Workplaces
                     .Select(w => new ShiftAssignment(employee, thisMonthDay, w))
                     .ToArray();
 
-                engine.AddSumConstraint(shiftsOnFirstDay, Constraint.Eq, 0);
+                engine.AddSumConstraint(shiftsOnDay, Constraint.Eq, 0);
             }
         }
     }

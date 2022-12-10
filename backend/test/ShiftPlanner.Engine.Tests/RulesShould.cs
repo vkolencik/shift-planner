@@ -268,7 +268,12 @@ public class RulesShould
 
         _engineMock.Setup(_ => _.AddSumRelationConstraint(Capture.In(capturedShiftsLhs), Constraint.Eq, Capture.In(capturedShiftsRhs)));
 
-        Rules.AlwaysScheduleAlternatesOverWeekends(MonthScheduleParameters, _engineMock.Object);
+        var month = new ScheduledMonth(2021, 1);
+        var fridays = month.Days.Where(d => d.DayOfWeek == DayOfWeek.Friday).Select(d => d.DayOfMonth);
+        var sundays = month.Days.SkipWhile(d => d.DayOfWeek != DayOfWeek.Friday).Where(d => d.DayOfWeek == DayOfWeek.Sunday).Select(d => d.DayOfMonth);
+        var monthScheduleParameters = MonthScheduleParameters with {Month = month};
+        
+        Rules.AlwaysScheduleAlternatesOverWeekends(monthScheduleParameters, _engineMock.Object);
 
         Assert.All(
             new[] {Employee1, Employee2, Employee3}, employee =>
@@ -277,14 +282,14 @@ public class RulesShould
                     Workplaces, workplace =>
                     {
                         Assert.All<(int, int)>(
-                            _fridays.Zip(_sundays), tuple =>
+                            fridays.Zip(sundays), tuple => 
                             {
                                 var (friday, sunday) = tuple;
                                 Assert.Contains(
-                                    new HashSet<ShiftAssignment> {new ShiftAssignment(employee, new Day(2022, 2, friday), workplace)},
+                                    new HashSet<ShiftAssignment> {new ShiftAssignment(employee, new Day(month, friday), workplace)},
                                     capturedShiftsLhs.Select(_ => _.ToHashSet()));
                                 Assert.Contains(
-                                    new HashSet<ShiftAssignment> {new ShiftAssignment(employee, new Day(2022, 2, sunday), workplace)},
+                                    new HashSet<ShiftAssignment> {new ShiftAssignment(employee, new Day(month, sunday), workplace)},
                                     capturedShiftsRhs.Select(_ => _.ToHashSet()));
                             });
                     });
