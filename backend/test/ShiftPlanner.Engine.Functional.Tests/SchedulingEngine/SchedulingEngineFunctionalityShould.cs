@@ -27,7 +27,7 @@ namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
 
             var result = engine.Solve();
 
-            var schedule = Assert.IsType<Schedule>(result);
+            var schedule = Assert.IsType<PlannedSchedule>(result);
 
             for (int d = 1; d <= 28; d++)
             {

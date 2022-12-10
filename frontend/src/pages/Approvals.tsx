@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { MonthRequirements, requirementTypes, useApi } from '../requirements/api'
-import { currentMonth, currentYear, formatDate, getCurrentMonthString, toDay } from '../dates'
+import { MonthRequirements, useApi } from '../service/api'
+import { Day, formatDate, getCurrentMonth, getMonthLabel, toDay } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { aggregateRequirements } from '../requirements/aggregate-requirements'
-import { Alert, Badge, Button, FormCheck, Table } from 'react-bootstrap'
-import { FaUser } from 'react-icons/fa'
+import { Alert, Badge, Button, Table } from 'react-bootstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 import Modal from 'react-bootstrap/Modal'
 
-type RequirementCoords = { userName: string, day: string }
+type RequirementCoords = { userName: string, day: Day }
 
 export function Approvals () {
   const [requirements, setRequirements] = useState<MonthRequirements | null>(null)
@@ -16,7 +17,7 @@ export function Approvals () {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.getMonth(currentYear, currentMonth)
+      api.requirements.getMonth(getCurrentMonth())
         .then(r => setRequirements(r))
     }
   }, [requirements])
@@ -46,7 +47,7 @@ export function Approvals () {
       throw new Error('Cannot find user to delete for')
     }
 
-    api.requirements.deleteForUser(userId, toDay(requirementToDelete.day))
+    api.requirements.delete(userId, toDay(requirementToDelete.day))
       .then(() => {
         setRequirementToDelete(null)
         setRequirements(oldRequirements => oldRequirements?.filter(r => !(r.userId === userId && r.date === requirementToDelete.day)) || null)
@@ -83,14 +84,14 @@ export function Approvals () {
   }
 
   return <>
-    <h1>Schvalování dovolených pro {getCurrentMonthString()}</h1>
+    <h1>Schvalování dovolených pro {getMonthLabel(getCurrentMonth())}</h1>
     <div className="form-check form-switch mb-3">
       <input className="form-check-input" type="checkbox" id="switchHideApproved" onChange={handleChangeHideApproved}/>
       <label className="form-check-label" htmlFor="switchHideApproved">Skrýt schválené</label>
     </div>
     {userNames.length === 0 && <Alert variant="dark">Nejsou žádné dovolené ke schválení</Alert>}
     {userNames.map(userName => (<>
-      <h2 key={'header-' + userName}><FaUser style={{ fontSize: '80%' }}/> {userName}</h2>
+      <h2 key={'header-' + userName}><FontAwesomeIcon icon={faUser} style={{ fontSize: '80%' }}/>{userName}</h2>
       <Table striped bordered hover className="table-fit" key={'table' + userName}>
         <thead>
         <tr>

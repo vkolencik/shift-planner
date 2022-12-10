@@ -1,0 +1,10 @@
+### Auth
+POST https://krtek.eu.auth0.com/oauth/token
+Content-Type: application/json
+
+< ./auth-payload.json
+> ./store-auth-token.js
+
+### Get list of users
+GET {{backendBaseUrl}}/api/fnb/users/
+Authorization: Bearer {{accessToken}}

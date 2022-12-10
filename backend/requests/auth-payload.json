@@ -1,0 +1,9 @@
+{
+  "grant_type": "password",
+  "audience": "https://b.krtek.me",
+  "scope": "",
+  "username": "{{testUserName}}",
+  "password": "{{testUserPassword}}",
+  "client_id": "{{clientId}}",
+  "client_secret": "{{clientSecret}}"
+}

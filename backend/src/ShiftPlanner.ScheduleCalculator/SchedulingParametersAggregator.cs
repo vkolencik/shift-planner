@@ -1,9 +1,8 @@
 ﻿using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Services;
-using ShiftPlanner.Api.Services.Users;
+using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
-using ShiftPlanner.Domain.Services;
-using ShiftPlanner.GoogleSheet;
+using ShiftPlanner.Services;
 
 namespace ShiftPlanner.ScheduleCalculator;
 
@@ -31,7 +30,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
     {
         var employeeInfos = await _employeeInfoService.GetEmployees(Workplace.Workplaces);
 
-        var activeEmployeeInfos = employeeInfos.Where(e => !e.Disabled);
+        var activeEmployeeInfos = employeeInfos.Where(e => e.EmployeeStatus == EmployeeStatus.Active);
 
         var employeeRequirements = await _requirementsService.GetRequirementsOverviewForMonth(tenant, month);
 
@@ -45,22 +44,33 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
                 ))
             .ToArray();
 
+        var previousMonth = month.Previous;
+        var existingShifts = (await _storedScheduleService.GetSchedule(previousMonth)).Shifts;
+        
         return new MonthScheduleParameters(
             month,
             employeeMonths,
             CompetenceGroup.CompetenceGroups,
-            _storedScheduleService.GetSchedule(month.Previous));
+            existingShifts.
+                Where(s => s.Day.Month == previousMonth.Month)
+                .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
+                .ToArray(),
+            existingShifts
+                .Where(ss => ss.Day.Month == month.Month)
+                .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
+                .ToArray(),
+            Workplace.WeekendInterchangeabilityGroups);
     }
 
+    private Employee GetEmployeeFromInfo(EmployeeInfo ei)
+    {
+        return new Employee(ei.Name, ei.CompetenceLevel, ei.Capabilities, ei.Workload);
+    }
+    
     private IReadOnlyCollection<Leave> GetLeavesForEmployee(IReadOnlyCollection<UserRequirementModel> employeeRequirements, string userId) =>
         employeeRequirements
             .Where(req => req.UserId == userId)
             .Where(req => AbsenceRequirementTypes.Contains(req.RequirementType))
-            .Select(req => new Leave(req.Date, req.Date))
+            .Select(req => new Leave(req.Date, req.Date, req.RequirementType == "leave"))
             .ToArray();
-}
-
-public interface IStoredScheduleService
-{
-    Schedule GetSchedule(ScheduledMonth month);
 }

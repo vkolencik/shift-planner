@@ -8,7 +8,8 @@ const PermissionsContext = createContext<Permission[] | null>(null)
 
 export enum Permission {
   readRequirementsOfOthers = 'read:requirements_of_others',
-  approveRequirementsOfOthers = 'approve:requirements_of_others'
+  approveRequirementsOfOthers = 'approve:requirements_of_others',
+  modifyRequirementsOfOthers = 'modify:requirements_of_others'
 }
 
 export const usePermissions = (): Permission[] => {
@@ -46,7 +47,7 @@ export const WithAuth: React.FC<PropsWithChildren> = ({ children }) => {
 
           const invalidPermissions = loadedPermissions.filter(p => !Object.values(Permission).includes(p))
           if (invalidPermissions.length > 0) {
-            throw new Error(`Unknown permissions found: ${invalidPermissions}`)
+            console.error(`Unknown permissions found: ${invalidPermissions}`)
           }
 
           setPermissions(loadedPermissions)
@@ -56,6 +57,9 @@ export const WithAuth: React.FC<PropsWithChildren> = ({ children }) => {
 
   if (!isAuthenticated) {
     return <div className="d-flex flex-column min-vh-100 h-100 d-flex align-items-center justify-content-center">
+      <img
+        style={{height: '70vh', maxHeight: '400px'}}
+        src='https://krtek-assets-720500131615.s3.eu-central-1.amazonaws.com/krtek1.svg'/>
       <Button onClick={() => loginWithRedirect()}>Login</Button>
     </div>
   }

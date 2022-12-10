@@ -1,10 +1,10 @@
 using Moq;
 using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Services;
-using ShiftPlanner.Api.Services.Users;
+using ShiftPlanner.Contracts;
+using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
-using ShiftPlanner.Domain.Services;
-using ShiftPlanner.GoogleSheet;
+using ShiftPlanner.Services;
 using ShiftPlanner.TestHelpers;
 
 namespace ShiftPlanner.ScheduleCalculator.Tests;
@@ -41,23 +41,33 @@ public class SchedulingParametersAggregatorShould
         var employee2 = new Employee("e2", CompetenceLevel.Level2, e2Capabilities, Workload.Workload06);
         var user2 = new User("uid2", "u2", "eml2@krtek.me");
 
-        var leave1 = new Leave(month.Days.First(), month.Days.First());
-        var leave2 = new Leave(month.Days.Skip(10).First(), month.Days.Skip(10).First());
-        var leave3 = new Leave(month.Days.Skip(20).First(), month.Days.Skip(20).First());
+        var employee3 = new Employee("e3", CompetenceLevel.Level3, e2Capabilities, Workload.Workload06);
+        var user3 = new User("uid3", "u3", "eml3@krtek.me");
 
-        var lastMonthSchedule = Schedule.CreateSchedule(
-            new[]
-            {
-                new ShiftAssignment(employee1, new Day(lastMonth, 30), workplace)
-            });
+        var employee4 = new Employee("e4", CompetenceLevel.Level4, e2Capabilities, Workload.Workload06);
+        var user4 = new User("uid4", "u4", "eml4@krtek.me");
+
+        var leave1 = new Leave(month.Days.First(), month.Days.First());
+        var leave2 = new Leave(month.Days.Skip(10).First(), month.Days.Skip(10).First(), false);
+        var leave3 = new Leave(month.Days.Skip(20).First(), month.Days.Skip(20).First(), false);
+
+        var lastMonthShifts = new[] {new ScheduledShift(new Day(lastMonth, 30), workplace, user1)};
+        var expectedLastMonthShifts = new[] {new ShiftAssignment(employee1, new Day(lastMonth, 30), workplace)};
+
+        var fixedShifts = new[] {new ScheduledShift(new Day(month, 1), workplace, user1)};
+        var expectedFixedShifts = new[] {new ShiftAssignment(employee1, new Day(month, 1), workplace)};
+        
+        var lastMonthSchedule = new Schedule(lastMonthShifts.Concat(fixedShifts).ToArray());
 
         _employeeInfoServiceMock
             .Setup(_ => _.GetEmployees(Workplace.Workplaces))
             .ReturnsAsync(
                 new[]
                 {
-                    new EmployeeInfo(employee1.Name, user1.Email, employee1.CompetenceLevel, employee1.Capabilities, employee1.Workload, false),
-                    new EmployeeInfo(employee2.Name, user2.Email, employee2.CompetenceLevel, employee2.Capabilities, employee2.Workload, false),
+                    new EmployeeInfo(employee1.Name, user1.Email, employee1.CompetenceLevel, employee1.Capabilities, employee1.Workload, EmployeeStatus.Active),
+                    new EmployeeInfo(employee2.Name, user2.Email, employee2.CompetenceLevel, employee2.Capabilities, employee2.Workload, EmployeeStatus.Active),
+                    new EmployeeInfo(employee3.Name, user3.Email, employee3.CompetenceLevel, employee3.Capabilities, employee3.Workload, EmployeeStatus.Inactive),
+                    new EmployeeInfo(employee4.Name, user4.Email, employee4.CompetenceLevel, employee4.Capabilities, employee4.Workload, EmployeeStatus.Disabled),
                 });
 
         _requirementsServiceMock
@@ -66,22 +76,28 @@ public class SchedulingParametersAggregatorShould
                 new UserRequirementModel[]
                 {
                     // Counted as "not available":
-                    new UserRequirementModel(user1.UserId, "", leave1.From, "leave", true), 
-                    new UserRequirementModel(user1.UserId, "", leave2.From, "hard-no", true), 
-                    new UserRequirementModel(user1.UserId, "", leave3.From, "only-morning", true), 
-                    
+                    new UserRequirementModel(user1.UserId, "", leave1.From, "leave", true),
+                    new UserRequirementModel(user1.UserId, "", leave2.From, "hard-no", true),
+                    new UserRequirementModel(user1.UserId, "", leave3.From, "only-morning", true),
+
                     // Counted as "available":
-                    new UserRequirementModel(user1.UserId, "", month.Days.Skip(7).First(), "only-afternoon", true), 
-                    new UserRequirementModel(user1.UserId, "", month.Days.Skip(8).First(), "soft-yes", true), 
-                    new UserRequirementModel(user2.UserId, "", month.Days.Skip(17).First(), "only-afternoon", true), 
-                    new UserRequirementModel(user2.UserId, "", month.Days.Skip(18).First(), "soft-yes", true), 
+                    new UserRequirementModel(user1.UserId, "", month.Days.Skip(7).First(), "only-afternoon", true),
+                    new UserRequirementModel(user1.UserId, "", month.Days.Skip(8).First(), "soft-yes", true),
+                    new UserRequirementModel(user2.UserId, "", month.Days.Skip(17).First(), "only-afternoon", true),
+                    new UserRequirementModel(user2.UserId, "", month.Days.Skip(18).First(), "soft-yes", true),
                 });
 
         _usersServiceMock
             .Setup(_ => _.GetAllUsers())
-            .ReturnsAsync(new [] { new User(user1.UserId, user1.UserName, user1.Email), new User(user2.UserId, user2.UserName, user2.Email)});
+            .ReturnsAsync(new[]
+            {
+                new User(user1.UserId, user1.UserName, user1.Email), 
+                new User(user2.UserId, user2.UserName, user2.Email),
+                new User(user3.UserId, user3.UserName, user3.Email),
+                new User(user4.UserId, user4.UserName, user4.Email),
+            });
 
-        _storedScheduleServiceMock.Setup(_ => _.GetSchedule(lastMonth)).Returns(lastMonthSchedule);
+        _storedScheduleServiceMock.Setup(_ => _.GetSchedule(lastMonth)).ReturnsAsync(lastMonthSchedule);
 
         IEnumerable<EmployeeMonth> expectedEmployeeMonths = new[]
         {
@@ -94,11 +110,14 @@ public class SchedulingParametersAggregatorShould
         var parameters = await aggregator.GetSchedulingParameters(tenant, month);
 
         Assert.Equal(month, parameters.Month);
+        Assert.Equal(2, parameters.EmployeeMonths.Count);
         Assert.Equal(expectedEmployeeMonths.First().Employee, parameters.EmployeeMonths.First().Employee);
         Assert.Equal(expectedEmployeeMonths.First().Leaves, parameters.EmployeeMonths.First().Leaves);
         Assert.Equal(expectedEmployeeMonths.Skip(1).First().Employee, parameters.EmployeeMonths.Skip(1).First().Employee);
         Assert.Equal(expectedEmployeeMonths.Skip(1).First().Leaves, parameters.EmployeeMonths.Skip(1).First().Leaves);
         Assert.Equal(CompetenceGroup.CompetenceGroups, parameters.CompetenceGroups);
-        Assert.Equal(new HashSet<ShiftAssignment>(lastMonthSchedule.Shifts), new HashSet<ShiftAssignment>(parameters.LastMonthSchedule.Shifts));
+        Assert.Equal(new HashSet<ShiftAssignment>(expectedLastMonthShifts), new HashSet<ShiftAssignment>(parameters.LastMonthShifts));
+        Assert.Equal(new HashSet<ShiftAssignment>(expectedFixedShifts), new HashSet<ShiftAssignment>(parameters.FixedShifts));
+        Assert.Equal(Workplace.WeekendInterchangeabilityGroups, parameters.WeekendInterchangeabilityGroups);
     }
 }

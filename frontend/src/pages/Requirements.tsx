@@ -13,14 +13,18 @@ import {
   momentToDay,
   RequirementType,
   requirementTypes,
-  useApi
-} from '../requirements/api'
+  useApi, User
+} from '../service/api'
 import { EventSourceInput } from '@fullcalendar/core'
-import { FormCheck, Spinner } from 'react-bootstrap'
+import { ButtonGroup, Card, Container, FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from '../components/LoadingSpinner'
-import { currentMonth, currentYear, getCurrentMonthString, getStartOfCurrentMonth } from '../dates'
+import { Permission, usePermissions } from '../auth/auth'
+import { UserSelect } from '../components/UserSelect'
+import { addMonths, getCurrentMonth, getMonthLabel, getStartOfMonth, Month } from '../dates'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
 type DayDate = moment.Moment
 
@@ -29,9 +33,9 @@ interface DateRange {
   to: DayDate
 }
 
-const DisplayDate: React.FC<{ date: DayDate }> = ({date}: { date: DayDate }) => <>{date.format('D. M. YYYY')}</>
+const DisplayDate: React.FC<{ date: DayDate }> = ({ date }: { date: DayDate }) => <>{date.format('D. M. YYYY')}</>
 
-function requirementsToEvents(requirements: EmployeeMonthRequirements): EventSourceInput {
+function requirementsToEvents (requirements: EmployeeMonthRequirements): EventSourceInput {
   const colorMapping: { [key in RequirementType]: string | undefined } = {
     'only-afternoon': '#0696c4',
     'only-morning': '#f1d567',
@@ -54,6 +58,10 @@ export const Requirements: React.FC = () => {
   const [requirements, setRequirements] = useState<EmployeeMonthRequirements | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const api = useApi()
+  const [user, setUser] = useState<User>(api.users.loggedInUser)
+  const permissions = usePermissions()
+  const [userSelectOpen, setUserSelectOpen] = useState<boolean>(false)
+  const [month, setMonth] = useState<Month>(getCurrentMonth())
 
   useEffect(() => {
     if (selectedDateRange === null && calendarRef.current) {
@@ -62,18 +70,20 @@ export const Requirements: React.FC = () => {
   }, [selectedDateRange])
 
   useEffect(() => {
-    if (requirements === null) {
-      api.requirements.get(currentYear, currentMonth)
-        .then(setRequirements)
-    }
-  })
+    setLoading(true)
+    api.requirements.get(user.userId, month)
+      .then(requirements => {
+        setRequirements(requirements)
+        setLoading(false)
+      })
+  }, [month.year, month.month, user.userId])
 
   const handleDateRangeSelect = (info: DateSelectArg) => {
-    setSelectedDateRange({from: moment(info.start), to: moment(info.end).add(-1, 'day')})
+    setSelectedDateRange({ from: moment(info.start), to: moment(info.end).add(-1, 'day') })
   }
 
   const handleDateClick = (info: DateClickArg) => {
-    setSelectedDateRange({from: moment(info.date), to: moment(info.date)})
+    setSelectedDateRange({ from: moment(info.date), to: moment(info.date) })
   }
 
   const handleDateRangeUnselect = (info: DateUnselectArg) => {
@@ -86,9 +96,10 @@ export const Requirements: React.FC = () => {
     }
 
     setLoading(true)
-    api.requirements.put(momentToDay(selectedDateRange?.from), type).then(() => {
+    const day = momentToDay(selectedDateRange?.from)
+    api.requirements.put(user.userId, day, type).then(() => {
       setLoading(false)
-      setRequirements(null)
+      setRequirements(oldRequirements => ({ ...oldRequirements, [day]: type }))
       setSelectedDateRange(null)
     })
   }
@@ -99,38 +110,76 @@ export const Requirements: React.FC = () => {
     }
 
     setLoading(true)
-    api.requirements.delete(momentToDay(selectedDateRange?.from))
+    const day = momentToDay(selectedDateRange?.from)
+    api.requirements.delete(user.userId, day)
       .then(() => {
         setLoading(false)
-        setRequirements(null)
+        setRequirements(oldRequirements => {
+          let newRequirements = { ...oldRequirements }
+          delete newRequirements[day]
+          return newRequirements
+        })
         setSelectedDateRange(null)
       })
   }
 
+  const handlePreviousMonth = () => {setMonth(oldMonth => addMonths(oldMonth, -1))}
+  const handleCurrentMonth = () => {setMonth(getCurrentMonth)}
+  const handleNextMonth = () => {setMonth(oldMonth => addMonths(oldMonth, 1))}
+
   const oneDayRange = selectedDateRange !== null && selectedDateRange.from.isSame(selectedDateRange.to, 'day')
 
-  const closeModal = () => {
+  const closeRequirementsModal = () => {
     setSelectedDateRange(null)
     setLoading(false)
   }
 
-  function handleEventClick(event: EventClickArg) {
-    setSelectedDateRange({from: moment(event.event.start), to: moment(event.event.end)})
+  function handleEventClick (event: EventClickArg) {
+    setSelectedDateRange({ from: moment(event.event.start), to: moment(event.event.end) })
   }
 
   const selectedDayRequirementType = selectedDateRange && requirements ? requirements[momentToDay(selectedDateRange?.from)] : null
 
+  const handleUserSelected = (user: User) => {
+    setUser(user)
+    setUserSelectOpen(false)
+  }
+
   return (
     <>
-      <h1>{getCurrentMonthString()}</h1>
+      {permissions.includes(Permission.modifyRequirementsOfOthers)
+        && permissions.includes(Permission.readRequirementsOfOthers)
+        && <>
+          <Card title="Přepnout na jiného uživatele" style={{ margin: '10px', maxWidth: '24em' }}>
+            <Card.Header>Zadávání za jiného uživatele</Card.Header>
+            <Card.Body>
+              <Card.Text>
+                Zadáváte požadavky za uživatele <strong>{user?.userName}</strong>
+              </Card.Text>
+              <Button variant="secondary" onClick={() => setUserSelectOpen(true)}>Přepnout uživatele</Button>
+            </Card.Body>
+          </Card>
+          <Modal
+            show={userSelectOpen}
+            onHide={() => setUserSelectOpen(false)}
+            key="user-select-modal"
+          >
+            <Modal.Header closeButton>Přepnout na jiného uživatele</Modal.Header>
+            <Modal.Body>
+              <UserSelect onUserSelected={handleUserSelected} autofocus={true}/>
+            </Modal.Body>
+          </Modal>
+        </>
+      }
 
       {selectedDateRange &&
         <Modal
           show={true}
           onHide={() => {
-            closeModal()
-          }}>
-
+            closeRequirementsModal()
+          }}
+          key="requirement-select-modal"
+        >
           <Modal.Header closeButton>
             <Modal.Title>
               {oneDayRange
@@ -152,8 +201,13 @@ export const Requirements: React.FC = () => {
                       onChange={() => handleAddRequirement(t.value)}
                       checked={selectedDayRequirementType === t.value}
                       id={`requirement-type-input-${t.value}`}
+                      key={`radio-${t.value}`}
                     />
-                    <FormCheckLabel htmlFor={`requirement-type-input-${t.value}`}>{t.name}</FormCheckLabel>
+                    <FormCheckLabel
+                      htmlFor={`requirement-type-input-${t.value}`}
+                      key={`label-${t.value}`}>
+                      {t.name}
+                    </FormCheckLabel>
                   </FormCheck>
                 </>
               )
@@ -162,33 +216,44 @@ export const Requirements: React.FC = () => {
 
           <Modal.Footer>
             {selectedDayRequirementType &&
-              <Button variant="danger" className="me-auto" onClick={handleRemoveRequirement}>Odstranit</Button>}
-            <Button variant="outline-secondary" onClick={() => {
-              closeModal()
-            }}>Zavřít</Button>
+              <Button variant="danger" className="me-auto" key="delete"
+                      onClick={handleRemoveRequirement}>Odstranit</Button>}
+            <Button variant="outline-secondary" key="close" onClick={() => {closeRequirementsModal() }}>Zavřít</Button>
           </Modal.Footer>
         </Modal>
       }
 
-      {requirements
-        ? <div><FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
-          initialView="dayGridMonth"
-          initialDate={getStartOfCurrentMonth()}
-          themeSystem="bootstrap5"
-          headerToolbar={false}
-          firstDay={1}
-          showNonCurrentDates={false}
-          locale={csLocale}
-          dateClick={handleDateClick}
-          unselect={handleDateRangeUnselect}
-          eventClick={handleEventClick}
-          ref={calendarRef}
-          height="auto"
-          events={requirementsToEvents(requirements)}
-        /></div>
-        : <Spinner animation="border"/>
-      }
+      <Container>
+
+        <ButtonGroup>
+          <Button variant="outline-secondary" onClick={handlePreviousMonth}><FontAwesomeIcon
+            icon={faArrowLeft}/></Button>
+          <Button variant="outline-secondary" disabled={month.month === getCurrentMonth().month && month.year === getCurrentMonth().year} onClick={handleCurrentMonth}>Aktuální měsíc</Button>
+          <Button variant="outline-secondary" onClick={handleNextMonth}><FontAwesomeIcon icon={faArrowRight}/></Button>
+        </ButtonGroup>
+
+        <h2>{getMonthLabel(month)}</h2>
+
+        {!loading && requirements
+          ? <div><FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
+            initialView="dayGridMonth"
+            initialDate={getStartOfMonth(month)}
+            themeSystem="bootstrap5"
+            headerToolbar={false}
+            firstDay={1}
+            showNonCurrentDates={false}
+            locale={csLocale}
+            dateClick={handleDateClick}
+            unselect={handleDateRangeUnselect}
+            eventClick={handleEventClick}
+            ref={calendarRef}
+            height="auto"
+            events={requirementsToEvents(requirements)}
+          /></div>
+          : <Spinner animation="border"/>
+        }
+      </Container>
     </>
   )
 }

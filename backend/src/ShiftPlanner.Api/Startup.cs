@@ -7,18 +7,18 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
-using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
-using ShiftPlanner.Api.Services.Secrets;
-using ShiftPlanner.Api.Services.Users;
+using ShiftPlanner.Contracts;
+using ShiftPlanner.Contracts.Services;
+using ShiftPlanner.Services;
+using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Api;
 
 public class Startup
 {
     private readonly string _myAllowSpecificOrigins = "_myAllowSpecificOrigins";
-    private readonly RegionEndpoint _awsRegionEndpoint = RegionEndpoint.EUCentral1;
 
     public Startup(IConfiguration configuration)
     {
@@ -30,7 +30,7 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddOptions<DynamoOptions>().Bind(Configuration.GetSection(DynamoOptions.SectionName)).ValidateDataAnnotations();
+        services.AddOptions<StorageOptions>().Bind(Configuration.GetSection(StorageOptions.SectionName)).ValidateDataAnnotations();
         
         services.AddCors(
             options =>
@@ -79,15 +79,15 @@ public class Startup
 
         services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
-        services.AddAWSService<IAmazonDynamoDB>(new AWSOptions() {Region = _awsRegionEndpoint});
 
         services.AddControllers();
 
         services.AddHttpClient();
-        services.AddAWSService<IAmazonSecretsManager>(new AWSOptions() {Region = _awsRegionEndpoint});
         services.AddSingleton<IAwsSecretsManagerClient, AwsSecretsManagerClient>();
         services.AddSingleton<IAuth0TokenProvider, Auth0TokenProvider>();
         services.AddSingleton<IUserService, Auth0UserService>();
+
+        services.AddServices();
         
         services.AddTransient<IRequirementsService, RequirementsService>();
         services.AddTransient<IRequirementEntityConverter, RequirementEntityConverter>();

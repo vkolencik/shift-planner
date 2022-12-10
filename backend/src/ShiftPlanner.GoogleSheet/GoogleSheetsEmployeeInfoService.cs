@@ -2,12 +2,12 @@
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
+using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
-using ShiftPlanner.Domain.Services;
 
 namespace ShiftPlanner.GoogleSheet;
 
-public class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeInfoService
+internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeInfoService
 {
     private static class RowIndices
     {
@@ -65,8 +65,8 @@ public class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeInf
             }
             var workload = Workload.GetByName(workloadString);
 
-            var disabledFlagString = (string) row[RowIndices.DisabledFlag];
-            var disabled = disabledFlagString == "X";
+            var statusString = (string) row[RowIndices.DisabledFlag];
+            var employeeStatus = ParseEmployeeStatus(statusString);
             var email = (string) row[RowIndices.Email];
             var competenceLevel = (CompetenceLevel) int.Parse(competenceLevelString);
 
@@ -80,17 +80,28 @@ public class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeInf
                             : new WorkplaceCapability.Green(workplaces[i], uint.Parse((string) cellValue)))
                 .ToArray();
 
-            employees.Add(new EmployeeInfo(name, email, competenceLevel, new Capabilities(capabilities), workload, disabled));
+            employees.Add(new EmployeeInfo(name, email, competenceLevel, new Capabilities(capabilities), workload, employeeStatus));
         }
 
         return employees;
+    }
+
+    private static EmployeeStatus ParseEmployeeStatus(string statusString)
+    {
+        return statusString switch
+        {
+            null or "" => EmployeeStatus.Active,
+            "X" => EmployeeStatus.Disabled,
+            "N" => EmployeeStatus.Inactive,
+            _ => throw new ArgumentOutOfRangeException(nameof(statusString), statusString)
+        };
     }
 }
 
 public abstract class GoogleSheetsService
 {
-    protected static readonly string[] Scopes = {SheetsService.Scope.Spreadsheets};
-    protected static readonly string ApplicationName = "Krtek";
+    private static readonly string[] Scopes = {SheetsService.Scope.Spreadsheets};
+    private static readonly string ApplicationName = "Krtek";
     protected static readonly string SpreadsheetId = "1iLE1TDFKrUbnzTVX8PmjP5AvvccD2dsFjomD5c5yiJs";
 
     protected static SheetsService GetGoogleSheetsService()

@@ -6,6 +6,7 @@ import { Environment } from '../lib/deployment-stack'
 const productionParams = {
   stackName: 'KrtekStack',
   requirementsTableName: 'Requirements',
+  scheduleS3BucketName: 'schedule-storage-720500131615',
   backendFunctionName: 'krtek-backend',
   backendCertificate: '*.krtek.me',
   backendUrl: 'b.krtek.me',
@@ -19,6 +20,7 @@ type EnvironmentParams = typeof productionParams
 const previewParams: EnvironmentParams = {
     stackName: 'KrtekStackPreview',
     requirementsTableName: '_preview-Requirements',
+    scheduleS3BucketName: 'preview-schedule-storage-720500131615',
     backendFunctionName: '_preview-krtek-backend',
     backendCertificate: '*.preview.krtek.me',
     backendUrl: 'b.preview.krtek.me',
@@ -52,6 +54,13 @@ const previewParams: EnvironmentParams = {
       })
       template.hasResourceProperties('AWS::Backup::BackupPlan', { BackupPlan: { BackupPlanName: environmentParams.dbBackupPlanName } })
 
+      template.hasResourceProperties('AWS::S3::Bucket', {
+        BucketName: environmentParams.scheduleS3BucketName,
+        PublicAccessBlockConfiguration: {
+          RestrictPublicBuckets: true
+        }
+      })
+
       template.hasResourceProperties('AWS::Lambda::Function', {
         FunctionName: environmentParams.backendFunctionName,
         Environment: {
@@ -61,13 +70,13 @@ const previewParams: EnvironmentParams = {
         }
       })
 
-/*
-      if (environmentParams.syntheticCanaryName !== null) {
-        template.hasResourceProperties('AWS::Synthetics::Canary', {
-          Name: environmentParams.syntheticCanaryName
-        })
-      }
-*/
+      /*
+            if (environmentParams.syntheticCanaryName !== null) {
+              template.hasResourceProperties('AWS::Synthetics::Canary', {
+                Name: environmentParams.syntheticCanaryName
+              })
+            }
+      */
 
       template.hasResourceProperties('AWS::CertificateManager::Certificate', { DomainName: environmentParams.backendCertificate })
       template.hasResourceProperties('AWS::ApiGateway::DomainName', { DomainName: environmentParams.backendUrl })

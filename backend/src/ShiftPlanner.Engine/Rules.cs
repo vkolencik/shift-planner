@@ -35,11 +35,11 @@ internal static class Rules
         }
     }
 
-    public static void NoConsecutiveShiftsForEmployee(SolverParameters schedulingParameters, ISchedulingEngine engine)
+    public static void NoConsecutiveShiftsForEmployee(MonthScheduleParameters schedulingParameters, ISchedulingEngine engine)
     {
         foreach (var employee in schedulingParameters.Employees)
         {
-            foreach (var (day1, day2) in schedulingParameters.Days.Zip(schedulingParameters.Days.Skip(1)))
+            foreach (var (day1, day2) in schedulingParameters.Month.Days.Zip(schedulingParameters.Month.Days.Skip(1)))
             {
                 var employeesShiftsInTwoDays = schedulingParameters.Workplaces
                     .SelectMany(w => new[] {new ShiftAssignment(employee, day1, w), new ShiftAssignment(employee, day2, w)})
@@ -48,13 +48,25 @@ internal static class Rules
                 engine.AddSumConstraint(employeesShiftsInTwoDays, Constraint.Lte, 1);
             }
         }
+
+        var firstDayOfMonth = schedulingParameters.Month.Days.First();
+        var lastDayOfPreviousMonth = schedulingParameters.Month.Previous.Days.Last();
+        var shiftsOnTheLastDayOfPreviousMonth = schedulingParameters.LastMonthShifts.Where(s => s.Shift.Day == lastDayOfPreviousMonth);
+        foreach (var employee in new HashSet<Employee>(shiftsOnTheLastDayOfPreviousMonth.Select(s => s.Employee)))
+        {
+            var shiftsOnFirstDay = schedulingParameters.Workplaces
+                .Select(w => new ShiftAssignment(employee, firstDayOfMonth, w))
+                .ToArray();
+
+            engine.AddSumConstraint(shiftsOnFirstDay, Constraint.Eq, 0);
+        }
     }
 
-    public static void NoAlternativeDayShiftsForEmployee(SolverParameters schedulingParameters, ISchedulingEngine engine)
+    public static void NoAlternativeDayShiftsForEmployee(MonthScheduleParameters schedulingParameters, ISchedulingEngine engine)
     {
         foreach (var employee in schedulingParameters.Employees)
         {
-            foreach (var (day1, day3) in schedulingParameters.Days.Zip(schedulingParameters.Days.Skip(2)))
+            foreach (var (day1, day3) in schedulingParameters.Month.Days.Zip(schedulingParameters.Month.Days.Skip(2)))
             {
                 if (day1.Date.DayOfWeek == DayOfWeek.Friday)
                 {
@@ -68,8 +80,34 @@ internal static class Rules
                 engine.AddSumConstraint(employeesShiftsInAlternateDays, Constraint.Lte, 1);
             }
         }
-    }
 
+        var previousMonthDays = schedulingParameters.Month.Previous.Days;
+
+        var lastDayOfPreviousMonth = previousMonthDays.Last();
+        ForbidShiftsOnDayWhenLastMonthDay(lastDayOfPreviousMonth);
+
+        var penultimateDayOfPreviousMonth = previousMonthDays.ElementAt(previousMonthDays.Count - 2);
+        ForbidShiftsOnDayWhenLastMonthDay(penultimateDayOfPreviousMonth);
+
+        void ForbidShiftsOnDayWhenLastMonthDay(Day previousMonthDay)
+        {
+            if (previousMonthDay.DayOfWeek == DayOfWeek.Friday)
+            {
+                return;
+            }
+
+            var thisMonthDay = new Day(previousMonthDay.Date.AddDays(2));
+            var shiftsOnPreviousMonthDay = schedulingParameters.LastMonthShifts.Where(s => s.Shift.Day == previousMonthDay);
+            foreach (var employee in new HashSet<Employee>(shiftsOnPreviousMonthDay.Select(s => s.Employee)))
+            {
+                var shiftsOnDay = schedulingParameters.Workplaces
+                    .Select(w => new ShiftAssignment(employee, thisMonthDay, w))
+                    .ToArray();
+
+                engine.AddSumConstraint(shiftsOnDay, Constraint.Eq, 0);
+            }
+        }
+    }
 
     public static void EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(MonthScheduleParameters monthScheduleParameters, IReadOnlyCollection<Day> days, ISchedulingEngine engine)
     {
@@ -122,8 +160,8 @@ internal static class Rules
 
     public static void LimitWeekendShifts(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
     {
-        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek == DayOfWeek.Saturday), 1);
-        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek == DayOfWeek.Sunday), 1);
+        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday), 1);
+        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek is DayOfWeek.Sunday), 1);
     }
 
     public static void AlwaysScheduleAlternatesOverWeekends(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
@@ -137,13 +175,34 @@ internal static class Rules
             {
                 foreach (var workplace in monthScheduleParameters.Workplaces)
                 {
+                    var interchangeabilityGroup = monthScheduleParameters.WeekendInterchangeabilityGroups.SingleOrDefault(ig => ig.Contains(workplace)) ?? new HashSet<Workplace> {workplace};
+
                     engine.AddSumRelationConstraint(
-                        new[] {new ShiftAssignment(employeeMonth.Employee, friday, workplace)},
+                        interchangeabilityGroup.Select(w => new ShiftAssignment(employeeMonth.Employee, friday, w)).ToArray(),
                         Constraint.Eq,
-                        new[] {new ShiftAssignment(employeeMonth.Employee, sunday, workplace)});
+                        interchangeabilityGroup.Select(w => new ShiftAssignment(employeeMonth.Employee, sunday, w)).ToArray());
                 }
             }
         }
+
+        void EnforceWeekendAlternatesFromLastMonth(Day lastMonthDay)
+        {
+            if (lastMonthDay.DayOfWeek == DayOfWeek.Friday)
+            {
+                var shiftsOnFriday = monthScheduleParameters.LastMonthShifts.Where(s => s.Shift.Day == lastMonthDay);
+                var sunday = new Day(lastMonthDay.Date.AddDays(2));
+                foreach (var fridayShift in shiftsOnFriday)
+                {
+                    var workplace = fridayShift.Shift.Workplace;
+                    var interchangeabilityGroup = monthScheduleParameters.WeekendInterchangeabilityGroups.SingleOrDefault(ig => ig.Contains(workplace)) ?? new HashSet<Workplace> {workplace};
+                    engine.AddSumConstraint(interchangeabilityGroup.Select(w => new ShiftAssignment(fridayShift.Employee, sunday, w)).ToArray(), Constraint.Eq, 1);
+                }
+            }
+        }
+
+        var previousMonthDays = monthScheduleParameters.Month.Previous.Days;
+        EnforceWeekendAlternatesFromLastMonth(previousMonthDays.Last());
+        EnforceWeekendAlternatesFromLastMonth(previousMonthDays.ElementAt(previousMonthDays.Count - 2));
     }
 
     private static void LimitShiftsOnDays(
@@ -160,5 +219,77 @@ internal static class Rules
 
             engine.AddSumConstraint(shiftsOnTheWeekday, Constraint.Lte, limit);
         }
+    }
+
+    public static void EnforceFixedShifts(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
+    {
+        foreach (var fixedShift in monthScheduleParameters.FixedShifts)
+        {
+            engine.AddVariableConstraint(fixedShift, Constraint.Eq, 1);
+        }
+    }
+
+    public static void AvoidSubsequentWeekends(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
+    {
+        var weekendDays = monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday).ToArray();
+
+        var saturdays = weekendDays
+            .Concat(weekendDays.Where(d => d.DayOfWeek is DayOfWeek.Saturday).Select(d => new Day(d.Date.AddDays(1))))
+            .Concat(weekendDays.Where(d => d.DayOfWeek is DayOfWeek.Sunday).Select(d => new Day(d.Date.AddDays(-1))))
+            .Where(d => d.DayOfWeek is DayOfWeek.Saturday)
+            .ToHashSet()
+            .OrderBy(_ => _)
+            .ToList(); // might also include last saturday of last month
+        
+        foreach (var employee in monthScheduleParameters.Employees)
+        {
+            foreach (var saturday in saturdays)
+            {
+                var sunday = new Day(saturday.Date.AddDays(1));
+                var nextSaturday = new Day(saturday.Date.AddDays(7));
+                var nextSunday = new Day(sunday.Date.AddDays(7));
+                if (nextSaturday.Month != monthScheduleParameters.Month.Month) continue;
+                
+                var shiftsOverSubsequentWeekends = new[] {saturday, sunday, nextSaturday, nextSunday}
+                    .Where(d => d.Month == monthScheduleParameters.Month.Month)
+                    .SelectMany(d => monthScheduleParameters.Workplaces.Select(w => new ShiftAssignment(employee, d, w)))
+                    .ToArray();
+                    
+                engine.AddSumConstraint(shiftsOverSubsequentWeekends, Constraint.Lte, 1);
+            }
+        }
+
+        void LimitShiftsOnWeekend(Day saturdayOfLastMonth)
+        {
+            var lastWeekendOfLastMonth = new[]
+            {
+                saturdayOfLastMonth,
+                new Day(saturdayOfLastMonth.Date.AddDays(1))
+            }.Where(d => d.Month == monthScheduleParameters.Month.Previous.Month);
+
+            var subsequentWeekendSaturday = new Day(saturdayOfLastMonth.Date.AddDays(7));
+            var subsequentWeekend = new[] {subsequentWeekendSaturday, new Day(subsequentWeekendSaturday.Date.AddDays(1))}
+                .Where(d => d.Month == monthScheduleParameters.Month.Month)
+                .ToArray();
+
+            if (!subsequentWeekend.Any())
+            {
+                return;
+            }
+            
+            var lastMonthWeekendShifts = monthScheduleParameters.LastMonthShifts.Where(s => lastWeekendOfLastMonth.Contains(s.Shift.Day));
+            foreach (var employee in lastMonthWeekendShifts.Select(s => s.Employee).ToHashSet())
+            {
+                engine.AddSumConstraint(monthScheduleParameters.Workplaces.SelectMany(w => subsequentWeekend.Select(d => new ShiftAssignment(employee, d, w))).ToArray(), Constraint.Eq, 0);
+            }
+        }
+        
+        var lastSaturdays = monthScheduleParameters.Month.Previous.Days.Reverse().Where(d => d.DayOfWeek is DayOfWeek.Saturday).ToArray();
+
+        var lastSaturdayOfLastMonth = lastSaturdays.ElementAt(0);
+        LimitShiftsOnWeekend(lastSaturdayOfLastMonth);
+
+        var penultimateSaturdayOfLastMonth = lastSaturdays.ElementAt(1);
+        LimitShiftsOnWeekend(penultimateSaturdayOfLastMonth);
     }
 }

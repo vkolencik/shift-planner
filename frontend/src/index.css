@@ -1,4 +1,5 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 body {
     margin: 0;
@@ -37,4 +38,22 @@ table.table-fit tbody td, table.table-fit tfoot td {
 
 table td.table-purple {
     background-color: #c985de;
+}
+
+th {
+    background-clip: padding-box;
+}
+
+@media only screen {
+    div.big-table {
+        position: fixed;
+        height: 90%;
+        overflow: scroll;
+    }
+}
+
+@media print {
+    .no-print {
+        display: none;
+    }
 }

@@ -4,6 +4,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
+using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine;
 
@@ -45,7 +46,9 @@ static class Program
             scheduledMonth,
             employees.Select(e => new EmployeeMonth(e)).ToArray(),
             competenceGroups,
-            Schedule.Empty);
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ISet<Workplace>>());
 
         var scheduler = new ShiftScheduler();
 
@@ -61,12 +64,12 @@ static class Program
         var successResult = (SuccessfulSchedulingResult) result;
         Console.Out.WriteLine($"Computed schedule with flexibility {successResult.Flexibility}");
 
-        Console.Out.WriteLine(successResult.Schedule.Shifts.First());
+        Console.Out.WriteLine(successResult.PlannedSchedule.Shifts.First());
 
         // WriteScheduleToGoogleSheet(scheduledMonth, workplaces, successResult.Schedule);
     }
 
-    private static void WriteScheduleToGoogleSheet(ScheduledMonth month, IReadOnlyCollection<Workplace> workplaces, Schedule schedule)
+    private static void WriteScheduleToGoogleSheet(ScheduledMonth month, IReadOnlyCollection<Workplace> workplaces, PlannedSchedule plannedSchedule)
     {
         var service = GetGoogleSheetsService();
 
@@ -81,7 +84,7 @@ static class Program
         int rowIndex = 2;
         foreach (var day in month.Days)
         {
-            WriteListToSheet(service, $"B{rowIndex}", workplaces.Select(w => schedule.GetAssignedEmployee(new Shift(day, w)).Name));
+            WriteListToSheet(service, $"B{rowIndex}", workplaces.Select(w => plannedSchedule.GetAssignedEmployee(new Shift(day, w)).Name));
             rowIndex++;
         }
     }
@@ -133,6 +136,7 @@ static class Program
             {
                 continue;
             }
+
             var competenceLevel = (CompetenceLevel) (int.Parse((string) row[2]));
 
             var capabilities = workplaces

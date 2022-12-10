@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { BrowserRouter } from 'react-router-dom'
 import { WithAuth } from './auth/auth'
+import { WithUserList } from './service/users'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -21,7 +22,9 @@ root.render(
         cacheLocation="localstorage"
         scope="">
         <WithAuth>
-          <App/>
+          <WithUserList>
+            <App/>
+          </WithUserList>
         </WithAuth>
       </Auth0Provider>
     </BrowserRouter>

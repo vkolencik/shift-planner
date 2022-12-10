@@ -7,7 +7,7 @@ const config: Config = {
     ...baseConfig.globals,
     backendBaseUrl: 'https://b.preview.krtek.me'
   },
-  testTimeout: 15000
+  testTimeout: 25000
 };
 
 export default config

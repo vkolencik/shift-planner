@@ -124,24 +124,6 @@ describe('users requirements resource should', () => {
     expect(resp.status).toEqual(403)
   })
 
-  it('delete other users\'s requirement when deleted by manager', async () => {
-    await putRequirement({ ...requirementParams, userId: testUser2Id }, token2)
-
-    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12/06`, {
-      method: 'delete',
-      ...getHeaders(token)
-    })
-
-    expect(resp.status).toEqual(200)
-
-    const getResp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12`, getHeaders(token))
-
-    const requirements = await getResp.json()
-
-    expect(requirements['2022-12-06']).toBeFalsy()
-
-  })
-
   it('return not found when deleting nonexistent requirement', async () => {
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/2019/12/13`, {
       method: 'delete',
@@ -166,5 +148,53 @@ describe('users requirements resource should', () => {
     const requirements = await getResp.json()
 
     expect(requirements['2022-12-06']).toBeFalsy()
+  })
+
+  describe('give access to another user\'s requirements to manager when', () => {
+    it('deleting other user\'s requirement when deleted by manager', async () => {
+      await putRequirement({ ...requirementParams, userId: testUser2Id }, token2)
+
+      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12/06`, {
+        method: 'delete',
+        ...getHeaders(token)
+      })
+
+      expect(resp.status).toEqual(200)
+
+      const getResp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12`, getHeaders(token))
+
+      const requirements = await getResp.json()
+
+      expect(requirements['2022-12-06']).toBeFalsy()
+    })
+
+    it('getting list of requirements', async () => {
+      await putRequirement({ ...requirementParams, userId: testUser2Id }, token2)
+
+      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12`, getHeaders(token))
+
+      expect(resp.status).toEqual(200)
+      expect(await resp.json()).toEqual({
+        '2022-12-06': 'soft-yes'
+      })
+    })
+
+    it('creating requirement for someone else', async () => {
+      const resp = await fetch(
+        `${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12/08`, {
+          ...getHeaders(token),
+          method: 'put',
+          body: JSON.stringify({ requirementType: 'hard-no' })
+        })
+
+      expect(resp.status).toEqual(200)
+
+      const getResp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12`, getHeaders(token))
+
+      expect(getResp.status).toEqual(200)
+      expect(await getResp.json()).toEqual(expect.objectContaining({
+        '2022-12-08': 'hard-no'
+      }))
+    })
   })
 })
