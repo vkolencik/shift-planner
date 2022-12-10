@@ -8,6 +8,11 @@ namespace ShiftPlanner.Engine.Functional.Tests.ShiftScheduler;
 
 public class ComputedScheduleShould
 {
+    private const int Year = 2022;
+    private const int Month = 1;
+    private const int DaysInMonth = 31;
+    private readonly ScheduledMonth _scheduledMonth = new ScheduledMonth(Year, Month);   
+    
     private readonly IReadOnlyCollection<EmployeeMonth> _employeeMonths;
 
     private IEnumerable<Employee> Employees => _employeeMonths.Select(e => e.Employee);
@@ -53,7 +58,7 @@ public class ComputedScheduleShould
                 }),
             Workload.Infinite
         ),
-        new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 15))}
+        new[] {new Leave(new Day(Year, Month, 1), new Day(Year, Month, 15))}
     );
 
     private IEnumerable<EmployeeMonth> EmployeeMonthsWithTimeOff => _employeeMonths.Take(_employeesWithTimeOffCount).Concat(new[] {_percentualCapabilitiesEmployee2WithLeave});
@@ -86,7 +91,7 @@ public class ComputedScheduleShould
                         CompetenceLevel: (i % 2 == 0 ? CompetenceLevel.Level1 : CompetenceLevel.Level3),
                         Capabilities: i % 2 == 0 ? capableForFirstWorkplaces : capableForSecondWorkplaces,
                         Workload: Workload.Infinite),
-                    i <= _employeesWithTimeOffCount ? new[] {new Leave(new Day(2022, 2, 1 + i * 2), new Day(2022, 2, 1 + i * 2 + 14))} : Array.Empty<Leave>()
+                    i <= _employeesWithTimeOffCount ? new[] {new Leave(new Day(Year, Month, 1 + i * 2), new Day(Year, Month, 1 + i * 2 + 14))} : Array.Empty<Leave>()
                 ))
             .Concat(new[] {_percentualCapabilitiesEmployee1, _percentualCapabilitiesEmployee2WithLeave})
             .ToArray();
@@ -166,7 +171,7 @@ public class ComputedScheduleShould
                 .Where(s => competenceGroup.Workplaces.Contains(s.Shift.Workplace))
                 .ToArray();
 
-            var shiftsPerDay = Enumerable.Range(1, 28)
+            var shiftsPerDay = Enumerable.Range(1, DaysInMonth)
                 .Select(d => competenceGroupShifts.Where(s => s.Shift.Day.Date.Day == d))
                 .ToArray();
 
@@ -184,8 +189,8 @@ public class ComputedScheduleShould
             var workplaceShifts = schedule.Shifts
                 .Where(s => s.Shift.Workplace == workplace)
                 .ToArray();
-            Assert.Equal(28, workplaceShifts.Length);
-            Assert.Equal(Enumerable.Range(1, 28), workplaceShifts.Select(s => s.Shift.Day.Date.Day));
+            Assert.Equal(DaysInMonth, workplaceShifts.Length);
+            Assert.Equal(Enumerable.Range(1, DaysInMonth), workplaceShifts.Select(s => s.Shift.Day.Date.Day));
         }
     }
 
@@ -302,22 +307,22 @@ public class ComputedScheduleShould
     {
         var scheduler = new Engine.ShiftScheduler();
 
-        var week1start = 1;
-        var week2start = 8;
-        var week3start = 15;
-        var week4start = 22;
+        var week1Start = 1;
+        var week2Start = 8;
+        var week3Start = 15;
+        var week4Start = 22;
 
-        var boundaries = new[] {week1start, week2start, week3start, week4start, 29};
+        var boundaries = new[] {week1Start, week2Start, week3Start, week4Start, 29};
 
         var oddWeekLeaves = new[]
         {
-            new Leave(new Day(2022, 2, week1start), new Day(2022, 2, week1start + 3)),
-            new Leave(new Day(2022, 2, week3start), new Day(2022, 2, week3start + 3))
+            new Leave(new Day(Year, Month, week1Start), new Day(Year, Month, week1Start + 3)),
+            new Leave(new Day(Year, Month, week3Start), new Day(Year, Month, week3Start + 3))
         };
         var evenWeekLeaves = new[]
         {
-            new Leave(new Day(2022, 2, week2start), new Day(2022, 2, week2start + 3)),
-            new Leave(new Day(2022, 2, week4start), new Day(2022, 2, week4start + 3))
+            new Leave(new Day(Year, Month, week2Start), new Day(Year, Month, week2Start + 3)),
+            new Leave(new Day(Year, Month, week4Start), new Day(Year, Month, week4Start + 3))
         };
 
         int numberOfEmployeesInEachGroup = 4;
@@ -338,7 +343,7 @@ public class ComputedScheduleShould
 
         var result = scheduler.ComputeSchedule(
             new MonthScheduleParameters(
-                new ScheduledMonth(2022, 2),
+                _scheduledMonth,
                 oddWeekLeaveEmployees.Concat(evenWeekLeaveEmployees).ToArray(),
                 new[] {new CompetenceGroup(new[] {Aro1})},
                 Array.Empty<ShiftAssignment>(),
@@ -380,6 +385,8 @@ public class ComputedScheduleShould
     {
         var schedule = ComputeSchedule();
 
+        var firstFriday = _scheduledMonth.Days.First(d => d.DayOfWeek == DayOfWeek.Friday);
+        
         Assert.All(
             Employees, employee =>
             {
@@ -388,17 +395,18 @@ public class ComputedScheduleShould
                     .Select(s => (s.Shift.Day.Date.Day, s.Shift.Workplace))
                     .ToArray();
 
-                var scheduledSundayShifts = schedule.Shifts
+                var scheduledSundayAfterFridayShifts = schedule.Shifts
                     .Where(s => s.Employee == employee && s.Shift.Day.DayOfWeek == DayOfWeek.Sunday)
+                    .Where(s => s.Shift.Day >= firstFriday)
                     .Select(s => (s.Shift.Day.Date.Day, s.Shift.Workplace))
                     .ToArray();
 
                 var expectedSundayShifts = scheduledFridayShifts
                     .Select(s => s with {Day = s.Day + 2})
-                    .Where(s => s.Day <= 28)
+                    .Where(s => s.Day <= DaysInMonth)
                     .ToArray();
 
-                Assert.Equal(expectedSundayShifts, scheduledSundayShifts);
+                Assert.Equal(expectedSundayShifts, scheduledSundayAfterFridayShifts);
             });
     }
 
@@ -408,11 +416,32 @@ public class ComputedScheduleShould
         var fixedEmployee = EmployeesWithoutTimeOff.First(e => e.Capabilities.WorkplaceCapabilities.Any(wpc => wpc.Workplace == Aro1 && wpc is WorkplaceCapability.Green));
         var monthScheduleParameters = CreateParameters() with
         {
-            FixedShifts = new [] { new ShiftAssignment(fixedEmployee, new Day(2022, 2, 1), Aro1) }
+            FixedShifts = new [] { new ShiftAssignment(fixedEmployee, new Day(Year, Month, 1), Aro1) }
         };
         var schedule = ComputeSchedule(monthScheduleParameters);
 
-        Assert.Equal(Aro1, schedule.Shifts.Single(s => s.Employee == fixedEmployee && s.Shift.Day == new Day(2022, 2, 1)).Shift.Workplace);
+        Assert.Equal(Aro1, schedule.Shifts.Single(s => s.Employee == fixedEmployee && s.Shift.Day == new Day(Year, Month, 1)).Shift.Workplace);
+    }
+
+    [Fact]
+    public void TakeLastMonthIntoAccount()
+    {
+        // ReSharper disable once ReplaceWithSingleCallToFirst
+        var lastMonthFridayEmployee = EmployeesWithoutTimeOff.Where(e => e.Capabilities.WorkplaceCapabilities.Any(wpc => wpc.Workplace == Aro1 && wpc is WorkplaceCapability.Green)).First();
+        var lastMonthThursdayEmployee = EmployeesWithoutTimeOff.Where(e => e.Capabilities.WorkplaceCapabilities.Any(wpc => wpc.Workplace == Aro1 && wpc is WorkplaceCapability.Green)).Skip(1).First();
+        var monthScheduleParameters = CreateParameters() with 
+        {
+            LastMonthShifts = new []
+            {
+                new ShiftAssignment(lastMonthFridayEmployee, new Day(_scheduledMonth.Previous, 31), Aro1),
+                new ShiftAssignment(lastMonthThursdayEmployee, new Day(_scheduledMonth.Previous, 30), Aro1)
+            }
+        };
+        
+        var schedule = ComputeSchedule(monthScheduleParameters);
+
+        Assert.Equal(Aro1, schedule.Shifts.Single(s => s.Employee == lastMonthFridayEmployee && s.Shift.Day == new Day(_scheduledMonth, 2)).Shift.Workplace);
+        Assert.Empty(schedule.Shifts.Where(s => s.Employee == lastMonthThursdayEmployee && s.Shift.Day == new Day(_scheduledMonth, 1)));
     }
 
     private Schedule ComputeSchedule() => ComputeSchedule(CreateParameters());
@@ -430,7 +459,7 @@ public class ComputedScheduleShould
     private MonthScheduleParameters CreateParameters()
     {
         return new MonthScheduleParameters(
-            new ScheduledMonth(2022, 2),
+            _scheduledMonth,
             _employeeMonths,
             _competenceGroups,
             Array.Empty<ShiftAssignment>(),
