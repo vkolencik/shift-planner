@@ -402,6 +402,15 @@ public class ComputedScheduleShould
             });
     }
 
+    [Fact]
+    public void TakeFixedShiftsIntoAccount()
+    {
+        var fixedEmployee = EmployeesWithoutTimeOff.Skip(1).First();
+        var schedule = ComputeSchedule();
+
+        Assert.Equal(Aro1, schedule.Shifts.Single(s => s.Employee == fixedEmployee && s.Shift.Day == new Day(2022, 2, 1)).Shift.Workplace);
+    }
+
     private Schedule ComputeSchedule()
     {
         var scheduler = new Engine.ShiftScheduler();
@@ -411,8 +420,8 @@ public class ComputedScheduleShould
                 new ScheduledMonth(2022, 2),
                 _employeeMonths,
                 _competenceGroups,
-                Array.Empty<ShiftAssignment>(),
-                Array.Empty<ShiftAssignment>()
+                new [] { new ShiftAssignment(EmployeesWithoutTimeOff.First(), new Day(2022, 1, 31), Aro1) },
+                new [] { new ShiftAssignment(EmployeesWithoutTimeOff.Skip(1).First(), new Day(2022, 2, 1), Aro1) }
             ));
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
         Assert.True(successResult.Flexibility.Degree <= 1, $"Scheduler was forced to use too much flexibility (flexibility degree: {successResult.Flexibility.Degree})");
