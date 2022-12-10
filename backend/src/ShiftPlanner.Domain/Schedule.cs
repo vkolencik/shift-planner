@@ -13,4 +13,6 @@ public record Schedule
         Shifts.Single(s => s.Shift == shift).Employee;
 
     public static Schedule CreateSchedule(IEnumerable<ShiftAssignment> shifts) => new Schedule(shifts);
+
+    public static readonly Schedule Empty = CreateSchedule(Array.Empty<ShiftAssignment>());
 }

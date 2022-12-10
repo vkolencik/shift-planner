@@ -44,7 +44,8 @@ static class Program
         var schedulingParams = new MonthScheduleParameters(
             scheduledMonth,
             employees.Select(e => new EmployeeMonth(e)).ToArray(),
-            competenceGroups);
+            competenceGroups,
+            Schedule.Empty);
 
         var scheduler = new ShiftScheduler();
 

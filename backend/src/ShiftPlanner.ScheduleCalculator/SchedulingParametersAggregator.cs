@@ -12,13 +12,19 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
     private readonly IEmployeeInfoService _employeeInfoService;
     private readonly IRequirementsService _requirementsService;
     private readonly IUserService _userService;
+    private readonly IStoredScheduleService _storedScheduleService;
     private static readonly HashSet<string> AbsenceRequirementTypes = new() {"leave", "hard-no", "only-morning"};
 
-    public SchedulingParametersAggregator(IEmployeeInfoService employeeInfoService, IRequirementsService requirementsService, IUserService userService)
+    public SchedulingParametersAggregator(
+        IEmployeeInfoService employeeInfoService,
+        IRequirementsService requirementsService,
+        IUserService userService,
+        IStoredScheduleService storedScheduleService)
     {
         _employeeInfoService = employeeInfoService;
         _requirementsService = requirementsService;
         _userService = userService;
+        _storedScheduleService = storedScheduleService;
     }
 
     public async Task<MonthScheduleParameters> GetSchedulingParameters(Tenant tenant, ScheduledMonth month)
@@ -42,7 +48,8 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
         return new MonthScheduleParameters(
             month,
             employeeMonths,
-            CompetenceGroup.CompetenceGroups);
+            CompetenceGroup.CompetenceGroups,
+            _storedScheduleService.GetSchedule(month.Previous));
     }
 
     private IReadOnlyCollection<Leave> GetLeavesForEmployee(IReadOnlyCollection<UserRequirementModel> employeeRequirements, string userId) =>
@@ -51,4 +58,9 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
             .Where(req => AbsenceRequirementTypes.Contains(req.RequirementType))
             .Select(req => new Leave(req.Date, req.Date))
             .ToArray();
+}
+
+public interface IStoredScheduleService
+{
+    Schedule GetSchedule(ScheduledMonth month);
 }

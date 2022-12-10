@@ -14,12 +14,14 @@ public class SchedulingParametersAggregatorShould
     private Mock<IEmployeeInfoService> _employeeInfoServiceMock;
     private Mock<IRequirementsService> _requirementsServiceMock;
     private Mock<IUserService> _usersServiceMock;
+    private Mock<IStoredScheduleService> _storedScheduleServiceMock;
 
     public SchedulingParametersAggregatorShould()
     {
         _employeeInfoServiceMock = new Mock<IEmployeeInfoService>();
         _requirementsServiceMock = new Mock<IRequirementsService>();
         _usersServiceMock = new Mock<IUserService>();
+        _storedScheduleServiceMock = new Mock<IStoredScheduleService>();
     }
 
     [Fact]
@@ -27,6 +29,7 @@ public class SchedulingParametersAggregatorShould
     {
         var tenant = TestData.Tenant;
         var month = new ScheduledMonth(2022, 12);
+        var lastMonth = new ScheduledMonth(2022, 11);
 
         var workplace = new Workplace("w1");
         var e1Capabilities = new Capabilities(new[] {new WorkplaceCapability.Green(workplace, 100),});
@@ -41,6 +44,12 @@ public class SchedulingParametersAggregatorShould
         var leave1 = new Leave(month.Days.First(), month.Days.First());
         var leave2 = new Leave(month.Days.Skip(10).First(), month.Days.Skip(10).First());
         var leave3 = new Leave(month.Days.Skip(20).First(), month.Days.Skip(20).First());
+
+        var lastMonthSchedule = Schedule.CreateSchedule(
+            new[]
+            {
+                new ShiftAssignment(employee1, new Day(lastMonth, 30), workplace)
+            });
 
         _employeeInfoServiceMock
             .Setup(_ => _.GetEmployees(Workplace.Workplaces))
@@ -72,13 +81,15 @@ public class SchedulingParametersAggregatorShould
             .Setup(_ => _.GetAllUsers())
             .ReturnsAsync(new [] { new User(user1.UserId, user1.UserName, user1.Email), new User(user2.UserId, user2.UserName, user2.Email)});
 
+        _storedScheduleServiceMock.Setup(_ => _.GetSchedule(lastMonth)).Returns(lastMonthSchedule);
+
         IEnumerable<EmployeeMonth> expectedEmployeeMonths = new[]
         {
             new EmployeeMonth(employee1, new[] {leave1, leave2, leave3}),
             new EmployeeMonth(employee2, Array.Empty<Leave>()),
         };
 
-        var aggregator = new SchedulingParametersAggregator(_employeeInfoServiceMock.Object, _requirementsServiceMock.Object, _usersServiceMock.Object);
+        var aggregator = new SchedulingParametersAggregator(_employeeInfoServiceMock.Object, _requirementsServiceMock.Object, _usersServiceMock.Object, _storedScheduleServiceMock.Object);
 
         var parameters = await aggregator.GetSchedulingParameters(tenant, month);
 
@@ -88,5 +99,6 @@ public class SchedulingParametersAggregatorShould
         Assert.Equal(expectedEmployeeMonths.Skip(1).First().Employee, parameters.EmployeeMonths.Skip(1).First().Employee);
         Assert.Equal(expectedEmployeeMonths.Skip(1).First().Leaves, parameters.EmployeeMonths.Skip(1).First().Leaves);
         Assert.Equal(CompetenceGroup.CompetenceGroups, parameters.CompetenceGroups);
+        Assert.Equal(new HashSet<ShiftAssignment>(lastMonthSchedule.Shifts), new HashSet<ShiftAssignment>(parameters.LastMonthSchedule.Shifts));
     }
 }

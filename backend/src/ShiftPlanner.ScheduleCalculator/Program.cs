@@ -29,7 +29,8 @@ static class Program
                     new RequirementEntityConverter(),
                     Options.Create(new DynamoOptions() {TableNamePrefix = ""})),
                 auth0UserService),
-            auth0UserService);
+            auth0UserService,
+            null!);
 
         var month = new ScheduledMonth(2023, 1);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);

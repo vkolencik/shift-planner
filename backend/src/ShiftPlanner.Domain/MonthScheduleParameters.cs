@@ -3,7 +3,8 @@ namespace ShiftPlanner.Domain;
 public record MonthScheduleParameters(
     ScheduledMonth Month,
     IReadOnlyCollection<EmployeeMonth> EmployeeMonths,
-    IReadOnlyCollection<CompetenceGroup> CompetenceGroups)
+    IReadOnlyCollection<CompetenceGroup> CompetenceGroups,
+    Schedule LastMonthSchedule)
 {
     public IReadOnlyCollection<Employee> Employees => EmployeeMonths.Select(em => em.Employee).ToArray();
 
