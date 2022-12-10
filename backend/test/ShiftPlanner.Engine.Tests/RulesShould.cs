@@ -13,8 +13,10 @@ public class RulesShould
 {
     private readonly Mock<ISchedulingEngine> _engineMock;
 
+    private static ScheduledMonth _scheduledMonth = new ScheduledMonth(2022, 2);
+
     private static readonly MonthScheduleParameters MonthScheduleParameters = new MonthScheduleParameters(
-        new ScheduledMonth(2022, 2),
+        _scheduledMonth,
         new[]
         {
             new EmployeeMonth(Employee1, new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 2))}),
@@ -72,9 +74,9 @@ public class RulesShould
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
 
-        Rules.NoConsecutiveShiftsForEmployee(SolverParametersTwoDays, _engineMock.Object);
+        Rules.NoConsecutiveShiftsForEmployee(MonthScheduleParameters, _engineMock.Object);
 
-        Assert.Equal(2, capturedShifts.Count);
+        Assert.Equal(MonthScheduleParameters.Employees.Count * (_scheduledMonth.Days.Count - 1), capturedShifts.Count);
         Assert.Contains(
             new HashSet<ShiftAssignment>
             {

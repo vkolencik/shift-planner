@@ -17,7 +17,7 @@ public class ShiftScheduler
 
             Rules.EveryEmployeeHasOneShiftAtATime(solverParameters, engine);
 
-            Rules.NoConsecutiveShiftsForEmployee(solverParameters, engine);
+            Rules.NoConsecutiveShiftsForEmployee(monthScheduleParameters, engine);
 
             Rules.NoAlternativeDayShiftsForEmployee(solverParameters, engine);
 

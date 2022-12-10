@@ -35,11 +35,11 @@ internal static class Rules
         }
     }
 
-    public static void NoConsecutiveShiftsForEmployee(SolverParameters schedulingParameters, ISchedulingEngine engine)
+    public static void NoConsecutiveShiftsForEmployee(MonthScheduleParameters schedulingParameters, ISchedulingEngine engine)
     {
         foreach (var employee in schedulingParameters.Employees)
         {
-            foreach (var (day1, day2) in schedulingParameters.Days.Zip(schedulingParameters.Days.Skip(1)))
+            foreach (var (day1, day2) in schedulingParameters.Month.Days.Zip(schedulingParameters.Month.Days.Skip(1)))
             {
                 var employeesShiftsInTwoDays = schedulingParameters.Workplaces
                     .SelectMany(w => new[] {new ShiftAssignment(employee, day1, w), new ShiftAssignment(employee, day2, w)})
