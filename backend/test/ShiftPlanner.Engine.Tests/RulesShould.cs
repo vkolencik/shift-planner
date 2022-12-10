@@ -221,13 +221,30 @@ public class RulesShould
                             {
                                 var (friday, sunday) = tuple;
                                 Assert.Contains(
-                                    new HashSet<ShiftAssignment> { new ShiftAssignment(employee, new Day(2022, 2, friday), workplace)},
+                                    new HashSet<ShiftAssignment> {new ShiftAssignment(employee, new Day(2022, 2, friday), workplace)},
                                     capturedShiftsLhs.Select(_ => _.ToHashSet()));
                                 Assert.Contains(
-                                    new HashSet<ShiftAssignment> { new ShiftAssignment(employee, new Day(2022, 2, sunday), workplace)},
+                                    new HashSet<ShiftAssignment> {new ShiftAssignment(employee, new Day(2022, 2, sunday), workplace)},
                                     capturedShiftsRhs.Select(_ => _.ToHashSet()));
                             });
                     });
             });
+    }
+
+    [Fact]
+    public void EnforceFixedShifts()
+    {
+        var capturedShifts = new List<ShiftAssignment>();
+
+        _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShifts), Constraint.Eq, 1));
+
+        var shiftAssignment1 = new ShiftAssignment(Employee1, new Day(2022, 2, 12), Workplace1);
+        var shiftAssignment2 = new ShiftAssignment(Employee2, new Day(2022, 2, 27), Workplace2);
+        var schedulingParams = MonthScheduleParameters with {FixedShifts = new[] {shiftAssignment1, shiftAssignment2}};
+
+        Rules.EnforceFixedShifts(schedulingParams, _engineMock.Object);
+
+        Assert.Contains(shiftAssignment1, capturedShifts);
+        Assert.Contains(shiftAssignment2, capturedShifts);
     }
 }

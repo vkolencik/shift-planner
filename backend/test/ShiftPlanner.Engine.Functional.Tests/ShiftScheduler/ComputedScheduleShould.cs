@@ -405,27 +405,37 @@ public class ComputedScheduleShould
     [Fact]
     public void TakeFixedShiftsIntoAccount()
     {
-        var fixedEmployee = EmployeesWithoutTimeOff.Skip(1).First();
-        var schedule = ComputeSchedule();
+        var fixedEmployee = EmployeesWithoutTimeOff.First(e => e.Capabilities.WorkplaceCapabilities.Any(wpc => wpc.Workplace == Aro1 && wpc is WorkplaceCapability.Green));
+        var monthScheduleParameters = CreateParameters() with
+        {
+            FixedShifts = new [] { new ShiftAssignment(fixedEmployee, new Day(2022, 2, 1), Aro1) }
+        };
+        var schedule = ComputeSchedule(monthScheduleParameters);
 
         Assert.Equal(Aro1, schedule.Shifts.Single(s => s.Employee == fixedEmployee && s.Shift.Day == new Day(2022, 2, 1)).Shift.Workplace);
     }
 
-    private Schedule ComputeSchedule()
+    private Schedule ComputeSchedule() => ComputeSchedule(CreateParameters());
+
+    private Schedule ComputeSchedule(MonthScheduleParameters parameters)
     {
         var scheduler = new Engine.ShiftScheduler();
 
-        var result = scheduler.ComputeSchedule(
-            new MonthScheduleParameters(
-                new ScheduledMonth(2022, 2),
-                _employeeMonths,
-                _competenceGroups,
-                new [] { new ShiftAssignment(EmployeesWithoutTimeOff.First(), new Day(2022, 1, 31), Aro1) },
-                new [] { new ShiftAssignment(EmployeesWithoutTimeOff.Skip(1).First(), new Day(2022, 2, 1), Aro1) }
-            ));
+        var result = scheduler.ComputeSchedule(parameters);
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
         Assert.True(successResult.Flexibility.Degree <= 1, $"Scheduler was forced to use too much flexibility (flexibility degree: {successResult.Flexibility.Degree})");
         return successResult.Schedule;
+    }
+
+    private MonthScheduleParameters CreateParameters()
+    {
+        return new MonthScheduleParameters(
+            new ScheduledMonth(2022, 2),
+            _employeeMonths,
+            _competenceGroups,
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ShiftAssignment>()
+        );
     }
 
     private static int DaysBetween(DateOnly d1, DateOnly d2) =>
