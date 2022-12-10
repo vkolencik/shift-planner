@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using Amazon.DynamoDBv2;
+﻿using Amazon.DynamoDBv2;
 using Amazon.SecretsManager;
 using Microsoft.Extensions.Options;
 using ShiftPlanner.Api;
@@ -17,13 +15,11 @@ namespace ShiftPlanner.ScheduleCalculator;
 
 static class Program
 {
-    private static ShiftAssignmentByEmail[] _lastMonthSchedule;
-
     public static async Task Main(string[] args)
     {
         var auth0UserService = new Auth0UserService(new Auth0TokenProvider(new HttpClientFactory()), new AwsSecretsManagerClient(new AmazonSecretsManagerClient()));
 
-        _lastMonthSchedule = new[]
+        ShiftAssignmentByEmail[] lastMonthSchedule = new[]
         {
             new ShiftAssignmentByEmail("jan.drasnar@bulovka.cz", new Day(2022, 12, 30), Workplace.A1),
             new ShiftAssignmentByEmail("daniela.fischer@bulovka.cz", new Day(2022, 12, 30), Workplace.A2),
@@ -31,7 +27,7 @@ static class Program
             new ShiftAssignmentByEmail("zdenka.sraierova@bulovka.cz", new Day(2022, 12, 30), Workplace.Res),
             new ShiftAssignmentByEmail("katerina.michalovic@bulovka.cz", new Day(2022, 12, 30), Workplace.Kpr),
             new ShiftAssignmentByEmail("pavol.fedurcak@bulovka.cz", new Day(2022, 12, 30), Workplace.Urg),
-        
+
             new ShiftAssignmentByEmail("petr.jiricka@bulovka.cz", new Day(2022, 12, 31), Workplace.A1),
             new ShiftAssignmentByEmail("daniel.dzunda@bulovka.cz", new Day(2022, 12, 31), Workplace.A2),
             new ShiftAssignmentByEmail("rafael.sepp@bulovka.cz", new Day(2022, 12, 31), Workplace.A3),
@@ -46,7 +42,7 @@ static class Program
             new ShiftAssignmentByEmail("pavol.fedurcak@bulovka.cz", new Day(2023, 1, 1), Workplace.Kpr),
             new ShiftAssignmentByEmail("katerina.michalovic@bulovka.cz", new Day(2023, 1, 1), Workplace.Urg),
         };
-        
+
         var aggregator = new SchedulingParametersAggregator(
             new GoogleSheetsEmployeeInfoService(),
             new RequirementsService(
@@ -56,11 +52,11 @@ static class Program
                     Options.Create(new DynamoOptions() {TableNamePrefix = ""})),
                 auth0UserService),
             auth0UserService,
-            new StoredScheduleService(new GoogleSheetsEmployeeInfoService(),  _lastMonthSchedule));
+            new StoredScheduleService(new GoogleSheetsEmployeeInfoService(), lastMonthSchedule));
 
         var month = new ScheduledMonth(2023, 1);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
-        
+
         var scheduler = new ShiftScheduler();
 
         var result = scheduler.ComputeSchedule(schedulingParams);
@@ -82,7 +78,7 @@ static class Program
             IScheduleRepository resultRepository = new GoogleSheetsScheduleRepository();
             Console.Out.WriteLine("Solution found");
             Console.Out.WriteLine($"Flexibility: {successResult.Flexibility.Degree}");
-            
+
             await resultRepository.StoreComputedSchedule(month, successResult);
         }
     }
