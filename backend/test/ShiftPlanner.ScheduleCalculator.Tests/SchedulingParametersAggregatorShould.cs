@@ -81,7 +81,7 @@ public class SchedulingParametersAggregatorShould
             .Setup(_ => _.GetAllUsers())
             .ReturnsAsync(new [] { new User(user1.UserId, user1.UserName, user1.Email), new User(user2.UserId, user2.UserName, user2.Email)});
 
-        _storedScheduleServiceMock.Setup(_ => _.GetSchedule(lastMonth)).Returns(lastMonthSchedule);
+        _storedScheduleServiceMock.Setup(_ => _.GetSchedule(lastMonth)).ReturnsAsync(lastMonthSchedule);
 
         IEnumerable<EmployeeMonth> expectedEmployeeMonths = new[]
         {
