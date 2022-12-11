@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.OrTools" Version="9.4.1874"/>
+    <PackageReference Include="Google.OrTools" Version="9.4.1874" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj"/>
+    <ProjectReference Include="..\ShiftPlanner.Contracts\ShiftPlanner.Contracts.csproj" />
+    <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.ScheduleCalcul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.TestHelpers", "test\ShiftPlanner.TestHelpers\ShiftPlanner.TestHelpers.csproj", "{AE0F3AE3-BEC1-4981-9639-9A65246A38A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Contracts", "src\ShiftPlanner.Contracts\ShiftPlanner.Contracts.csproj", "{8BEC40F4-BAEF-464F-8B5E-9A4D48CD94FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,10 @@ Global
 		{AE0F3AE3-BEC1-4981-9639-9A65246A38A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE0F3AE3-BEC1-4981-9639-9A65246A38A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE0F3AE3-BEC1-4981-9639-9A65246A38A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BEC40F4-BAEF-464F-8B5E-9A4D48CD94FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BEC40F4-BAEF-464F-8B5E-9A4D48CD94FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BEC40F4-BAEF-464F-8B5E-9A4D48CD94FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BEC40F4-BAEF-464F-8B5E-9A4D48CD94FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +115,7 @@ Global
 		{2FD25B93-7ECB-4288-96D7-8E1EA6D8C6C3} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
 		{5E7AD480-BA8A-445E-A760-EFC9F743653F} = {ED84CCCC-8C80-441B-A438-23AA1BDA62C0}
 		{AE0F3AE3-BEC1-4981-9639-9A65246A38A5} = {ED84CCCC-8C80-441B-A438-23AA1BDA62C0}
+		{8BEC40F4-BAEF-464F-8B5E-9A4D48CD94FB} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F388AFFB-3E53-42D2-B0C1-6ADEB8A5C4AB}

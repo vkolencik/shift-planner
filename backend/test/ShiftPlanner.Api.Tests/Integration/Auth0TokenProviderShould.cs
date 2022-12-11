@@ -1,5 +1,4 @@
 ﻿using Amazon;
-using Amazon.Runtime;
 using Amazon.SecretsManager;
 using ShiftPlanner.Api.Services.Secrets;
 using ShiftPlanner.Api.Services.Users;

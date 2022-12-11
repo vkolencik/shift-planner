@@ -2,7 +2,7 @@
 
 public record Workload
 {
-    public static readonly Workload Full = new Workload("1,0", 6, 7);
+    public static readonly Workload Full = new Workload("1,0", 5, 7);
     public static readonly Workload FullLimited = new Workload("1,0s", 5, 6);
 
     public static readonly Workload Workload08 = new Workload("0,8", 4, 5);

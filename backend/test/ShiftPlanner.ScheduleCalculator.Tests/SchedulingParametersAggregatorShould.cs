@@ -4,7 +4,6 @@ using ShiftPlanner.Api.Services;
 using ShiftPlanner.Api.Services.Users;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Domain.Services;
-using ShiftPlanner.GoogleSheet;
 using ShiftPlanner.TestHelpers;
 
 namespace ShiftPlanner.ScheduleCalculator.Tests;

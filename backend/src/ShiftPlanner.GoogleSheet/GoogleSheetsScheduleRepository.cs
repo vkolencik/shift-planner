@@ -1,7 +1,7 @@
 ﻿using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
+using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
-using ShiftPlanner.Domain.Services;
 
 namespace ShiftPlanner.GoogleSheet;
 
