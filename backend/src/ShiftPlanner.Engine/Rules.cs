@@ -160,8 +160,8 @@ internal static class Rules
 
     public static void LimitWeekendShifts(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
     {
-        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek == DayOfWeek.Saturday), 1);
-        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek == DayOfWeek.Sunday), 1);
+        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday), 1);
+        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek is DayOfWeek.Sunday), 1);
     }
 
     public static void AlwaysScheduleAlternatesOverWeekends(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
@@ -227,5 +227,27 @@ internal static class Rules
         {
             engine.AddVariableConstraint(fixedShift, Constraint.Eq, 1);
         }
+    }
+
+    public static void AvoidSubsequentWeekends(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
+    {
+        var saturdays = monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday);
+        foreach (var employee in monthScheduleParameters.Employees)
+        {
+            foreach (var saturday in saturdays)
+            {
+                var sunday = new Day(saturday.Date.AddDays(1));
+                var nextSaturday = new Day(saturday.Date.AddDays(7));
+                var nextSunday = new Day(sunday.Date.AddDays(7));
+                if (nextSaturday.Month != monthScheduleParameters.Month.Month) break;
+                
+                var shiftsOverSubsequentWeekends = new[] {saturday, sunday, nextSaturday, nextSunday}
+                    .Where(d => d.Month == monthScheduleParameters.Month.Month)
+                    .SelectMany(d => monthScheduleParameters.Workplaces.Select(w => new ShiftAssignment(employee, d, w)))
+                    .ToArray();
+                    
+                engine.AddSumConstraint(shiftsOverSubsequentWeekends, Constraint.Lte, 1);
+            }
+        }        
     }
 }
