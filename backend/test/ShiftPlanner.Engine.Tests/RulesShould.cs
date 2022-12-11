@@ -310,6 +310,56 @@ public class RulesShould
     }
 
     [Fact]
+    public void AlwaysScheduleAlternatesOverWeekends_WithInterchangeability()
+    {
+        var capturedShiftsLhs = new List<IReadOnlyCollection<ShiftAssignment>>();
+        var capturedShiftsRhs = new List<IReadOnlyCollection<ShiftAssignment>>();
+
+        _engineMock.Setup(_ => _.AddSumRelationConstraint(Capture.In(capturedShiftsLhs), Constraint.Eq, Capture.In(capturedShiftsRhs)));
+
+        var fridays = _scheduledMonth.Days.Where(d => d.DayOfWeek == DayOfWeek.Friday).Select(d => d.DayOfMonth);
+        var sundays = _scheduledMonth.Days.SkipWhile(d => d.DayOfWeek != DayOfWeek.Friday).Where(d => d.DayOfWeek == DayOfWeek.Sunday).Select(d => d.DayOfMonth);
+
+        var monthScheduleParameters = MonthScheduleParameters with
+        {
+            WeekendInterchangeabilityGroups = new []
+            {
+                new HashSet<Workplace> { Workplace1, Workplace2 }
+            }
+        };
+        
+        Rules.AlwaysScheduleAlternatesOverWeekends(monthScheduleParameters, _engineMock.Object);
+
+        Assert.All(
+            new[] {Employee1, Employee2, Employee3}, employee =>
+            {
+                Assert.All(
+                    new [] {Workplace1, Workplace2}, workplace =>
+                    {
+                        Assert.All<(int, int)>(
+                            fridays.Zip(sundays), tuple => 
+                            {
+                                var (friday, sunday) = tuple;
+                                Assert.Contains(
+                                    new HashSet<ShiftAssignment>
+                                    {
+                                        new ShiftAssignment(employee, new Day(_scheduledMonth, friday), Workplace1),
+                                        new ShiftAssignment(employee, new Day(_scheduledMonth, friday), Workplace2),
+                                    },
+                                    capturedShiftsLhs.Select(_ => _.ToHashSet()));
+                                Assert.Contains(
+                                    new HashSet<ShiftAssignment>
+                                    {
+                                        new ShiftAssignment(employee, new Day(_scheduledMonth, sunday), Workplace1),
+                                        new ShiftAssignment(employee, new Day(_scheduledMonth, sunday), Workplace2),
+                                    },
+                                    capturedShiftsRhs.Select(_ => _.ToHashSet()));
+                            });
+                    });
+            });
+    }
+
+    [Fact]
     public void AlwaysScheduleAlternatesOverWeekends_FromLastMonth()
     {
         var capturedShiftsVariable = new List<ShiftAssignment>();
