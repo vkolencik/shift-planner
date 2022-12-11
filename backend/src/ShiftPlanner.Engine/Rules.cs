@@ -193,7 +193,9 @@ internal static class Rules
                 var sunday = new Day(lastMonthDay.Date.AddDays(2));
                 foreach (var fridayShift in shiftsOnFriday)
                 {
-                    engine.AddVariableConstraint(new ShiftAssignment(fridayShift.Employee, sunday, fridayShift.Shift.Workplace), Constraint.Eq, 1);
+                    var workplace = fridayShift.Shift.Workplace;
+                    var interchangeabilityGroup = monthScheduleParameters.WeekendInterchangeabilityGroups.SingleOrDefault(ig => ig.Contains(workplace)) ?? new HashSet<Workplace> {workplace};
+                    engine.AddSumConstraint(interchangeabilityGroup.Select(w => new ShiftAssignment(fridayShift.Employee, sunday, w)).ToArray(), Constraint.Eq, 1);
                 }
             }
         }

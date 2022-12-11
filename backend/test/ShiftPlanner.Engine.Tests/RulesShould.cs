@@ -362,9 +362,9 @@ public class RulesShould
     [Fact]
     public void AlwaysScheduleAlternatesOverWeekends_FromLastMonth()
     {
-        var capturedShiftsVariable = new List<ShiftAssignment>();
+        var capturedShiftsVariable = new List<IReadOnlyCollection<ShiftAssignment>>();
 
-        _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShiftsVariable), Constraint.Eq, 1));
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsVariable), Constraint.Eq, 1));
 
         var month = new ScheduledMonth(2022, 1);
         
@@ -380,7 +380,39 @@ public class RulesShould
         Rules.AlwaysScheduleAlternatesOverWeekends(monthScheduleParameters, _engineMock.Object);
 
         Assert.Equal(DayOfWeek.Friday, month.Previous.Days.Last().DayOfWeek);
-        Assert.Contains(new ShiftAssignment(Employee1, new Day(month, 2), Workplace1), capturedShiftsVariable);
+        Assert.Contains(new List<ShiftAssignment> {new ShiftAssignment(Employee1, new Day(month, 2), Workplace1)}, capturedShiftsVariable);
+    }
+
+    [Fact]
+    public void AlwaysScheduleAlternatesOverWeekends_FromLastMonth_WithInterchangeability()
+    {
+        var capturedShiftsVariable = new List<IReadOnlyCollection<ShiftAssignment>>();
+
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsVariable), Constraint.Eq, 1));
+
+        var month = new ScheduledMonth(2022, 1);
+        
+        var monthScheduleParameters = MonthScheduleParameters with
+        {
+            Month = month,
+            LastMonthShifts = new []
+            {
+                new ShiftAssignment(Employee1, new Day(2021, 12, 31), Workplace1), // Friday 
+            },
+            WeekendInterchangeabilityGroups = new []
+            {
+                new HashSet<Workplace> { Workplace1, Workplace2 }
+            }
+        };
+        
+        Rules.AlwaysScheduleAlternatesOverWeekends(monthScheduleParameters, _engineMock.Object);
+
+        Assert.Equal(DayOfWeek.Friday, month.Previous.Days.Last().DayOfWeek);
+        Assert.Contains(new List<ShiftAssignment>
+        {
+            new ShiftAssignment(Employee1, new Day(month, 2), Workplace1),
+            new ShiftAssignment(Employee1, new Day(month, 2), Workplace2),
+        }, capturedShiftsVariable);
     }
 
     [Fact]
