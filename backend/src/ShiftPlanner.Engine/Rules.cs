@@ -183,7 +183,7 @@ internal static class Rules
             }
         }
 
-        void EnforceAlternatesFromLastMonth(Day lastMonthDay)
+        void EnforceWeekendAlternatesFromLastMonth(Day lastMonthDay)
         {
             if (lastMonthDay.DayOfWeek == DayOfWeek.Friday)
             {
@@ -197,8 +197,8 @@ internal static class Rules
         }
 
         var previousMonthDays = monthScheduleParameters.Month.Previous.Days;
-        EnforceAlternatesFromLastMonth(previousMonthDays.Last());
-        EnforceAlternatesFromLastMonth(previousMonthDays.ElementAt(previousMonthDays.Count - 2));
+        EnforceWeekendAlternatesFromLastMonth(previousMonthDays.Last());
+        EnforceWeekendAlternatesFromLastMonth(previousMonthDays.ElementAt(previousMonthDays.Count - 2));
     }
 
     private static void LimitShiftsOnDays(
