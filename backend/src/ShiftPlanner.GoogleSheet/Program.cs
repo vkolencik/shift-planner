@@ -46,7 +46,8 @@ static class Program
             employees.Select(e => new EmployeeMonth(e)).ToArray(),
             competenceGroups,
             Array.Empty<ShiftAssignment>(),
-            Array.Empty<ShiftAssignment>());
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ISet<Workplace>>());
 
         var scheduler = new ShiftScheduler();
 

@@ -107,5 +107,6 @@ public class SchedulingParametersAggregatorShould
         Assert.Equal(CompetenceGroup.CompetenceGroups, parameters.CompetenceGroups);
         Assert.Equal(new HashSet<ShiftAssignment>(lastMonthShifts), new HashSet<ShiftAssignment>(parameters.LastMonthShifts));
         Assert.Equal(new HashSet<ShiftAssignment>(fixedShifts), new HashSet<ShiftAssignment>(parameters.FixedShifts));
+        Assert.Equal(Workplace.WeekendInterchangeabilityGroups, parameters.WeekendInterchangeabilityGroups);
     }
 }

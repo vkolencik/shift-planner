@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ShiftPlanner.Domain;
 using Xunit;
@@ -44,7 +45,7 @@ public class ShiftFlexibilityShould
                                 Workload.Infinite)))
                 ).ToArray(),
             new[] {new CompetenceGroup(new[] {workplaceA, workplaceB})},
-            Array.Empty<ShiftAssignment>(), Array.Empty<ShiftAssignment>());
+            Array.Empty<ShiftAssignment>(), Array.Empty<ShiftAssignment>(), Array.Empty<ISet<Workplace>>());
 
         var result = scheduler.ComputeSchedule(parameters);
 

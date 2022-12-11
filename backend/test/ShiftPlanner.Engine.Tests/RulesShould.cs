@@ -25,7 +25,8 @@ public class RulesShould
         },
         new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})},
         Array.Empty<ShiftAssignment>(),
-        Array.Empty<ShiftAssignment>());
+        Array.Empty<ShiftAssignment>(),
+        Array.Empty<ISet<Workplace>>());
 
     private static IEnumerable<Workplace> Workplaces => new[] {Workplace1, Workplace2};
 

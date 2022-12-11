@@ -8,5 +8,6 @@ internal record SchedulerParameters(
     IReadOnlyCollection<CompetenceGroup> CompetenceGroups,
     IReadOnlyCollection<ShiftAssignment> LastMonthShifts,
     IReadOnlyCollection<ShiftAssignment> FixedShifts,
+    IReadOnlyCollection<ISet<Workplace>> WeekendInterchangeabilityGroups,
     ScheduleFlexibility Flexibility
-) : MonthScheduleParameters(Month, EmployeeMonths, CompetenceGroups, LastMonthShifts, FixedShifts);
+) : MonthScheduleParameters(Month, EmployeeMonths, CompetenceGroups, LastMonthShifts, FixedShifts, WeekendInterchangeabilityGroups);
