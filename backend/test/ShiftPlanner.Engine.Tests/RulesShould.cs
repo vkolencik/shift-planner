@@ -332,6 +332,44 @@ public class RulesShould
     }
 
     [Fact]
+    public void NotScheduleSubsequentWeekends_FromLastMonth()
+    {
+        var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
+
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Eq, 0));
+
+        var parameters = MonthScheduleParameters with
+        {
+            Month = new ScheduledMonth(2023, 1),
+            CompetenceGroups = new [] { new CompetenceGroup(new [] {Workplace1}) },
+            LastMonthShifts = new []
+            {
+                new ShiftAssignment(Employee1, new Day(2022, 12, 31), Workplace1), 
+                new ShiftAssignment(Employee2, new Day(2022, 12, 25), Workplace1), 
+                new ShiftAssignment(Employee3, new Day(2022, 12, 24), Workplace1), 
+            }
+        };
+        
+        Rules.AvoidSubsequentWeekends(parameters, _engineMock.Object);
+
+        Assert.Contains(new HashSet<ShiftAssignment>
+        {
+            new ShiftAssignment(Employee1, new Day(2023, 1, 7), Workplace1),
+            new ShiftAssignment(Employee1, new Day(2023, 1, 8), Workplace1)
+        }.ToHashSet(), capturedShifts.Select(_ => _.ToHashSet()));
+
+        Assert.Contains(new HashSet<ShiftAssignment>
+        {
+            new ShiftAssignment(Employee2, new Day(2023, 1, 1), Workplace1),
+        }.ToHashSet(), capturedShifts.Select(_ => _.ToHashSet()));
+        
+        Assert.Contains(new HashSet<ShiftAssignment>
+        {
+            new ShiftAssignment(Employee3, new Day(2023, 1, 1), Workplace1),
+        }.ToHashSet(), capturedShifts.Select(_ => _.ToHashSet()));
+    }
+    
+    [Fact]
     public void AlwaysScheduleAlternatesOverWeekends_WithInterchangeability()
     {
         var capturedShiftsLhs = new List<IReadOnlyCollection<ShiftAssignment>>();

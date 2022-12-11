@@ -302,7 +302,6 @@ public class ComputedScheduleShould
             Assert.All(daysBetweenWeekendShifts, d => Assert.True(d > 12, $"Too few days between weekend shifts: {d}"));
         }
     }
-    
 
     [Fact]
     public void SpreadAssignedShiftsEvenlyAcrossMonth()

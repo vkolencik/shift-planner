@@ -231,7 +231,7 @@ internal static class Rules
 
     public static void AvoidSubsequentWeekends(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
     {
-        var saturdays = monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday);
+        var saturdays = monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday).ToArray();
         foreach (var employee in monthScheduleParameters.Employees)
         {
             foreach (var saturday in saturdays)
@@ -248,6 +248,16 @@ internal static class Rules
                     
                 engine.AddSumConstraint(shiftsOverSubsequentWeekends, Constraint.Lte, 1);
             }
-        }        
+        }
+
+        var lastSaturdayOfLastMonth = monthScheduleParameters.Month.Previous.Days.Last(d => d.DayOfWeek is DayOfWeek.Saturday);
+        var lastWeekendOfLastMonth = new[] {lastSaturdayOfLastMonth, new Day(lastSaturdayOfLastMonth.Date.AddDays(1))}.Where(d => d.Month == monthScheduleParameters.Month.Previous.Month);
+        var lastWeekendShifts = monthScheduleParameters.LastMonthShifts.Where(s => lastWeekendOfLastMonth.Contains(s.Shift.Day));
+        var firstSaturday = monthScheduleParameters.Month.Days.First(d => d.DayOfWeek is DayOfWeek.Saturday);
+        var firstWeekend = new[] {firstSaturday, new Day(firstSaturday.Date.AddDays(1))};
+        foreach (var employee in lastWeekendShifts.Select(s => s.Employee).ToHashSet())
+        {
+            engine.AddSumConstraint(monthScheduleParameters.Workplaces.SelectMany(w => firstWeekend.Select(d => new ShiftAssignment(employee, d, w))).ToArray(), Constraint.Eq, 0);
+        }
     }
 }
