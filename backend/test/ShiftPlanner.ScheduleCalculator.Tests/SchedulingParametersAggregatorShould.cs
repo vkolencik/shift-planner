@@ -40,6 +40,12 @@ public class SchedulingParametersAggregatorShould
         var employee2 = new Employee("e2", CompetenceLevel.Level2, e2Capabilities, Workload.Workload06);
         var user2 = new User("uid2", "u2", "eml2@krtek.me");
 
+        var employee3 = new Employee("e3", CompetenceLevel.Level3, e2Capabilities, Workload.Workload06);
+        var user3 = new User("uid3", "u3", "eml3@krtek.me");
+
+        var employee4 = new Employee("e4", CompetenceLevel.Level4, e2Capabilities, Workload.Workload06);
+        var user4 = new User("uid4", "u4", "eml4@krtek.me");
+
         var leave1 = new Leave(month.Days.First(), month.Days.First());
         var leave2 = new Leave(month.Days.Skip(10).First(), month.Days.Skip(10).First(), false);
         var leave3 = new Leave(month.Days.Skip(20).First(), month.Days.Skip(20).First(), false);
@@ -61,8 +67,10 @@ public class SchedulingParametersAggregatorShould
             .ReturnsAsync(
                 new[]
                 {
-                    new EmployeeInfo(employee1.Name, user1.Email, employee1.CompetenceLevel, employee1.Capabilities, employee1.Workload, false),
-                    new EmployeeInfo(employee2.Name, user2.Email, employee2.CompetenceLevel, employee2.Capabilities, employee2.Workload, false),
+                    new EmployeeInfo(employee1.Name, user1.Email, employee1.CompetenceLevel, employee1.Capabilities, employee1.Workload, EmployeeStatus.Active),
+                    new EmployeeInfo(employee2.Name, user2.Email, employee2.CompetenceLevel, employee2.Capabilities, employee2.Workload, EmployeeStatus.Active),
+                    new EmployeeInfo(employee3.Name, user3.Email, employee3.CompetenceLevel, employee3.Capabilities, employee3.Workload, EmployeeStatus.Inactive),
+                    new EmployeeInfo(employee4.Name, user4.Email, employee4.CompetenceLevel, employee4.Capabilities, employee4.Workload, EmployeeStatus.Disabled),
                 });
 
         _requirementsServiceMock
@@ -84,7 +92,13 @@ public class SchedulingParametersAggregatorShould
 
         _usersServiceMock
             .Setup(_ => _.GetAllUsers())
-            .ReturnsAsync(new[] {new User(user1.UserId, user1.UserName, user1.Email), new User(user2.UserId, user2.UserName, user2.Email)});
+            .ReturnsAsync(new[]
+            {
+                new User(user1.UserId, user1.UserName, user1.Email), 
+                new User(user2.UserId, user2.UserName, user2.Email),
+                new User(user3.UserId, user3.UserName, user3.Email),
+                new User(user4.UserId, user4.UserName, user4.Email),
+            });
 
         _storedScheduleServiceMock.Setup(_ => _.GetSchedule(lastMonth)).ReturnsAsync(lastMonthSchedule);
 
@@ -99,6 +113,7 @@ public class SchedulingParametersAggregatorShould
         var parameters = await aggregator.GetSchedulingParameters(tenant, month);
 
         Assert.Equal(month, parameters.Month);
+        Assert.Equal(2, parameters.EmployeeMonths.Count);
         Assert.Equal(expectedEmployeeMonths.First().Employee, parameters.EmployeeMonths.First().Employee);
         Assert.Equal(expectedEmployeeMonths.First().Leaves, parameters.EmployeeMonths.First().Leaves);
         Assert.Equal(expectedEmployeeMonths.Skip(1).First().Employee, parameters.EmployeeMonths.Skip(1).First().Employee);

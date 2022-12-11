@@ -30,7 +30,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
     {
         var employeeInfos = await _employeeInfoService.GetEmployees(Workplace.Workplaces);
 
-        var activeEmployeeInfos = employeeInfos.Where(e => !e.Disabled);
+        var activeEmployeeInfos = employeeInfos.Where(e => e.EmployeeStatus == EmployeeStatus.Active);
 
         var employeeRequirements = await _requirementsService.GetRequirementsOverviewForMonth(tenant, month);
 
