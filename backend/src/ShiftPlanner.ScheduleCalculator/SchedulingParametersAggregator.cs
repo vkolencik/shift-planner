@@ -60,6 +60,6 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
         employeeRequirements
             .Where(req => req.UserId == userId)
             .Where(req => AbsenceRequirementTypes.Contains(req.RequirementType))
-            .Select(req => new Leave(req.Date, req.Date))
+            .Select(req => new Leave(req.Date, req.Date, req.RequirementType == "leave"))
             .ToArray();
 }
