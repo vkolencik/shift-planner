@@ -12,6 +12,7 @@ namespace ShiftPlanner.Engine.Tests;
 public class EmployeeStandardRuleShould
 {
     private readonly Mock<ISchedulingEngine> _engineMock;
+    private readonly Mock<ISchedulingParametersRecorder> _recorderMock = new Mock<ISchedulingParametersRecorder>();
 
     public EmployeeStandardRuleShould()
     {
@@ -42,7 +43,7 @@ public class EmployeeStandardRuleShould
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, (uint) Math.Floor(standard)));
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, (uint) Math.Ceiling(standard)));
 
-        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object, _recorderMock.Object);
 
         Assert.Equal(capturedShiftsGte.ToHashSet(), capturedShiftsLte.ToHashSet());
         Assert.All(
@@ -90,7 +91,7 @@ public class EmployeeStandardRuleShould
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsHalfMonthOffGte), Constraint.Gte, (uint) Math.Floor(standardLeave)));
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsHalfMonthOffLte), Constraint.Lte, (uint) Math.Ceiling(standardLeave)));
 
-        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object, _recorderMock.Object);
 
         Assert.Equal(capturedShiftsFullMonthGte.ToHashSet(), capturedShiftsFullMonthLte.ToHashSet());
         Assert.Equal(capturedShiftsHalfMonthOffGte.ToHashSet(), capturedShiftsHalfMonthOffLte.ToHashSet());
@@ -172,7 +173,7 @@ public class EmployeeStandardRuleShould
 
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, Capture.In(capturedBoundsLte)));
 
-        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object, _recorderMock.Object);
 
         var lteBound = Assert.Single(capturedBoundsLte);
         var lteShifts = Assert.Single(capturedShiftsLte);
@@ -209,7 +210,7 @@ public class EmployeeStandardRuleShould
         _engineMock.Setup(_ => _.AddSumConstraint(It.IsAny<IReadOnlyCollection<ShiftAssignment>>(), Constraint.Lte, Capture.In(capturedBoundsLte)));
         _engineMock.Setup(_ => _.AddSumConstraint(It.IsAny<IReadOnlyCollection<ShiftAssignment>>(), Constraint.Gte, Capture.In(capturedBoundsGte)));
 
-        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object);
+        EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulingParams, _engineMock.Object, _recorderMock.Object);
 
         var lteBound = Assert.Single(capturedBoundsLte);
         var gteBound = Assert.Single(capturedBoundsGte);

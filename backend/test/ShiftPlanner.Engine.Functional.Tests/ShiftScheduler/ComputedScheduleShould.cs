@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 using Xunit;
 
