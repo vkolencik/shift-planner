@@ -2,7 +2,7 @@
 
 public record Leave
 {
-    public Leave(Day from, Day to)
+    public Leave(Day from, Day to, bool reducesCapacity = true)
     {
         if (to.Date < from.Date)
         {
@@ -11,6 +11,7 @@ public record Leave
 
         this.From = from;
         this.To = to;
+        this.ReducesCapacity = reducesCapacity;
     }
 
     public int LengthDays => (To.Date.ToDateTime(TimeOnly.MinValue) - From.Date.ToDateTime(TimeOnly.MinValue)).Days + 1;
@@ -28,10 +29,5 @@ public record Leave
 
     public Day From { get; init; }
     public Day To { get; init; }
-
-    public void Deconstruct(out Day from, out Day to)
-    {
-        from = this.From;
-        to = this.To;
-    }
+    public bool ReducesCapacity { get; init; }
 }

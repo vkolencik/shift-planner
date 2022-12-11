@@ -64,7 +64,11 @@ public class EmployeeStandardRuleShould
             new ScheduledMonth(2022, 2),
             new[]
             {
-                new EmployeeMonth(Employee1, new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 14))}),
+                new EmployeeMonth(Employee1, new[]
+                {
+                    new Leave(new Day(2022, 2, 1), new Day(2022, 2, 14)),
+                    new Leave(new Day(2022, 2, 1), new Day(2022, 2, 14), false)
+                }),
                 new EmployeeMonth(Employee2),
                 new EmployeeMonth(Employee2),
             },
@@ -74,12 +78,12 @@ public class EmployeeStandardRuleShould
             Array.Empty<ISet<Workplace>>(),
             ScheduleFlexibility.Strict);
 
-        var v = (double) 2 * 28;
-        var ceNoLeaves = (double) 28;
-        var ceLeave = (double) 14;
-        var ct = (double) 2.5 * 28;
-        var standardNoLeaves = v * ceNoLeaves / ct;
-        var standardLeave = v * ceLeave / ct;
+        var overallRequiredCapacity = (double) 2 * 28;
+        var employeeCapacityWithoutLeaves = (double) 28;
+        var employeeCapacityWithLeaves = (double) 14;
+        var overallAvailableCapacity = (double) 2.5 * 28;
+        var standardNoLeaves = overallRequiredCapacity * employeeCapacityWithoutLeaves / overallAvailableCapacity;
+        var standardLeave = overallRequiredCapacity * employeeCapacityWithLeaves / overallAvailableCapacity;
 
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsFullMonthGte), Constraint.Gte, (uint) Math.Floor(standardNoLeaves)));
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsFullMonthLte), Constraint.Lte, (uint) Math.Ceiling(standardNoLeaves)));

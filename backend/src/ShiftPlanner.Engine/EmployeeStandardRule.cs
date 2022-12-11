@@ -99,8 +99,9 @@ internal static class EmployeeStandardRule
     {
         var daysCount = (double) monthScheduleParameters.Month.Days.Count;
         var totalRequiredCapacity = daysCount * monthScheduleParameters.Workplaces.Count;
-        var totalEmployeeCapacity = (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
-        var employeeCapacity = daysCount - employeeMonth.Leaves.Sum(l => l.LengthDays);
+        var capacityReductionByLeaves = employeeMonth.Leaves.Where(l => l.ReducesCapacity).Sum(l => l.LengthDays);
+        var totalEmployeeCapacity = (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Where(l => l.ReducesCapacity).Sum(l => l.LengthDays));
+        var employeeCapacity = daysCount - capacityReductionByLeaves;
         var flexibilityModifier = flexibilityMultiplier * monthScheduleParameters.Flexibility.Degree / 10;
         var preciseStandard = totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
         var standardLb = Math.Max(employeeMonth.Employee.Workload.MinimumShiftsPerMonth * employeeCapacity / daysCount, multiplier * preciseStandard - flexibilityModifier);
