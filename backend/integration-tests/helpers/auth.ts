@@ -57,7 +57,6 @@ async function getTestUserCredentials(testUser: TestUser): Promise<TestUserCrede
     password: credentials[testUser].password,
     client_id: credentials.client_id,
     client_secret: credentials.client_secret
-
   }
 }
 

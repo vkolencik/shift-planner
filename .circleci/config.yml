@@ -8,7 +8,7 @@ executors:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
   node:
     docker:
-      - image: node:18-alpine
+      - image: cimg/node:18.12.1
 
 jobs:
 
@@ -74,6 +74,9 @@ jobs:
     steps:
       - checkout:
           path: ~/project
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: ../backend

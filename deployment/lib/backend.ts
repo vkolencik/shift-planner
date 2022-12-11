@@ -7,9 +7,14 @@ import { EndpointType, LambdaRestApi, SecurityPolicy } from 'aws-cdk-lib/aws-api
 import { IGrantable, IPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam'
 import { Environment } from './deployment-stack'
 import { RetentionDays } from 'aws-cdk-lib/aws-logs'
+import { ApplicationLoadBalancedFargateService } from 'aws-cdk-lib/aws-ecs-patterns'
+import { Cluster, ContainerDefinition, ContainerImage, ContainerImageConfig } from 'aws-cdk-lib/aws-ecs'
+import { InstanceClass, InstanceSize, InstanceType, NatProvider, Vpc } from 'aws-cdk-lib/aws-ec2'
+import { FckNatInstanceProvider } from 'cdk-fck-nat'
 
 export class Backend extends Construct implements IGrantable {
   private readonly backendLambdaFunction: Function
+  public readonly service: ApplicationLoadBalancedFargateService
 
   public get grantPrincipal (): IPrincipal {
     return this.backendLambdaFunction.grantPrincipal
@@ -31,7 +36,7 @@ export class Backend extends Construct implements IGrantable {
       },
       runtime: Runtime.DOTNET_6,
       timeout: Duration.seconds(30),
-     logRetention: RetentionDays.ONE_MONTH,
+      logRetention: RetentionDays.ONE_MONTH,
     })
 
     if (environment === Environment.Production) {
@@ -67,10 +72,65 @@ export class Backend extends Construct implements IGrantable {
         securityPolicy: SecurityPolicy.TLS_1_2
       }
     })
+
+    // const vpc = Vpc.fromVpcAttributes(this, 'asdf', {
+    //   vpcId: 'vpc-084d5cbc6198a7dee',
+    //   availabilityZones: ['eu-central-1a', 'eu-central-1b'],
+    //   publicSubnetIds: ['subnet-04b3761eb14587693', 'subnet-0c6c12377543a7d6c'],
+    //   isolatedSubnetIds: ['subnet-0acc106e478550384', 'subnet-0364123ff4247136b']
+    // })
+
+    const vpc = new Vpc(this, 'vpc', {
+      natGatewayProvider: new FckNatInstanceProvider({
+        instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.MICRO),
+      }),
+      // natGateways: 1,
+      // availabilityZones: ['eu-central-1a', 'eu-central-1b']
+      //maxAzs: 2
+    })
+
+    const cluster = new Cluster(this, 'cluster2', {
+      clusterName: '_preview-krtek-cluster2',
+      vpc
+    })
+
+    this.service = new ApplicationLoadBalancedFargateService(this, 'service2', {
+      domainName: 'b3.preview.krtek.me',
+      domainZone: HostedZone.fromHostedZoneAttributes(this, `hosted-zone`, {
+        zoneName: 'preview.krtek.me',
+        hostedZoneId: hostedZoneId
+      }),
+      certificate: cert,
+      publicLoadBalancer: true,
+      desiredCount: 2,
+      cluster: cluster,
+      serviceName: '_preview-krtek2',
+      taskSubnets: { },
+      taskImageOptions: {
+        // `deployment/cdk.out` must be ignored in `.dockerignore`
+        image: runningInTest ? new DummyImage() : ContainerImage.fromAsset('../backend'),
+        environment: {
+          ASPNETCORE_ENVIRONMENT: environment === Environment.Production ? 'Production' : 'Staging'
+        }
+      }
+    })
+
+    this.service.taskDefinition.taskRole.addToPrincipalPolicy(new PolicyStatement({
+      resources: ['arn:aws:secretsmanager:eu-central-1:720500131615:secret:auth0-mgmt-api-key-vdXHOP'],
+      actions: ['secretsmanager:GetSecretValue']
+    }))
   }
 }
 
 const dummyCode: Code = {
   bind (_: Construct): CodeConfig { return { s3Location: { bucketName: 'dummy', objectKey: 'dummy' } }},
   bindToResource (_resource: CfnResource, _options?: ResourceBindOptions): void {}
+}
+
+class DummyImage extends ContainerImage {
+  bind (scope: Construct, containerDefinition: ContainerDefinition): ContainerImageConfig {
+    return {
+      imageName: 'dummy'
+    }
+  }
 }
