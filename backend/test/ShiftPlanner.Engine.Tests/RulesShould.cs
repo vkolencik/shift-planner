@@ -124,27 +124,14 @@ public class RulesShould
     public void DisallowShiftsOnAlternateDaysExceptWeekends()
     {
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
-        var capturedShiftsZero = new List<IReadOnlyCollection<ShiftAssignment>>();
         _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsZero), Constraint.Eq, 0));
 
-        var scheduledMonth = new ScheduledMonth(2022, 1);
-        var day1 = scheduledMonth.Days.ElementAt(0);
-        var day2 = scheduledMonth.Days.ElementAt(1);
-        var day3 = scheduledMonth.Days.ElementAt(2);
-        var firstFriday = scheduledMonth.Days.First(d => d.DayOfWeek == DayOfWeek.Friday);
-        var firstSundayAfterFriday = scheduledMonth.Days.SkipWhile(d => d.DayOfWeek != DayOfWeek.Friday).First(d => d.DayOfWeek == DayOfWeek.Sunday);
-        var previousMonthDays = scheduledMonth.Previous.Days;
-        
-        var monthScheduleParameters = MonthScheduleParameters with
-        {
-            Month = scheduledMonth,
-            LastMonthShifts = new []
-            {
-                new ShiftAssignment(Employee1, previousMonthDays.ElementAt(previousMonthDays.Count - 1), Workplace1), // Friday
-                new ShiftAssignment(Employee2, previousMonthDays.ElementAt(previousMonthDays.Count - 2), Workplace1), // Thursday
-            }
-        };
+        var day1 = _scheduledMonth.Days.ElementAt(0);
+        var day3 = _scheduledMonth.Days.ElementAt(2);
+        var firstFriday = _scheduledMonth.Days.First(d => d.DayOfWeek == DayOfWeek.Friday);
+        var firstSundayAfterFriday = _scheduledMonth.Days.SkipWhile(d => d.DayOfWeek != DayOfWeek.Friday).First(d => d.DayOfWeek == DayOfWeek.Sunday);
+
+        var monthScheduleParameters = MonthScheduleParameters;
 
         Rules.NoAlternativeDayShiftsForEmployee(monthScheduleParameters, _engineMock.Object);
 
@@ -167,6 +154,30 @@ public class RulesShould
                 new ShiftAssignment(Employee1, firstSundayAfterFriday, Workplace1),
                 new ShiftAssignment(Employee1, firstSundayAfterFriday, Workplace2)
             }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
+    }
+
+    [Fact]
+    public void DisallowShiftsOnAlternateDaysExceptWeekends_FromLastMonth()
+    {
+        var capturedShiftsZero = new List<IReadOnlyCollection<ShiftAssignment>>();
+        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsZero), Constraint.Eq, 0));
+
+        var scheduledMonth = new ScheduledMonth(2022, 1);
+        var day1 = scheduledMonth.Days.ElementAt(0);
+        var day2 = scheduledMonth.Days.ElementAt(1);
+        var previousMonthDays = scheduledMonth.Previous.Days;
+        
+        var monthScheduleParameters = MonthScheduleParameters with
+        {
+            Month = scheduledMonth,
+            LastMonthShifts = new []
+            {
+                new ShiftAssignment(Employee1, previousMonthDays.ElementAt(previousMonthDays.Count - 1), Workplace1), // Friday
+                new ShiftAssignment(Employee2, previousMonthDays.ElementAt(previousMonthDays.Count - 2), Workplace1), // Thursday
+            }
+        };
+
+        Rules.NoAlternativeDayShiftsForEmployee(monthScheduleParameters, _engineMock.Object);
 
         // alternating shifts from last month:
         Assert.DoesNotContain(
