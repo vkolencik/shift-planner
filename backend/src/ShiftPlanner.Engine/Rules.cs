@@ -84,19 +84,19 @@ internal static class Rules
         var previousMonthDays = schedulingParameters.Month.Previous.Days;
         
         var lastDayOfPreviousMonth = previousMonthDays.Last();
-        if (lastDayOfPreviousMonth.DayOfWeek != DayOfWeek.Friday)
-        {
-            ForbidShiftsOnDayWhenDay(lastDayOfPreviousMonth, schedulingParameters.Month.Days.ElementAt(1));
-        }
+        ForbidShiftsOnDayWhenLastMonthDay(lastDayOfPreviousMonth);
 
         var penultimateDayOfPreviousMonth = previousMonthDays.ElementAt(previousMonthDays.Count - 2);
-        if (lastDayOfPreviousMonth.DayOfWeek != DayOfWeek.Friday)
-        {
-            ForbidShiftsOnDayWhenDay(penultimateDayOfPreviousMonth, schedulingParameters.Month.Days.ElementAt(0));
-        }
+        ForbidShiftsOnDayWhenLastMonthDay(penultimateDayOfPreviousMonth);
 
-        void ForbidShiftsOnDayWhenDay(Day previousMonthDay, Day thisMonthDay)
+        void ForbidShiftsOnDayWhenLastMonthDay(Day previousMonthDay)
         {
+            if (previousMonthDay.DayOfWeek == DayOfWeek.Friday)
+            {
+                return;
+            }
+            
+            var thisMonthDay = new Day(previousMonthDay.Date.AddDays(2));
             var shiftsOnPreviousMonthDay = schedulingParameters.LastMonthShifts.Where(s => s.Shift.Day == previousMonthDay);
             foreach (var employee in new HashSet<Employee>(shiftsOnPreviousMonthDay.Select(s => s.Employee)))
             {
