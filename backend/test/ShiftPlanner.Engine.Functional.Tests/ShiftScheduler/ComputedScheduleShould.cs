@@ -286,6 +286,24 @@ public class ComputedScheduleShould
     }
 
     [Fact]
+    public void NotHaveSubsequentWeekends()
+    {
+        var schedule = ComputeSchedule();
+
+        foreach (var employee in Employees)
+        {
+            var weekendDayShifts = schedule.Shifts
+                .Where(s => s.Employee == employee && s.Shift.Day.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                .Select(s => s.Shift.Day.Date)
+                .ToArray();
+
+            var daysBetweenWeekendShifts = weekendDayShifts.Zip(weekendDayShifts.Skip(1)).Select(tuple => DaysBetween(tuple.First, tuple.Second));
+
+            Assert.All(daysBetweenWeekendShifts, d => Assert.True(d > 12, $"Too few days between weekend shifts: {d}"));
+        }
+    }
+
+    [Fact]
     public void SpreadAssignedShiftsEvenlyAcrossMonth()
     {
         var schedule = ComputeSchedule();
