@@ -23,7 +23,7 @@
   "dependencies": {
     "@aws-cdk/aws-synthetics-alpha": "^2.51.1-alpha.0",
     "aws-cdk-lib": "2.51.1",
-    "constructs": "^10.1.164",
+    "constructs": "^10.1.165",
     "source-map-support": "^0.5.21"
   }
 }
