@@ -4,7 +4,6 @@ using ShiftPlanner.Api.Services;
 using ShiftPlanner.Api.Services.Users;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Domain.Services;
-using ShiftPlanner.GoogleSheet;
 using ShiftPlanner.TestHelpers;
 
 namespace ShiftPlanner.ScheduleCalculator.Tests;
@@ -42,8 +41,8 @@ public class SchedulingParametersAggregatorShould
         var user2 = new User("uid2", "u2", "eml2@krtek.me");
 
         var leave1 = new Leave(month.Days.First(), month.Days.First());
-        var leave2 = new Leave(month.Days.Skip(10).First(), month.Days.Skip(10).First());
-        var leave3 = new Leave(month.Days.Skip(20).First(), month.Days.Skip(20).First());
+        var leave2 = new Leave(month.Days.Skip(10).First(), month.Days.Skip(10).First(), false);
+        var leave3 = new Leave(month.Days.Skip(20).First(), month.Days.Skip(20).First(), false);
 
         var lastMonthShifts = new[]
         {

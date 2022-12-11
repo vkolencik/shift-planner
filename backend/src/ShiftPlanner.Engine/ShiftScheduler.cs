@@ -1,4 +1,5 @@
-﻿using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Contracts;
+using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Engine;
 
@@ -7,8 +8,11 @@ public class ShiftScheduler
     public SchedulingResult ComputeSchedule(MonthScheduleParameters monthScheduleParameters)
     {
         var solverParameters = GetSolverParameters(monthScheduleParameters);
+        var recorder = new SchedulingParametersRecorder();
+
         for (uint degreeOfFlexibility = 0; degreeOfFlexibility <= 50; degreeOfFlexibility++)
         {
+            recorder.Reset();
             var flexibility = new ScheduleFlexibility(degreeOfFlexibility);
             var schedulerParameters = GetSchedulerParameters(monthScheduleParameters, flexibility);
             var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(solverParameters);
@@ -30,25 +34,25 @@ public class ShiftScheduler
 
             Rules.DisallowShiftsWithoutEmployeeCapability(solverParameters, engine);
 
-            EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulerParameters, engine);
+            EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulerParameters, engine, recorder);
 
             EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulerParameters, engine);
 
             EmployeeStandardRule.SpreadShiftsEvenlyThroughoutMonth(schedulerParameters, engine);
 
             Rules.TakeLeavesIntoAccount(monthScheduleParameters, engine);
-            
+
             Rules.EnforceFixedShifts(monthScheduleParameters, engine);
 
             var result = engine.Solve();
 
             if (result != null)
             {
-                return new SuccessfulSchedulingResult(result, flexibility);
+                return new SuccessfulSchedulingResult(result, flexibility, recorder.GetParameters);
             }
         }
 
-        throw new Exception("Cannot find feasible solution");
+        return new SolutionNotFound(recorder.GetParameters);
     }
 
     private SchedulerParameters GetSchedulerParameters(MonthScheduleParameters monthScheduleParameters, ScheduleFlexibility flexibility)
@@ -59,7 +63,7 @@ public class ShiftScheduler
             monthScheduleParameters.CompetenceGroups,
             monthScheduleParameters.LastMonthShifts,
             monthScheduleParameters.FixedShifts,
-            monthScheduleParameters.WeekendInterchangeabilityGroups, 
+            monthScheduleParameters.WeekendInterchangeabilityGroups,
             flexibility);
     }
 

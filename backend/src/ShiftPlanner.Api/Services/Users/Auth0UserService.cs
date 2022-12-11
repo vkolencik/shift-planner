@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Auth0.ManagementApi;
+﻿using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
 using Auth0.ManagementApi.Paging;
 using ShiftPlanner.Api.Services.Secrets;

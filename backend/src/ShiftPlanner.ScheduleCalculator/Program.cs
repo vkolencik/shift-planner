@@ -6,8 +6,8 @@ using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
 using ShiftPlanner.Api.Services.Secrets;
 using ShiftPlanner.Api.Services.Users;
+using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
-using ShiftPlanner.Domain.Services;
 using ShiftPlanner.Engine;
 using ShiftPlanner.GoogleSheet;
 
@@ -71,16 +71,16 @@ static class Program
             Console.Error.WriteLine("Solution not found");
         }
 
-        if (result is SuccessfulSchedulingResult)
+        if (result is SuccessfulSchedulingResult successResult)
         {
-            var successResult = (SuccessfulSchedulingResult) result;
-
             IScheduleRepository resultRepository = new GoogleSheetsScheduleRepository();
             Console.Out.WriteLine("Solution found");
             Console.Out.WriteLine($"Flexibility: {successResult.Flexibility.Degree}");
 
             await resultRepository.StoreComputedSchedule(month, successResult);
         }
+
+        Console.Out.WriteLine(string.Join('\n', result.SolutionParameters.RecordedStandards.Select(kvp => $"{kvp.Key.Name}: {kvp.Value.Minimum}-{kvp.Value.Maximum}")));
     }
 }
 

@@ -1,13 +1,14 @@
-﻿using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Contracts;
+using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine;
 
 namespace ShiftPlanner.Engine;
 
 internal static class EmployeeStandardRule
 {
-    public static void SpreadShiftAssignmentEvenlyAmongEmployees(SchedulerParameters monthScheduleParameters, ISchedulingEngine engine)
+    public static void SpreadShiftAssignmentEvenlyAmongEmployees(SchedulerParameters monthScheduleParameters, ISchedulingEngine engine, ISchedulingParametersRecorder recorder)
     {
-        monthScheduleParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeeStandardRules(monthScheduleParameters, engine, em));
+        monthScheduleParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeeStandardRules(monthScheduleParameters, engine, recorder, em));
     }
 
     public static void AssignShiftsByPreferencePercentages(
@@ -60,6 +61,7 @@ internal static class EmployeeStandardRule
     private static void AddEmployeeStandardRules(
         SchedulerParameters monthScheduleParameters,
         ISchedulingEngine engine,
+        ISchedulingParametersRecorder recorder,
         EmployeeMonth employeeMonth)
     {
         var employeeStandard = ComputeStandard(monthScheduleParameters, employeeMonth, 1);
@@ -70,6 +72,7 @@ internal static class EmployeeStandardRule
 
         engine.AddSumConstraint(employeeShiftsInMonth, Constraint.Gte, employeeStandard.Minimum);
         engine.AddSumConstraint(employeeShiftsInMonth, Constraint.Lte, employeeStandard.Maximum);
+        recorder.RecordEmployeeStandard(employeeMonth.Employee, employeeStandard);
     }
 
     private static void AddEmployeePreferencePercentages(
@@ -99,8 +102,9 @@ internal static class EmployeeStandardRule
     {
         var daysCount = (double) monthScheduleParameters.Month.Days.Count;
         var totalRequiredCapacity = daysCount * monthScheduleParameters.Workplaces.Count;
-        var totalEmployeeCapacity = (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Sum(l => l.LengthDays));
-        var employeeCapacity = daysCount - employeeMonth.Leaves.Sum(l => l.LengthDays);
+        var capacityReductionByLeaves = employeeMonth.Leaves.Where(l => l.ReducesCapacity).Sum(l => l.LengthDays);
+        var totalEmployeeCapacity = (double) monthScheduleParameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Where(l => l.ReducesCapacity).Sum(l => l.LengthDays));
+        var employeeCapacity = daysCount - capacityReductionByLeaves;
         var flexibilityModifier = flexibilityMultiplier * monthScheduleParameters.Flexibility.Degree / 10;
         var preciseStandard = totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
         var standardLb = Math.Max(employeeMonth.Employee.Workload.MinimumShiftsPerMonth * employeeCapacity / daysCount, multiplier * preciseStandard - flexibilityModifier);
@@ -110,6 +114,4 @@ internal static class EmployeeStandardRule
             (uint) Math.Floor(standardLb),
             (uint) Math.Ceiling(standardUb));
     }
-
-    private record struct EmployeeStandard(uint Minimum, uint Maximum);
 }
