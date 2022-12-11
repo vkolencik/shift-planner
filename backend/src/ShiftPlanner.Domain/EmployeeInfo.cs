@@ -6,4 +6,6 @@ public record EmployeeInfo(
     CompetenceLevel CompetenceLevel,
     Capabilities Capabilities,
     Workload Workload,
-    bool Disabled);
+    EmployeeStatus EmployeeStatus);
+
+public enum EmployeeStatus { Active, Inactive, Disabled }
