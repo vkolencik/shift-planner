@@ -7,13 +7,22 @@ import { Day, toDay } from '../dates'
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'
 
-const excludedUserIds = getInstance() === Instance.Production ? [
+const inactiveUsers = [
+  'auth0|637f84ec841043dd7a9d44d9', // Hladníková K.
+  'auth0|637f84eb841043dd7a9d44d1', // Kršková
+  'auth0|637f84ea841043dd7a9d44c9', // Matějková
+  'auth0|637f84e6841043dd7a9d449d', // Švecová
+]
+
+const testUsers = [
   'auth0|637dde8af1e62a9cb6276431', // tester testovic
   'auth0|633015ee115794a47e8166d8', // test user 1
   'auth0|6367b6f40df1e7bc1037834f', // test user 2
   'auth0|6313a5ba9b10486b3d672dad', // lu
-  'auth0|637dd38ca50041687c9806f9' // vojta
-] : []
+  'auth0|637dd38ca50041687c9806f9', // vojta
+]
+
+const excludedUserIds = getInstance() === Instance.Production ? [...inactiveUsers, ...testUsers] : inactiveUsers
 
 export const requirementTypes: { [key in RequirementType]: { name: string, value: RequirementType } } = {
   'leave': { name: 'Dovolená', value: 'leave' },
