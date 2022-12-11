@@ -52,7 +52,8 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
             employeeMonths,
             CompetenceGroup.CompetenceGroups,
             existingShifts.Where(s => s.Shift.Day.Month == previousMonth.Month).ToArray(),
-            existingShifts.Where(s => s.Shift.Day.Month == month.Month).ToArray());
+            existingShifts.Where(s => s.Shift.Day.Month == month.Month).ToArray(),
+            Workplace.WeekendInterchangeabilityGroups);
     }
 
     private IReadOnlyCollection<Leave> GetLeavesForEmployee(IReadOnlyCollection<UserRequirementModel> employeeRequirements, string userId) =>

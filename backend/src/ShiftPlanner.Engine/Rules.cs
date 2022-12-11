@@ -57,7 +57,7 @@ internal static class Rules
             var shiftsOnFirstDay = schedulingParameters.Workplaces
                 .Select(w => new ShiftAssignment(employee, firstDayOfMonth, w))
                 .ToArray();
-            
+
             engine.AddSumConstraint(shiftsOnFirstDay, Constraint.Eq, 0);
         }
     }
@@ -80,9 +80,9 @@ internal static class Rules
                 engine.AddSumConstraint(employeesShiftsInAlternateDays, Constraint.Lte, 1);
             }
         }
-        
+
         var previousMonthDays = schedulingParameters.Month.Previous.Days;
-        
+
         var lastDayOfPreviousMonth = previousMonthDays.Last();
         ForbidShiftsOnDayWhenLastMonthDay(lastDayOfPreviousMonth);
 
@@ -95,7 +95,7 @@ internal static class Rules
             {
                 return;
             }
-            
+
             var thisMonthDay = new Day(previousMonthDay.Date.AddDays(2));
             var shiftsOnPreviousMonthDay = schedulingParameters.LastMonthShifts.Where(s => s.Shift.Day == previousMonthDay);
             foreach (var employee in new HashSet<Employee>(shiftsOnPreviousMonthDay.Select(s => s.Employee)))
@@ -175,10 +175,12 @@ internal static class Rules
             {
                 foreach (var workplace in monthScheduleParameters.Workplaces)
                 {
+                    var interchangeabilityGroup = monthScheduleParameters.WeekendInterchangeabilityGroups.SingleOrDefault(ig => ig.Contains(workplace)) ?? new HashSet<Workplace> {workplace};
+
                     engine.AddSumRelationConstraint(
-                        new[] {new ShiftAssignment(employeeMonth.Employee, friday, workplace)},
+                        interchangeabilityGroup.Select(w => new ShiftAssignment(employeeMonth.Employee, friday, w)).ToArray(),
                         Constraint.Eq,
-                        new[] {new ShiftAssignment(employeeMonth.Employee, sunday, workplace)});
+                        interchangeabilityGroup.Select(w => new ShiftAssignment(employeeMonth.Employee, sunday, w)).ToArray());
                 }
             }
         }
@@ -191,7 +193,9 @@ internal static class Rules
                 var sunday = new Day(lastMonthDay.Date.AddDays(2));
                 foreach (var fridayShift in shiftsOnFriday)
                 {
-                    engine.AddVariableConstraint(new ShiftAssignment(fridayShift.Employee, sunday, fridayShift.Shift.Workplace), Constraint.Eq, 1);
+                    var workplace = fridayShift.Shift.Workplace;
+                    var interchangeabilityGroup = monthScheduleParameters.WeekendInterchangeabilityGroups.SingleOrDefault(ig => ig.Contains(workplace)) ?? new HashSet<Workplace> {workplace};
+                    engine.AddSumConstraint(interchangeabilityGroup.Select(w => new ShiftAssignment(fridayShift.Employee, sunday, w)).ToArray(), Constraint.Eq, 1);
                 }
             }
         }

@@ -5,7 +5,8 @@ public record MonthScheduleParameters(
     IReadOnlyCollection<EmployeeMonth> EmployeeMonths,
     IReadOnlyCollection<CompetenceGroup> CompetenceGroups,
     IReadOnlyCollection<ShiftAssignment> LastMonthShifts,
-    IReadOnlyCollection<ShiftAssignment> FixedShifts)
+    IReadOnlyCollection<ShiftAssignment> FixedShifts,
+    IReadOnlyCollection<ISet<Workplace>> WeekendInterchangeabilityGroups)
 {
     public IReadOnlyCollection<Employee> Employees => EmployeeMonths.Select(em => em.Employee).ToArray();
 

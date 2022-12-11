@@ -51,7 +51,7 @@ public class ShiftScheduler
         throw new Exception("Cannot find feasible solution");
     }
 
-    private SchedulerParameters GetSchedulerParameters(MonthScheduleParameters monthScheduleParameters, ScheduleFlexibility flexiblity)
+    private SchedulerParameters GetSchedulerParameters(MonthScheduleParameters monthScheduleParameters, ScheduleFlexibility flexibility)
     {
         return new SchedulerParameters(
             monthScheduleParameters.Month,
@@ -59,7 +59,8 @@ public class ShiftScheduler
             monthScheduleParameters.CompetenceGroups,
             monthScheduleParameters.LastMonthShifts,
             monthScheduleParameters.FixedShifts,
-            flexiblity);
+            monthScheduleParameters.WeekendInterchangeabilityGroups, 
+            flexibility);
     }
 
     private static SolverParameters GetSolverParameters(MonthScheduleParameters monthScheduleParameters)

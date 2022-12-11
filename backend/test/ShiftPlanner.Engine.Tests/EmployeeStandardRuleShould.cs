@@ -34,6 +34,7 @@ public class EmployeeStandardRuleShould
             new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})},
             Array.Empty<ShiftAssignment>(),
             Array.Empty<ShiftAssignment>(),
+            Array.Empty<ISet<Workplace>>(),
             ScheduleFlexibility.Strict);
 
         var standard = (double) schedulingParams.Month.Days.Count * schedulingParams.Workplaces.Count / schedulingParams.Employees.Count;
@@ -70,6 +71,7 @@ public class EmployeeStandardRuleShould
             new[] {new CompetenceGroup(new[] {Workplace1}), new CompetenceGroup(new[] {Workplace2})},
             Array.Empty<ShiftAssignment>(),
             Array.Empty<ShiftAssignment>(),
+            Array.Empty<ISet<Workplace>>(),
             ScheduleFlexibility.Strict);
 
         var v = (double) 2 * 28;
@@ -121,6 +123,7 @@ public class EmployeeStandardRuleShould
             },
             Array.Empty<ShiftAssignment>(),
             Array.Empty<ShiftAssignment>(),
+            Array.Empty<ISet<Workplace>>(),
             ScheduleFlexibility.Strict
         );
 
@@ -159,6 +162,7 @@ public class EmployeeStandardRuleShould
             },
             Array.Empty<ShiftAssignment>(),
             Array.Empty<ShiftAssignment>(),
+            Array.Empty<ISet<Workplace>>(),
             ScheduleFlexibility.Strict
         );
 
@@ -194,6 +198,7 @@ public class EmployeeStandardRuleShould
             },
             Array.Empty<ShiftAssignment>(),
             Array.Empty<ShiftAssignment>(),
+            Array.Empty<ISet<Workplace>>(),
             ScheduleFlexibility.Strict
         );
 
@@ -241,6 +246,7 @@ public class EmployeeStandardRuleShould
             },
             Array.Empty<ShiftAssignment>(),
             Array.Empty<ShiftAssignment>(),
+            Array.Empty<ISet<Workplace>>(),
             ScheduleFlexibility.Strict
         );
 

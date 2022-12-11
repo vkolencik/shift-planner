@@ -347,7 +347,8 @@ public class ComputedScheduleShould
                 oddWeekLeaveEmployees.Concat(evenWeekLeaveEmployees).ToArray(),
                 new[] {new CompetenceGroup(new[] {Aro1})},
                 Array.Empty<ShiftAssignment>(),
-                Array.Empty<ShiftAssignment>()
+                Array.Empty<ShiftAssignment>(),
+                Array.Empty<ISet<Workplace>>()
             ));
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
         Assert.Equal(successResult.Flexibility, ScheduleFlexibility.Strict);
@@ -464,7 +465,8 @@ public class ComputedScheduleShould
             _employeeMonths,
             _competenceGroups,
             Array.Empty<ShiftAssignment>(),
-            Array.Empty<ShiftAssignment>()
+            Array.Empty<ShiftAssignment>(),
+            Array.Empty<ISet<Workplace>>()
         );
     }
 
