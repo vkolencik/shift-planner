@@ -7,16 +7,26 @@ import { sortArrayBy } from '../sort-array-by'
 import './MonthlyOverview.css'
 
 type CellDetails = { cssClass: string, titleText: string, cellText: string }
-const absenceClasses: Partial<{ [requirementType in RequirementType]: CellDetails }> = {
+const absenceClasses: { [requirementType in RequirementType]: CellDetails } = {
+  'leave': {
+    cssClass: 'table-purple',
+    cellText: 'D',
+    titleText: 'Dovolená',
+  },
+  'soft-yes': {
+    cssClass: 'table-success',
+    cellText: 'Ch',
+    titleText: 'Chci'
+  },
   'hard-no': {
     cssClass: 'table-danger',
     cellText: 'N',
     titleText: 'Nemůžu'
   },
-  'leave': {
-    cssClass: 'table-purple',
-    cellText: 'D',
-    titleText: 'Dovolená',
+  'only-morning': {
+    cssClass: 'table-warning',
+    cellText: 'R',
+    titleText: 'Pouze R'
   },
   'only-afternoon': {
     cssClass: 'table-primary',
@@ -33,7 +43,7 @@ function DayCell ({ requirementType }: { requirementType: string | undefined }) 
   }
 
   // @ts-ignore
-  return <td className={details?.cssClass} title={details?.titleText}>
+  return <td className={`${details?.cssClass} text-center`} title={details?.titleText}>
     {details?.cellText}
   </td>
 }
@@ -67,13 +77,15 @@ export const MonthlyOverview: React.FC = () => {
   const days = new Array(daysInMonth).fill(1).map((_, i) => i + 1)
 
   const dailySums = new Array(daysInMonth).fill(users.length - 6)
-  const absences = requirements.filter(r => r.requirementType === 'leave' || r.requirementType === 'hard-no' || r.requirementType == 'only-afternoon')
-  const dayTypes: { [key: string]: string } = {}
-  for (const requirement of absences) {
-    const date = parseDate(requirement.date)
-    const day = date.getDate()
-    dailySums[day - 1]--
-    dayTypes[`${requirement.userId}-${day}`] = requirement.requirementType
+
+  const requirementsPerUserDay: { [key: string]: string } = {}
+  const countsAsAbsence = (r: RequirementType) => r === 'leave' || r === 'hard-no' || r == 'only-afternoon'
+  for (const requirement of requirements) {
+    const day = parseDate(requirement.date).getDate()
+    if (countsAsAbsence(requirement.requirementType)) {
+      dailySums[day - 1]--
+    }
+    requirementsPerUserDay[`${requirement.userId}-${day}`] = requirement.requirementType
   }
 
   const weekends: number[] = days.filter(day => isWeekend(new Date(currentYear, currentMonth - 1, day)))
@@ -98,9 +110,7 @@ export const MonthlyOverview: React.FC = () => {
       {users.map(user =>
         <tr>
           <th scope="row">{user.userName}</th>
-          {days.map(day => weekends.includes(day)
-            ? <td className="weekend-day"></td>
-            : <DayCell requirementType={dayTypes[`${user.userId}-${day}`]}/>
+          {days.map(day => <DayCell requirementType={requirementsPerUserDay[`${user.userId}-${day}`]}/>
           )}
         </tr>
       )}
