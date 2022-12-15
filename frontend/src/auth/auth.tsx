@@ -56,6 +56,9 @@ export const WithAuth: React.FC<PropsWithChildren> = ({ children }) => {
 
   if (!isAuthenticated) {
     return <div className="d-flex flex-column min-vh-100 h-100 d-flex align-items-center justify-content-center">
+      <img
+        style={{height: '70vh', maxHeight: '400px'}}
+        src='https://krtek-assets-720500131615.s3.eu-central-1.amazonaws.com/krtek1.svg'/>
       <Button onClick={() => loginWithRedirect()}>Login</Button>
     </div>
   }
