@@ -1,0 +1,715 @@
+[
+  {
+    "date": "2023-01-01",
+    "shifts": [
+      {
+        "name": "Drašnar"
+      },
+      {
+        "name": "Fischer"
+      },
+      {
+        "name": "Paulovičová"
+      },
+      {
+        "name": "Šraierová"
+      },
+      {
+        "name": "Fedurčák"
+      },
+      {
+        "name": "Michalovič"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-02",
+    "shifts": [
+      {
+        "name": "Hobzíková"
+      },
+      {
+        "name": "Sedlačková"
+      },
+      {
+        "name": "Marešová"
+      },
+      {
+        "name": "Jánský"
+      },
+      {
+        "name": "Vobořil"
+      },
+      {
+        "name": "Jagerská"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-03",
+    "shifts": [
+      {
+        "name": "Jiřička"
+      },
+      {
+        "name": "Korchová"
+      },
+      {
+        "name": "Sepp"
+      },
+      {
+        "name": "Šumanová"
+      },
+      {
+        "name": "Bala"
+      },
+      {
+        "name": "Polka"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-04",
+    "shifts": [
+      {
+        "name": "Šebele"
+      },
+      {
+        "name": "Džunda"
+      },
+      {
+        "name": "Džbánková"
+      },
+      {
+        "name": "Strnadelová"
+      },
+      {
+        "name": "Bohm"
+      },
+      {
+        "name": "Fischer"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-05",
+    "shifts": [
+      {
+        "name": "Lubbadová"
+      },
+      {
+        "name": "Beranová"
+      },
+      {
+        "name": "Paulovičová"
+      },
+      {
+        "name": "Tesařík"
+      },
+      {
+        "name": "Drašnar"
+      },
+      {
+        "name": "Marešová"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-06",
+    "shifts": [
+      {
+        "name": "Koutová"
+      },
+      {
+        "name": "Sedlačková"
+      },
+      {
+        "name": "Polka"
+      },
+      {
+        "name": "Jánský"
+      },
+      {
+        "name": "Vobořil"
+      },
+      {
+        "name": "Stepaniuk"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-07",
+    "shifts": [
+      {
+        "name": "Touficová"
+      },
+      {
+        "name": "Korchová"
+      },
+      {
+        "name": "Miřátská"
+      },
+      {
+        "name": "Strnadelová"
+      },
+      {
+        "name": "Fedurčák"
+      },
+      {
+        "name": "Bala"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-08",
+    "shifts": [
+      {
+        "name": "Koutová"
+      },
+      {
+        "name": "Sedlačková"
+      },
+      {
+        "name": "Polka"
+      },
+      {
+        "name": "Jánský"
+      },
+      {
+        "name": "Vobořil"
+      },
+      {
+        "name": "Stepaniuk"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-09",
+    "shifts": [
+      {
+        "name": "Zlámal"
+      },
+      {
+        "name": "Michalovič"
+      },
+      {
+        "name": "Sepp"
+      },
+      {
+        "name": "Nedvěd"
+      },
+      {
+        "name": "Jagerská"
+      },
+      {
+        "name": "Šumanová"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-10",
+    "shifts": [
+      {
+        "name": "Jiřička"
+      },
+      {
+        "name": "Stepaniuk"
+      },
+      {
+        "name": "Marešová"
+      },
+      {
+        "name": "Šraierová"
+      },
+      {
+        "name": "Součková"
+      },
+      {
+        "name": "Džbánková"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-11",
+    "shifts": [
+      {
+        "name": "Zlámal"
+      },
+      {
+        "name": "Sedlačková"
+      },
+      {
+        "name": "Procklová"
+      },
+      {
+        "name": "Fedurčák"
+      },
+      {
+        "name": "Bala"
+      },
+      {
+        "name": "Fischer"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-12",
+    "shifts": [
+      {
+        "name": "Bohm"
+      },
+      {
+        "name": "Džunda"
+      },
+      {
+        "name": "Miřátská"
+      },
+      {
+        "name": "Jánský"
+      },
+      {
+        "name": "Šumanová"
+      },
+      {
+        "name": "Vobořil"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-13",
+    "shifts": [
+      {
+        "name": "Dohnalová"
+      },
+      {
+        "name": "Marešová"
+      },
+      {
+        "name": "Džbánková"
+      },
+      {
+        "name": "Nedvěd"
+      },
+      {
+        "name": "Jagerská"
+      },
+      {
+        "name": "Šebele"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-14",
+    "shifts": [
+      {
+        "name": "Drašnar"
+      },
+      {
+        "name": "Beranová"
+      },
+      {
+        "name": "Polka"
+      },
+      {
+        "name": "Šraierová"
+      },
+      {
+        "name": "Součková"
+      },
+      {
+        "name": "Džunda"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-15",
+    "shifts": [
+      {
+        "name": "Dohnalová"
+      },
+      {
+        "name": "Marešová"
+      },
+      {
+        "name": "Džbánková"
+      },
+      {
+        "name": "Nedvěd"
+      },
+      {
+        "name": "Jagerská"
+      },
+      {
+        "name": "Šebele"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-16",
+    "shifts": [
+      {
+        "name": "Touficová"
+      },
+      {
+        "name": "Sedlačková"
+      },
+      {
+        "name": "Paulovičová"
+      },
+      {
+        "name": "Michalovič"
+      },
+      {
+        "name": "Bohm"
+      },
+      {
+        "name": "Fischer"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-17",
+    "shifts": [
+      {
+        "name": "Strnadelová"
+      },
+      {
+        "name": "Korchová"
+      },
+      {
+        "name": "Procklová"
+      },
+      {
+        "name": "Šumanová"
+      },
+      {
+        "name": "Fedurčák"
+      },
+      {
+        "name": "Džunda"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-18",
+    "shifts": [
+      {
+        "name": "Jiřička"
+      },
+      {
+        "name": "Beranová"
+      },
+      {
+        "name": "Polka"
+      },
+      {
+        "name": "Koutová"
+      },
+      {
+        "name": "Vobořil"
+      },
+      {
+        "name": "Džbánková"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-19",
+    "shifts": [
+      {
+        "name": "Zlámal"
+      },
+      {
+        "name": "Fischer"
+      },
+      {
+        "name": "Sepp"
+      },
+      {
+        "name": "Tesařík"
+      },
+      {
+        "name": "Dohnalová"
+      },
+      {
+        "name": "Drašnar"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-20",
+    "shifts": [
+      {
+        "name": "Bohm"
+      },
+      {
+        "name": "Korchová"
+      },
+      {
+        "name": "Miřátská"
+      },
+      {
+        "name": "Šumanová"
+      },
+      {
+        "name": "Michalovič"
+      },
+      {
+        "name": "Bala"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-21",
+    "shifts": [
+      {
+        "name": "Lubbadová"
+      },
+      {
+        "name": "Stepaniuk"
+      },
+      {
+        "name": "Paulovičová"
+      },
+      {
+        "name": "Koutová"
+      },
+      {
+        "name": "Fedurčák"
+      },
+      {
+        "name": "Vobořil"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-22",
+    "shifts": [
+      {
+        "name": "Bohm"
+      },
+      {
+        "name": "Korchová"
+      },
+      {
+        "name": "Miřátská"
+      },
+      {
+        "name": "Šumanová"
+      },
+      {
+        "name": "Michalovič"
+      },
+      {
+        "name": "Bala"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-23",
+    "shifts": [
+      {
+        "name": "Zlámal"
+      },
+      {
+        "name": "Beranová"
+      },
+      {
+        "name": "Marešová"
+      },
+      {
+        "name": "Strnadelová"
+      },
+      {
+        "name": "Drašnar"
+      },
+      {
+        "name": "Hobzíková"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-24",
+    "shifts": [
+      {
+        "name": "Jiřička"
+      },
+      {
+        "name": "Džunda"
+      },
+      {
+        "name": "Paulovičová"
+      },
+      {
+        "name": "Jánský"
+      },
+      {
+        "name": "Dohnalová"
+      },
+      {
+        "name": "Součková"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-25",
+    "shifts": [
+      {
+        "name": "Bohm"
+      },
+      {
+        "name": "Stepaniuk"
+      },
+      {
+        "name": "Procklová"
+      },
+      {
+        "name": "Tesařík"
+      },
+      {
+        "name": "Jagerská"
+      },
+      {
+        "name": "Vobořil"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-26",
+    "shifts": [
+      {
+        "name": "Lubbadová"
+      },
+      {
+        "name": "Beranová"
+      },
+      {
+        "name": "Džbánková"
+      },
+      {
+        "name": "Fedurčák"
+      },
+      {
+        "name": "Šebele"
+      },
+      {
+        "name": "Marešová"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-27",
+    "shifts": [
+      {
+        "name": "Zlámal"
+      },
+      {
+        "name": "Džunda"
+      },
+      {
+        "name": "Sepp"
+      },
+      {
+        "name": "Strnadelová"
+      },
+      {
+        "name": "Součková"
+      },
+      {
+        "name": "Polka"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-28",
+    "shifts": [
+      {
+        "name": "Hobzíková"
+      },
+      {
+        "name": "Fischer"
+      },
+      {
+        "name": "Procklová"
+      },
+      {
+        "name": "Nedvěd"
+      },
+      {
+        "name": "Vobořil"
+      },
+      {
+        "name": "Jagerská"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-29",
+    "shifts": [
+      {
+        "name": "Zlámal"
+      },
+      {
+        "name": "Polka"
+      },
+      {
+        "name": "Sepp"
+      },
+      {
+        "name": "Strnadelová"
+      },
+      {
+        "name": "Součková"
+      },
+      {
+        "name": "Džunda"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-30",
+    "shifts": [
+      {
+        "name": "Touficová"
+      },
+      {
+        "name": "Korchová"
+      },
+      {
+        "name": "Paulovičová"
+      },
+      {
+        "name": "Michalovič"
+      },
+      {
+        "name": "Šebele"
+      },
+      {
+        "name": "Bala"
+      }
+    ]
+  },
+  {
+    "date": "2023-01-31",
+    "shifts": [
+      {
+        "name": "Jiřička"
+      },
+      {
+        "name": "Stepaniuk"
+      },
+      {
+        "name": "Procklová"
+      },
+      {
+        "name": "Nedvěd"
+      },
+      {
+        "name": "Koutová"
+      },
+      {
+        "name": "Sedlačková"
+      }
+    ]
+  }
+]
