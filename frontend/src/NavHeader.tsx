@@ -9,7 +9,7 @@ export const NavHeader: FC = () => {
   const { logout } = useAuth0()
   const permissions = usePermissions()
 
-  return (<Navbar bg="light" expand="sm" sticky="top" className="border-bottom">
+  return (<Navbar bg="light" expand="sm" sticky="top" className="border-bottom no-print">
     <Container>
       <Navbar.Brand href="/" className="navbar-brand basic-navbar-nav">
         <img
