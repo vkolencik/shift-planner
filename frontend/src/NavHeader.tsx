@@ -15,7 +15,7 @@ export const NavHeader: FC = () => {
         <img
           className="rounded-circle img-fluid"
           width="64" height="64"
-          src="https://krtek-assets-720500131615.s3.eu-central-1.amazonaws.com/mole2.svg"
+          src="https://krtek-assets-720500131615.s3.eu-central-1.amazonaws.com/krtek1.svg"
           alt="logo"/>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav"/>
