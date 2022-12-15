@@ -38,3 +38,21 @@ table.table-fit tbody td, table.table-fit tfoot td {
 table td.table-purple {
     background-color: #c985de;
 }
+
+th {
+    background-clip: padding-box;
+}
+
+@media only screen {
+    div.big-table {
+        position: fixed;
+        height: 90%;
+        overflow: scroll;
+    }
+}
+
+@media print {
+    .no-print {
+        display: none;
+    }
+}

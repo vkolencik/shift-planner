@@ -4,6 +4,7 @@ import { currentMonth, currentYear, getNumberOfDaysOfCurrentMonth, isWeekend, pa
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Table } from 'react-bootstrap'
 import { sortArrayBy } from '../sort-array-by'
+import {Printer} from 'react-bootstrap-icons'
 import './MonthlyOverview.css'
 
 type CellDetails = { cssClass: string, titleText: string, cellText: string }
@@ -64,7 +65,7 @@ export const MonthlyOverview: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (requirements == null) {
+    if (requirements === null) {
       api.requirements.getMonth(currentYear, currentMonth).then(setRequirements)
     }
   }, [])
@@ -79,7 +80,7 @@ export const MonthlyOverview: React.FC = () => {
   const dailySums = new Array(daysInMonth).fill(users.length - 6)
 
   const requirementsPerUserDay: { [key: string]: string } = {}
-  const countsAsAbsence = (r: RequirementType) => r === 'leave' || r === 'hard-no' || r == 'only-afternoon'
+  const countsAsAbsence = (r: RequirementType) => r === 'leave' || r === 'hard-no' || r === 'only-afternoon'
   for (const requirement of requirements) {
     const day = parseDate(requirement.date).getDate()
     if (countsAsAbsence(requirement.requirementType)) {
@@ -90,19 +91,22 @@ export const MonthlyOverview: React.FC = () => {
 
   const weekends: number[] = days.filter(day => isWeekend(new Date(currentYear, currentMonth - 1, day)))
 
-  return <div style={{ position: 'fixed', height: '90%', overflow: 'scroll' }}>
-    <Table bordered hover className="table-fit table-sm">
-      <thead className="thead-light sticky-top table-primary">
+  return <div className='big-table'>
+    <button className='btn btn-primary no-print' onClick={window.print}>
+      <Printer/>&nbsp;Tisk
+    </button>
+    <Table bordered hover className='table-fit table-sm table-bordered'>
+      <thead className='thead-light sticky-top table-primary table-bordered'>
       <tr>
         <th>Datum</th>
         {days.map(day => weekends.includes(day)
-          ? <th scope="col" className="weekend-day">{day}</th>
-          : <th scope="col">{day}</th>)}
+          ? <th scope='col' className='weekend-day text-center'>{day}</th>
+          : <th scope='col' className='text-center'>{day}</th>)}
       </tr>
       <tr>
         <th>Lidí k dispozici</th>
         {days.map(day => weekends.includes(day)
-          ? <th scope="col" className="weekend-day"></th>
+          ? <th scope="col" className="weekend-day">&nbsp;</th>
           : <th scope="col">{dailySums[day - 1]}</th>)}
       </tr>
       </thead>
