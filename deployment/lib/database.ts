@@ -53,7 +53,7 @@ export class Database extends Construct {
     this.buckets = []
 
     const scheduleBucket = new Bucket(this, 'schedule-bucket', {
-      bucketName: environment === Environment.Production ? 'schedule-storage-720500131615' : '_preview-schedule-storage-720500131615',
+      bucketName: environment === Environment.Production ? 'schedule-storage-720500131615' : 'preview-schedule-storage-720500131615',
       accessControl: BucketAccessControl.PRIVATE,
       blockPublicAccess: { restrictPublicBuckets: true, blockPublicAcls: true, blockPublicPolicy: true, ignorePublicAcls: true }
     })

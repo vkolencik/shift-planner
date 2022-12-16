@@ -20,7 +20,7 @@ type EnvironmentParams = typeof productionParams
 const previewParams: EnvironmentParams = {
     stackName: 'KrtekStackPreview',
     requirementsTableName: '_preview-Requirements',
-    scheduleS3BucketName: '_preview-schedule-storage-720500131615',
+    scheduleS3BucketName: 'preview-schedule-storage-720500131615',
     backendFunctionName: '_preview-krtek-backend',
     backendCertificate: '*.preview.krtek.me',
     backendUrl: 'b.preview.krtek.me',
