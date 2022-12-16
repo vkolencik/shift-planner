@@ -49,7 +49,7 @@ static class Program
                 new DynamoRequirementsRepository(
                     new AmazonDynamoDBClient(),
                     new RequirementEntityConverter(),
-                    Options.Create(new DynamoOptions() {TableNamePrefix = ""})),
+                    Options.Create(new StorageOptions() {StoragePrefix = ""})),
                 auth0UserService),
             auth0UserService,
             new StoredScheduleService(new GoogleSheetsEmployeeInfoService(), lastMonthSchedule));

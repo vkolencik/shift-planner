@@ -9,11 +9,11 @@ namespace ShiftPlanner.Api.Persistence;
 
 public class DynamoRequirementsRepository : IRequirementsRepository
 {
-    private readonly DynamoOptions _options;
+    private readonly StorageOptions _options;
     private readonly IAmazonDynamoDB _dynamo;
     private readonly IRequirementEntityConverter _requirementEntityConverter;
 
-    public DynamoRequirementsRepository(IAmazonDynamoDB dynamo, IRequirementEntityConverter requirementEntityConverter, IOptions<DynamoOptions> options)
+    public DynamoRequirementsRepository(IAmazonDynamoDB dynamo, IRequirementEntityConverter requirementEntityConverter, IOptions<StorageOptions> options)
     {
         _dynamo = dynamo;
         _requirementEntityConverter = requirementEntityConverter;
@@ -101,7 +101,7 @@ public class DynamoRequirementsRepository : IRequirementsRepository
     {
         return new DynamoDBContext(_dynamo, new DynamoDBContextConfig
         {
-            TableNamePrefix = _options.TableNamePrefix
+            TableNamePrefix = _options.StoragePrefix
         });
     }
 }
