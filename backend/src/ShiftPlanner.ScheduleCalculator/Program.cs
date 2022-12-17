@@ -1,5 +1,8 @@
-﻿using Amazon.DynamoDBv2;
+﻿using Amazon;
+using Amazon.DynamoDBv2;
+using Amazon.Extensions.NETCore.Setup;
 using Amazon.SecretsManager;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ShiftPlanner.Api;
 using ShiftPlanner.Api.Persistence;
@@ -10,6 +13,7 @@ using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine;
 using ShiftPlanner.GoogleSheet;
+using ShiftPlanner.Services;
 
 namespace ShiftPlanner.ScheduleCalculator;
 
@@ -19,16 +23,21 @@ static class Program
     {
         var auth0UserService = new Auth0UserService(new Auth0TokenProvider(new HttpClientFactory()), new AwsSecretsManagerClient(new AmazonSecretsManagerClient()));
 
-        var aggregator = new SchedulingParametersAggregator(
-            new GoogleSheetsEmployeeInfoService(),
-            new RequirementsService(
-                new DynamoRequirementsRepository(
-                    new AmazonDynamoDBClient(),
-                    new RequirementEntityConverter(),
-                    Options.Create(new StorageOptions() {StoragePrefix = ""})),
-                auth0UserService),
-            auth0UserService,
-            new StoredScheduleService(new GoogleSheetsEmployeeInfoService()));
+        var services = new ServiceCollection()
+            .AddServices()
+            .AddTransient<IRequirementsService, RequirementsService>()
+            .AddTransient<IRequirementsRepository, DynamoRequirementsRepository>()
+            .AddTransient<IRequirementEntityConverter, RequirementEntityConverter>()
+            .AddHttpClient()
+            .AddAWSService<IAmazonDynamoDB>(new AWSOptions() {Region = RegionEndpoint.EUCentral1})
+            .AddAWSService<IAmazonSecretsManager>(new AWSOptions() {Region = RegionEndpoint.EUCentral1})
+            .AddSingleton<IAwsSecretsManagerClient, AwsSecretsManagerClient>()
+            .AddSingleton<IAuth0TokenProvider, Auth0TokenProvider>()
+            .AddSingleton<IUserService, Auth0UserService>()
+            .AddSingleton<SchedulingParametersAggregator>()
+            .BuildServiceProvider();
+
+        var aggregator = services.GetRequiredService<SchedulingParametersAggregator>();
 
         var month = new ScheduledMonth(2023, 1);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
