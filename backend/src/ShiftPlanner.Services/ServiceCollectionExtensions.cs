@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ShiftPlanner.GoogleSheet;
-using ShiftPlanner.ScheduleCalculator;
 
 namespace ShiftPlanner.Services;
 

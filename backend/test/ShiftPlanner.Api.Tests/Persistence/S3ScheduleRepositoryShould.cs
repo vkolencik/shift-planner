@@ -24,7 +24,7 @@ public class S3ScheduleRepositoryShould
     {
         var repository = CreateRepository();
 
-        var schedule = await repository.LoadLatestSchedule(new ScheduledMonth(2023, 1));
+        var schedule = await repository.LoadSchedule(new ScheduledMonth(2023, 1));
     }
 
     private static S3ScheduleRepository CreateRepository()

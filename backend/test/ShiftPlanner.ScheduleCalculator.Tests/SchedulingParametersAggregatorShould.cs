@@ -57,7 +57,7 @@ public class SchedulingParametersAggregatorShould
         var fixedShifts = new[] {new ScheduledShift(new Day(month, 1), workplace, user1)};
         var expectedFixedShifts = new[] {new ShiftAssignment(employee1, new Day(month, 1), workplace)};
         
-        var lastMonthSchedule = new StoredSchedule(lastMonthShifts.Concat(fixedShifts).ToArray());
+        var lastMonthSchedule = new Schedule(lastMonthShifts.Concat(fixedShifts).ToArray());
 
         _employeeInfoServiceMock
             .Setup(_ => _.GetEmployees(Workplace.Workplaces))

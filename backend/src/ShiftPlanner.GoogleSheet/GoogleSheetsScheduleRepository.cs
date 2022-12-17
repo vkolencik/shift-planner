@@ -30,7 +30,7 @@ public class GoogleSheetsScheduleRepository : GoogleSheetsService, IScheduleRepo
         }
     }
 
-    public Task<StoredSchedule> LoadLatestSchedule(ScheduledMonth month)
+    public Task<Schedule> LoadSchedule(ScheduledMonth month)
     {
         throw new NotImplementedException();
     }

@@ -10,7 +10,7 @@ public class S3ScheduleRepository : IScheduleRepository
         throw new NotImplementedException();
     }
 
-    public Task<StoredSchedule> LoadLatestSchedule(ScheduledMonth month)
+    public Task<Schedule> LoadSchedule(ScheduledMonth month)
     {
         throw new NotImplementedException();
     }

@@ -45,7 +45,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
             .ToArray();
 
         var previousMonth = month.Previous;
-        var existingShifts = (await _storedScheduleService.GetSchedule(previousMonth)).Schedule;
+        var existingShifts = (await _storedScheduleService.GetSchedule(previousMonth)).Shifts;
         
         return new MonthScheduleParameters(
             month,

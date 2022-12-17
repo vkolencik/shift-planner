@@ -1,12 +1,12 @@
 ﻿using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
-using ShiftPlanner.Services;
 
-namespace ShiftPlanner.ScheduleCalculator;
+namespace ShiftPlanner.Services;
 
 internal class StoredScheduleService : IStoredScheduleService
 {
     private readonly IEmployeeInfoService _employeeInfoService;
+    private readonly IScheduleRepository _scheduleRepository;
 
     private readonly IReadOnlyList<ShiftAssignmentByEmail> _lastMonthSchedule = new[]
     {
@@ -32,21 +32,23 @@ internal class StoredScheduleService : IStoredScheduleService
         new ShiftAssignmentByEmail("katerina.michalovic@bulovka.cz", new Day(2023, 1, 1), Workplace.Urg),
     };
     
-    public StoredScheduleService(IEmployeeInfoService employeeInfoService)
+    public StoredScheduleService(IEmployeeInfoService employeeInfoService, IScheduleRepository scheduleRepository)
     {
         _employeeInfoService = employeeInfoService;
+        _scheduleRepository = scheduleRepository;
     }
 
-    public async Task<StoredSchedule> GetSchedule(ScheduledMonth month)
+    public async Task<Schedule> GetSchedule(ScheduledMonth month)
     {
-        if (month != new ScheduledMonth(2022, 12))
+        if (month == new ScheduledMonth(2022, 12))
         {
-            throw new NotImplementedException();
-        }
-        
-        var employeeInfos = (await _employeeInfoService.GetEmployees(Workplace.Workplaces)).ToArray();
+            var employeeInfos = (await _employeeInfoService.GetEmployees(Workplace.Workplaces)).ToArray();
 
-        return new StoredSchedule(_lastMonthSchedule.Select(sbe => GetScheduledShiftShift(sbe, employeeInfos)).ToArray());
+            return new Schedule(_lastMonthSchedule.Select(sbe => GetScheduledShiftShift(sbe, employeeInfos)).ToArray());
+        }
+
+        return await _scheduleRepository.LoadSchedule(month);
+
     }
 
     private ScheduledShift GetScheduledShiftShift(ShiftAssignmentByEmail assignmentByEmail, IReadOnlyList<EmployeeInfo> employeeInfos)

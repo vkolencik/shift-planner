@@ -20,7 +20,7 @@ public class ScheduleControllerShould
         var month = new ScheduledMonth(2027, 7);
 
         var scheduledShift = new ScheduledShift(new Day(month, 1), workplace, new User("user1", "user 1", "user1@krtek.me"));
-        var storedSchedule = new StoredSchedule(new [] {scheduledShift});
+        var storedSchedule = new Schedule(new [] {scheduledShift});
 
         _storedScheduleServiceMock
             .Setup(_ => _.GetSchedule(month))
@@ -32,6 +32,6 @@ public class ScheduleControllerShould
 
         var result = Assert.IsType<OkObjectResult>(response.Result);
 
-        Assert.Equal(storedSchedule, (StoredSchedule?) result.Value);
+        Assert.Equal(storedSchedule, (Schedule?) result.Value);
     }
 }
