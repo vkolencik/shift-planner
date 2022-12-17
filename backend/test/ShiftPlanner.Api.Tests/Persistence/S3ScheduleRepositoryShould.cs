@@ -6,7 +6,7 @@ namespace ShiftPlanner.Api.Tests.Persistence;
 
 public class S3ScheduleRepositoryShould
 {
-    [Fact]
+    [Fact(Skip = "")]
     public async Task StoreSchedule()
     {
         var repository = CreateRepository();
@@ -19,7 +19,7 @@ public class S3ScheduleRepositoryShould
                 new SolutionParameters(new Dictionary<Employee, EmployeeStandard>())));
     }
 
-    [Fact]
+    [Fact(Skip = "")]
     public async Task LoadLatestSchedule()
     {
         var repository = CreateRepository();

@@ -1,3 +1,5 @@
-﻿namespace ShiftPlanner.Contracts;
+﻿using ShiftPlanner.Domain;
 
-public record ScheduledDay(DateOnly Date, IReadOnlyList<ScheduledShift> Shifts);
+namespace ShiftPlanner.Contracts;
+
+public record ScheduledDay(Day Day, IReadOnlyList<ScheduledShift> Shifts);

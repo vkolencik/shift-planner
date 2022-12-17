@@ -29,7 +29,12 @@ public class GoogleSheetsScheduleRepository : GoogleSheetsService, IScheduleRepo
             rowIndex++;
         }
     }
-    
+
+    public Task<StoredSchedule> LoadLatestSchedule(ScheduledMonth month)
+    {
+        throw new NotImplementedException();
+    }
+
     private static async Task WriteListToSheet<T>(
         SheetsService service,
         string rangeStart,
