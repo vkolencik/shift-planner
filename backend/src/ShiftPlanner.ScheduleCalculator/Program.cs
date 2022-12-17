@@ -21,8 +21,6 @@ static class Program
 {
     public static async Task Main(string[] args)
     {
-        var auth0UserService = new Auth0UserService(new Auth0TokenProvider(new HttpClientFactory()), new AwsSecretsManagerClient(new AmazonSecretsManagerClient()));
-
         var services = new ServiceCollection()
             .AddServices()
             .AddTransient<IRequirementsService, RequirementsService>()
