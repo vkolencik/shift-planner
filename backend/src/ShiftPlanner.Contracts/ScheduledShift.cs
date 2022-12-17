@@ -2,4 +2,4 @@
 
 namespace ShiftPlanner.Contracts;
 
-public record ScheduledShift(Workplace Workplace, string UserId);
+public record ScheduledShift(Day Day, Workplace Workplace, User User);

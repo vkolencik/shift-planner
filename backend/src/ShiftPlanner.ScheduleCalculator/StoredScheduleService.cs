@@ -1,4 +1,5 @@
-﻿using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Contracts;
+using ShiftPlanner.Domain;
 using ShiftPlanner.Domain.Services;
 
 namespace ShiftPlanner.ScheduleCalculator;
@@ -15,7 +16,7 @@ class StoredScheduleService : IStoredScheduleService
         _lastMonthSchedule = lastMonthSchedule;
     }
 
-    public async Task<IReadOnlyCollection<ShiftAssignment>> GetSchedule(ScheduledMonth month)
+    public async Task<StoredSchedule> GetSchedule(ScheduledMonth month)
     {
         if (month != new ScheduledMonth(2022, 12))
         {
@@ -24,14 +25,13 @@ class StoredScheduleService : IStoredScheduleService
         
         var employeeInfos = (await _employeeInfoService.GetEmployees(Workplace.Workplaces)).ToArray();
 
-        return _lastMonthSchedule.Select(sbe => GetShiftAssignment(sbe, employeeInfos)).ToArray();
+        return new StoredSchedule(_lastMonthSchedule.Select(sbe => GetScheduledShiftShift(sbe, employeeInfos)).ToArray());
     }
 
-    private ShiftAssignment GetShiftAssignment(ShiftAssignmentByEmail assignmentByEmail, IReadOnlyList<EmployeeInfo> employeeInfos)
+    private ScheduledShift GetScheduledShiftShift(ShiftAssignmentByEmail assignmentByEmail, IReadOnlyList<EmployeeInfo> employeeInfos)
     {
         var employeeInfo = employeeInfos.Single(ei => ei.Email == assignmentByEmail.Email);
-        var employee = new Employee(employeeInfo.Name, employeeInfo.CompetenceLevel, employeeInfo.Capabilities);
-        return new ShiftAssignment(employee, assignmentByEmail.Day, assignmentByEmail.Workplace);
+        return new ScheduledShift(assignmentByEmail.Day, assignmentByEmail.Workplace, new User("<blank>", employeeInfo.Name, employeeInfo.Email));
     } 
 }
 

@@ -11,6 +11,6 @@ public class ScheduleController : ControllerBase
     [HttpGet("{year}/{month}")]
     public async Task<ActionResult<StoredSchedule>> GetSchedule(int year, int month)
     {
-        return Ok(new StoredSchedule(Array.Empty<ScheduledDay>()));
+        return Ok(new StoredSchedule(Array.Empty<ScheduledShift>()));
     }
 }

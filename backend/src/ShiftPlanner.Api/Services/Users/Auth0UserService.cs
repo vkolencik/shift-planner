@@ -2,7 +2,7 @@
 using Auth0.ManagementApi.Models;
 using Auth0.ManagementApi.Paging;
 using ShiftPlanner.Api.Services.Secrets;
-using User = ShiftPlanner.Api.Contracts.User;
+using User = ShiftPlanner.Contracts.User;
 
 namespace ShiftPlanner.Api.Services.Users;
 

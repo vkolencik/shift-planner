@@ -1,3 +1,3 @@
 ﻿namespace ShiftPlanner.Contracts;
 
-public record StoredSchedule(IReadOnlyList<ScheduledDay> Schedule);
+public record StoredSchedule(IReadOnlyList<ScheduledShift> Schedule);

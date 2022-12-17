@@ -3,6 +3,7 @@ using Amazon.SecretsManager;
 using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Services.Secrets;
 using ShiftPlanner.Api.Services.Users;
+using ShiftPlanner.Contracts;
 
 namespace ShiftPlanner.Api.Tests.Integration;
 

@@ -2,6 +2,7 @@ using Moq;
 using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Services;
 using ShiftPlanner.Api.Services.Users;
+using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Domain.Services;
 using ShiftPlanner.TestHelpers;
@@ -50,17 +51,13 @@ public class SchedulingParametersAggregatorShould
         var leave2 = new Leave(month.Days.Skip(10).First(), month.Days.Skip(10).First(), false);
         var leave3 = new Leave(month.Days.Skip(20).First(), month.Days.Skip(20).First(), false);
 
-        var lastMonthShifts = new[]
-        {
-            new ShiftAssignment(employee1, new Day(lastMonth, 30), workplace)
-        };
+        var lastMonthShifts = new[] {new ScheduledShift(new Day(lastMonth, 30), workplace, user1)};
+        var expectedLastMonthShifts = new[] {new ShiftAssignment(employee1, new Day(lastMonth, 30), workplace)};
 
-        var fixedShifts = new[]
-        {
-            new ShiftAssignment(employee1, new Day(month, 1), workplace)
-        };
+        var fixedShifts = new[] {new ScheduledShift(new Day(month, 1), workplace, user1)};
+        var expectedFixedShifts = new[] {new ShiftAssignment(employee1, new Day(month, 1), workplace)};
         
-        var lastMonthSchedule = lastMonthShifts.Concat(fixedShifts).ToArray();
+        var lastMonthSchedule = new StoredSchedule(lastMonthShifts.Concat(fixedShifts).ToArray());
 
         _employeeInfoServiceMock
             .Setup(_ => _.GetEmployees(Workplace.Workplaces))
@@ -119,8 +116,8 @@ public class SchedulingParametersAggregatorShould
         Assert.Equal(expectedEmployeeMonths.Skip(1).First().Employee, parameters.EmployeeMonths.Skip(1).First().Employee);
         Assert.Equal(expectedEmployeeMonths.Skip(1).First().Leaves, parameters.EmployeeMonths.Skip(1).First().Leaves);
         Assert.Equal(CompetenceGroup.CompetenceGroups, parameters.CompetenceGroups);
-        Assert.Equal(new HashSet<ShiftAssignment>(lastMonthShifts), new HashSet<ShiftAssignment>(parameters.LastMonthShifts));
-        Assert.Equal(new HashSet<ShiftAssignment>(fixedShifts), new HashSet<ShiftAssignment>(parameters.FixedShifts));
+        Assert.Equal(new HashSet<ShiftAssignment>(expectedLastMonthShifts), new HashSet<ShiftAssignment>(parameters.LastMonthShifts));
+        Assert.Equal(new HashSet<ShiftAssignment>(expectedFixedShifts), new HashSet<ShiftAssignment>(parameters.FixedShifts));
         Assert.Equal(Workplace.WeekendInterchangeabilityGroups, parameters.WeekendInterchangeabilityGroups);
     }
 }

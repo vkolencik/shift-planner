@@ -3,6 +3,7 @@ using Moq;
 using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Api.Services.Users;
+using ShiftPlanner.Contracts;
 
 namespace ShiftPlanner.Api.Tests.Controllers;
 

@@ -18,15 +18,13 @@ public class ScheduleControllerShould
         var controller = new ScheduleController();
         var workplace = TestData.Workplace;
         var month = new ScheduledMonth(2022, 1);
-        
-        var storedSchedule = new StoredSchedule(new ScheduledDay[]
-        {
-            new ScheduledDay(new Day(month, 1), new [] { new ScheduledShift(workplace, "user1")}), 
-        });
+
+        var scheduledShift = new ScheduledShift(new Day(month, 1), workplace, new User("user1", "user 1", "user1@krtek.me"));
+        var storedSchedule = new StoredSchedule(new [] {scheduledShift});
 
         _storedScheduleServiceMock
             .Setup(_ => _.GetSchedule(month))
-            .ReturnsAsync(new [] {new ShiftAssignment(null, new Day(month, 1), workplace) });
+            .ReturnsAsync(storedSchedule);
         
         var response = await controller.GetSchedule(2027, 7);
 

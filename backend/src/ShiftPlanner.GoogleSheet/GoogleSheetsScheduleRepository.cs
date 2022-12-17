@@ -17,7 +17,7 @@ public class GoogleSheetsScheduleRepository : GoogleSheetsService, IScheduleRepo
             new BatchClearValuesRequest() {Ranges = new[] {"Vysledky!B1:G1"}}, SpreadsheetId).Execute();
         
         var workplaces = Workplace.Workplaces;
-        var schedule = result.Schedule;
+        var schedule = result.PlannedSchedule;
 
         await WriteListToSheet(service, "A2", month.Days.Select(d => d.Date.Day), "COLUMNS");
         await WriteListToSheet(service, "B1", workplaces.Select(w => w.Name));

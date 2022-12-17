@@ -51,7 +51,7 @@ public class ShiftFlexibilityShould
         var result = scheduler.ComputeSchedule(parameters);
 
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
-        Assert.NotEmpty(successResult.Schedule.Shifts);
+        Assert.NotEmpty(successResult.PlannedSchedule.Shifts);
         Assert.NotEqual(ScheduleFlexibility.Strict, successResult.Flexibility);
     }
 }

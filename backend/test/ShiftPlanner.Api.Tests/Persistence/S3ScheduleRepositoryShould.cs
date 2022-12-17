@@ -14,7 +14,7 @@ public class S3ScheduleRepositoryShould
         await repository.StoreComputedSchedule(
             new ScheduledMonth(2023, 1),
             new SuccessfulSchedulingResult(
-                Schedule.CreateSchedule(new ShiftAssignment[] { }),
+                PlannedSchedule.CreateSchedule(new ShiftAssignment[] { }),
                 ScheduleFlexibility.Strict,
                 new SolutionParameters(new Dictionary<Employee, EmployeeStandard>())));
     }

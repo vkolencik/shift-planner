@@ -1,8 +1,9 @@
-﻿using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Contracts;
+using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.ScheduleCalculator;
 
 public interface IStoredScheduleService
 {
-    Task<IReadOnlyCollection<ShiftAssignment>> GetSchedule(ScheduledMonth month);
+    Task<StoredSchedule> GetSchedule(ScheduledMonth month);
 }
