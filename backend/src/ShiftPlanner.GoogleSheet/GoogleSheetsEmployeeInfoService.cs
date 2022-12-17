@@ -3,11 +3,11 @@ using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using ShiftPlanner.Domain;
-using ShiftPlanner.Domain.Services;
+using ShiftPlanner.Services;
 
 namespace ShiftPlanner.GoogleSheet;
 
-public class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeInfoService
+internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeInfoService
 {
     private static class RowIndices
     {

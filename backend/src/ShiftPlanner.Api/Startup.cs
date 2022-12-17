@@ -11,6 +11,8 @@ using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
 using ShiftPlanner.Api.Services.Secrets;
 using ShiftPlanner.Api.Services.Users;
+using ShiftPlanner.Contracts;
+using ShiftPlanner.Services;
 
 namespace ShiftPlanner.Api;
 
@@ -87,6 +89,8 @@ public class Startup
         services.AddSingleton<IAwsSecretsManagerClient, AwsSecretsManagerClient>();
         services.AddSingleton<IAuth0TokenProvider, Auth0TokenProvider>();
         services.AddSingleton<IUserService, Auth0UserService>();
+
+        services.AddServices();
         
         services.AddTransient<IRequirementsService, RequirementsService>();
         services.AddTransient<IRequirementEntityConverter, RequirementEntityConverter>();

@@ -19,30 +19,6 @@ static class Program
     {
         var auth0UserService = new Auth0UserService(new Auth0TokenProvider(new HttpClientFactory()), new AwsSecretsManagerClient(new AmazonSecretsManagerClient()));
 
-        ShiftAssignmentByEmail[] lastMonthSchedule = new[]
-        {
-            new ShiftAssignmentByEmail("jan.drasnar@bulovka.cz", new Day(2022, 12, 30), Workplace.A1),
-            new ShiftAssignmentByEmail("daniela.fischer@bulovka.cz", new Day(2022, 12, 30), Workplace.A2),
-            new ShiftAssignmentByEmail("juliana.paulovicova@bulovka.cz", new Day(2022, 12, 30), Workplace.A3),
-            new ShiftAssignmentByEmail("zdenka.sraierova@bulovka.cz", new Day(2022, 12, 30), Workplace.Res),
-            new ShiftAssignmentByEmail("katerina.michalovic@bulovka.cz", new Day(2022, 12, 30), Workplace.Kpr),
-            new ShiftAssignmentByEmail("pavol.fedurcak@bulovka.cz", new Day(2022, 12, 30), Workplace.Urg),
-
-            new ShiftAssignmentByEmail("petr.jiricka@bulovka.cz", new Day(2022, 12, 31), Workplace.A1),
-            new ShiftAssignmentByEmail("daniel.dzunda@bulovka.cz", new Day(2022, 12, 31), Workplace.A2),
-            new ShiftAssignmentByEmail("rafael.sepp@bulovka.cz", new Day(2022, 12, 31), Workplace.A3),
-            new ShiftAssignmentByEmail("jan.tesarik@bulovka.cz", new Day(2022, 12, 31), Workplace.Res),
-            new ShiftAssignmentByEmail("marcela.sumanova@bulovka.cz", new Day(2022, 12, 31), Workplace.Kpr),
-            new ShiftAssignmentByEmail("simon.polka@bulovka.cz", new Day(2022, 12, 31), Workplace.Urg),
-
-            new ShiftAssignmentByEmail("jan.drasnar@bulovka.cz", new Day(2023, 1, 1), Workplace.A1),
-            new ShiftAssignmentByEmail("daniela.fischer@bulovka.cz", new Day(2023, 1, 1), Workplace.A2),
-            new ShiftAssignmentByEmail("juliana.paulovicova@bulovka.cz", new Day(2023, 1, 1), Workplace.A3),
-            new ShiftAssignmentByEmail("zdenka.sraierova@bulovka.cz", new Day(2023, 1, 1), Workplace.Res),
-            new ShiftAssignmentByEmail("pavol.fedurcak@bulovka.cz", new Day(2023, 1, 1), Workplace.Kpr),
-            new ShiftAssignmentByEmail("katerina.michalovic@bulovka.cz", new Day(2023, 1, 1), Workplace.Urg),
-        };
-
         var aggregator = new SchedulingParametersAggregator(
             new GoogleSheetsEmployeeInfoService(),
             new RequirementsService(
@@ -52,7 +28,7 @@ static class Program
                     Options.Create(new StorageOptions() {StoragePrefix = ""})),
                 auth0UserService),
             auth0UserService,
-            new StoredScheduleService(new GoogleSheetsEmployeeInfoService(), lastMonthSchedule));
+            new StoredScheduleService(new GoogleSheetsEmployeeInfoService()));
 
         var month = new ScheduledMonth(2023, 1);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);

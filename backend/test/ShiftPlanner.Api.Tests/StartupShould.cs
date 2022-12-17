@@ -28,6 +28,7 @@ public class StartupShould
         IServiceProvider services = host.Services;
 
         Assert.NotNull(services.GetService<UsersRequirementsController>());
+        Assert.NotNull(services.GetService<ScheduleController>());
     }
 
     private static MemoryStream CreateConfigurationStream()

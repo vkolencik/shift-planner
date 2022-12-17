@@ -1,4 +1,6 @@
-﻿namespace ShiftPlanner.Domain.Services;
+﻿using ShiftPlanner.Domain;
+
+namespace ShiftPlanner.Services;
 
 public interface IEmployeeInfoService
 {
