@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ShiftPlanner.Contracts\ShiftPlanner.Contracts.csproj" />
     <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj" />
+    <ProjectReference Include="..\ShiftPlanner.Services\ShiftPlanner.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="appsettings.Development.json">

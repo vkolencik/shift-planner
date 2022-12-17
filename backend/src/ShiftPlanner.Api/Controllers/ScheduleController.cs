@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShiftPlanner.Contracts;
+using ShiftPlanner.Domain;
+using ShiftPlanner.Services;
 
 namespace ShiftPlanner.Api.Controllers;
 
@@ -8,9 +10,17 @@ namespace ShiftPlanner.Api.Controllers;
 [Authorize(Policy = Claims.ReadRequirementsOfOthers)]
 public class ScheduleController : ControllerBase
 {
+    private IStoredScheduleService _storedScheduleService;
+
+    public ScheduleController(IStoredScheduleService storedScheduleService)
+    {
+        _storedScheduleService = storedScheduleService;
+    }
+
     [HttpGet("{year}/{month}")]
     public async Task<ActionResult<StoredSchedule>> GetSchedule(int year, int month)
     {
-        return Ok(new StoredSchedule(Array.Empty<ScheduledShift>()));
+        var storedSchedule = await _storedScheduleService.GetSchedule(new ScheduledMonth(year, month));
+        return Ok(storedSchedule);
     }
 }

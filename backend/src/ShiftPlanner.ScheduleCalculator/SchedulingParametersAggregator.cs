@@ -3,6 +3,7 @@ using ShiftPlanner.Api.Services;
 using ShiftPlanner.Api.Services.Users;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Domain.Services;
+using ShiftPlanner.Services;
 
 namespace ShiftPlanner.ScheduleCalculator;
 

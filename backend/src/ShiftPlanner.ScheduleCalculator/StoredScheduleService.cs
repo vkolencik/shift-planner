@@ -1,6 +1,7 @@
 ﻿using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Domain.Services;
+using ShiftPlanner.Services;
 
 namespace ShiftPlanner.ScheduleCalculator;
 

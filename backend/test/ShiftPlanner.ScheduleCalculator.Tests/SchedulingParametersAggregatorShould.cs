@@ -5,6 +5,7 @@ using ShiftPlanner.Api.Services.Users;
 using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Domain.Services;
+using ShiftPlanner.Services;
 using ShiftPlanner.TestHelpers;
 
 namespace ShiftPlanner.ScheduleCalculator.Tests;
