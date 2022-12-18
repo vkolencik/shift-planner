@@ -7,6 +7,7 @@ import { NavHeader } from './NavHeader'
 import { Permission, usePermissions } from './auth/auth'
 import { Approvals } from './pages/Approvals'
 import { MonthlyOverview } from './pages/MonthlyOverview'
+import { MonthSchedule } from './pages/MonthSchedule'
 
 function App () {
   const navigate = useNavigate()
@@ -31,7 +32,7 @@ function App () {
               <Route path="/tydenik" element={<h1>Týdeník</h1>}/>
               <Route path="/mesicnik" element={<MonthlyOverview/>}/>
               <Route path="/schvalovani" element={<Approvals/>}/>
-              <Route path="/sluzby" element={<h1>Služby</h1>}/>
+              <Route path="/sluzby" element={<MonthSchedule/>}/>
               <Route path="/konference" element={<h1>Konference</h1>}/>
             </Routes>
           </Col>

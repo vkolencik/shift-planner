@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { MonthRequirements, RequirementType, useApi, User } from '../requirements/api'
-import { currentMonth, currentYear, getNumberOfDaysOfCurrentMonth, isWeekend, parseDate } from '../dates'
+import { MonthRequirements, RequirementType, useApi, User } from '../api'
+import {
+  currentMonth,
+  currentYear,
+  dateToString,
+  getCurrentMonth,
+  getNumberOfDaysOfMonth,
+  isWeekend,
+  parseDate
+} from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Table } from 'react-bootstrap'
 import { sortArrayBy } from '../sort-array-by'
@@ -74,7 +82,7 @@ export const MonthlyOverview: React.FC = () => {
     return <LoadingSpinner/>
   }
 
-  const daysInMonth = getNumberOfDaysOfCurrentMonth()
+  const daysInMonth = getNumberOfDaysOfMonth(getCurrentMonth())
   const days = new Array(daysInMonth).fill(1).map((_, i) => i + 1)
 
   const dailySums = new Array(daysInMonth).fill(users.length - 6)
@@ -89,7 +97,7 @@ export const MonthlyOverview: React.FC = () => {
     requirementsPerUserDay[`${requirement.userId}-${day}`] = requirement.requirementType
   }
 
-  const weekends: number[] = days.filter(day => isWeekend(new Date(currentYear, currentMonth - 1, day)))
+  const weekends: number[] = days.filter(day => isWeekend(dateToString(currentYear, currentMonth, day)))
 
   return <div className='big-table'>
     <button className='btn btn-primary no-print' onClick={window.print}>

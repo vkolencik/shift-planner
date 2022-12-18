@@ -1,4 +1,4 @@
-import { MonthRequirements } from './api'
+import { MonthRequirements } from '../api'
 import { sortArrayBy } from '../sort-array-by'
 
 interface Leave {

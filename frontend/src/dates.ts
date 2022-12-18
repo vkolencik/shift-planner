@@ -20,12 +20,52 @@ export const parseDate = (date: string) => {
   return new Date(year, month - 1, day)
 }
 
-export const isWeekend = (date: Date) => date.getDay() == 0 || date.getDay() == 6
+export function isWeekend(day: string) {
+  const date = parseDate(day)
+  return date.getDay() == 0 || date.getDay() == 6
+}
 
 export function toDay (date: string): Day {
   return date as Day
 }
 
-export function getNumberOfDaysOfCurrentMonth() {
-  return new Date(currentYear, currentMonth, 0).getDate()
+export function getNumberOfDaysOfMonth(month: Month) {
+  return new Date(month.year, month.month, 0).getDate()
+}
+
+export interface Month {
+  year: number,
+  month: number
+}
+
+export function getCurrentMonth(): Month {
+  return {year: currentYear, month: currentMonth}
+}
+
+export function getMonthDays(month: Month): number[] {
+  return new Array(getNumberOfDaysOfMonth(month)).fill(1).map((_, i) => i + 1)
+}
+
+export function getMonthDates(month: Month): string[] {
+  return getMonthDays(month).map(d => dateToString(month.year, month.month, d))
+}
+
+export function dateToString(year: number, month: number, day: number) {
+  return `${year}-${padDateComponent(month)}-${padDateComponent(day)}`
+}
+
+function padDateComponent (value: number): string {
+  return String(value).padStart(2, '0')
+}
+
+export function getDayOfWeek(day: string): string {
+  return [
+    'Ne',
+    'Po',
+    'Út',
+    'St',
+    'Čt',
+    'Pá',
+    'So',
+  ][parseDate(day).getDay()]
 }

@@ -1,5 +1,5 @@
 import { aggregateRequirements } from './aggregate-requirements'
-import { MonthRequirements } from './api'
+import { MonthRequirements } from '../api'
 
 describe('Requirements aggregation should', () => {
   it('return empty object when there are no leaves', () => {
