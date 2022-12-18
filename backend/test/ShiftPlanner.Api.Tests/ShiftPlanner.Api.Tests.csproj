@@ -23,12 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.AspNetCore.Mvc.Core">
-      <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.10\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\ShiftPlanner.Api\ShiftPlanner.Api.csproj" />
     <ProjectReference Include="..\..\src\ShiftPlanner.Contracts\ShiftPlanner.Contracts.csproj" />
     <ProjectReference Include="..\..\src\ShiftPlanner.ScheduleCalculator\ShiftPlanner.ScheduleCalculator.csproj" />
