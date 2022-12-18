@@ -5,7 +5,7 @@ using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.GoogleSheet;
 
-public class GoogleSheetsScheduleRepository : GoogleSheetsService, IScheduleRepository 
+public class GoogleSheetsScheduleRepository : GoogleSheetsService, IGoogleSheetsScheduleRepository 
 {
     public async Task StoreComputedSchedule(ScheduledMonth month, SuccessfulSchedulingResult result)
     {
@@ -17,7 +17,7 @@ public class GoogleSheetsScheduleRepository : GoogleSheetsService, IScheduleRepo
             new BatchClearValuesRequest() {Ranges = new[] {"Vysledky!B1:G1"}}, SpreadsheetId).Execute();
         
         var workplaces = Workplace.Workplaces;
-        var schedule = result.Schedule;
+        var schedule = result.PlannedSchedule;
 
         await WriteListToSheet(service, "A2", month.Days.Select(d => d.Date.Day), "COLUMNS");
         await WriteListToSheet(service, "B1", workplaces.Select(w => w.Name));
@@ -29,7 +29,12 @@ public class GoogleSheetsScheduleRepository : GoogleSheetsService, IScheduleRepo
             rowIndex++;
         }
     }
-    
+
+    public Task<Schedule> LoadSchedule(ScheduledMonth month)
+    {
+        throw new NotImplementedException();
+    }
+
     private static async Task WriteListToSheet<T>(
         SheetsService service,
         string rangeStart,

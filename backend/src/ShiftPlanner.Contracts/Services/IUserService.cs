@@ -1,6 +1,4 @@
-﻿using ShiftPlanner.Api.Contracts;
-
-namespace ShiftPlanner.Api.Services.Users;
+﻿namespace ShiftPlanner.Contracts.Services;
 
 public interface IUserService
 {

@@ -2,8 +2,9 @@
 using System.Text.Json;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
+using ShiftPlanner.Contracts.Services;
 
-namespace ShiftPlanner.Api.Services.Secrets;
+namespace ShiftPlanner.Services.Services;
 
 public class AwsSecretsManagerClient : IAwsSecretsManagerClient
 {

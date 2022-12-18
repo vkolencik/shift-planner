@@ -1,8 +1,9 @@
 ﻿using System.Text;
 using System.Text.Json;
-using ShiftPlanner.Api.Services.Secrets;
+using ShiftPlanner.Contracts;
+using ShiftPlanner.Contracts.Services;
 
-namespace ShiftPlanner.Api.Services.Users;
+namespace ShiftPlanner.Services.Services;
 
 public class Auth0TokenProvider : IAuth0TokenProvider
 {

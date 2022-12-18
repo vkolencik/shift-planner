@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShiftPlanner.Api.Services.Users;
+using ShiftPlanner.Contracts.Services;
 
 namespace ShiftPlanner.Api.Controllers;
 
@@ -15,6 +15,7 @@ public class UsersController : ControllerBase
         _userService = userService;
     }
 
+    [HttpGet]
     [Authorize(Policy = Claims.ReadRequirementsOfOthers)]
     public async Task<ActionResult<IEnumerable<UserOutputModel>>> GetUsers()
     {

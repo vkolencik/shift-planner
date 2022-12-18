@@ -37,7 +37,7 @@ namespace ShiftPlanner.Engine.SchedulingEngine
             }
         }
 
-        public Schedule? Solve()
+        public PlannedSchedule? Solve()
         {
             _solver.Solve();
 
@@ -60,7 +60,7 @@ namespace ShiftPlanner.Engine.SchedulingEngine
                 }
             }
 
-            return Schedule.CreateSchedule(outputModel);
+            return PlannedSchedule.CreateSchedule(outputModel);
         }
 
         private static IDictionary<T, int> CreateIndex<T>(IReadOnlyCollection<T> elements)

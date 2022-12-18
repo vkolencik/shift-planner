@@ -1,0 +1,10 @@
+### Auth
+POST https://krtek.eu.auth0.com/oauth/token
+Content-Type: application/json
+
+< ./auth-payload.json
+> ./store-auth-token.js
+
+### Fetch schedule
+GET {{backendBaseUrl}}/api/fnb/schedule/2023/01
+Authorization: Bearer {{accessToken}}

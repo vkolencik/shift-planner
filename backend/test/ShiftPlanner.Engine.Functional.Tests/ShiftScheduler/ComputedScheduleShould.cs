@@ -371,7 +371,7 @@ public class ComputedScheduleShould
             ));
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
         Assert.Equal(successResult.Flexibility, ScheduleFlexibility.Strict);
-        var schedule = successResult.Schedule;
+        var schedule = successResult.PlannedSchedule;
 
         foreach (var employeeMonth in oddWeekLeaveEmployees)
         {
@@ -465,16 +465,16 @@ public class ComputedScheduleShould
         Assert.Empty(schedule.Shifts.Where(s => s.Employee == lastMonthThursdayEmployee && s.Shift.Day == new Day(_scheduledMonth, 1)));
     }
 
-    private Schedule ComputeSchedule() => ComputeSchedule(CreateParameters());
+    private PlannedSchedule ComputeSchedule() => ComputeSchedule(CreateParameters());
 
-    private Schedule ComputeSchedule(MonthScheduleParameters parameters)
+    private PlannedSchedule ComputeSchedule(MonthScheduleParameters parameters)
     {
         var scheduler = new Engine.ShiftScheduler();
 
         var result = scheduler.ComputeSchedule(parameters);
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);
         Assert.True(successResult.Flexibility.Degree <= 1, $"Scheduler was forced to use too much flexibility (flexibility degree: {successResult.Flexibility.Degree})");
-        return successResult.Schedule;
+        return successResult.PlannedSchedule;
     }
 
     private MonthScheduleParameters CreateParameters()
