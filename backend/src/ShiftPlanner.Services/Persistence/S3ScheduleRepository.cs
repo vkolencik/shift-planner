@@ -24,6 +24,7 @@ public class S3ScheduleRepository : IScheduleRepository
 
     public async Task StoreComputedSchedule(ScheduledMonth month, SuccessfulSchedulingResult result)
     {
+        throw new NotImplementedException();
         // Create a GetObject request
         var request = new PutObjectRequest
         {
