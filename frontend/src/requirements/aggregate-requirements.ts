@@ -19,7 +19,7 @@ export function aggregateRequirements (requirements: MonthRequirements, hideAppr
 
   const userIds = Array.from(new Set(leaves.map(r => r.userId)))
 
-  const entries = userIds.map(uid => [
+  const entries: [username: string, leaves: {day: string, approved: boolean}[]][] = userIds.map(uid => [
     leaves.find(l => l.userId === uid)!.userName,
     leaves.filter(l => l.userId === uid).map(l => ({
       day: l.date,
