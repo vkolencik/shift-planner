@@ -1,6 +1,6 @@
 ﻿using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Services;
-using ShiftPlanner.Api.Services.Users;
+using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Services;
 

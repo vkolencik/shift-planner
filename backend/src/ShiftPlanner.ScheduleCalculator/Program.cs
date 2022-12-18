@@ -7,13 +7,13 @@ using Microsoft.Extensions.Options;
 using ShiftPlanner.Api;
 using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
-using ShiftPlanner.Api.Services.Secrets;
-using ShiftPlanner.Api.Services.Users;
 using ShiftPlanner.Contracts;
+using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine;
 using ShiftPlanner.GoogleSheet;
 using ShiftPlanner.Services;
+using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.ScheduleCalculator;
 

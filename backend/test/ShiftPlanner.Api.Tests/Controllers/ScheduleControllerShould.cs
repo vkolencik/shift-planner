@@ -2,6 +2,7 @@
 using Moq;
 using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Contracts;
+using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
 using ShiftPlanner.ScheduleCalculator;
 using ShiftPlanner.Services;

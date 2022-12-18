@@ -1,10 +1,11 @@
 ﻿using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
 using Auth0.ManagementApi.Paging;
-using ShiftPlanner.Api.Services.Secrets;
+using ShiftPlanner.Contracts;
+using ShiftPlanner.Contracts.Services;
 using User = ShiftPlanner.Contracts.User;
 
-namespace ShiftPlanner.Api.Services.Users;
+namespace ShiftPlanner.Services.Services;
 
 public class Auth0UserService : IUserService
 {
@@ -25,6 +26,6 @@ public class Auth0UserService : IUserService
         var mgmtClient = new ManagementApiClient(token, new Uri("https://krtek.eu.auth0.com/api/v2"));
         var users = await mgmtClient.Users.GetAllAsync(new GetUsersRequest{}, new PaginationInfo(0, 100));
 
-        return users.Select(u => new User(u.UserId, u.FullName, u.Email)).ToArray();
+        return Enumerable.ToArray<User>(users.Select(u => new User(u.UserId, u.FullName, u.Email)));
     }
 }

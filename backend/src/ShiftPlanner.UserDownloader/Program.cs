@@ -2,8 +2,7 @@
 
 using System.Text.Json;
 using Amazon.SecretsManager;
-using ShiftPlanner.Api.Services.Secrets;
-using ShiftPlanner.Api.Services.Users;
+using ShiftPlanner.Services.Services;
 
 var service = new Auth0UserService(new Auth0TokenProvider(new HttpClientFactory()), new AwsSecretsManagerClient(new AmazonSecretsManagerClient()));
 

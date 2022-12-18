@@ -1,3 +1,3 @@
-﻿namespace ShiftPlanner.Api.Services.Secrets;
+﻿namespace ShiftPlanner.Contracts;
 
 public record ClientCredentials(string ClientId, string ClientSecret);

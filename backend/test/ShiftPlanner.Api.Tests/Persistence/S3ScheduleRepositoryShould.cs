@@ -1,12 +1,26 @@
+using Amazon.S3;
+using Microsoft.Extensions.Options;
+using Moq;
 using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Contracts;
+using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Persistence;
 
 namespace ShiftPlanner.Api.Tests.Persistence;
 
 public class S3ScheduleRepositoryShould
 {
-    [Fact(Skip = "")]
+    private readonly Mock<IAmazonS3> _s3ClientMock;
+    private readonly Mock<IUserService> _userServiceMock;
+
+    public S3ScheduleRepositoryShould()
+    {
+        _s3ClientMock = new Mock<IAmazonS3>();
+        _userServiceMock = new Mock<IUserService>();
+    }
+
+    [Fact(Skip = "Will be implemented")]
     public async Task StoreSchedule()
     {
         var repository = CreateRepository();
@@ -19,7 +33,7 @@ public class S3ScheduleRepositoryShould
                 new SolutionParameters(new Dictionary<Employee, EmployeeStandard>())));
     }
 
-    [Fact(Skip = "")]
+    [Fact(Skip = "Will be implemented")]
     public async Task LoadLatestSchedule()
     {
         var repository = CreateRepository();
@@ -27,8 +41,11 @@ public class S3ScheduleRepositoryShould
         var schedule = await repository.LoadSchedule(new ScheduledMonth(2023, 1));
     }
 
-    private static S3ScheduleRepository CreateRepository()
+    private S3ScheduleRepository CreateRepository()
     {
-        return new S3ScheduleRepository();
+        return new S3ScheduleRepository(
+            _s3ClientMock.Object,
+            _userServiceMock.Object,
+            Options.Create(new StorageOptions {StoragePrefix = "_test123"}));
     }
 }

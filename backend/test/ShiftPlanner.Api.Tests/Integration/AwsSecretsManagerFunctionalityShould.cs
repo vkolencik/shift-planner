@@ -1,6 +1,6 @@
 ﻿using Amazon;
 using Amazon.SecretsManager;
-using ShiftPlanner.Api.Services.Secrets;
+using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Api.Tests.Integration;
 

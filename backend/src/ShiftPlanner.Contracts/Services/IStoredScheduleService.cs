@@ -1,7 +1,6 @@
-﻿using ShiftPlanner.Contracts;
-using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Services;
+namespace ShiftPlanner.Contracts.Services;
 
 public interface IStoredScheduleService
 {

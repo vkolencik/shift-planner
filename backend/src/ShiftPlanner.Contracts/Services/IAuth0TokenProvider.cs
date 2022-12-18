@@ -1,6 +1,4 @@
-﻿using ShiftPlanner.Api.Services.Secrets;
-
-namespace ShiftPlanner.Api.Services.Users;
+﻿namespace ShiftPlanner.Contracts.Services;
 
 public interface IAuth0TokenProvider
 {

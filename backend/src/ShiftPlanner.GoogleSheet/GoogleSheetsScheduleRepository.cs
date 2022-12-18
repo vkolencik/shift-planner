@@ -5,7 +5,7 @@ using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.GoogleSheet;
 
-public class GoogleSheetsScheduleRepository : GoogleSheetsService, IScheduleRepository 
+public class GoogleSheetsScheduleRepository : GoogleSheetsService, IGoogleSheetsScheduleRepository 
 {
     public async Task StoreComputedSchedule(ScheduledMonth month, SuccessfulSchedulingResult result)
     {

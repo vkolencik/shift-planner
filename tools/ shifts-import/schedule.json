@@ -1,901 +1,901 @@
 {
-  "schedule": [
+  "Schedule": [
     {
-      "date": "2023-01-01",
-      "shifts": [
+      "Date": "2023-01-01",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e4841043dd7a9d4495"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e4841043dd7a9d4495"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84ed841043dd7a9d44e6"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84ed841043dd7a9d44e6"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e9841043dd7a9d44bf"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e9841043dd7a9d44bf"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44aa"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44aa"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84ed841043dd7a9d44e5"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84ed841043dd7a9d44e5"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e9841043dd7a9d44bc"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e9841043dd7a9d44bc"
         }
       ]
     },
     {
-      "date": "2023-01-02",
-      "shifts": [
+      "Date": "2023-01-02",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84ec841043dd7a9d44da"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84ec841043dd7a9d44da"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e8841043dd7a9d44b3"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e8841043dd7a9d44b3"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84ea841043dd7a9d44c7"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84ea841043dd7a9d44c7"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84ec841043dd7a9d44dc"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84ec841043dd7a9d44dc"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e6841043dd7a9d44a1"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e6841043dd7a9d44a1"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ec841043dd7a9d44db"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ec841043dd7a9d44db"
         }
       ]
     },
     {
-      "date": "2023-01-03",
-      "shifts": [
+      "Date": "2023-01-03",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84ec841043dd7a9d44dd"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84ec841043dd7a9d44dd"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84eb841043dd7a9d44cf"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84eb841043dd7a9d44cf"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b4"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b4"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44ab"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44ab"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e4841043dd7a9d4491"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e4841043dd7a9d4491"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e8841043dd7a9d44b1"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e8841043dd7a9d44b1"
         }
       ]
     },
     {
-      "date": "2023-01-04",
-      "shifts": [
+      "Date": "2023-01-04",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e7841043dd7a9d44a9"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e7841043dd7a9d44a9"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84ed841043dd7a9d44e4"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84ed841043dd7a9d44e4"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84ed841043dd7a9d44e3"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84ed841043dd7a9d44e3"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44a8"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44a8"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e4841043dd7a9d4493"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e4841043dd7a9d4493"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ed841043dd7a9d44e6"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ed841043dd7a9d44e6"
         }
       ]
     },
     {
-      "date": "2023-01-05",
-      "shifts": [
+      "Date": "2023-01-05",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84ea841043dd7a9d44c5"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84ea841043dd7a9d44c5"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e4841043dd7a9d4492"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e4841043dd7a9d4492"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e9841043dd7a9d44bf"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e9841043dd7a9d44bf"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e6841043dd7a9d449e"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e6841043dd7a9d449e"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e4841043dd7a9d4495"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e4841043dd7a9d4495"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ea841043dd7a9d44c7"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ea841043dd7a9d44c7"
         }
       ]
     },
     {
-      "date": "2023-01-06",
-      "shifts": [
+      "Date": "2023-01-06",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84eb841043dd7a9d44d0"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84eb841043dd7a9d44d0"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e8841043dd7a9d44b3"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e8841043dd7a9d44b3"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b1"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b1"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84ec841043dd7a9d44dc"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84ec841043dd7a9d44dc"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e6841043dd7a9d44a1"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e6841043dd7a9d44a1"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e7841043dd7a9d44a7"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e7841043dd7a9d44a7"
         }
       ]
     },
     {
-      "date": "2023-01-07",
-      "shifts": [
+      "Date": "2023-01-07",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e6841043dd7a9d44a0"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e6841043dd7a9d44a0"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84eb841043dd7a9d44cf"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84eb841043dd7a9d44cf"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e9841043dd7a9d44bd"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e9841043dd7a9d44bd"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44a8"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44a8"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84ed841043dd7a9d44e5"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84ed841043dd7a9d44e5"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e4841043dd7a9d4491"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e4841043dd7a9d4491"
         }
       ]
     },
     {
-      "date": "2023-01-08",
-      "shifts": [
+      "Date": "2023-01-08",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84eb841043dd7a9d44d0"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84eb841043dd7a9d44d0"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e8841043dd7a9d44b3"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e8841043dd7a9d44b3"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b1"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b1"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84ec841043dd7a9d44dc"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84ec841043dd7a9d44dc"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e6841043dd7a9d44a1"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e6841043dd7a9d44a1"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e7841043dd7a9d44a7"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e7841043dd7a9d44a7"
         }
       ]
     },
     {
-      "date": "2023-01-09",
-      "shifts": [
+      "Date": "2023-01-09",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e5841043dd7a9d4497"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e5841043dd7a9d4497"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e9841043dd7a9d44bc"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e9841043dd7a9d44bc"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b4"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b4"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e9841043dd7a9d44be"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e9841043dd7a9d44be"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84ec841043dd7a9d44db"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84ec841043dd7a9d44db"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e7841043dd7a9d44ab"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e7841043dd7a9d44ab"
         }
       ]
     },
     {
-      "date": "2023-01-10",
-      "shifts": [
+      "Date": "2023-01-10",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84ec841043dd7a9d44dd"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84ec841043dd7a9d44dd"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e7841043dd7a9d44a7"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e7841043dd7a9d44a7"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84ea841043dd7a9d44c7"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84ea841043dd7a9d44c7"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44aa"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44aa"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e8841043dd7a9d44b5"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e8841043dd7a9d44b5"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ed841043dd7a9d44e3"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ed841043dd7a9d44e3"
         }
       ]
     },
     {
-      "date": "2023-01-11",
-      "shifts": [
+      "Date": "2023-01-11",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e5841043dd7a9d4497"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e5841043dd7a9d4497"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e8841043dd7a9d44b3"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e8841043dd7a9d44b3"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b2"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b2"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84ed841043dd7a9d44e5"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84ed841043dd7a9d44e5"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e4841043dd7a9d4491"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e4841043dd7a9d4491"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ed841043dd7a9d44e6"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ed841043dd7a9d44e6"
         }
       ]
     },
     {
-      "date": "2023-01-12",
-      "shifts": [
+      "Date": "2023-01-12",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e4841043dd7a9d4493"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e4841043dd7a9d4493"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84ed841043dd7a9d44e4"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84ed841043dd7a9d44e4"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e9841043dd7a9d44bd"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e9841043dd7a9d44bd"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84ec841043dd7a9d44dc"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84ec841043dd7a9d44dc"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e7841043dd7a9d44ab"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e7841043dd7a9d44ab"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e6841043dd7a9d44a1"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e6841043dd7a9d44a1"
         }
       ]
     },
     {
-      "date": "2023-01-13",
-      "shifts": [
+      "Date": "2023-01-13",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e4841043dd7a9d4494"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e4841043dd7a9d4494"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84ea841043dd7a9d44c7"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84ea841043dd7a9d44c7"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84ed841043dd7a9d44e3"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84ed841043dd7a9d44e3"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e9841043dd7a9d44be"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e9841043dd7a9d44be"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84ec841043dd7a9d44db"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84ec841043dd7a9d44db"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e7841043dd7a9d44a9"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e7841043dd7a9d44a9"
         }
       ]
     },
     {
-      "date": "2023-01-14",
-      "shifts": [
+      "Date": "2023-01-14",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e4841043dd7a9d4495"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e4841043dd7a9d4495"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e4841043dd7a9d4492"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e4841043dd7a9d4492"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b1"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b1"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44aa"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44aa"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e8841043dd7a9d44b5"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e8841043dd7a9d44b5"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ed841043dd7a9d44e4"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ed841043dd7a9d44e4"
         }
       ]
     },
     {
-      "date": "2023-01-15",
-      "shifts": [
+      "Date": "2023-01-15",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e4841043dd7a9d4494"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e4841043dd7a9d4494"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84ea841043dd7a9d44c7"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84ea841043dd7a9d44c7"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84ed841043dd7a9d44e3"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84ed841043dd7a9d44e3"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e9841043dd7a9d44be"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e9841043dd7a9d44be"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84ec841043dd7a9d44db"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84ec841043dd7a9d44db"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e7841043dd7a9d44a9"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e7841043dd7a9d44a9"
         }
       ]
     },
     {
-      "date": "2023-01-16",
-      "shifts": [
+      "Date": "2023-01-16",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e6841043dd7a9d44a0"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e6841043dd7a9d44a0"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e8841043dd7a9d44b3"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e8841043dd7a9d44b3"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e9841043dd7a9d44bf"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e9841043dd7a9d44bf"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e9841043dd7a9d44bc"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e9841043dd7a9d44bc"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e4841043dd7a9d4493"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e4841043dd7a9d4493"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ed841043dd7a9d44e6"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ed841043dd7a9d44e6"
         }
       ]
     },
     {
-      "date": "2023-01-17",
-      "shifts": [
+      "Date": "2023-01-17",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e7841043dd7a9d44a8"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e7841043dd7a9d44a8"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84eb841043dd7a9d44cf"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84eb841043dd7a9d44cf"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b2"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b2"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44ab"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44ab"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84ed841043dd7a9d44e5"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84ed841043dd7a9d44e5"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ed841043dd7a9d44e4"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ed841043dd7a9d44e4"
         }
       ]
     },
     {
-      "date": "2023-01-18",
-      "shifts": [
+      "Date": "2023-01-18",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84ec841043dd7a9d44dd"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84ec841043dd7a9d44dd"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e4841043dd7a9d4492"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e4841043dd7a9d4492"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b1"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b1"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84eb841043dd7a9d44d0"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84eb841043dd7a9d44d0"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e6841043dd7a9d44a1"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e6841043dd7a9d44a1"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ed841043dd7a9d44e3"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ed841043dd7a9d44e3"
         }
       ]
     },
     {
-      "date": "2023-01-19",
-      "shifts": [
+      "Date": "2023-01-19",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e5841043dd7a9d4497"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e5841043dd7a9d4497"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84ed841043dd7a9d44e6"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84ed841043dd7a9d44e6"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b4"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b4"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e6841043dd7a9d449e"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e6841043dd7a9d449e"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e4841043dd7a9d4494"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e4841043dd7a9d4494"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e4841043dd7a9d4495"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e4841043dd7a9d4495"
         }
       ]
     },
     {
-      "date": "2023-01-20",
-      "shifts": [
+      "Date": "2023-01-20",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e4841043dd7a9d4493"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e4841043dd7a9d4493"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84eb841043dd7a9d44cf"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84eb841043dd7a9d44cf"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e9841043dd7a9d44bd"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e9841043dd7a9d44bd"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44ab"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44ab"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e9841043dd7a9d44bc"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e9841043dd7a9d44bc"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e4841043dd7a9d4491"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e4841043dd7a9d4491"
         }
       ]
     },
     {
-      "date": "2023-01-21",
-      "shifts": [
+      "Date": "2023-01-21",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84ea841043dd7a9d44c5"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84ea841043dd7a9d44c5"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e7841043dd7a9d44a7"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e7841043dd7a9d44a7"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e9841043dd7a9d44bf"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e9841043dd7a9d44bf"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84eb841043dd7a9d44d0"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84eb841043dd7a9d44d0"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84ed841043dd7a9d44e5"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84ed841043dd7a9d44e5"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e6841043dd7a9d44a1"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e6841043dd7a9d44a1"
         }
       ]
     },
     {
-      "date": "2023-01-22",
-      "shifts": [
+      "Date": "2023-01-22",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e4841043dd7a9d4493"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e4841043dd7a9d4493"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84eb841043dd7a9d44cf"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84eb841043dd7a9d44cf"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e9841043dd7a9d44bd"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e9841043dd7a9d44bd"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44ab"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44ab"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e9841043dd7a9d44bc"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e9841043dd7a9d44bc"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e4841043dd7a9d4491"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e4841043dd7a9d4491"
         }
       ]
     },
     {
-      "date": "2023-01-23",
-      "shifts": [
+      "Date": "2023-01-23",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e5841043dd7a9d4497"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e5841043dd7a9d4497"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e4841043dd7a9d4492"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e4841043dd7a9d4492"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84ea841043dd7a9d44c7"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84ea841043dd7a9d44c7"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44a8"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44a8"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e4841043dd7a9d4495"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e4841043dd7a9d4495"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ec841043dd7a9d44da"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ec841043dd7a9d44da"
         }
       ]
     },
     {
-      "date": "2023-01-24",
-      "shifts": [
+      "Date": "2023-01-24",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84ec841043dd7a9d44dd"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84ec841043dd7a9d44dd"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84ed841043dd7a9d44e4"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84ed841043dd7a9d44e4"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e9841043dd7a9d44bf"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e9841043dd7a9d44bf"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84ec841043dd7a9d44dc"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84ec841043dd7a9d44dc"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e4841043dd7a9d4494"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e4841043dd7a9d4494"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e8841043dd7a9d44b5"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e8841043dd7a9d44b5"
         }
       ]
     },
     {
-      "date": "2023-01-25",
-      "shifts": [
+      "Date": "2023-01-25",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e4841043dd7a9d4493"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e4841043dd7a9d4493"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e7841043dd7a9d44a7"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e7841043dd7a9d44a7"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b2"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b2"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e6841043dd7a9d449e"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e6841043dd7a9d449e"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84ec841043dd7a9d44db"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84ec841043dd7a9d44db"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e6841043dd7a9d44a1"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e6841043dd7a9d44a1"
         }
       ]
     },
     {
-      "date": "2023-01-26",
-      "shifts": [
+      "Date": "2023-01-26",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84ea841043dd7a9d44c5"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84ea841043dd7a9d44c5"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e4841043dd7a9d4492"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e4841043dd7a9d4492"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84ed841043dd7a9d44e3"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84ed841043dd7a9d44e3"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84ed841043dd7a9d44e5"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84ed841043dd7a9d44e5"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e7841043dd7a9d44a9"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e7841043dd7a9d44a9"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ea841043dd7a9d44c7"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ea841043dd7a9d44c7"
         }
       ]
     },
     {
-      "date": "2023-01-27",
-      "shifts": [
+      "Date": "2023-01-27",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e5841043dd7a9d4497"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e5841043dd7a9d4497"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84ed841043dd7a9d44e4"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84ed841043dd7a9d44e4"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b4"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b4"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44a8"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44a8"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e8841043dd7a9d44b5"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e8841043dd7a9d44b5"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e8841043dd7a9d44b1"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e8841043dd7a9d44b1"
         }
       ]
     },
     {
-      "date": "2023-01-28",
-      "shifts": [
+      "Date": "2023-01-28",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84ec841043dd7a9d44da"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84ec841043dd7a9d44da"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84ed841043dd7a9d44e6"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84ed841043dd7a9d44e6"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b2"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b2"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e9841043dd7a9d44be"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e9841043dd7a9d44be"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e6841043dd7a9d44a1"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e6841043dd7a9d44a1"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ec841043dd7a9d44db"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ec841043dd7a9d44db"
         }
       ]
     },
     {
-      "date": "2023-01-29",
-      "shifts": [
+      "Date": "2023-01-29",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e5841043dd7a9d4497"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e5841043dd7a9d4497"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e8841043dd7a9d44b1"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e8841043dd7a9d44b1"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b4"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b4"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e7841043dd7a9d44a8"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e7841043dd7a9d44a8"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e8841043dd7a9d44b5"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e8841043dd7a9d44b5"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84ed841043dd7a9d44e4"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84ed841043dd7a9d44e4"
         }
       ]
     },
     {
-      "date": "2023-01-30",
-      "shifts": [
+      "Date": "2023-01-30",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84e6841043dd7a9d44a0"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84e6841043dd7a9d44a0"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84eb841043dd7a9d44cf"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84eb841043dd7a9d44cf"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e9841043dd7a9d44bf"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e9841043dd7a9d44bf"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e9841043dd7a9d44bc"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e9841043dd7a9d44bc"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84e7841043dd7a9d44a9"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84e7841043dd7a9d44a9"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e4841043dd7a9d4491"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e4841043dd7a9d4491"
         }
       ]
     },
     {
-      "date": "2023-01-31",
-      "shifts": [
+      "Date": "2023-01-31",
+      "Shifts": [
         {
-          "workplace": "A1",
-          "userId": "auth0|637f84ec841043dd7a9d44dd"
+          "Workplace": "A1",
+          "UserId": "auth0|637f84ec841043dd7a9d44dd"
         },
         {
-          "workplace": "A2",
-          "userId": "auth0|637f84e7841043dd7a9d44a7"
+          "Workplace": "A2",
+          "UserId": "auth0|637f84e7841043dd7a9d44a7"
         },
         {
-          "workplace": "A3",
-          "userId": "auth0|637f84e8841043dd7a9d44b2"
+          "Workplace": "A3",
+          "UserId": "auth0|637f84e8841043dd7a9d44b2"
         },
         {
-          "workplace": "RES",
-          "userId": "auth0|637f84e9841043dd7a9d44be"
+          "Workplace": "RES",
+          "UserId": "auth0|637f84e9841043dd7a9d44be"
         },
         {
-          "workplace": "KPR",
-          "userId": "auth0|637f84eb841043dd7a9d44d0"
+          "Workplace": "KPR",
+          "UserId": "auth0|637f84eb841043dd7a9d44d0"
         },
         {
-          "workplace": "URG",
-          "userId": "auth0|637f84e8841043dd7a9d44b3"
+          "Workplace": "URG",
+          "UserId": "auth0|637f84e8841043dd7a9d44b3"
         }
       ]
     }

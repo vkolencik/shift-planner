@@ -1,4 +1,5 @@
 ﻿using ShiftPlanner.Contracts;
+using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Services;
