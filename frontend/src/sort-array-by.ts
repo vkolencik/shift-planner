@@ -1,3 +1,4 @@
-export function sortArrayBy<T> (array: T[], func: (val: T) => any) {
-  array.sort((a, b) => func(a) > func(b) ? 1 : (func(a) < func(b) ? -1 : 0))
+export function sortArrayBy<T> (array: T[], func: (val: T) => string) {
+  const clt = Intl.Collator('cs')
+  array.sort((a, b) => clt.compare(func(a), func(b)))
 }

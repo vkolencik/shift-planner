@@ -1,8 +1,8 @@
 // const baseUrl = 'https://b.krtek.me'
 import { useAuth0 } from '@auth0/auth0-react'
-import { getBaseUrl, getInstance, Instance } from '../instance-config'
+import { getBaseUrl, getInstance, Instance } from './instance-config'
 import { Moment } from 'moment'
-import { Day, toDay } from '../dates'
+import { Day, Month, toDay } from './dates'
 
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'
@@ -23,6 +23,10 @@ const testUsers = [
 ]
 
 const excludedUserIds = getInstance() === Instance.Production ? [...inactiveUsers, ...testUsers] : inactiveUsers
+
+function padDateComponent (value: number): string {
+  return String(value).padStart(2, '0')
+}
 
 export const requirementTypes: { [key in RequirementType]: { name: string, value: RequirementType } } = {
   'leave': { name: 'Dovolená', value: 'leave' },
@@ -50,6 +54,16 @@ export interface User { userId: string, userName: string }
 
 export function momentToDay (date: Moment): Day {
   return toDay(date.format('yyyy-MM-DD'))
+}
+
+export interface Schedule {
+  shifts: Shift[]
+}
+
+export interface Shift {
+  day: string,
+  workplace: string,
+  user: {userId: string, userName: string}
 }
 
 export function useApi () {
@@ -112,7 +126,7 @@ export function useApi () {
           scope: '',
         })
           .then(token => fetch(
-            `${baseUrl}/api/${tenant}/requirements/${year}/${month}`,
+            `${baseUrl}/api/${tenant}/requirements/${year}/${padDateComponent(month)}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`
@@ -196,6 +210,30 @@ export function useApi () {
 
         const users = await response.json() as User[]
         return users.filter(u => !excludedUserIds.includes(u.userId))
+      }
+    },
+
+    schedule: {
+      get: async (month: Month): Promise<Schedule | null> => {
+        const token = await getAccessTokenSilently({
+          audience: 'https://b.krtek.me',
+          scope: ''
+        })
+
+        const response = await fetch(`${baseUrl}/api/${tenant}/schedule/${month.year}/${padDateComponent(month.month)}`, {headers: { Authorization: `Bearer ${token}`}})
+
+        if (response.status >= 400) {
+          throw new Error(`Error fetching users: ${await response.text()}`)
+        }
+
+        if (response.status === 204) {
+          return null
+        }
+
+        const schedule = await response.json() as Schedule
+        return {
+          shifts: schedule.shifts.filter(s => !excludedUserIds.includes(s.user.userId))
+        }
       }
     }
   })
