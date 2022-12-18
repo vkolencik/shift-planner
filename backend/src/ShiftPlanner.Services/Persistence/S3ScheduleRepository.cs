@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 using Amazon.S3;
@@ -39,10 +40,11 @@ public class S3ScheduleRepository : IScheduleRepository
 
     public async Task<Schedule> LoadSchedule(ScheduledMonth month)
     {
-        
-        var listResponse = await _s3Client.ListObjectsAsync(new ListObjectsRequest(){BucketName = GetBucketName(), Prefix = GetMonthPrefix(month)});
-        var latestSchedule = listResponse.S3Objects.OrderBy(o => o.LastModified).First();
-        
+        var listResponse = await _s3Client.ListObjectsV2Async(new ListObjectsV2Request() {BucketName = GetBucketName(), Prefix = GetMonthPrefix(month)});
+        var latestSchedule = listResponse.S3Objects
+            .Where(o => o.Size > 0) // filter out folders
+            .MaxBy(o => o.LastModified); // latest
+
         var request = new GetObjectRequest
         {
             BucketName = GetBucketName(),
@@ -52,16 +54,22 @@ public class S3ScheduleRepository : IScheduleRepository
         using var response = await _s3Client.GetObjectAsync(request);
 
         var jsonString = await new StreamReader(response.ResponseStream).ReadToEndAsync();
-        var loadedSchedule = JsonSerializer.Deserialize<ScheduleWithUserIds>(jsonString);
-        if (loadedSchedule is null)
+        var loadedSchedule = JsonSerializer.Deserialize<StoredSchedule>(jsonString);
+        if (loadedSchedule is null || loadedSchedule.Shifts is null )
         {
             throw new InvalidOperationException("Unable to parse stored schedule");
         }
-        
+
         var users = await _userService.GetAllUsers();
-        var schedule = new Schedule(loadedSchedule.Shifts.Select(s => new ScheduledShift(s.Day, s.Workplace, users.Single(u => u.UserId == s.UserId))).ToArray());
+
+        var schedule = new Schedule(loadedSchedule.Shifts.Select(s => ConvertStoredShift(s, users)).ToArray());
 
         return schedule;
+    }
+
+    ScheduledShift ConvertStoredShift(StoredScheduledShift s, IReadOnlyCollection<User> users)
+    {
+        return new ScheduledShift(new Day(DateOnly.ParseExact(s.Day, "yyyy-MM-dd")), new Workplace(s.Workplace), users.Single(u => u.UserId == s.UserId));
     }
 
     private string GetBucketName()
@@ -69,16 +77,10 @@ public class S3ScheduleRepository : IScheduleRepository
         var prefix = _options.StoragePrefix.Replace("_", "");
         var bucketName = "schedule-storage-720500131615";
 
-        if (prefix != "")
-        {
-            return $"{prefix}-{bucketName}";
-        }
-
-        return bucketName;
+        return $"{prefix}{bucketName}";
     }
 
-    private record ScheduleWithUserIds(IReadOnlyList<ScheduledShiftWithUserId> Shifts);
-    private record ScheduledShiftWithUserId(Day Day, Workplace Workplace, string UserId);
+    private record StoredSchedule(IReadOnlyList<StoredScheduledShift> Shifts);
 
+    private record StoredScheduledShift(string Day, string Workplace, string UserId);
 }
-
