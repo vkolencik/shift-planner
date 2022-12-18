@@ -18,21 +18,22 @@ for (const day of rawShifts) {
   shiftUsers.push(...day.shifts.map(s => s.name))
 }
 
-shiftUsers = [... new Set(shiftUsers)]
+shiftUsers = [...new Set(shiftUsers)]
 
-const userNames = users.map(u => u.UserName);
+const userNames = users.map(u => u.UserName)
 const notFoundUsers = shiftUsers.filter(name => userNames.indexOf(name) < 0)
 console.log(notFoundUsers)
 
-const shifts = rawShifts.map(s => ({
-  date: s.date,
+const shifts = []
 
-  shifts: [0, 1, 2, 3, 4, 5].map(i => ({
-    workplace: workplaces[i],
-    userId: users.find(u => u.UserName === s.shifts[i].name).UserId
-  }))
-}))
+for (const day of rawShifts) {
+  for (let i = 0; i < workplaces.length; i++) {
+    shifts.push({
+      Day: day.date,
+      Workplace: workplaces[i],
+      UserId: users.find(u => u.UserName === day.shifts[i].name).UserId
+    })
+  }
+}
 
-console.log(rawShifts)
-
-fs.writeFileSync('./output.json', JSON.stringify(shifts))
+fs.writeFileSync('./output.json', JSON.stringify({ Shifts: shifts }))

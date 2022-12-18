@@ -19,9 +19,18 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpGet("{year}/{month}")]
-    public async Task<ActionResult<Schedule>> GetSchedule(int year, int month)
+    public async Task<ActionResult<ScheduleOutputModel>> GetSchedule(int year, int month)
     {
         var storedSchedule = await _storedScheduleService.GetSchedule(new ScheduledMonth(year, month));
-        return Ok(storedSchedule);
+        var outputModel = new ScheduleOutputModel(storedSchedule.Shifts.Select(ConvertToOutput).ToArray());
+        return Ok(outputModel);
     }
+
+    private ShiftOutputModel ConvertToOutput(ScheduledShift shift) =>
+        new ShiftOutputModel(shift.Day.Date.ToString("yyyy-MM-dd"), shift.Workplace.Name, new UserOutputModel(shift.User.UserId, shift.User.UserName));
+
+    public record ScheduleOutputModel(IReadOnlyList<ShiftOutputModel> Shifts);
+
+    public record ShiftOutputModel(string Day, string Workplace, UserOutputModel User);
 }
+
