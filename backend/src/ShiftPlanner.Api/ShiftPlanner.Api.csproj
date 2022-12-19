@@ -37,9 +37,4 @@
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="credentials\krtekpoc-credentials.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>
