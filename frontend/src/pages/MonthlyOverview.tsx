@@ -74,7 +74,7 @@ export const MonthlyOverview: React.FC = () => {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.getMonth(currentYear, currentMonth).then(setRequirements)
+      api.requirements.getMonth(getCurrentMonth()).then(setRequirements)
     }
   }, [])
 

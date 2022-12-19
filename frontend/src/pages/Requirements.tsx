@@ -20,7 +20,7 @@ import { FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from '../components/LoadingSpinner'
-import { currentMonth, currentYear, getCurrentMonthString, getStartOfCurrentMonth } from '../dates'
+import { currentMonth, currentYear, getCurrentMonth, getCurrentMonthString, getStartOfCurrentMonth } from '../dates'
 
 type DayDate = moment.Moment
 
@@ -63,7 +63,7 @@ export const Requirements: React.FC = () => {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.get(currentYear, currentMonth)
+      api.requirements.get(getCurrentMonth())
         .then(setRequirements)
     }
   })

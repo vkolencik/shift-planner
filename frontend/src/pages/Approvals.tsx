@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { MonthRequirements, requirementTypes, useApi } from '../api'
-import { currentMonth, currentYear, formatDate, getCurrentMonthString, toDay } from '../dates'
+import { currentMonth, currentYear, formatDate, getCurrentMonth, getCurrentMonthString, toDay } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { aggregateRequirements } from '../requirements/aggregate-requirements'
 import { Alert, Badge, Button, FormCheck, Table } from 'react-bootstrap'
@@ -16,7 +16,7 @@ export function Approvals () {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.getMonth(currentYear, currentMonth)
+      api.requirements.getMonth(getCurrentMonth())
         .then(r => setRequirements(r))
     }
   }, [requirements])
