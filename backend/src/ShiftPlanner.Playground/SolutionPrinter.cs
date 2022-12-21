@@ -1,6 +1,6 @@
 using Google.OrTools.Sat;
 
-namespace ShiftPlanner.Engine.Sample;
+namespace ShiftPlanner.Playground;
 
 public class SolutionPrinter : CpSolverSolutionCallback
 {
