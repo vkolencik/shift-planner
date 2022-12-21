@@ -12,6 +12,7 @@ const inactiveUsers = [
   'auth0|637f84eb841043dd7a9d44d1', // Kršková
   'auth0|637f84ea841043dd7a9d44c9', // Matějková
   'auth0|637f84e6841043dd7a9d449d', // Švecová
+  'auth0|63a2d3bb16331ae04fc581f8', // Mullerova
 ]
 
 const testUsers = [
