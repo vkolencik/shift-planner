@@ -126,6 +126,10 @@ export const WeeklyOverview: React.FC = () => {
     setWeekStart(addDays(weekStart, -7))
   }
 
+  function handleCurrentWeek () {
+    setWeekStart(getStartOfWeek())
+  }
+
   function handleNextWeek () {
     setWeekStart(addDays(weekStart, 7))
   }
@@ -146,6 +150,7 @@ export const WeeklyOverview: React.FC = () => {
   return <div className="container">
     <ButtonGroup>
       <Button onClick={handlePreviousWeek}><FontAwesomeIcon icon={faArrowLeft}/></Button>
+      <Button onClick={handleCurrentWeek}>Aktuální týden</Button>
       <Button onClick={handleNextWeek}><FontAwesomeIcon icon={faArrowRight}/></Button>
     </ButtonGroup>
     {someShiftDataMissing && <Alert variant="warning">Pro toto období zatím nebyl vygenerován rozvrh služeb.</Alert>}
