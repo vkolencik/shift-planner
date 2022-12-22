@@ -8,6 +8,7 @@ import { Permission, usePermissions } from './auth/auth'
 import { Approvals } from './pages/Approvals'
 import { MonthlyOverview } from './pages/MonthlyOverview'
 import { MonthSchedule } from './pages/MonthSchedule'
+import { WeeklyOverview } from './pages/WeeklyOverview'
 
 function App () {
   const navigate = useNavigate()
@@ -29,7 +30,7 @@ function App () {
             <Routes>
               <Route path="/" element={<h1>Home</h1>}/>
               <Route path="/pozadavky" element={<Requirements/>}/>
-              <Route path="/tydenik" element={<h1>Týdeník</h1>}/>
+              <Route path="/tydenik" element={<WeeklyOverview/>}/>
               <Route path="/mesicnik" element={<MonthlyOverview/>}/>
               <Route path="/schvalovani" element={<Approvals/>}/>
               <Route path="/sluzby" element={<MonthSchedule/>}/>

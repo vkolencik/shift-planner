@@ -1,9 +1,10 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Schedule, useApi } from '../api'
 import {
   formatDate,
   getCurrentMonth,
-  getCurrentMonthString, getDayOfWeek,
+  getCurrentMonthString,
+  getDayOfWeek,
   getMonthDates,
   isWeekend,
   Month

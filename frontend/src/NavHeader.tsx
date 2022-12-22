@@ -22,7 +22,7 @@ export const NavHeader: FC = () => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
           <LinkContainer to="/pozadavky"><Nav.Link>Požadavky</Nav.Link></LinkContainer>
-          {false && <LinkContainer to="/tydenik"><Nav.Link>Týdeník</Nav.Link></LinkContainer>}
+          {permissions.includes(Permission.readRequirementsOfOthers) && <LinkContainer to="/tydenik"><Nav.Link>Týdeník</Nav.Link></LinkContainer>}
           {permissions.includes(Permission.readRequirementsOfOthers) && <LinkContainer to="/mesicnik"><Nav.Link>Měsíčník</Nav.Link></LinkContainer>}
           {permissions.includes(Permission.readRequirementsOfOthers) && <LinkContainer to="/schvalovani"><Nav.Link>Schvalování</Nav.Link></LinkContainer>}
           <LinkContainer to="/sluzby"><Nav.Link>Služby</Nav.Link></LinkContainer>

@@ -35,9 +35,29 @@ public class S3ScheduleRepositoryShould
     }
 
     [Fact]
-    public async Task LoadLatestSchedule()
+    public async Task ReturnNull_WhenScheduleDoesNotExist()
     {
         var repository = CreateRepository();
+
+        _s3ClientMock
+            .Setup(_ => _.ListObjectsV2Async(It.IsAny<ListObjectsV2Request>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
+                new ListObjectsV2Response
+                {
+                    S3Objects = new List<S3Object>
+                    {
+                        new S3Object {Key = "2023/06/", Size = 0, LastModified = DateTime.Now.AddHours(-1)}, // Folder object
+                    }
+                });
+        
+        var schedule = await repository.LoadSchedule(new ScheduledMonth(2023, 6));
+
+        Assert.Null(schedule);
+    }
+    
+    [Fact]
+    public async Task LoadLatestSchedule()
+    {
         var prefix = "2023/06/";
         var storedScheduleKey = prefix + "abc123.json";
         var userId = "user-id-1";
@@ -67,6 +87,8 @@ public class S3ScheduleRepositoryShould
             .ReturnsAsync(new GetObjectResponse() {ResponseStream = new MemoryStream(JsonSerializer.SerializeToUtf8Bytes(storedSchedule))});
 
         _userServiceMock.Setup(_ => _.GetAllUsers()).ReturnsAsync(new[] {user});
+        
+        var repository = CreateRepository();
 
         var schedule = await repository.LoadSchedule(new ScheduledMonth(2023, 6));
 

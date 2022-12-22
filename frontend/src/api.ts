@@ -3,6 +3,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { getBaseUrl, getInstance, Instance } from './instance-config'
 import { Moment } from 'moment'
 import { Day, Month, toDay } from './dates'
+import { sortArrayBy } from './sort-array-by'
 
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'
@@ -39,10 +40,10 @@ export const requirementTypes: { [key in RequirementType]: { name: string, value
 
 export type RequirementType = 'leave' | 'hard-no' | 'soft-yes' | 'only-morning' | 'only-afternoon'
 
-interface UserRequirement {
+export interface UserRequirement {
   userId: string,
   userName: string,
-  date: string,
+  date: Day,
   requirementType: RequirementType,
   approved?: boolean | null
 }
@@ -62,7 +63,7 @@ export interface Schedule {
 }
 
 export interface Shift {
-  day: string,
+  day: Day,
   workplace: string,
   user: {userId: string, userName: string}
 }
@@ -101,13 +102,13 @@ export function useApi () {
 
   return ({
     requirements: {
-      get: async (year: number, month: number): Promise<EmployeeMonthRequirements> =>
+      get: async (month: Month): Promise<EmployeeMonthRequirements> =>
         getAccessTokenSilently({
           audience: 'https://b.krtek.me',
           scope: '',
         })
           .then(token => fetch(
-            `${baseUrl}/api/${tenant}/users/${encodeURIComponent(loggedInUserId)}/requirements/${year}/${month}`,
+            `${baseUrl}/api/${tenant}/users/${encodeURIComponent(loggedInUserId)}/requirements/${month.year}/${month.month}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`
@@ -121,13 +122,13 @@ export function useApi () {
 
             return resp.json()
           }),
-      getMonth: async (year: number, month: number): Promise<MonthRequirements> =>
+      getMonth: async (month: Month): Promise<MonthRequirements> =>
         getAccessTokenSilently({
           audience: 'https://b.krtek.me',
           scope: '',
         })
           .then(token => fetch(
-            `${baseUrl}/api/${tenant}/requirements/${year}/${padDateComponent(month)}`,
+            `${baseUrl}/api/${tenant}/requirements/${month.year}/${padDateComponent(month.month)}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`
@@ -210,6 +211,7 @@ export function useApi () {
         }
 
         const users = await response.json() as User[]
+        sortArrayBy(users, u => u.userName)
         return users.filter(u => !excludedUserIds.includes(u.userId))
       }
     },

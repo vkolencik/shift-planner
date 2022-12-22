@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { MonthRequirements, requirementTypes, useApi } from '../api'
-import { currentMonth, currentYear, formatDate, getCurrentMonthString, toDay } from '../dates'
+import { MonthRequirements, useApi } from '../api'
+import { Day, formatDate, getCurrentMonth, getCurrentMonthString, toDay } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { aggregateRequirements } from '../requirements/aggregate-requirements'
-import { Alert, Badge, Button, FormCheck, Table } from 'react-bootstrap'
-import { FaUser } from 'react-icons/fa'
+import { Alert, Badge, Button, Table } from 'react-bootstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 import Modal from 'react-bootstrap/Modal'
 
-type RequirementCoords = { userName: string, day: string }
+type RequirementCoords = { userName: string, day: Day }
 
 export function Approvals () {
   const [requirements, setRequirements] = useState<MonthRequirements | null>(null)
@@ -16,7 +17,7 @@ export function Approvals () {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.getMonth(currentYear, currentMonth)
+      api.requirements.getMonth(getCurrentMonth())
         .then(r => setRequirements(r))
     }
   }, [requirements])
@@ -90,7 +91,7 @@ export function Approvals () {
     </div>
     {userNames.length === 0 && <Alert variant="dark">Nejsou žádné dovolené ke schválení</Alert>}
     {userNames.map(userName => (<>
-      <h2 key={'header-' + userName}><FaUser style={{ fontSize: '80%' }}/> {userName}</h2>
+      <h2 key={'header-' + userName}><FontAwesomeIcon icon={faUser} style={{ fontSize: '80%' }}/>{userName}</h2>
       <Table striped bordered hover className="table-fit" key={'table' + userName}>
         <thead>
         <tr>

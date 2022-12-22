@@ -1,13 +1,14 @@
 import { aggregateRequirements } from './aggregate-requirements'
 import { MonthRequirements } from '../api'
+import { toDay } from '../dates'
 
 describe('Requirements aggregation should', () => {
   it('return empty object when there are no leaves', () => {
     const requirements: MonthRequirements = [
-      { userId: 'user2', userName: 'User 2', date: '2022-11-30', requirementType: 'hard-no' },
-      { userId: 'user1', userName: 'User 1', date: '2022-11-27', requirementType: 'hard-no' },
-      { userId: 'user1', userName: 'User 1', date: '2022-11-29', requirementType: 'hard-no' },
-      { userId: 'user1', userName: 'User 1', date: '2022-11-28', requirementType: 'hard-no' },
+      { userId: 'user2', userName: 'User 2', date: toDay('2022-11-30'), requirementType: 'hard-no' },
+      { userId: 'user1', userName: 'User 1', date: toDay('2022-11-27'), requirementType: 'hard-no' },
+      { userId: 'user1', userName: 'User 1', date: toDay('2022-11-29'), requirementType: 'hard-no' },
+      { userId: 'user1', userName: 'User 1', date: toDay('2022-11-28'), requirementType: 'hard-no' },
     ]
 
     const aggregatedLeaves = aggregateRequirements(requirements, false)
@@ -17,10 +18,10 @@ describe('Requirements aggregation should', () => {
 
   it('aggregate by user and filter leaves', () => {
     const requirements: MonthRequirements = [
-      { userId: 'user2', userName: 'User 2', date: '2022-11-30', requirementType: 'leave', approved: false },
-      { userId: 'user1', userName: 'User 1', date: '2022-11-27', requirementType: 'leave', approved: false },
-      { userId: 'user1', userName: 'User 1', date: '2022-11-29', requirementType: 'leave', approved: true },
-      { userId: 'user1', userName: 'User 1', date: '2022-11-28', requirementType: 'hard-no' },
+      { userId: 'user2', userName: 'User 2', date: toDay('2022-11-30'), requirementType: 'leave', approved: false },
+      { userId: 'user1', userName: 'User 1', date: toDay('2022-11-27'), requirementType: 'leave', approved: false },
+      { userId: 'user1', userName: 'User 1', date: toDay('2022-11-29'), requirementType: 'leave', approved: true },
+      { userId: 'user1', userName: 'User 1', date: toDay('2022-11-28'), requirementType: 'hard-no' },
     ]
 
     const aggregatedLeaves = aggregateRequirements(requirements, false)
@@ -38,8 +39,8 @@ describe('Requirements aggregation should', () => {
 
   it('hide approved', () => {
     const requirements: MonthRequirements = [
-      { userId: 'user2', userName: 'User 2', date: '2022-11-29', requirementType: 'leave', approved: true },
-      { userId: 'user2', userName: 'User 2', date: '2022-11-30', requirementType: 'leave', approved: false },
+      { userId: 'user2', userName: 'User 2', date: toDay('2022-11-29'), requirementType: 'leave', approved: true },
+      { userId: 'user2', userName: 'User 2', date: toDay('2022-11-30'), requirementType: 'leave', approved: false },
     ]
 
     const aggregatedLeaves = aggregateRequirements(requirements, true)
