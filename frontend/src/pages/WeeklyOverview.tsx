@@ -44,24 +44,56 @@ export function GetDayUserKey (userId: string, date: Day): DateUserKey {
 
 export const WeeklyOverview: React.FC = () => {
   const [weekStart, setWeekStart] = useState<Day>(addDays(getStartOfWeek(), 30))
-  const [shifts, setShifts] = useState<Shift[] | null | undefined>(undefined)
-  const [requirements, setRequirements] = useState<UserRequirement[] | undefined>(undefined)
+  const [shifts, setShifts] = useState<Shift[]>([])
+  const [requirements, setRequirements] = useState<UserRequirement[]>([])
+  const [someShiftDataMissing, setSomeShiftDataMissing] = useState<boolean>(false)
+  const [loadingWeek, setLoadingWeek] = useState<boolean>(true)
   const [users, setUsers] = useState<User[] | undefined>(undefined)
   const api = useApi()
 
   useEffect(() => {
-    const month = getMonth(weekStart)
-    api.requirements.getMonth(month)
-      .then(setRequirements)
-    api.schedule.get(month)
-      .then(s => setShifts(s?.shifts))
-    api.users.get()
-      .then(setUsers)
+    if (users === undefined) {
+      api.users.get()
+        .then(setUsers)
+    }
+  }, [users])
+
+  useEffect(() => {
+    setRequirements([])
+    setShifts([])
+    setSomeShiftDataMissing(false)
+    setLoadingWeek(true)
+
+    const monthWeekStart = getMonth(addDays(weekStart, -1))
+    const monthWeekEnd = getMonth(addDays(weekStart, 7))
+    const months = [monthWeekStart]
+
+    if (monthWeekEnd.month !== monthWeekStart.month) {
+      months.push(monthWeekEnd)
+    }
+
+    const promises = [
+      ...months.map(month =>
+        api.requirements.getMonth(month)
+          .then(reqs => setRequirements(x => [...x, ...reqs]))
+      ),
+      ...months.map(month =>
+        api.schedule.get(month)
+          .then(s => {
+            if (s === null) {
+              setSomeShiftDataMissing(true)
+            } else {
+              setShifts(x => [...x, ...s.shifts])
+            }
+          })
+      )]
+
+    Promise.all(promises).then(() => setLoadingWeek(false))
   }, [weekStart])
 
   const weekDays = getWeekDays(weekStart)
 
-  if (requirements === undefined || shifts === undefined || users === undefined) {
+  if (loadingWeek || users === undefined) {
     return <LoadingSpinner/>
   }
 
@@ -82,7 +114,7 @@ export const WeeklyOverview: React.FC = () => {
       case 'shift':
         return <td className="table-danger text-center" title="Služba"><strong>{dayInfo.workplace}</strong></td>
       case 'day-after':
-        return <td className="table-danger text-center" title='Po službě'>
+        return <td className="table-danger text-center" title="Po službě">
           <FontAwesomeIcon icon={faBan}/>
         </td>
       default:
@@ -94,7 +126,7 @@ export const WeeklyOverview: React.FC = () => {
     <Table>
       <thead>
       <th scope="col"></th>
-      {weekDays.map(d => <th scope="col" className='text-center'>{formatDate(d)}</th>)}
+      {weekDays.map(d => <th scope="col" className="text-center">{formatDate(d)}</th>)}
       </thead>
       <tbody>
       {users.map(u =>
