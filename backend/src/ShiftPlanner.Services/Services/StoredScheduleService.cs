@@ -39,14 +39,14 @@ internal class StoredScheduleService : IStoredScheduleService
         _scheduleRepository = scheduleRepository;
     }
 
-    public async Task<Schedule> GetSchedule(ScheduledMonth month)
+    public async Task<Schedule?> GetSchedule(ScheduledMonth month)
     {
-        if (month == new ScheduledMonth(2022, 12))
-        {
-            var employeeInfos = (await _employeeInfoService.GetEmployees(Workplace.Workplaces)).ToArray();
-
-            return new Schedule(_lastMonthSchedule.Select(sbe => GetScheduledShiftShift(sbe, employeeInfos)).ToArray());
-        }
+        // if (month == new ScheduledMonth(2022, 12))
+        // {
+        //     var employeeInfos = (await _employeeInfoService.GetEmployees(Workplace.Workplaces)).ToArray();
+        //
+        //     return new Schedule(_lastMonthSchedule.Select(sbe => GetScheduledShiftShift(sbe, employeeInfos)).ToArray());
+        // }
 
         return await _scheduleRepository.LoadSchedule(month);
 

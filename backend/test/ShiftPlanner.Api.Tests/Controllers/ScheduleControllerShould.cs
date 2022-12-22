@@ -36,4 +36,12 @@ public class ScheduleControllerShould
 
         Assert.Equal(expectedOutputShifts, ((ScheduleController.ScheduleOutputModel?) result.Value)?.Shifts);
     }
+
+    [Fact]
+    public async Task ReturnNoContent_WhenScheduleDoesNotExist()
+    {
+        var controller = new ScheduleController(_storedScheduleServiceMock.Object);
+        var response = await controller.GetSchedule(2027, 7);
+        var result = Assert.IsType<NoContentResult>(response.Result);
+    }
 }

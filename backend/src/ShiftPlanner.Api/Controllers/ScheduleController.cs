@@ -21,6 +21,12 @@ public class ScheduleController : ControllerBase
     public async Task<ActionResult<ScheduleOutputModel>> GetSchedule(int year, int month)
     {
         var storedSchedule = await _storedScheduleService.GetSchedule(new ScheduledMonth(year, month));
+
+        if (storedSchedule is null)
+        {
+            return NoContent();
+        }
+        
         var outputModel = new ScheduleOutputModel(storedSchedule.Shifts.Select(ConvertToOutput).ToArray());
         return Ok(outputModel);
     }

@@ -38,12 +38,17 @@ public class S3ScheduleRepository : IScheduleRepository
 
     private static string GetMonthPrefix(ScheduledMonth month) => $"{month.Year}/{month.Month:D2}/";
 
-    public async Task<Schedule> LoadSchedule(ScheduledMonth month)
+    public async Task<Schedule?> LoadSchedule(ScheduledMonth month)
     {
         var listResponse = await _s3Client.ListObjectsV2Async(new ListObjectsV2Request() {BucketName = GetBucketName(), Prefix = GetMonthPrefix(month)});
         var latestSchedule = listResponse.S3Objects
             .Where(o => o.Size > 0) // filter out folders
             .MaxBy(o => o.LastModified); // latest
+
+        if (latestSchedule is null)
+        {
+            return null;
+        }
 
         var request = new GetObjectRequest
         {

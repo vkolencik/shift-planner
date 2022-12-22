@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { addDays, Day, formatDate, getMonth, getStartOfWeek, getWeekDays, toDay } from '../dates'
 import { RequirementType, requirementTypes, Shift, useApi, User, UserRequirement } from '../api'
 import { LoadingSpinner } from '../components/LoadingSpinner'
-import { Table } from 'react-bootstrap'
+import { Alert, Button, ButtonGroup, Table } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBan, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faBan, faCheck, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
 type DayInfo =
   undefined
@@ -65,7 +65,7 @@ export const WeeklyOverview: React.FC = () => {
     setLoadingWeek(true)
 
     const monthWeekStart = getMonth(addDays(weekStart, -1))
-    const monthWeekEnd = getMonth(addDays(weekStart, 7))
+    const monthWeekEnd = getMonth(addDays(weekStart, 6))
     const months = [monthWeekStart]
 
     if (monthWeekEnd.month !== monthWeekStart.month) {
@@ -122,11 +122,26 @@ export const WeeklyOverview: React.FC = () => {
     }
   }
 
+  function handlePreviousWeek () {
+    setWeekStart(addDays(weekStart, -7))
+  }
+
+  function handleNextWeek () {
+    setWeekStart(addDays(weekStart, 7))
+  }
+
   return <div className="container">
+    <ButtonGroup>
+      <Button onClick={handlePreviousWeek}><FontAwesomeIcon icon={faArrowLeft}/></Button>
+      <Button onClick={handleNextWeek}><FontAwesomeIcon icon={faArrowRight}/></Button>
+    </ButtonGroup>
+    {someShiftDataMissing && <Alert variant="warning">Pro toto období zatím nebyl vygenerován rozvrh služeb.</Alert>}
     <Table>
       <thead>
-      <th scope="col"></th>
-      {weekDays.map(d => <th scope="col" className="text-center">{formatDate(d)}</th>)}
+      <tr>
+        <th scope="col"></th>
+        {weekDays.map(d => <th scope="col" className="text-center">{formatDate(d)}</th>)}
+      </tr>
       </thead>
       <tbody>
       {users.map(u =>
