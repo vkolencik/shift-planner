@@ -43,7 +43,7 @@ export function GetDayUserKey (userId: string, date: Day): DateUserKey {
 }
 
 export const WeeklyOverview: React.FC = () => {
-  const [weekStart, setWeekStart] = useState<Day>(addDays(getStartOfWeek(), 30))
+  const [weekStart, setWeekStart] = useState<Day>(getStartOfWeek())
   const [shifts, setShifts] = useState<Shift[]>([])
   const [requirements, setRequirements] = useState<UserRequirement[]>([])
   const [someShiftDataMissing, setSomeShiftDataMissing] = useState<boolean>(false)
