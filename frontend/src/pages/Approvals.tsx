@@ -4,7 +4,8 @@ import { currentMonth, currentYear, formatDate, getCurrentMonth, getCurrentMonth
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { aggregateRequirements } from '../requirements/aggregate-requirements'
 import { Alert, Badge, Button, FormCheck, Table } from 'react-bootstrap'
-import { FaUser } from 'react-icons/fa'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 import Modal from 'react-bootstrap/Modal'
 
 type RequirementCoords = { userName: string, day: string }
@@ -90,7 +91,7 @@ export function Approvals () {
     </div>
     {userNames.length === 0 && <Alert variant="dark">Nejsou žádné dovolené ke schválení</Alert>}
     {userNames.map(userName => (<>
-      <h2 key={'header-' + userName}><FaUser style={{ fontSize: '80%' }}/> {userName}</h2>
+      <h2 key={'header-' + userName}><FontAwesomeIcon icon={faUser} style={{ fontSize: '80%' }}/>{userName}</h2>
       <Table striped bordered hover className="table-fit" key={'table' + userName}>
         <thead>
         <tr>

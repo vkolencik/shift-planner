@@ -14,6 +14,7 @@ export const formatDate = (date: string) => {
 
   return `${day}. ${month}. ${year}`
 }
+
 export const formatDateMoment = (date: Moment) => date.format('dd. MM. yyyy')
 
 export type Day = string & { __isDay: true }
@@ -31,6 +32,19 @@ export function isWeekend (day: string) {
 
 export function toDay (date: string): Day {
   return date as Day
+}
+
+const dayFormat = 'YYYY-MM-DD'
+function getMoment(date: Day): Moment {
+  return moment(date, dayFormat)
+}
+
+function formatMoment(moment: Moment): Day {
+  return toDay(moment.format(dayFormat))
+}
+
+export function addDays(date: Day, days: number): Day {
+  return formatMoment(getMoment(date).add(days, 'days'))
 }
 
 export function getNumberOfDaysOfMonth (month: Month) {

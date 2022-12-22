@@ -42,7 +42,7 @@ export type RequirementType = 'leave' | 'hard-no' | 'soft-yes' | 'only-morning' 
 export interface UserRequirement {
   userId: string,
   userName: string,
-  date: string,
+  date: Day,
   requirementType: RequirementType,
   approved?: boolean | null
 }
@@ -62,7 +62,7 @@ export interface Schedule {
 }
 
 export interface Shift {
-  day: string,
+  day: Day,
   workplace: string,
   user: {userId: string, userName: string}
 }
