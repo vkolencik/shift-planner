@@ -1,10 +1,10 @@
-import { CreateWeekView, DateUserKey, GetDayUserKey, WeekView } from './WeeklyOverview'
+import { CreateWeekView, DateUserKey, getDayUserKey, WeekView } from './WeeklyOverview'
 import { Shift, User, UserRequirement } from '../api'
 import { toDay } from '../dates'
 
 describe('Weekly overview should', () => {
   it('generate user-day key', () => {
-    const key = GetDayUserKey('user1', toDay('2022-12-22'))
+    const key = getDayUserKey('user1', toDay('2022-12-22'))
     expect(key).toEqual('user1:2022-12-22')
   })
 

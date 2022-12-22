@@ -19,7 +19,7 @@ export function CreateWeekView (requirements: UserRequirement[], shifts: Shift[]
 
   for (const requirement of requirements) {
     if (['leave', 'hard-no', 'only-afternoon'].includes(requirement.requirementType)) {
-      view[GetDayUserKey(requirement.userId, requirement.date)] = {
+      view[getDayUserKey(requirement.userId, requirement.date)] = {
         status: 'unavailable',
         reason: requirement.requirementType
       }
@@ -28,8 +28,8 @@ export function CreateWeekView (requirements: UserRequirement[], shifts: Shift[]
 
   if (shifts !== null) {
     for (const shift of shifts) {
-      view[GetDayUserKey(shift.user.userId, shift.day)] = { status: 'shift', workplace: shift.workplace }
-      view[GetDayUserKey(shift.user.userId, addDays(shift.day, 1))] = { status: 'day-after' }
+      view[getDayUserKey(shift.user.userId, shift.day)] = { status: 'shift', workplace: shift.workplace }
+      view[getDayUserKey(shift.user.userId, addDays(shift.day, 1))] = { status: 'day-after' }
     }
   }
 
@@ -38,7 +38,7 @@ export function CreateWeekView (requirements: UserRequirement[], shifts: Shift[]
 
 export type DateUserKey = string & { __isDateUserKey: true }
 
-export function GetDayUserKey (userId: string, date: Day): DateUserKey {
+export function getDayUserKey (userId: string, date: Day): DateUserKey {
   return `${userId}:${date}` as DateUserKey
 }
 
@@ -100,7 +100,7 @@ export const WeeklyOverview: React.FC = () => {
   const weeklyView = CreateWeekView(requirements, shifts)
 
   function DayCell (props: { day: string, userId: string }) {
-    const dayInfo = weeklyView[GetDayUserKey(props.userId, toDay(props.day))]
+    const dayInfo = weeklyView[getDayUserKey(props.userId, toDay(props.day))]
 
     if (dayInfo === undefined) {
       return <td className="table-success text-center" title="K dispozici"><FontAwesomeIcon icon={faCheck}/></td>
@@ -130,6 +130,19 @@ export const WeeklyOverview: React.FC = () => {
     setWeekStart(addDays(weekStart, 7))
   }
 
+  const dailyAvailabilities = []
+  for (const day of weekDays) {
+    let available = users.length
+
+    for (const user of users) {
+      if (weeklyView[getDayUserKey(user.userId, day)] !== undefined){
+        available--
+      }
+    }
+
+    dailyAvailabilities.push(available)
+  }
+
   return <div className="container">
     <ButtonGroup>
       <Button onClick={handlePreviousWeek}><FontAwesomeIcon icon={faArrowLeft}/></Button>
@@ -137,15 +150,19 @@ export const WeeklyOverview: React.FC = () => {
     </ButtonGroup>
     {someShiftDataMissing && <Alert variant="warning">Pro toto období zatím nebyl vygenerován rozvrh služeb.</Alert>}
     <Table>
-      <thead>
+      <thead className='thead-light table-primary'>
       <tr>
         <th scope="col"></th>
         {weekDays.map(d => <th scope="col" className="text-center">{formatDate(d)}</th>)}
       </tr>
+      <tr>
+        <th scope="row">K dispozici</th>
+        {dailyAvailabilities.map(a => <th scope="col" className="text-center">{a}</th>)}
+      </tr>
       </thead>
       <tbody>
       {users.map(u =>
-        <tr>
+        <tr key={u.userId}>
           <th scope="row">{u.userName}</th>
           {weekDays.map(d => <DayCell day={d} userId={u.userId}/>)}
         </tr>
