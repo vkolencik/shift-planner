@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { MonthRequirements, requirementTypes, useApi } from '../api'
-import { currentMonth, currentYear, formatDate, getCurrentMonth, getCurrentMonthString, toDay } from '../dates'
+import { MonthRequirements, useApi } from '../api'
+import { Day, formatDate, getCurrentMonth, getCurrentMonthString, toDay } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { aggregateRequirements } from '../requirements/aggregate-requirements'
-import { Alert, Badge, Button, FormCheck, Table } from 'react-bootstrap'
+import { Alert, Badge, Button, Table } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import Modal from 'react-bootstrap/Modal'
 
-type RequirementCoords = { userName: string, day: string }
+type RequirementCoords = { userName: string, day: Day }
 
 export function Approvals () {
   const [requirements, setRequirements] = useState<MonthRequirements | null>(null)

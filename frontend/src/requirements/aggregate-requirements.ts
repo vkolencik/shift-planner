@@ -1,8 +1,9 @@
 import { MonthRequirements } from '../api'
 import { sortArrayBy } from '../sort-array-by'
+import { Day } from '../dates'
 
 interface Leave {
-  day: string,
+  day: Day,
   approved: boolean
 }
 
@@ -19,7 +20,7 @@ export function aggregateRequirements (requirements: MonthRequirements, hideAppr
 
   const userIds = Array.from(new Set(leaves.map(r => r.userId)))
 
-  const entries: [username: string, leaves: {day: string, approved: boolean}[]][] = userIds.map(uid => [
+  const entries: [username: string, leaves: {day: Day, approved: boolean}[]][] = userIds.map(uid => [
     leaves.find(l => l.userId === uid)!.userName,
     leaves.filter(l => l.userId === uid).map(l => ({
       day: l.date,

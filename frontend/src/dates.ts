@@ -9,7 +9,7 @@ export function getCurrentMonthString () {
 
 export const getStartOfCurrentMonth = () => new Date(currentYear, currentMonth - 1, 1)
 
-export const formatDate = (date: string) => {
+export const formatDate = (date: Day) => {
   const [year, month, day] = date.split('-').map(dateComponent => parseInt(dateComponent, 10))
 
   return `${day}. ${month}. ${year}`
@@ -64,8 +64,8 @@ export function getMonthDays (month: Month): number[] {
   return new Array(getNumberOfDaysOfMonth(month)).fill(1).map((_, i) => i + 1)
 }
 
-export function getMonthDates (month: Month): string[] {
-  return getMonthDays(month).map(d => dateToString(month.year, month.month, d))
+export function getMonthDates (month: Month): Day[] {
+  return getMonthDays(month).map(d => toDay(dateToString(month.year, month.month, d)))
 }
 
 export function dateToString (year: number, month: number, day: number) {
@@ -88,22 +88,23 @@ export function getDayOfWeek (day: string): string {
   ][parseDate(day).getDay()]
 }
 
-export function getStartOfWeek (): Moment {
-  return moment().startOf('isoWeek')
+export function getStartOfWeek (): Day {
+  return formatMoment(moment().startOf('isoWeek'))
 }
 
-export function getWeekDays (startOfWeek: Moment): Moment[] {
+export function getWeekDays (startOfWeek: Day): Day[] {
   const days = []
   for (let d = 0; d < 7; d++) {
-    days.push(startOfWeek.clone().add(d, 'days'))
+    days.push(addDays(startOfWeek, d))
   }
 
   return days
 }
 
-export function getMonth (date: Moment): Month {
+export function getMonth (date: Day): Month {
+  const moment = getMoment(date)
   return {
-    year: date.year(),
-    month: date.month() + 1
+    year: moment.year(),
+    month: moment.month() + 1
   }
 }

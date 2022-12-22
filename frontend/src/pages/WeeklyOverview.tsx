@@ -1,4 +1,3 @@
-import { Moment } from 'moment'
 import React, { useEffect, useState } from 'react'
 import { addDays, Day, formatDate, getMonth, getStartOfWeek, getWeekDays, toDay } from '../dates'
 import { RequirementType, requirementTypes, Shift, useApi, User, UserRequirement } from '../api'
@@ -44,7 +43,7 @@ export function GetDayUserKey (userId: string, date: Day): DateUserKey {
 }
 
 export const WeeklyOverview: React.FC = () => {
-  const [weekStart, setWeekStart] = useState<Moment>(getStartOfWeek().add(1, 'month'))
+  const [weekStart, setWeekStart] = useState<Day>(addDays(getStartOfWeek(), 30))
   const [shifts, setShifts] = useState<Shift[] | null | undefined>(undefined)
   const [requirements, setRequirements] = useState<UserRequirement[] | undefined>(undefined)
   const [users, setUsers] = useState<User[] | undefined>(undefined)
@@ -60,7 +59,7 @@ export const WeeklyOverview: React.FC = () => {
       .then(setUsers)
   }, [weekStart])
 
-  const weekDays = getWeekDays(weekStart).map(d => d.format('yyyy-MM-DD'))
+  const weekDays = getWeekDays(weekStart)
 
   if (requirements === undefined || shifts === undefined || users === undefined) {
     return <LoadingSpinner/>
