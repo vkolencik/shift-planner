@@ -16,11 +16,12 @@ import {
   useApi
 } from '../api'
 import { EventSourceInput } from '@fullcalendar/core'
-import { FormCheck, Spinner } from 'react-bootstrap'
+import { Card, FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { currentMonth, currentYear, getCurrentMonth, getCurrentMonthString, getStartOfCurrentMonth } from '../dates'
+import { Permission, usePermissions } from '../auth/auth'
 
 type DayDate = moment.Moment
 
@@ -29,9 +30,9 @@ interface DateRange {
   to: DayDate
 }
 
-const DisplayDate: React.FC<{ date: DayDate }> = ({date}: { date: DayDate }) => <>{date.format('D. M. YYYY')}</>
+const DisplayDate: React.FC<{ date: DayDate }> = ({ date }: { date: DayDate }) => <>{date.format('D. M. YYYY')}</>
 
-function requirementsToEvents(requirements: EmployeeMonthRequirements): EventSourceInput {
+function requirementsToEvents (requirements: EmployeeMonthRequirements): EventSourceInput {
   const colorMapping: { [key in RequirementType]: string | undefined } = {
     'only-afternoon': '#0696c4',
     'only-morning': '#f1d567',
@@ -54,6 +55,7 @@ export const Requirements: React.FC = () => {
   const [requirements, setRequirements] = useState<EmployeeMonthRequirements | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const api = useApi()
+  const permissions = usePermissions()
 
   useEffect(() => {
     if (selectedDateRange === null && calendarRef.current) {
@@ -69,11 +71,11 @@ export const Requirements: React.FC = () => {
   })
 
   const handleDateRangeSelect = (info: DateSelectArg) => {
-    setSelectedDateRange({from: moment(info.start), to: moment(info.end).add(-1, 'day')})
+    setSelectedDateRange({ from: moment(info.start), to: moment(info.end).add(-1, 'day') })
   }
 
   const handleDateClick = (info: DateClickArg) => {
-    setSelectedDateRange({from: moment(info.date), to: moment(info.date)})
+    setSelectedDateRange({ from: moment(info.date), to: moment(info.date) })
   }
 
   const handleDateRangeUnselect = (info: DateUnselectArg) => {
@@ -114,14 +116,22 @@ export const Requirements: React.FC = () => {
     setLoading(false)
   }
 
-  function handleEventClick(event: EventClickArg) {
-    setSelectedDateRange({from: moment(event.event.start), to: moment(event.event.end)})
+  function handleEventClick (event: EventClickArg) {
+    setSelectedDateRange({ from: moment(event.event.start), to: moment(event.event.end) })
   }
 
   const selectedDayRequirementType = selectedDateRange && requirements ? requirements[momentToDay(selectedDateRange?.from)] : null
 
   return (
     <>
+      {permissions.includes(Permission.modifyRequirementsOfOthers) &&
+        <Card title='Přepnout na jiného uživatele' style={{margin: '10px'}} className={'col-md-4 col-sm-6'}>
+          <Card.Header>Přepnout na jiného uživatele</Card.Header>
+          <Card.Body>
+            <Card.Text><select></select></Card.Text>
+          </Card.Body>
+        </Card>
+      }
       <h1>{getCurrentMonthString()}</h1>
 
       {selectedDateRange &&
