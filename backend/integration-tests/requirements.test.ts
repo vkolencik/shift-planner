@@ -191,8 +191,8 @@ describe('users requirements resource should', () => {
 
       const getResp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12`, getHeaders(token))
 
-      expect(resp.status).toEqual(200)
-      expect(await resp.json()).toEqual(expect.objectContaining({
+      expect(getResp.status).toEqual(200)
+      expect(await getResp.json()).toEqual(expect.objectContaining({
         '2022-12-08': 'hard-no'
       }))
     })

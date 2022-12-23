@@ -101,6 +101,17 @@ public abstract class UsersRequirementsControllerShould
             var result = Assert.IsType<ObjectResult>(response);
             Assert.Equal(403, result.StatusCode);
         }
+
+        [Fact]
+        public async Task CreateNewRequirement_GivenTokenForManager()
+        {
+            var controller = CreateController("user-id-1", new[] {Claims.ModifyRequirementsOfOthers});
+
+            var response = await controller.Put("tenant-1", "user-id-2", 2022, 10, 12, new RequirementInputModel("hard-no"));
+
+            Assert.IsType<OkResult>(response);
+            _requirementsServiceMock.Verify(_ => _.SetRequirement(It.IsAny<RequirementModel>()));
+        }
     }
 
     public class Delete : UsersRequirementsControllerShould
