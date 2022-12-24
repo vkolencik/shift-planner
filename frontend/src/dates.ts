@@ -1,6 +1,6 @@
 import moment, { Moment } from 'moment'
 
-export const currentMonth = 1
+export const currentMonth = 2
 export const currentYear = 2023
 
 export function getCurrentMonthString () {

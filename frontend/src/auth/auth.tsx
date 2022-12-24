@@ -46,7 +46,7 @@ export const WithAuth: React.FC<PropsWithChildren> = ({ children }) => {
 
           const invalidPermissions = loadedPermissions.filter(p => !Object.values(Permission).includes(p))
           if (invalidPermissions.length > 0) {
-            throw new Error(`Unknown permissions found: ${invalidPermissions}`)
+            console.error(`Unknown permissions found: ${invalidPermissions}`)
           }
 
           setPermissions(loadedPermissions)
