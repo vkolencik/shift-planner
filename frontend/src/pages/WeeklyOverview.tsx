@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { addDays, Day, formatDate, getMonth, getStartOfWeek, getWeekDays, toDay } from '../dates'
-import { RequirementType, requirementTypes, Shift, useApi, User, UserRequirement } from '../api'
+import { RequirementType, requirementTypes, Shift, useApi, User, UserRequirement } from '../service/api'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Alert, Button, ButtonGroup, Table } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBan, faCheck, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { useUserList } from '../service/users'
 
 type DayInfo =
   undefined
@@ -48,15 +49,8 @@ export const WeeklyOverview: React.FC = () => {
   const [requirements, setRequirements] = useState<UserRequirement[]>([])
   const [someShiftDataMissing, setSomeShiftDataMissing] = useState<boolean>(false)
   const [loadingWeek, setLoadingWeek] = useState<boolean>(true)
-  const [users, setUsers] = useState<User[] | undefined>(undefined)
+  const users = useUserList()
   const api = useApi()
-
-  useEffect(() => {
-    if (users === undefined) {
-      api.users.get()
-        .then(setUsers)
-    }
-  }, [users])
 
   useEffect(() => {
     setRequirements([])

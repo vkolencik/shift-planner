@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { MonthRequirements, useApi } from '../api'
+import { MonthRequirements, useApi } from '../service/api'
 import { Day, formatDate, getCurrentMonth, getCurrentMonthString, toDay } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { aggregateRequirements } from '../requirements/aggregate-requirements'

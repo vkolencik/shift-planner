@@ -1,5 +1,5 @@
 import { CreateWeekView, DateUserKey, getDayUserKey, WeekView } from './WeeklyOverview'
-import { Shift, User, UserRequirement } from '../api'
+import { Shift, User, UserRequirement } from '../service/api'
 import { toDay } from '../dates'
 
 describe('Weekly overview should', () => {

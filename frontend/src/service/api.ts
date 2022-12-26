@@ -1,9 +1,9 @@
 // const baseUrl = 'https://b.krtek.me'
 import { useAuth0 } from '@auth0/auth0-react'
-import { getBaseUrl, getInstance, Instance } from './instance-config'
+import { getBaseUrl, getInstance, Instance } from '../instance-config'
 import { Moment } from 'moment'
-import { Day, Month, toDay } from './dates'
-import { sortArrayBy } from './sort-array-by'
+import { Day, Month, toDay } from '../dates'
+import { sortArrayBy } from '../sort-array-by'
 
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'

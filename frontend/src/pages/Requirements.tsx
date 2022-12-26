@@ -14,7 +14,7 @@ import {
   RequirementType,
   requirementTypes,
   useApi
-} from '../api'
+} from '../service/api'
 import { EventSourceInput } from '@fullcalendar/core'
 import { Card, FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'

@@ -1,4 +1,4 @@
-import { MonthRequirements } from '../api'
+import { MonthRequirements } from '../service/api'
 import { sortArrayBy } from '../sort-array-by'
 import { Day } from '../dates'
 
