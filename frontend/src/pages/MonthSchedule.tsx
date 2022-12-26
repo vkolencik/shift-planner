@@ -3,9 +3,8 @@ import { Schedule, useApi } from '../service/api'
 import {
   formatDate,
   getCurrentMonth,
-  getCurrentMonthString,
   getDayOfWeek,
-  getMonthDates,
+  getMonthDates, getMonthLabel,
   isWeekend,
   Month
 } from '../dates'
@@ -55,7 +54,7 @@ export function MonthSchedule (): JSX.Element {
   sortArrayBy(userShiftEntries, e => e[0])
 
   return <>
-    <h1>{getCurrentMonthString()}</h1>
+    <h1>{getMonthLabel(getCurrentMonth())}</h1>
     <Tabs
       defaultActiveKey='schedule'
       id='uncontrolled-tab-example'

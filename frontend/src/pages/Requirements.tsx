@@ -16,13 +16,15 @@ import {
   useApi, User
 } from '../service/api'
 import { EventSourceInput } from '@fullcalendar/core'
-import { Card, FormCheck, Spinner } from 'react-bootstrap'
+import { ButtonGroup, Card, Container, FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from '../components/LoadingSpinner'
-import { currentMonth, currentYear, getCurrentMonth, getCurrentMonthString, getStartOfCurrentMonth } from '../dates'
 import { Permission, usePermissions } from '../auth/auth'
 import { UserSelect } from '../components/UserSelect'
+import { addMonths, getCurrentMonth, getMonthLabel, getStartOfMonth, Month } from '../dates'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
 type DayDate = moment.Moment
 
@@ -59,6 +61,7 @@ export const Requirements: React.FC = () => {
   const [user, setUser] = useState<User>(api.users.loggedInUser)
   const permissions = usePermissions()
   const [userSelectOpen, setUserSelectOpen] = useState<boolean>(false)
+  const [month, setMonth] = useState<Month>(getCurrentMonth())
 
   useEffect(() => {
     if (selectedDateRange === null && calendarRef.current) {
@@ -67,11 +70,13 @@ export const Requirements: React.FC = () => {
   }, [selectedDateRange])
 
   useEffect(() => {
-    if (requirements === null) {
-      api.requirements.get(user.userId, getCurrentMonth())
-        .then(setRequirements)
-    }
-  }, [requirements])
+    setLoading(true)
+    api.requirements.get(user.userId, month)
+      .then(requirements => {
+        setRequirements(requirements)
+        setLoading(false)
+      })
+  }, [month.year, month.month, user.userId])
 
   const handleDateRangeSelect = (info: DateSelectArg) => {
     setSelectedDateRange({ from: moment(info.start), to: moment(info.end).add(-1, 'day') })
@@ -91,9 +96,10 @@ export const Requirements: React.FC = () => {
     }
 
     setLoading(true)
-    api.requirements.put(user.userId, momentToDay(selectedDateRange?.from), type).then(() => {
+    const day = momentToDay(selectedDateRange?.from)
+    api.requirements.put(user.userId, day, type).then(() => {
       setLoading(false)
-      setRequirements(null)
+      setRequirements(oldRequirements => ({ ...oldRequirements, [day]: type }))
       setSelectedDateRange(null)
     })
   }
@@ -104,13 +110,22 @@ export const Requirements: React.FC = () => {
     }
 
     setLoading(true)
-    api.requirements.delete(user.userId, momentToDay(selectedDateRange?.from))
+    const day = momentToDay(selectedDateRange?.from)
+    api.requirements.delete(user.userId, day)
       .then(() => {
         setLoading(false)
-        setRequirements(null)
+        setRequirements(oldRequirements => {
+          let newRequirements = { ...oldRequirements }
+          delete newRequirements[day]
+          return newRequirements
+        })
         setSelectedDateRange(null)
       })
   }
+
+  const handlePreviousMonth = () => {setMonth(oldMonth => addMonths(oldMonth, -1))}
+  const handleCurrentMonth = () => {setMonth(getCurrentMonth)}
+  const handleNextMonth = () => {setMonth(oldMonth => addMonths(oldMonth, 1))}
 
   const oneDayRange = selectedDateRange !== null && selectedDateRange.from.isSame(selectedDateRange.to, 'day')
 
@@ -128,7 +143,6 @@ export const Requirements: React.FC = () => {
   const handleUserSelected = (user: User) => {
     setUser(user)
     setUserSelectOpen(false)
-    setRequirements(null)
   }
 
   return (
@@ -157,7 +171,6 @@ export const Requirements: React.FC = () => {
           </Modal>
         </>
       }
-      <h1>{getCurrentMonthString()}</h1>
 
       {selectedDateRange &&
         <Modal
@@ -210,25 +223,37 @@ export const Requirements: React.FC = () => {
         </Modal>
       }
 
-      {requirements
-        ? <div><FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
-          initialView="dayGridMonth"
-          initialDate={getStartOfCurrentMonth()}
-          themeSystem="bootstrap5"
-          headerToolbar={false}
-          firstDay={1}
-          showNonCurrentDates={false}
-          locale={csLocale}
-          dateClick={handleDateClick}
-          unselect={handleDateRangeUnselect}
-          eventClick={handleEventClick}
-          ref={calendarRef}
-          height="auto"
-          events={requirementsToEvents(requirements)}
-        /></div>
-        : <Spinner animation="border"/>
-      }
+      <Container>
+
+        <ButtonGroup>
+          <Button variant="outline-secondary" onClick={handlePreviousMonth}><FontAwesomeIcon
+            icon={faArrowLeft}/></Button>
+          <Button variant="outline-secondary" disabled={month.month === getCurrentMonth().month && month.year === getCurrentMonth().year} onClick={handleCurrentMonth}>Aktuální měsíc</Button>
+          <Button variant="outline-secondary" onClick={handleNextMonth}><FontAwesomeIcon icon={faArrowRight}/></Button>
+        </ButtonGroup>
+
+        <h2>{getMonthLabel(month)}</h2>
+
+        {!loading && requirements
+          ? <div><FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
+            initialView="dayGridMonth"
+            initialDate={getStartOfMonth(month)}
+            themeSystem="bootstrap5"
+            headerToolbar={false}
+            firstDay={1}
+            showNonCurrentDates={false}
+            locale={csLocale}
+            dateClick={handleDateClick}
+            unselect={handleDateRangeUnselect}
+            eventClick={handleEventClick}
+            ref={calendarRef}
+            height="auto"
+            events={requirementsToEvents(requirements)}
+          /></div>
+          : <Spinner animation="border"/>
+        }
+      </Container>
     </>
   )
 }
