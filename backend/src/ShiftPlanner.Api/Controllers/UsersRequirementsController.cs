@@ -71,7 +71,8 @@ public class UsersRequirementsController : ControllerBase
     {
         var loggedInUserId = User.Identity.Name;
 
-        if (loggedInUserId != userId && !User.Claims.Any(c => c.Type == "permissions" && c.Value == Claims.ApproveRequirementsOfOthers))
+        if (loggedInUserId != userId
+            && !(User.HasClaim("permissions", Claims.ModifyRequirementsOfOthers) || User.HasClaim("permissions", Claims.ApproveRequirementsOfOthers)))
         {
             return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
