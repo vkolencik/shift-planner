@@ -15,7 +15,7 @@ import { sortArrayBy } from '../sort-array-by'
 
 export function MonthSchedule (): JSX.Element {
   const [schedule, setSchedule] = useState<Schedule | null | undefined>(undefined)
-  const [month, setMonth] = useState<Month>(getCurrentMonth)
+  const [month, setMonth] = useState<Month>({month: 1, year: 2023})
   const api = useApi()
 
   useEffect(() => {
