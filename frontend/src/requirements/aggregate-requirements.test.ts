@@ -1,5 +1,5 @@
 import { aggregateRequirements } from './aggregate-requirements'
-import { MonthRequirements } from '../api'
+import { MonthRequirements } from '../service/api'
 import { toDay } from '../dates'
 
 describe('Requirements aggregation should', () => {

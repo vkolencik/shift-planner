@@ -36,7 +36,7 @@ public class UsersRequirementsController : ControllerBase
         var requirementsModel = requirements.ToDictionary(
             kvp => kvp.Key.Date.ToString("yyyy-MM-dd"),
             kvp => kvp.Value);
-        
+
         return Ok(requirementsModel);
     }
 
@@ -51,7 +51,7 @@ public class UsersRequirementsController : ControllerBase
     {
         var loggedInUserId = User.Identity.Name;
 
-        if (loggedInUserId != userId)
+        if (loggedInUserId != userId && !User.HasClaim("permissions", Claims.ModifyRequirementsOfOthers))
         {
             return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
@@ -71,7 +71,8 @@ public class UsersRequirementsController : ControllerBase
     {
         var loggedInUserId = User.Identity.Name;
 
-        if (loggedInUserId != userId && !User.Claims.Any(c => c.Type == "permissions" && c.Value == Claims.ApproveRequirementsOfOthers))
+        if (loggedInUserId != userId
+            && !(User.HasClaim("permissions", Claims.ModifyRequirementsOfOthers) || User.HasClaim("permissions", Claims.ApproveRequirementsOfOthers)))
         {
             return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
@@ -84,7 +85,7 @@ public class UsersRequirementsController : ControllerBase
             DeleteResult.NotFound => NotFound()
         };
     }
-    
+
     [HttpPut("{year}/{month}/{day}/approval")]
     [Authorize(Claims.ApproveRequirementsOfOthers)]
     public async Task<ActionResult> Approve(
@@ -99,7 +100,7 @@ public class UsersRequirementsController : ControllerBase
         {
             return Ok();
         }
-        
+
         var result = await _requirementsService.Approve(new Tenant(tenant), userId, new Day(year, month, day));
 
         return result switch

@@ -13,14 +13,16 @@ import {
   momentToDay,
   RequirementType,
   requirementTypes,
-  useApi
-} from '../api'
+  useApi, User
+} from '../service/api'
 import { EventSourceInput } from '@fullcalendar/core'
-import { FormCheck, Spinner } from 'react-bootstrap'
+import { Card, FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { currentMonth, currentYear, getCurrentMonth, getCurrentMonthString, getStartOfCurrentMonth } from '../dates'
+import { Permission, usePermissions } from '../auth/auth'
+import { UserSelect } from '../components/UserSelect'
 
 type DayDate = moment.Moment
 
@@ -29,9 +31,9 @@ interface DateRange {
   to: DayDate
 }
 
-const DisplayDate: React.FC<{ date: DayDate }> = ({date}: { date: DayDate }) => <>{date.format('D. M. YYYY')}</>
+const DisplayDate: React.FC<{ date: DayDate }> = ({ date }: { date: DayDate }) => <>{date.format('D. M. YYYY')}</>
 
-function requirementsToEvents(requirements: EmployeeMonthRequirements): EventSourceInput {
+function requirementsToEvents (requirements: EmployeeMonthRequirements): EventSourceInput {
   const colorMapping: { [key in RequirementType]: string | undefined } = {
     'only-afternoon': '#0696c4',
     'only-morning': '#f1d567',
@@ -54,6 +56,9 @@ export const Requirements: React.FC = () => {
   const [requirements, setRequirements] = useState<EmployeeMonthRequirements | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const api = useApi()
+  const [user, setUser] = useState<User>(api.users.loggedInUser)
+  const permissions = usePermissions()
+  const [userSelectOpen, setUserSelectOpen] = useState<boolean>(false)
 
   useEffect(() => {
     if (selectedDateRange === null && calendarRef.current) {
@@ -63,17 +68,17 @@ export const Requirements: React.FC = () => {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.get(getCurrentMonth())
+      api.requirements.get(user.userId, getCurrentMonth())
         .then(setRequirements)
     }
-  })
+  }, [requirements])
 
   const handleDateRangeSelect = (info: DateSelectArg) => {
-    setSelectedDateRange({from: moment(info.start), to: moment(info.end).add(-1, 'day')})
+    setSelectedDateRange({ from: moment(info.start), to: moment(info.end).add(-1, 'day') })
   }
 
   const handleDateClick = (info: DateClickArg) => {
-    setSelectedDateRange({from: moment(info.date), to: moment(info.date)})
+    setSelectedDateRange({ from: moment(info.date), to: moment(info.date) })
   }
 
   const handleDateRangeUnselect = (info: DateUnselectArg) => {
@@ -86,7 +91,7 @@ export const Requirements: React.FC = () => {
     }
 
     setLoading(true)
-    api.requirements.put(momentToDay(selectedDateRange?.from), type).then(() => {
+    api.requirements.put(user.userId, momentToDay(selectedDateRange?.from), type).then(() => {
       setLoading(false)
       setRequirements(null)
       setSelectedDateRange(null)
@@ -99,7 +104,7 @@ export const Requirements: React.FC = () => {
     }
 
     setLoading(true)
-    api.requirements.delete(momentToDay(selectedDateRange?.from))
+    api.requirements.delete(user.userId, momentToDay(selectedDateRange?.from))
       .then(() => {
         setLoading(false)
         setRequirements(null)
@@ -109,28 +114,59 @@ export const Requirements: React.FC = () => {
 
   const oneDayRange = selectedDateRange !== null && selectedDateRange.from.isSame(selectedDateRange.to, 'day')
 
-  const closeModal = () => {
+  const closeRequirementsModal = () => {
     setSelectedDateRange(null)
     setLoading(false)
   }
 
-  function handleEventClick(event: EventClickArg) {
-    setSelectedDateRange({from: moment(event.event.start), to: moment(event.event.end)})
+  function handleEventClick (event: EventClickArg) {
+    setSelectedDateRange({ from: moment(event.event.start), to: moment(event.event.end) })
   }
 
   const selectedDayRequirementType = selectedDateRange && requirements ? requirements[momentToDay(selectedDateRange?.from)] : null
 
+  const handleUserSelected = (user: User) => {
+    setUser(user)
+    setUserSelectOpen(false)
+    setRequirements(null)
+  }
+
   return (
     <>
+      {permissions.includes(Permission.modifyRequirementsOfOthers)
+        && permissions.includes(Permission.readRequirementsOfOthers)
+        && <>
+          <Card title="Přepnout na jiného uživatele" style={{ margin: '10px', maxWidth: '24em' }}>
+            <Card.Header>Zadávání za jiného uživatele</Card.Header>
+            <Card.Body>
+              <Card.Text>
+                Zadáváte požadavky za uživatele <strong>{user?.userName}</strong>
+              </Card.Text>
+              <Button variant="secondary" onClick={() => setUserSelectOpen(true)}>Přepnout uživatele</Button>
+            </Card.Body>
+          </Card>
+          <Modal
+            show={userSelectOpen}
+            onHide={() => setUserSelectOpen(false)}
+            key="user-select-modal"
+          >
+            <Modal.Header closeButton>Přepnout na jiného uživatele</Modal.Header>
+            <Modal.Body>
+              <UserSelect onUserSelected={handleUserSelected} autofocus={true}/>
+            </Modal.Body>
+          </Modal>
+        </>
+      }
       <h1>{getCurrentMonthString()}</h1>
 
       {selectedDateRange &&
         <Modal
           show={true}
           onHide={() => {
-            closeModal()
-          }}>
-
+            closeRequirementsModal()
+          }}
+          key="requirement-select-modal"
+        >
           <Modal.Header closeButton>
             <Modal.Title>
               {oneDayRange
@@ -152,8 +188,13 @@ export const Requirements: React.FC = () => {
                       onChange={() => handleAddRequirement(t.value)}
                       checked={selectedDayRequirementType === t.value}
                       id={`requirement-type-input-${t.value}`}
+                      key={`radio-${t.value}`}
                     />
-                    <FormCheckLabel htmlFor={`requirement-type-input-${t.value}`}>{t.name}</FormCheckLabel>
+                    <FormCheckLabel
+                      htmlFor={`requirement-type-input-${t.value}`}
+                      key={`label-${t.value}`}>
+                      {t.name}
+                    </FormCheckLabel>
                   </FormCheck>
                 </>
               )
@@ -162,10 +203,9 @@ export const Requirements: React.FC = () => {
 
           <Modal.Footer>
             {selectedDayRequirementType &&
-              <Button variant="danger" className="me-auto" onClick={handleRemoveRequirement}>Odstranit</Button>}
-            <Button variant="outline-secondary" onClick={() => {
-              closeModal()
-            }}>Zavřít</Button>
+              <Button variant="danger" className="me-auto" key="delete"
+                      onClick={handleRemoveRequirement}>Odstranit</Button>}
+            <Button variant="outline-secondary" key="close" onClick={() => {closeRequirementsModal() }}>Zavřít</Button>
           </Modal.Footer>
         </Modal>
       }

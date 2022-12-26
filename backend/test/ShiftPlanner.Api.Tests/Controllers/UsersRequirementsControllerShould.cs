@@ -75,7 +75,7 @@ public abstract class UsersRequirementsControllerShould
         [Fact]
         public async Task CreateNewRequirement()
         {
-            var requirement = TestData.Requirement with { UserId = _userId };
+            var requirement = TestData.Requirement with {UserId = _userId};
 
             var controller = CreateController();
 
@@ -86,7 +86,7 @@ public abstract class UsersRequirementsControllerShould
                 requirement.Date.Month,
                 requirement.Date.DayOfMonth,
                 new RequirementInputModel(requirement.RequirementType));
-            
+
             Assert.IsType<OkResult>(response);
             _requirementsServiceMock.Verify(_ => _.SetRequirement(requirement));
         }
@@ -100,6 +100,17 @@ public abstract class UsersRequirementsControllerShould
 
             var result = Assert.IsType<ObjectResult>(response);
             Assert.Equal(403, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task CreateNewRequirement_GivenTokenForManager()
+        {
+            var controller = CreateController("user-id-1", new[] {Claims.ModifyRequirementsOfOthers});
+
+            var response = await controller.Put("tenant-1", "user-id-2", 2022, 10, 12, new RequirementInputModel("hard-no"));
+
+            Assert.IsType<OkResult>(response);
+            _requirementsServiceMock.Verify(_ => _.SetRequirement(It.IsAny<RequirementModel>()));
         }
     }
 
@@ -146,14 +157,16 @@ public abstract class UsersRequirementsControllerShould
             Assert.Equal(403, result.StatusCode);
         }
 
-        [Fact]
-        public async Task DeleteOtherUserRequirement_WhenDeletedByManager()
+        [Theory]
+        [InlineData(Claims.ApproveRequirementsOfOthers)]
+        [InlineData(Claims.ModifyRequirementsOfOthers)]
+        public async Task DeleteOtherUserRequirement_WhenDeletedByManager(string claim)
         {
             var tenant = TestData.Tenant;
             var day = new Day(2022, 10, 18);
             _requirementsServiceMock.Setup(_ => _.DeleteRequirement(tenant, "userId2", day))
                 .ReturnsAsync(DeleteResult.Deleted);
-            var controller = CreateController(_userId, new[] {Claims.ApproveRequirementsOfOthers});
+            var controller = CreateController(_userId, new[] {claim});
 
             var response = await controller.Delete(tenant.Name, "userId2", day.Year, day.Month, day.DayOfMonth);
 
@@ -183,8 +196,8 @@ public abstract class UsersRequirementsControllerShould
         }
 
         [Theory]
-        [InlineData(ApproveResult.NotFound, typeof (NotFoundResult))]
-        [InlineData(ApproveResult.Failure, typeof (BadRequestResult))]
+        [InlineData(ApproveResult.NotFound, typeof(NotFoundResult))]
+        [InlineData(ApproveResult.Failure, typeof(BadRequestResult))]
         public async Task ReturnErrorStatus_WhenApprovalNotsuccessful(ApproveResult approvalResult, Type expectedResultType)
         {
             var controller = CreateController(_userId, new[] {Claims.ApproveRequirementsOfOthers});
@@ -192,11 +205,11 @@ public abstract class UsersRequirementsControllerShould
             _requirementsServiceMock
                 .Setup(_ => _.Approve(It.IsAny<Tenant>(), It.IsAny<string>(), It.IsAny<Day>()))
                 .ReturnsAsync(approvalResult);
-            
+
             var result = await controller.Approve(TestData.Tenant.Name, _userId, TestData.Day.Year, TestData.Day.Month, TestData.Day.DayOfMonth, new ApprovalInputModel(true));
-            
+
             Assert.IsType(expectedResultType, result);
-        } 
+        }
     }
 
     private UsersRequirementsController CreateController() => CreateController(_userId);

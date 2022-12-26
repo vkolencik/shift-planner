@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { MonthRequirements, RequirementType, useApi, User } from '../api'
+import { MonthRequirements, RequirementType, useApi, User } from '../service/api'
 import {
   currentMonth,
   currentYear,
@@ -14,6 +14,7 @@ import { Table } from 'react-bootstrap'
 import { sortArrayBy } from '../sort-array-by'
 import {Printer} from 'react-bootstrap-icons'
 import './MonthlyOverview.css'
+import { useUserList } from '../service/users'
 
 type CellDetails = { cssClass: string, titleText: string, cellText: string }
 const absenceClasses: { [requirementType in RequirementType]: CellDetails } = {
@@ -59,18 +60,8 @@ function DayCell ({ requirementType }: { requirementType: string | undefined }) 
 
 export const MonthlyOverview: React.FC = () => {
   const api = useApi()
-  const [users, setUsers] = useState<User[] | null>(null)
+  const users = useUserList()
   const [requirements, setRequirements] = useState<MonthRequirements | null>(null)
-
-  useEffect(() => {
-    if (users == null) {
-      api.users.get().then(users => {
-        sortArrayBy(users, u => u.userName)
-        setUsers(users)
-      })
-    }
-
-  }, [])
 
   useEffect(() => {
     if (requirements === null) {

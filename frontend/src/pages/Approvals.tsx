@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { MonthRequirements, useApi } from '../api'
+import { MonthRequirements, useApi } from '../service/api'
 import { Day, formatDate, getCurrentMonth, getCurrentMonthString, toDay } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { aggregateRequirements } from '../requirements/aggregate-requirements'
@@ -47,7 +47,7 @@ export function Approvals () {
       throw new Error('Cannot find user to delete for')
     }
 
-    api.requirements.deleteForUser(userId, toDay(requirementToDelete.day))
+    api.requirements.delete(userId, toDay(requirementToDelete.day))
       .then(() => {
         setRequirementToDelete(null)
         setRequirements(oldRequirements => oldRequirements?.filter(r => !(r.userId === userId && r.date === requirementToDelete.day)) || null)

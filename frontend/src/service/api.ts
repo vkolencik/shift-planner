@@ -1,9 +1,9 @@
 // const baseUrl = 'https://b.krtek.me'
 import { useAuth0 } from '@auth0/auth0-react'
-import { getBaseUrl, getInstance, Instance } from './instance-config'
+import { getBaseUrl, getInstance, Instance } from '../instance-config'
 import { Moment } from 'moment'
-import { Day, Month, toDay } from './dates'
-import { sortArrayBy } from './sort-array-by'
+import { Day, Month, toDay } from '../dates'
+import { sortArrayBy } from '../sort-array-by'
 
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'
@@ -52,7 +52,10 @@ export type MonthRequirements = UserRequirement[]
 
 export type EmployeeMonthRequirements = { [key: Day]: RequirementType }
 
-export interface User { userId: string, userName: string }
+export interface User {
+  userId: string,
+  userName: string
+}
 
 export function momentToDay (date: Moment): Day {
   return toDay(date.format('yyyy-MM-DD'))
@@ -65,7 +68,7 @@ export interface Schedule {
 export interface Shift {
   day: Day,
   workplace: string,
-  user: {userId: string, userName: string}
+  user: { userId: string, userName: string }
 }
 
 export function useApi () {
@@ -75,7 +78,7 @@ export function useApi () {
     throw new Error('User is not logged in')
   }
 
-  const loggedInUserId = user.sub
+  const loggedInUser: User = { userId: user.sub, userName: user.name || '' }
 
   const deleteForUser = async (userId: string, date: Day): Promise<void> => {
     const token = await getAccessTokenSilently({
@@ -102,13 +105,13 @@ export function useApi () {
 
   return ({
     requirements: {
-      get: async (month: Month): Promise<EmployeeMonthRequirements> =>
+      get: async (userId: string, month: Month): Promise<EmployeeMonthRequirements> =>
         getAccessTokenSilently({
           audience: 'https://b.krtek.me',
           scope: '',
         })
           .then(token => fetch(
-            `${baseUrl}/api/${tenant}/users/${encodeURIComponent(loggedInUserId)}/requirements/${month.year}/${month.month}`,
+            `${baseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${month.year}/${month.month}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`
@@ -142,7 +145,7 @@ export function useApi () {
 
             return resp.json()
           }),
-      put: async (date: Day, requirementType: RequirementType): Promise<void> => {
+      put: async (userId: string, date: Day, requirementType: RequirementType): Promise<void> => {
         const token = await getAccessTokenSilently({
           audience: 'https://b.krtek.me',
           scope: ''
@@ -152,7 +155,7 @@ export function useApi () {
           throw new Error(`Invalid date format ${date}`)
         }
 
-        const response = await fetch(`${baseUrl}/api/${tenant}/users/${encodeURIComponent(loggedInUserId)}/requirements/${date.replace(/-/g, '/')}`, {
+        const response = await fetch(`${baseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${date.replace(/-/g, '/')}`, {
             method: 'PUT',
             body: JSON.stringify({ requirementType: requirementType }),
             headers: {
@@ -167,9 +170,7 @@ export function useApi () {
         }
       },
 
-      deleteForUser: deleteForUser,
-
-      delete: async (date: Day): Promise<void> => deleteForUser(loggedInUserId, date),
+      delete: deleteForUser,
 
       approve: async (userId: string, date: Day) => {
         const token = await getAccessTokenSilently({
@@ -204,7 +205,7 @@ export function useApi () {
           scope: ''
         })
 
-        const response = await fetch(`${baseUrl}/api/${tenant}/users`, {headers: { Authorization: `Bearer ${token}`}})
+        const response = await fetch(`${baseUrl}/api/${tenant}/users`, { headers: { Authorization: `Bearer ${token}` } })
 
         if (response.status !== 200) {
           throw new Error(`Error fetching users: ${await response.text()}`)
@@ -213,7 +214,8 @@ export function useApi () {
         const users = await response.json() as User[]
         sortArrayBy(users, u => u.userName)
         return users.filter(u => !excludedUserIds.includes(u.userId))
-      }
+      },
+      loggedInUser
     },
 
     schedule: {
@@ -223,7 +225,7 @@ export function useApi () {
           scope: ''
         })
 
-        const response = await fetch(`${baseUrl}/api/${tenant}/schedule/${month.year}/${padDateComponent(month.month)}`, {headers: { Authorization: `Bearer ${token}`}})
+        const response = await fetch(`${baseUrl}/api/${tenant}/schedule/${month.year}/${padDateComponent(month.month)}`, { headers: { Authorization: `Bearer ${token}` } })
 
         if (response.status >= 400) {
           throw new Error(`Error fetching users: ${await response.text()}`)

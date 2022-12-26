@@ -34,5 +34,11 @@ describe('schedule endpoint should', () => {
     const sampleUser = firstDayShifts[0].user
     expect(sampleUser).toHaveProperty('userId', expect.not.toBeEmpty())
     expect(sampleUser).toHaveProperty('userName', expect.not.toBeEmpty())
-   })
+  })
+
+  it('return no content for a month that doesn\'t have schedule', async () => {
+    const resp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2020/01`, getHeaders(token))
+
+    expect(resp.status).toEqual(204)
+  })
 })

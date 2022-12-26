@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Schedule, useApi } from '../api'
+import { Schedule, useApi } from '../service/api'
 import {
   formatDate,
   getCurrentMonth,
