@@ -143,9 +143,9 @@ export const WeeklyOverview: React.FC = () => {
 
   return <div className="container">
     <ButtonGroup>
-      <Button onClick={handlePreviousWeek}><FontAwesomeIcon icon={faArrowLeft}/></Button>
-      <Button onClick={handleCurrentWeek}>Aktuální týden</Button>
-      <Button onClick={handleNextWeek}><FontAwesomeIcon icon={faArrowRight}/></Button>
+      <Button variant='outline-secondary' onClick={handlePreviousWeek}><FontAwesomeIcon icon={faArrowLeft}/></Button>
+      <Button variant='outline-secondary' onClick={handleCurrentWeek}>Aktuální týden</Button>
+      <Button variant='outline-secondary' onClick={handleNextWeek}><FontAwesomeIcon icon={faArrowRight}/></Button>
     </ButtonGroup>
     {someShiftDataMissing && <Alert variant="warning">Pro toto období zatím nebyl vygenerován rozvrh služeb.</Alert>}
     <Table>

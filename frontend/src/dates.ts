@@ -47,6 +47,10 @@ export function addDays(date: Day, days: number): Day {
   return formatMoment(getMoment(date).add(days, 'days'))
 }
 
+export function addMonths(month: Month, months: number) {
+  return getMonth(formatMoment(moment(getStartOfMonth(month)).add(months, 'months')))
+}
+
 export function getNumberOfDaysOfMonth (month: Month) {
   return new Date(month.year, month.month, 0).getDate()
 }

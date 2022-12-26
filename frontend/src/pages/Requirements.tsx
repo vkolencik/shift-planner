@@ -16,13 +16,15 @@ import {
   useApi, User
 } from '../service/api'
 import { EventSourceInput } from '@fullcalendar/core'
-import { Card, FormCheck, Spinner } from 'react-bootstrap'
+import { ButtonGroup, Card, Container, FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Permission, usePermissions } from '../auth/auth'
 import { UserSelect } from '../components/UserSelect'
-import { getCurrentMonth, getMonthLabel, getStartOfMonth, Month } from '../dates'
+import { addMonths, getCurrentMonth, getMonthLabel, getStartOfMonth, Month } from '../dates'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
 type DayDate = moment.Moment
 
@@ -68,8 +70,12 @@ export const Requirements: React.FC = () => {
   }, [selectedDateRange])
 
   useEffect(() => {
+    setLoading(true)
     api.requirements.get(user.userId, month)
-      .then(setRequirements)
+      .then(requirements => {
+        setRequirements(requirements)
+        setLoading(false)
+      })
   }, [month.year, month.month, user.userId])
 
   const handleDateRangeSelect = (info: DateSelectArg) => {
@@ -117,6 +123,10 @@ export const Requirements: React.FC = () => {
       })
   }
 
+  const handlePreviousMonth = () => {setMonth(oldMonth => addMonths(oldMonth, -1))}
+  const handleCurrentMonth = () => {setMonth(getCurrentMonth)}
+  const handleNextMonth = () => {setMonth(oldMonth => addMonths(oldMonth, 1))}
+
   const oneDayRange = selectedDateRange !== null && selectedDateRange.from.isSame(selectedDateRange.to, 'day')
 
   const closeRequirementsModal = () => {
@@ -161,7 +171,6 @@ export const Requirements: React.FC = () => {
           </Modal>
         </>
       }
-      <h1>{getMonthLabel(month)}</h1>
 
       {selectedDateRange &&
         <Modal
@@ -214,25 +223,37 @@ export const Requirements: React.FC = () => {
         </Modal>
       }
 
-      {requirements
-        ? <div><FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
-          initialView="dayGridMonth"
-          initialDate={getStartOfMonth(month)}
-          themeSystem="bootstrap5"
-          headerToolbar={false}
-          firstDay={1}
-          showNonCurrentDates={false}
-          locale={csLocale}
-          dateClick={handleDateClick}
-          unselect={handleDateRangeUnselect}
-          eventClick={handleEventClick}
-          ref={calendarRef}
-          height="auto"
-          events={requirementsToEvents(requirements)}
-        /></div>
-        : <Spinner animation="border"/>
-      }
+      <Container>
+
+        <ButtonGroup>
+          <Button variant="outline-secondary" onClick={handlePreviousMonth}><FontAwesomeIcon
+            icon={faArrowLeft}/></Button>
+          <Button variant="outline-secondary" disabled={month.month === getCurrentMonth().month && month.year === getCurrentMonth().year} onClick={handleCurrentMonth}>Aktuální měsíc</Button>
+          <Button variant="outline-secondary" onClick={handleNextMonth}><FontAwesomeIcon icon={faArrowRight}/></Button>
+        </ButtonGroup>
+
+        <h2>{getMonthLabel(month)}</h2>
+
+        {!loading && requirements
+          ? <div><FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
+            initialView="dayGridMonth"
+            initialDate={getStartOfMonth(month)}
+            themeSystem="bootstrap5"
+            headerToolbar={false}
+            firstDay={1}
+            showNonCurrentDates={false}
+            locale={csLocale}
+            dateClick={handleDateClick}
+            unselect={handleDateRangeUnselect}
+            eventClick={handleEventClick}
+            ref={calendarRef}
+            height="auto"
+            events={requirementsToEvents(requirements)}
+          /></div>
+          : <Spinner animation="border"/>
+        }
+      </Container>
     </>
   )
 }

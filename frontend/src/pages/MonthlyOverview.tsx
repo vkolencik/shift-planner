@@ -11,7 +11,6 @@ import {
 } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Table } from 'react-bootstrap'
-import { sortArrayBy } from '../sort-array-by'
 import {Printer} from 'react-bootstrap-icons'
 import './MonthlyOverview.css'
 import { useUserList } from '../service/users'
@@ -63,9 +62,10 @@ export const MonthlyOverview: React.FC = () => {
   const users = useUserList()
   const [requirements, setRequirements] = useState<MonthRequirements | null>(null)
 
+  const month = getCurrentMonth()
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.getMonth(getCurrentMonth()).then(setRequirements)
+      api.requirements.getMonth(month).then(setRequirements)
     }
   }, [])
 
@@ -73,7 +73,7 @@ export const MonthlyOverview: React.FC = () => {
     return <LoadingSpinner/>
   }
 
-  const daysInMonth = getNumberOfDaysOfMonth(getCurrentMonth())
+  const daysInMonth = getNumberOfDaysOfMonth(month)
   const days = new Array(daysInMonth).fill(1).map((_, i) => i + 1)
 
   const dailySums = new Array(daysInMonth).fill(users.length - 6)
