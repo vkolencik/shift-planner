@@ -53,5 +53,6 @@ export const UserSelect: React.FC<Props> = (props: Props) => {
     autoFocus={props.autofocus}
     highlightOnlyResult
     onChange={handleUserSelected}
+    id='user-select'
   />)
 }

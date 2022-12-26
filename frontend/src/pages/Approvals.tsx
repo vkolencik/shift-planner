@@ -47,7 +47,7 @@ export function Approvals () {
       throw new Error('Cannot find user to delete for')
     }
 
-    api.requirements.deleteForUser(userId, toDay(requirementToDelete.day))
+    api.requirements.delete(userId, toDay(requirementToDelete.day))
       .then(() => {
         setRequirementToDelete(null)
         setRequirements(oldRequirements => oldRequirements?.filter(r => !(r.userId === userId && r.date === requirementToDelete.day)) || null)

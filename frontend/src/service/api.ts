@@ -79,7 +79,6 @@ export function useApi () {
   }
 
   const loggedInUser: User = { userId: user.sub, userName: user.name || '' }
-  const loggedInUserId = loggedInUser.userId
 
   const deleteForUser = async (userId: string, date: Day): Promise<void> => {
     const token = await getAccessTokenSilently({
@@ -106,13 +105,13 @@ export function useApi () {
 
   return ({
     requirements: {
-      get: async (month: Month): Promise<EmployeeMonthRequirements> =>
+      get: async (userId: string, month: Month): Promise<EmployeeMonthRequirements> =>
         getAccessTokenSilently({
           audience: 'https://b.krtek.me',
           scope: '',
         })
           .then(token => fetch(
-            `${baseUrl}/api/${tenant}/users/${encodeURIComponent(loggedInUserId)}/requirements/${month.year}/${month.month}`,
+            `${baseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${month.year}/${month.month}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`
@@ -146,7 +145,7 @@ export function useApi () {
 
             return resp.json()
           }),
-      put: async (date: Day, requirementType: RequirementType): Promise<void> => {
+      put: async (userId: string, date: Day, requirementType: RequirementType): Promise<void> => {
         const token = await getAccessTokenSilently({
           audience: 'https://b.krtek.me',
           scope: ''
@@ -156,7 +155,7 @@ export function useApi () {
           throw new Error(`Invalid date format ${date}`)
         }
 
-        const response = await fetch(`${baseUrl}/api/${tenant}/users/${encodeURIComponent(loggedInUserId)}/requirements/${date.replace(/-/g, '/')}`, {
+        const response = await fetch(`${baseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${date.replace(/-/g, '/')}`, {
             method: 'PUT',
             body: JSON.stringify({ requirementType: requirementType }),
             headers: {
@@ -171,9 +170,7 @@ export function useApi () {
         }
       },
 
-      deleteForUser: deleteForUser,
-
-      delete: async (date: Day): Promise<void> => deleteForUser(loggedInUserId, date),
+      delete: deleteForUser,
 
       approve: async (userId: string, date: Day) => {
         const token = await getAccessTokenSilently({

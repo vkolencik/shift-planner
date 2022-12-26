@@ -68,10 +68,10 @@ export const Requirements: React.FC = () => {
 
   useEffect(() => {
     if (requirements === null) {
-      api.requirements.get(getCurrentMonth())
+      api.requirements.get(user.userId, getCurrentMonth())
         .then(setRequirements)
     }
-  })
+  }, [requirements])
 
   const handleDateRangeSelect = (info: DateSelectArg) => {
     setSelectedDateRange({ from: moment(info.start), to: moment(info.end).add(-1, 'day') })
@@ -91,7 +91,7 @@ export const Requirements: React.FC = () => {
     }
 
     setLoading(true)
-    api.requirements.put(momentToDay(selectedDateRange?.from), type).then(() => {
+    api.requirements.put(user.userId, momentToDay(selectedDateRange?.from), type).then(() => {
       setLoading(false)
       setRequirements(null)
       setSelectedDateRange(null)
@@ -104,7 +104,7 @@ export const Requirements: React.FC = () => {
     }
 
     setLoading(true)
-    api.requirements.delete(momentToDay(selectedDateRange?.from))
+    api.requirements.delete(user.userId, momentToDay(selectedDateRange?.from))
       .then(() => {
         setLoading(false)
         setRequirements(null)
@@ -114,7 +114,7 @@ export const Requirements: React.FC = () => {
 
   const oneDayRange = selectedDateRange !== null && selectedDateRange.from.isSame(selectedDateRange.to, 'day')
 
-  const closeModal = () => {
+  const closeRequirementsModal = () => {
     setSelectedDateRange(null)
     setLoading(false)
   }
@@ -128,30 +128,34 @@ export const Requirements: React.FC = () => {
   const handleUserSelected = (user: User) => {
     setUser(user)
     setUserSelectOpen(false)
+    setRequirements(null)
   }
 
   return (
     <>
-      {permissions.includes(Permission.modifyRequirementsOfOthers) && <>
-        <Card title="Přepnout na jiného uživatele" style={{ margin: '10px', maxWidth: '24em' }}>
-          <Card.Header>Zadávání za jiného uživatele</Card.Header>
-          <Card.Body>
-            <Card.Text>
-              Zadáváte požadavky za uživatele <strong>{user?.userName}</strong>
-            </Card.Text>
-            <Button variant="secondary" onClick={() => setUserSelectOpen(true)}>Přepnout uživatele</Button>
-          </Card.Body>
-        </Card>
-        <Modal
-          show={userSelectOpen}
-          onHide={() => setUserSelectOpen(false)}
-        >
-          <Modal.Header closeButton>Přepnout na jiného uživatele</Modal.Header>
-          <Modal.Body>
-            <UserSelect onUserSelected={handleUserSelected} autofocus={true}/>
-          </Modal.Body>
-        </Modal>
-      </>
+      {permissions.includes(Permission.modifyRequirementsOfOthers)
+        && permissions.includes(Permission.readRequirementsOfOthers)
+        && <>
+          <Card title="Přepnout na jiného uživatele" style={{ margin: '10px', maxWidth: '24em' }}>
+            <Card.Header>Zadávání za jiného uživatele</Card.Header>
+            <Card.Body>
+              <Card.Text>
+                Zadáváte požadavky za uživatele <strong>{user?.userName}</strong>
+              </Card.Text>
+              <Button variant="secondary" onClick={() => setUserSelectOpen(true)}>Přepnout uživatele</Button>
+            </Card.Body>
+          </Card>
+          <Modal
+            show={userSelectOpen}
+            onHide={() => setUserSelectOpen(false)}
+            key="user-select-modal"
+          >
+            <Modal.Header closeButton>Přepnout na jiného uživatele</Modal.Header>
+            <Modal.Body>
+              <UserSelect onUserSelected={handleUserSelected} autofocus={true}/>
+            </Modal.Body>
+          </Modal>
+        </>
       }
       <h1>{getCurrentMonthString()}</h1>
 
@@ -159,9 +163,10 @@ export const Requirements: React.FC = () => {
         <Modal
           show={true}
           onHide={() => {
-            closeModal()
-          }}>
-
+            closeRequirementsModal()
+          }}
+          key="requirement-select-modal"
+        >
           <Modal.Header closeButton>
             <Modal.Title>
               {oneDayRange
@@ -183,8 +188,13 @@ export const Requirements: React.FC = () => {
                       onChange={() => handleAddRequirement(t.value)}
                       checked={selectedDayRequirementType === t.value}
                       id={`requirement-type-input-${t.value}`}
+                      key={`radio-${t.value}`}
                     />
-                    <FormCheckLabel htmlFor={`requirement-type-input-${t.value}`}>{t.name}</FormCheckLabel>
+                    <FormCheckLabel
+                      htmlFor={`requirement-type-input-${t.value}`}
+                      key={`label-${t.value}`}>
+                      {t.name}
+                    </FormCheckLabel>
                   </FormCheck>
                 </>
               )
@@ -193,10 +203,9 @@ export const Requirements: React.FC = () => {
 
           <Modal.Footer>
             {selectedDayRequirementType &&
-              <Button variant="danger" className="me-auto" onClick={handleRemoveRequirement}>Odstranit</Button>}
-            <Button variant="outline-secondary" onClick={() => {
-              closeModal()
-            }}>Zavřít</Button>
+              <Button variant="danger" className="me-auto" key="delete"
+                      onClick={handleRemoveRequirement}>Odstranit</Button>}
+            <Button variant="outline-secondary" key="close" onClick={() => {closeRequirementsModal() }}>Zavřít</Button>
           </Modal.Footer>
         </Modal>
       }
