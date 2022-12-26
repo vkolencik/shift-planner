@@ -13,7 +13,7 @@ import {
   momentToDay,
   RequirementType,
   requirementTypes,
-  useApi
+  useApi, User
 } from '../service/api'
 import { EventSourceInput } from '@fullcalendar/core'
 import { Card, FormCheck, Spinner } from 'react-bootstrap'
@@ -22,6 +22,7 @@ import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { currentMonth, currentYear, getCurrentMonth, getCurrentMonthString, getStartOfCurrentMonth } from '../dates'
 import { Permission, usePermissions } from '../auth/auth'
+import { UserSelect } from '../components/UserSelect'
 
 type DayDate = moment.Moment
 
@@ -55,7 +56,9 @@ export const Requirements: React.FC = () => {
   const [requirements, setRequirements] = useState<EmployeeMonthRequirements | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const api = useApi()
+  const [user, setUser] = useState<User>(api.users.loggedInUser)
   const permissions = usePermissions()
+  const [userSelectOpen, setUserSelectOpen] = useState<boolean>(false)
 
   useEffect(() => {
     if (selectedDateRange === null && calendarRef.current) {
@@ -122,15 +125,33 @@ export const Requirements: React.FC = () => {
 
   const selectedDayRequirementType = selectedDateRange && requirements ? requirements[momentToDay(selectedDateRange?.from)] : null
 
+  const handleUserSelected = (user: User) => {
+    setUser(user)
+    setUserSelectOpen(false)
+  }
+
   return (
     <>
-      {permissions.includes(Permission.modifyRequirementsOfOthers) &&
-        <Card title='Přepnout na jiného uživatele' style={{margin: '10px'}} className={'col-md-4 col-sm-6'}>
-          <Card.Header>Přepnout na jiného uživatele</Card.Header>
+      {permissions.includes(Permission.modifyRequirementsOfOthers) && <>
+        <Card title="Přepnout na jiného uživatele" style={{ margin: '10px', maxWidth: '24em' }}>
+          <Card.Header>Zadávání za jiného uživatele</Card.Header>
           <Card.Body>
-            <Card.Text><select></select></Card.Text>
+            <Card.Text>
+              Zadáváte požadavky za uživatele <strong>{user?.userName}</strong>
+            </Card.Text>
+            <Button variant="secondary" onClick={() => setUserSelectOpen(true)}>Přepnout uživatele</Button>
           </Card.Body>
         </Card>
+        <Modal
+          show={userSelectOpen}
+          onHide={() => setUserSelectOpen(false)}
+        >
+          <Modal.Header closeButton>Přepnout na jiného uživatele</Modal.Header>
+          <Modal.Body>
+            <UserSelect onUserSelected={handleUserSelected} autofocus={true}/>
+          </Modal.Body>
+        </Modal>
+      </>
       }
       <h1>{getCurrentMonthString()}</h1>
 

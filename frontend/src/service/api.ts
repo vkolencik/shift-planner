@@ -52,7 +52,10 @@ export type MonthRequirements = UserRequirement[]
 
 export type EmployeeMonthRequirements = { [key: Day]: RequirementType }
 
-export interface User { userId: string, userName: string }
+export interface User {
+  userId: string,
+  userName: string
+}
 
 export function momentToDay (date: Moment): Day {
   return toDay(date.format('yyyy-MM-DD'))
@@ -65,7 +68,7 @@ export interface Schedule {
 export interface Shift {
   day: Day,
   workplace: string,
-  user: {userId: string, userName: string}
+  user: { userId: string, userName: string }
 }
 
 export function useApi () {
@@ -75,7 +78,8 @@ export function useApi () {
     throw new Error('User is not logged in')
   }
 
-  const loggedInUserId = user.sub
+  const loggedInUser: User = { userId: user.sub, userName: user.name || '' }
+  const loggedInUserId = loggedInUser.userId
 
   const deleteForUser = async (userId: string, date: Day): Promise<void> => {
     const token = await getAccessTokenSilently({
@@ -204,7 +208,7 @@ export function useApi () {
           scope: ''
         })
 
-        const response = await fetch(`${baseUrl}/api/${tenant}/users`, {headers: { Authorization: `Bearer ${token}`}})
+        const response = await fetch(`${baseUrl}/api/${tenant}/users`, { headers: { Authorization: `Bearer ${token}` } })
 
         if (response.status !== 200) {
           throw new Error(`Error fetching users: ${await response.text()}`)
@@ -213,7 +217,8 @@ export function useApi () {
         const users = await response.json() as User[]
         sortArrayBy(users, u => u.userName)
         return users.filter(u => !excludedUserIds.includes(u.userId))
-      }
+      },
+      loggedInUser
     },
 
     schedule: {
@@ -223,7 +228,7 @@ export function useApi () {
           scope: ''
         })
 
-        const response = await fetch(`${baseUrl}/api/${tenant}/schedule/${month.year}/${padDateComponent(month.month)}`, {headers: { Authorization: `Bearer ${token}`}})
+        const response = await fetch(`${baseUrl}/api/${tenant}/schedule/${month.year}/${padDateComponent(month.month)}`, { headers: { Authorization: `Bearer ${token}` } })
 
         if (response.status >= 400) {
           throw new Error(`Error fetching users: ${await response.text()}`)
