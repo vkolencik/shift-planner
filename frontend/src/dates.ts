@@ -3,11 +3,11 @@ import moment, { Moment } from 'moment'
 export const currentMonth = 2
 export const currentYear = 2023
 
-export function getCurrentMonthString () {
-  return getStartOfCurrentMonth().toLocaleString('default', { month: 'long' }) + ' ' + currentYear
+export function getMonthLabel (month: Month) {
+  return getStartOfMonth(month).toLocaleString('default', { month: 'long' }) + ' ' + currentYear
 }
 
-export const getStartOfCurrentMonth = () => new Date(currentYear, currentMonth - 1, 1)
+export const getStartOfMonth = (month: Month): Date => new Date(month.year, month.month - 1, 1)
 
 export const formatDate = (date: Day) => {
   const [year, month, day] = date.split('-').map(dateComponent => parseInt(dateComponent, 10))

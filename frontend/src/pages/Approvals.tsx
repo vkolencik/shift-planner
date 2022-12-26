@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { MonthRequirements, useApi } from '../service/api'
-import { Day, formatDate, getCurrentMonth, getCurrentMonthString, toDay } from '../dates'
+import { Day, formatDate, getCurrentMonth, getMonthLabel, toDay } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { aggregateRequirements } from '../requirements/aggregate-requirements'
 import { Alert, Badge, Button, Table } from 'react-bootstrap'
@@ -84,7 +84,7 @@ export function Approvals () {
   }
 
   return <>
-    <h1>Schvalování dovolených pro {getCurrentMonthString()}</h1>
+    <h1>Schvalování dovolených pro {getMonthLabel(getCurrentMonth())}</h1>
     <div className="form-check form-switch mb-3">
       <input className="form-check-input" type="checkbox" id="switchHideApproved" onChange={handleChangeHideApproved}/>
       <label className="form-check-label" htmlFor="switchHideApproved">Skrýt schválené</label>
