@@ -225,12 +225,21 @@ export const Requirements: React.FC = () => {
 
       <Container>
 
-        <ButtonGroup>
-          <Button variant="outline-secondary" onClick={handlePreviousMonth}><FontAwesomeIcon
-            icon={faArrowLeft}/></Button>
-          <Button variant="outline-secondary" disabled={month.month === getCurrentMonth().month && month.year === getCurrentMonth().year} onClick={handleCurrentMonth}>Aktuální měsíc</Button>
-          <Button variant="outline-secondary" onClick={handleNextMonth}><FontAwesomeIcon icon={faArrowRight}/></Button>
-        </ButtonGroup>
+        {permissions.includes(Permission.modifyRequirementsOfOthers) &&
+          <ButtonGroup>
+            <Button variant="outline-secondary" onClick={handlePreviousMonth}>
+              <FontAwesomeIcon icon={faArrowLeft}/>
+            </Button>
+            <Button variant="outline-secondary"
+                    disabled={month.month === getCurrentMonth().month && month.year === getCurrentMonth().year}
+                    onClick={handleCurrentMonth}>
+              Aktuální měsíc
+            </Button>
+            <Button variant="outline-secondary" onClick={handleNextMonth}>
+              <FontAwesomeIcon icon={faArrowRight}/>
+            </Button>
+          </ButtonGroup>
+        }
 
         <h2>{getMonthLabel(month)}</h2>
 
