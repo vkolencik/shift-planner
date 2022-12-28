@@ -31,7 +31,7 @@ public class StoredScheduleServiceShould
             .Setup(_ => _.LoadSchedule(month))
             .ReturnsAsync(new Schedule(new[] {shift}));
 
-        var service = new StoredScheduleService(_employeeInfoServiceMock.Object, _scheduleRepositoryMock.Object);
+        var service = new StoredScheduleService(_scheduleRepositoryMock.Object);
 
         var schedule = await service.GetSchedule(month);
 

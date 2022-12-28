@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Contracts;
 
