@@ -40,24 +40,6 @@ public class RulesShould
         _engineMock = new Mock<ISchedulingEngine>();
     }
 
-    [Fact]
-    public void RespectDaysOff()
-    {
-        var capturedShifts = new List<ShiftAssignment>();
-        _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShifts), Constraint.Eq, 0));
-
-        Rules.TakeLeavesIntoAccount(MonthScheduleParameters, _engineMock.Object);
-
-        Assert.Equal(
-            new HashSet<ShiftAssignment>
-            {
-                new ShiftAssignment(Employee1, new Day(2022, 2, 1), Workplace1),
-                new ShiftAssignment(Employee1, new Day(2022, 2, 1), Workplace2),
-                new ShiftAssignment(Employee1, new Day(2022, 2, 2), Workplace1),
-                new ShiftAssignment(Employee1, new Day(2022, 2, 2), Workplace2)
-            },
-            capturedShifts.ToHashSet());
-    }
 
    
     [Fact]

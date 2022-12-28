@@ -1,9 +1,10 @@
 ﻿using Moq;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Rules.Ruleset;
-using static ShiftPlanner.Rules.Tests.RulesFixture;
 
 namespace ShiftPlanner.Rules.Tests.Ruleset;
+
+using static RulesFixture;
 
 public class NoConcurrentShiftsRuleShould
 {
