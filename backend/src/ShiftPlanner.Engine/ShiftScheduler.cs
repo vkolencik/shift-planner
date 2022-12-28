@@ -1,7 +1,6 @@
 ﻿using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Rules;
-using ShiftPlanner.Rules.Rules;
 
 namespace ShiftPlanner.Engine;
 
@@ -21,8 +20,6 @@ public class ShiftScheduler
 
             var rules = RulesetFactory.CreateRuleset(schedulerParameters).ToList();
             rules.ForEach(r => r.Apply(engine));
-
-            Rules.LimitWeekendShifts(monthScheduleParameters, engine);
 
             Rules.AvoidSubsequentWeekends(monthScheduleParameters, engine);
 

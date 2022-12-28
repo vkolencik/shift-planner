@@ -13,5 +13,6 @@ public static class RulesetFactory
         yield return new NoConsecutiveShiftsRule(parameters);
         yield return new NoAlternativeDayShiftsRule(parameters);
         yield return new AlwaysScheduleAlternatesOverWeekendsRule(parameters);
+        yield return new WeekendShiftLimitRule(parameters);
     }
 }

@@ -99,27 +99,6 @@ public class RulesShould
     }
 
     [Fact]
-    public void LimitWeekendShifts()
-    {
-        var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
-
-        Rules.LimitWeekendShifts(MonthScheduleParameters, _engineMock.Object);
-
-        Assert.All(
-            new[] {Employee1, Employee2, Employee3}, employee =>
-            {
-                Assert.Contains(
-                    Saturdays.SelectMany(d => Workplaces.Select(workplace => new ShiftAssignment(employee, new Day(2022, 2, d), workplace))).ToHashSet(),
-                    capturedShifts.Select(_ => _.ToHashSet()));
-
-                Assert.Contains(
-                    Sundays.SelectMany(d => Workplaces.Select(workplace => new ShiftAssignment(employee, new Day(2022, 2, d), workplace))).ToHashSet(),
-                    capturedShifts.Select(_ => _.ToHashSet()));
-            });
-    }
-
-    [Fact]
     public void NotScheduleSubsequentWeekends()
     {
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
