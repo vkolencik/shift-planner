@@ -54,7 +54,7 @@ export function MonthSchedule (): JSX.Element {
   sortArrayBy(userShiftEntries, e => e[0])
 
   return <>
-    <h1>{getMonthLabel(getCurrentMonth())}</h1>
+    <h1>{getMonthLabel(month)}</h1>
     <Tabs
       defaultActiveKey='schedule'
       id='uncontrolled-tab-example'
