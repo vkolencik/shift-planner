@@ -21,8 +21,6 @@ public class ShiftScheduler
             var rules = RulesetFactory.CreateRuleset(schedulerParameters).ToList();
             rules.ForEach(r => r.Apply(engine));
 
-            Rules.AvoidSubsequentWeekends(monthScheduleParameters, engine);
-
             Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(
                 monthScheduleParameters, solverParameters.Days, engine);
 
