@@ -1,6 +1,5 @@
 ﻿using Moq;
 using ShiftPlanner.Domain;
-using ShiftPlanner.Engine.Tests;
 using ShiftPlanner.Rules.Rules;
 
 namespace ShiftPlanner.Rules.Tests.Ruleset;

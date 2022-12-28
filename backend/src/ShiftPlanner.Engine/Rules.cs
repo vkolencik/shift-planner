@@ -6,21 +6,6 @@ namespace ShiftPlanner.Engine;
 
 internal static class Rules
 {
-    public static void EveryEmployeeHasOneShiftAtATime(ISolverParameters schedulingParameters, ISchedulingEngine engine)
-    {
-        foreach (var employee in schedulingParameters.Employees)
-        {
-            foreach (var day in schedulingParameters.Days)
-            {
-                var employeesShiftsThatDay = schedulingParameters.Workplaces
-                    .Select(w => new ShiftAssignment(employee, day, w))
-                    .ToArray();
-
-                engine.AddSumConstraint(employeesShiftsThatDay, Constraint.Lte, 1);
-            }
-        }
-    }
-
     public static void NoConsecutiveShiftsForEmployee(MonthScheduleParameters schedulingParameters, ISchedulingEngine engine)
     {
         foreach (var employee in schedulingParameters.Employees)

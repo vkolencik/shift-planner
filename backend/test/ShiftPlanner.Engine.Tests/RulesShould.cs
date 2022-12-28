@@ -41,21 +41,6 @@ public class RulesShould
     }
 
     [Fact]
-    public void DisallowConcurrentShiftsForEmployee()
-    {
-        var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Lte, 1));
-
-        Rules.EveryEmployeeHasOneShiftAtATime(SolverParametersTwoDays, _engineMock.Object);
-
-        Assert.Equal(4, capturedShifts.Count);
-        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day1, Workplace1), new ShiftAssignment(Employee1, Day1, Workplace2)}, capturedShifts);
-        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day2, Workplace1), new ShiftAssignment(Employee1, Day2, Workplace2)}, capturedShifts);
-        Assert.Contains(new[] {new ShiftAssignment(Employee2, Day1, Workplace1), new ShiftAssignment(Employee2, Day1, Workplace2)}, capturedShifts);
-        Assert.Contains(new[] {new ShiftAssignment(Employee2, Day2, Workplace1), new ShiftAssignment(Employee2, Day2, Workplace2)}, capturedShifts);
-    }
-
-    [Fact]
     public void DisallowConsecutiveShiftsForEmployee()
     {
         var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();

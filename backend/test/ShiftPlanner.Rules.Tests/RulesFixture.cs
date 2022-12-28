@@ -1,7 +1,7 @@
 ﻿using ShiftPlanner.Domain;
 using ShiftPlanner.TestHelpers;
 
-namespace ShiftPlanner.Engine.Tests;
+namespace ShiftPlanner.Rules.Tests;
 
 static internal class RulesFixture
 {
