@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using Google.OrTools.Sat;
-using RConstraint = ShiftScheduler.Rules.Constraint;
+using RConstraint = ShiftPlanner.Rules.Constraint;
 
 namespace ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
 

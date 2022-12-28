@@ -1,6 +1,6 @@
 ﻿using ShiftPlanner.Domain;
 
-namespace ShiftScheduler.Rules;
+namespace ShiftPlanner.Rules;
 
 public interface IScheduleConstraintReceiver
 {

@@ -1,26 +1,11 @@
 ﻿using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine;
-using ShiftScheduler.Rules;
+using ShiftPlanner.Rules;
 
 namespace ShiftPlanner.Engine;
 
 internal static class Rules
 {
-    public static void EveryDayAtEveryWorkplaceIsCovered(ISolverParameters schedulingParameters, ISchedulingEngine engine)
-    {
-        foreach (var day in schedulingParameters.Days)
-        {
-            foreach (var workplace in schedulingParameters.Workplaces)
-            {
-                var shiftsOnDayAtWorkplace = schedulingParameters.Employees
-                    .Select(e => new ShiftAssignment(e, day, workplace))
-                    .ToArray();
-
-                engine.AddSumConstraint(shiftsOnDayAtWorkplace, Constraint.Eq, 1);
-            }
-        }
-    }
-
     public static void EveryEmployeeHasOneShiftAtATime(ISolverParameters schedulingParameters, ISchedulingEngine engine)
     {
         foreach (var employee in schedulingParameters.Employees)

@@ -3,8 +3,8 @@ using System.Linq;
 using Moq;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine;
+using ShiftPlanner.Rules;
 using ShiftPlanner.TestHelpers;
-using ShiftScheduler.Rules;
 using Xunit;
 
 namespace ShiftPlanner.Engine.Tests.SchedulingEngine;

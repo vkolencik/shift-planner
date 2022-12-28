@@ -1,5 +1,7 @@
 ﻿using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Rules;
+using ShiftPlanner.Rules.Rules;
 
 namespace ShiftPlanner.Engine;
 
@@ -17,7 +19,8 @@ public class ShiftScheduler
             var schedulerParameters = GetSchedulerParameters(monthScheduleParameters, flexibility);
             var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(solverParameters);
 
-            Rules.EveryDayAtEveryWorkplaceIsCovered(solverParameters, engine);
+            var rules = RulesetFactory.CreateRuleset(schedulerParameters).ToList();
+            rules.ForEach(r => r.Apply(engine));
 
             Rules.EveryEmployeeHasOneShiftAtATime(solverParameters, engine);
 

@@ -1,4 +1,4 @@
-namespace ShiftScheduler.Rules;
+namespace ShiftPlanner.Rules;
 
 public enum Constraint
 {

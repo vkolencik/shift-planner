@@ -1,5 +1,5 @@
 ﻿using ShiftPlanner.Domain;
-using ShiftScheduler.Rules;
+using ShiftPlanner.Rules;
 
 namespace ShiftPlanner.Engine.SchedulingEngine;
 

@@ -4,7 +4,7 @@ using System.Linq;
 using Moq;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine;
-using ShiftScheduler.Rules;
+using ShiftPlanner.Rules;
 using Xunit;
 using static ShiftPlanner.Engine.Tests.RulesFixture;
 
@@ -38,21 +38,6 @@ public class RulesShould
     public RulesShould()
     {
         _engineMock = new Mock<ISchedulingEngine>();
-    }
-
-    [Fact]
-    public void CoverEveryDayAtEveryWorkplace()
-    {
-        var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Eq, 1));
-
-        Rules.EveryDayAtEveryWorkplaceIsCovered(SolverParametersTwoDays, _engineMock.Object);
-
-        Assert.Equal(4, capturedShifts.Count);
-        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day1, Workplace1), new ShiftAssignment(Employee2, Day1, Workplace1)}, capturedShifts);
-        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day1, Workplace2), new ShiftAssignment(Employee2, Day1, Workplace2)}, capturedShifts);
-        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day2, Workplace1), new ShiftAssignment(Employee2, Day2, Workplace1)}, capturedShifts);
-        Assert.Contains(new[] {new ShiftAssignment(Employee1, Day2, Workplace2), new ShiftAssignment(Employee2, Day2, Workplace2)}, capturedShifts);
     }
 
     [Fact]
