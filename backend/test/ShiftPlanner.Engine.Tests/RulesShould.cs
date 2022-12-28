@@ -41,20 +41,6 @@ public class RulesShould
     }
 
     [Fact]
-    public void EmployeeShouldOnlyBeAssignedToWorkplacesWhereTheyHaveCapability()
-    {
-        var capturedShifts = new List<ShiftAssignment>();
-        _engineMock.Setup(_ => _.AddVariableConstraint(Capture.In(capturedShifts), Constraint.Eq, 0));
-
-        Rules.DisallowShiftsWithoutEmployeeCapability(SolverParametersTwoDays, _engineMock.Object);
-
-        Assert.Contains(new ShiftAssignment(Employee1, Day1, Workplace2), capturedShifts);
-        Assert.Contains(new ShiftAssignment(Employee1, Day2, Workplace2), capturedShifts);
-        Assert.DoesNotContain(new ShiftAssignment(Employee2, Day1, Workplace1), capturedShifts);
-        Assert.DoesNotContain(new ShiftAssignment(Employee2, Day1, Workplace2), capturedShifts);
-    }
-
-    [Fact]
     public void RespectDaysOff()
     {
         var capturedShifts = new List<ShiftAssignment>();

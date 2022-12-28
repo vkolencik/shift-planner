@@ -17,7 +17,8 @@ public static class RulesetFactory
         yield return new AlwaysScheduleAlternatesOverWeekendsRule(parameters);
         yield return new WeekendShiftLimitRule(parameters);
         yield return new NoSubsequentWeekendsRule(parameters);
-        
+
+        yield return new WorkplaceCapabilityRule(parameters);
         yield return new CompetenceGroupQualificationRule(parameters);
     }
 }
