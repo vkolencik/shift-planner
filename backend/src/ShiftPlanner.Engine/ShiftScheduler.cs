@@ -27,8 +27,6 @@ public class ShiftScheduler
 
             EmployeeStandardRule.SpreadShiftsEvenlyThroughoutMonth(schedulerParameters, engine);
 
-            Rules.EnforceFixedShifts(monthScheduleParameters, engine);
-
             var result = engine.Solve();
 
             if (result != null)

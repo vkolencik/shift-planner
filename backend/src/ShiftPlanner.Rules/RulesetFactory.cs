@@ -22,5 +22,7 @@ public static class RulesetFactory
 
         yield return new WorkplaceCapabilityRule(parameters);
         yield return new CompetenceGroupQualificationRule(parameters);
+
+        yield return new PredefinedShiftsRule(parameters);
     }
 }
