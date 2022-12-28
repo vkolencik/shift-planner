@@ -3,6 +3,7 @@ using System.Linq;
 using Moq;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine;
+using ShiftPlanner.TestHelpers;
 using Xunit;
 
 namespace ShiftPlanner.Engine.Tests.SchedulingEngine;
@@ -154,12 +155,12 @@ public class EngineShould
         Assert.Null(schedulingResult);
     }
 
-    private static SolverParameters CreateEmptyInput()
+    private static ISolverParameters CreateEmptyInput()
     {
         return new SolverParameters(new ScheduledMonth(2022, 2).Days, Array.Empty<Employee>(), Array.Empty<Workplace>());
     }
 
-    private static SolverParameters CreateBasicInput()
+    private static ISolverParameters CreateBasicInput()
     {
         var workplace1 = new Workplace("ARO");
         var workplaces = new Workplace[]
@@ -179,7 +180,7 @@ public class EngineShould
             workplaces);
     }
 
-    private Engine.SchedulingEngine.Engine CreateEngine(SolverParameters input)
+    private Engine.SchedulingEngine.Engine CreateEngine(ISolverParameters input)
     {
         return new Engine.SchedulingEngine.Engine(_solverMock.Object, input);
     }

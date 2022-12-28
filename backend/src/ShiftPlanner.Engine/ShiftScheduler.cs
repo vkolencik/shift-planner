@@ -69,13 +69,5 @@ public class ShiftScheduler
             flexibility);
     }
 
-    private static SolverParameters GetSolverParameters(MonthScheduleParameters monthScheduleParameters)
-    {
-        var days = monthScheduleParameters.Month.Days;
-
-        return new SolverParameters(
-            days,
-            monthScheduleParameters.Employees,
-            monthScheduleParameters.CompetenceGroups.SelectMany(g => g.Workplaces).ToArray());
-    }
+    private static ISolverParameters GetSolverParameters(MonthScheduleParameters monthScheduleParameters) => monthScheduleParameters;
 }

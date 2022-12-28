@@ -10,16 +10,16 @@ namespace ShiftPlanner.Engine.SchedulingEngine
         private IDictionary<Workplace, int> _workplaces = null!;
         private IDictionary<Day, int> _days = null!;
 
-        internal Engine(ISolver solver, SolverParameters input)
+        internal Engine(ISolver solver, ISolverParameters input)
         {
             _solver = solver;
             Init(input);
         }
 
-        public static Engine CreateGoogleSolverEngine(SolverParameters input) =>
+        public static Engine CreateGoogleSolverEngine(ISolverParameters input) =>
             new Engine(new GoogleCpSolver(), input);
 
-        private void Init(SolverParameters input)
+        private void Init(ISolverParameters input)
         {
             _employees = CreateIndex(input.Employees);
             _workplaces = CreateIndex(input.Workplaces);

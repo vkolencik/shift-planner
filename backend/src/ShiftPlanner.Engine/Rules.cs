@@ -5,7 +5,7 @@ namespace ShiftPlanner.Engine;
 
 internal static class Rules
 {
-    public static void EveryDayAtEveryWorkplaceIsCovered(SolverParameters schedulingParameters, ISchedulingEngine engine)
+    public static void EveryDayAtEveryWorkplaceIsCovered(ISolverParameters schedulingParameters, ISchedulingEngine engine)
     {
         foreach (var day in schedulingParameters.Days)
         {
@@ -20,7 +20,7 @@ internal static class Rules
         }
     }
 
-    public static void EveryEmployeeHasOneShiftAtATime(SolverParameters schedulingParameters, ISchedulingEngine engine)
+    public static void EveryEmployeeHasOneShiftAtATime(ISolverParameters schedulingParameters, ISchedulingEngine engine)
     {
         foreach (var employee in schedulingParameters.Employees)
         {
@@ -39,7 +39,7 @@ internal static class Rules
     {
         foreach (var employee in schedulingParameters.Employees)
         {
-            foreach (var (day1, day2) in schedulingParameters.Month.Days.Zip(schedulingParameters.Month.Days.Skip(1)))
+            foreach (var (day1, day2) in schedulingParameters.Days.Zip(schedulingParameters.Days.Skip(1)))
             {
                 var employeesShiftsInTwoDays = schedulingParameters.Workplaces
                     .SelectMany(w => new[] {new ShiftAssignment(employee, day1, w), new ShiftAssignment(employee, day2, w)})
@@ -49,7 +49,7 @@ internal static class Rules
             }
         }
 
-        var firstDayOfMonth = schedulingParameters.Month.Days.First();
+        var firstDayOfMonth = schedulingParameters.Days.First();
         var lastDayOfPreviousMonth = schedulingParameters.Month.Previous.Days.Last();
         var shiftsOnTheLastDayOfPreviousMonth = schedulingParameters.LastMonthShifts.Where(s => s.Shift.Day == lastDayOfPreviousMonth);
         foreach (var employee in new HashSet<Employee>(shiftsOnTheLastDayOfPreviousMonth.Select(s => s.Employee)))
@@ -66,7 +66,7 @@ internal static class Rules
     {
         foreach (var employee in schedulingParameters.Employees)
         {
-            foreach (var (day1, day3) in schedulingParameters.Month.Days.Zip(schedulingParameters.Month.Days.Skip(2)))
+            foreach (var (day1, day3) in schedulingParameters.Days.Zip(schedulingParameters.Days.Skip(2)))
             {
                 if (day1.Date.DayOfWeek == DayOfWeek.Friday)
                 {
@@ -125,7 +125,7 @@ internal static class Rules
         }
     }
 
-    public static void DisallowShiftsWithoutEmployeeCapability(SolverParameters solverParameters, ISchedulingEngine engine)
+    public static void DisallowShiftsWithoutEmployeeCapability(ISolverParameters solverParameters, ISchedulingEngine engine)
     {
         foreach (var employee in solverParameters.Employees)
         {
@@ -160,13 +160,13 @@ internal static class Rules
 
     public static void LimitWeekendShifts(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
     {
-        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday), 1);
-        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek is DayOfWeek.Sunday), 1);
+        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday), 1);
+        LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Days.Where(d => d.DayOfWeek is DayOfWeek.Sunday), 1);
     }
 
     public static void AlwaysScheduleAlternatesOverWeekends(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
     {
-        var fridays = monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek == DayOfWeek.Friday).ToArray();
+        var fridays = monthScheduleParameters.Days.Where(d => d.DayOfWeek == DayOfWeek.Friday).ToArray();
         var sundaysAfterFridays = fridays.Select(d => new Day(d.Date.AddDays(2))).Where(d => d.Date.Month == monthScheduleParameters.Month.Month).ToArray();
 
         foreach (var employeeMonth in monthScheduleParameters.EmployeeMonths)
@@ -231,7 +231,7 @@ internal static class Rules
 
     public static void AvoidSubsequentWeekends(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
     {
-        var weekendDays = monthScheduleParameters.Month.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday).ToArray();
+        var weekendDays = monthScheduleParameters.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday).ToArray();
 
         var saturdays = weekendDays
             .Concat(weekendDays.Where(d => d.DayOfWeek is DayOfWeek.Saturday).Select(d => new Day(d.Date.AddDays(1))))
