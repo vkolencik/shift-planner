@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Services.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftPlanner.Playground", "src\ShiftPlanner.Playground\ShiftPlanner.Playground.csproj", "{F5A41952-73FF-4EC2-8E9E-8BAFEC4013AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftScheduler.Rules", "src\ShiftScheduler.Rules\ShiftScheduler.Rules.csproj", "{6F863ADA-ADC4-4EE0-95FD-C10FDD1F62A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,10 @@ Global
 		{F5A41952-73FF-4EC2-8E9E-8BAFEC4013AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5A41952-73FF-4EC2-8E9E-8BAFEC4013AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5A41952-73FF-4EC2-8E9E-8BAFEC4013AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F863ADA-ADC4-4EE0-95FD-C10FDD1F62A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F863ADA-ADC4-4EE0-95FD-C10FDD1F62A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F863ADA-ADC4-4EE0-95FD-C10FDD1F62A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F863ADA-ADC4-4EE0-95FD-C10FDD1F62A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,6 +143,7 @@ Global
 		{77570AA3-FCB6-47CB-AA6E-6E73D47B7275} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
 		{6863453A-40A5-431C-8BD2-CB0D8A8C24C1} = {ED84CCCC-8C80-441B-A438-23AA1BDA62C0}
 		{F5A41952-73FF-4EC2-8E9E-8BAFEC4013AF} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
+		{6F863ADA-ADC4-4EE0-95FD-C10FDD1F62A7} = {1E6033B3-8355-4D8C-92C7-F8367ECCD570}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F388AFFB-3E53-42D2-B0C1-6ADEB8A5C4AB}

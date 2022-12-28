@@ -1,11 +1,9 @@
 ﻿using ShiftPlanner.Domain;
+using ShiftScheduler.Rules;
 
 namespace ShiftPlanner.Engine.SchedulingEngine;
 
-internal interface ISchedulingEngine
+internal interface ISchedulingEngine : IScheduleConstraintReceiver
 {
     PlannedSchedule? Solve();
-    void AddSumConstraint(IReadOnlyCollection<ShiftAssignment> shifts, Constraint constraint, uint bound);
-    void AddVariableConstraint(ShiftAssignment shift, Constraint constraint, int value);
-    void AddSumRelationConstraint(IReadOnlyCollection<ShiftAssignment> shifts1, Constraint constraint, IReadOnlyCollection<ShiftAssignment> shifts2);
 }

@@ -1,3 +1,5 @@
+using ShiftScheduler.Rules;
+
 namespace ShiftPlanner.Engine.SchedulingEngine;
 
 internal interface ISolver

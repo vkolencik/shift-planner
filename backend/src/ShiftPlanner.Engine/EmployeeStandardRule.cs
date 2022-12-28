@@ -1,6 +1,7 @@
 ﻿using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine;
+using ShiftScheduler.Rules;
 
 namespace ShiftPlanner.Engine;
 

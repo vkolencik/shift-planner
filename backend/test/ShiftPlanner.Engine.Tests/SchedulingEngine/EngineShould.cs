@@ -4,6 +4,7 @@ using Moq;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine;
 using ShiftPlanner.TestHelpers;
+using ShiftScheduler.Rules;
 using Xunit;
 
 namespace ShiftPlanner.Engine.Tests.SchedulingEngine;

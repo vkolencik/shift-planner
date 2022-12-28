@@ -1,5 +1,6 @@
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
+using ShiftScheduler.Rules;
 
 namespace ShiftPlanner.Engine.SchedulingEngine
 {

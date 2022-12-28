@@ -40,7 +40,7 @@ static class Program
         var month = new ScheduledMonth(2023, 1);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
 
-        var scheduler = new ShiftScheduler();
+        var scheduler = new Engine.ShiftScheduler();
 
         var result = scheduler.ComputeSchedule(schedulingParams);
 
