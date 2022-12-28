@@ -6,22 +6,6 @@ namespace ShiftPlanner.Engine;
 
 internal static class Rules
 {
-    public static void EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(MonthScheduleParameters monthScheduleParameters, IReadOnlyCollection<Day> days, ISchedulingEngine engine)
-    {
-        foreach (var competenceGroup in monthScheduleParameters.CompetenceGroups)
-        {
-            foreach (var day in days)
-            {
-                IReadOnlyCollection<ShiftAssignment> employeesLevel1AndWorkplacesCombinations = monthScheduleParameters.Employees
-                    .Where(e => e.CompetenceLevel == CompetenceLevel.Level1)
-                    .SelectMany(e => competenceGroup.Workplaces.Select(w => new ShiftAssignment(e, day, w)))
-                    .ToArray();
-
-                engine.AddSumConstraint(employeesLevel1AndWorkplacesCombinations, Constraint.Gte, 1);
-            }
-        }
-    }
-
     public static void DisallowShiftsWithoutEmployeeCapability(ISolverParameters solverParameters, ISchedulingEngine engine)
     {
         foreach (var employee in solverParameters.Employees)

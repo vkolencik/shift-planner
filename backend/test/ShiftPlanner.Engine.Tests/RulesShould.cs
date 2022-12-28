@@ -41,31 +41,6 @@ public class RulesShould
     }
 
     [Fact]
-    public void EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee()
-    {
-        var capturedShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShifts), Constraint.Gte, 1));
-
-        Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(MonthScheduleParameters, new[] {Day1, Day2}, _engineMock.Object);
-
-        Assert.Equal(4, capturedShifts.Count);
-
-        Assert.Contains(
-            new HashSet<ShiftAssignment>
-            {
-                new ShiftAssignment(Employee1, Day1, Workplace1),
-                new ShiftAssignment(Employee3, Day1, Workplace1)
-            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
-
-        Assert.Contains(
-            new HashSet<ShiftAssignment>
-            {
-                new ShiftAssignment(Employee1, Day1, Workplace2),
-                new ShiftAssignment(Employee3, Day1, Workplace2)
-            }, capturedShifts.Select(x => new HashSet<ShiftAssignment>(x)));
-    }
-
-    [Fact]
     public void EmployeeShouldOnlyBeAssignedToWorkplacesWhereTheyHaveCapability()
     {
         var capturedShifts = new List<ShiftAssignment>();
