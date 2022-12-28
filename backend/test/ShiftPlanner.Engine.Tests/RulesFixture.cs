@@ -1,4 +1,5 @@
 ﻿using ShiftPlanner.Domain;
+using ShiftPlanner.TestHelpers;
 
 namespace ShiftPlanner.Engine.Tests;
 
@@ -19,13 +20,14 @@ static internal class RulesFixture
     public static readonly Employee Employee2 = new Employee("Employee2", CompetenceLevel.Level2, CapabilitiesBothWorkplaces, Workload.Infinite);
     public static readonly Employee Employee3 = new Employee("Employee3", CompetenceLevel.Level1, CapabilitiesBothWorkplaces, Workload.Infinite);
 
-    public static readonly SolverParameters SolverParametersTwoDays = new SolverParameters(
+    public static readonly ISolverParameters SolverParametersTwoDays = new SolverParameters(
         new[] {Day1, Day2},
         new[] {Employee1, Employee2},
         new[] {Workplace1, Workplace2});
 
-    public static readonly SolverParameters SolverParametersOneWeek = new SolverParameters(
+    public static readonly ISolverParameters SolverParametersOneWeek = new SolverParameters(
         new[] {Day1, Day2, Day3, Day4Friday, Day5Saturday, Day6Sunday, Day7},
         new[] {Employee1, Employee2},
         new[] {Workplace1, Workplace2});
+
 }

@@ -1,5 +1,6 @@
 ﻿using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Rules;
 
 namespace ShiftPlanner.Engine;
 
@@ -17,34 +18,14 @@ public class ShiftScheduler
             var schedulerParameters = GetSchedulerParameters(monthScheduleParameters, flexibility);
             var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(solverParameters);
 
-            Rules.EveryDayAtEveryWorkplaceIsCovered(solverParameters, engine);
-
-            Rules.EveryEmployeeHasOneShiftAtATime(solverParameters, engine);
-
-            Rules.NoConsecutiveShiftsForEmployee(monthScheduleParameters, engine);
-
-            Rules.NoAlternativeDayShiftsForEmployee(monthScheduleParameters, engine);
-
-            Rules.LimitWeekendShifts(monthScheduleParameters, engine);
-
-            Rules.AlwaysScheduleAlternatesOverWeekends(monthScheduleParameters, engine);
-            
-            Rules.AvoidSubsequentWeekends(monthScheduleParameters, engine);
-
-            Rules.EveryCompetenceGroupMustHaveAtLeastOneLevel1Employee(
-                monthScheduleParameters, solverParameters.Days, engine);
-
-            Rules.DisallowShiftsWithoutEmployeeCapability(solverParameters, engine);
+            var rules = RulesetFactory.CreateRuleset(schedulerParameters).ToList();
+            rules.ForEach(r => r.Apply(engine));
 
             EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulerParameters, engine, recorder);
 
             EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulerParameters, engine);
 
             EmployeeStandardRule.SpreadShiftsEvenlyThroughoutMonth(schedulerParameters, engine);
-
-            Rules.TakeLeavesIntoAccount(monthScheduleParameters, engine);
-
-            Rules.EnforceFixedShifts(monthScheduleParameters, engine);
 
             var result = engine.Solve();
 
@@ -69,13 +50,5 @@ public class ShiftScheduler
             flexibility);
     }
 
-    private static SolverParameters GetSolverParameters(MonthScheduleParameters monthScheduleParameters)
-    {
-        var days = monthScheduleParameters.Month.Days;
-
-        return new SolverParameters(
-            days,
-            monthScheduleParameters.Employees,
-            monthScheduleParameters.CompetenceGroups.SelectMany(g => g.Workplaces).ToArray());
-    }
+    private static ISolverParameters GetSolverParameters(MonthScheduleParameters monthScheduleParameters) => monthScheduleParameters;
 }

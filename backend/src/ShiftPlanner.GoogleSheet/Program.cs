@@ -50,7 +50,7 @@ static class Program
             Array.Empty<ShiftAssignment>(),
             Array.Empty<ISet<Workplace>>());
 
-        var scheduler = new ShiftScheduler();
+        var scheduler = new Engine.ShiftScheduler();
 
         var result = scheduler.ComputeSchedule(schedulingParams);
 

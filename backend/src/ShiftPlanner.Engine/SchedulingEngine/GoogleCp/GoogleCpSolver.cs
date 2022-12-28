@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Google.OrTools.Sat;
+using RConstraint = ShiftPlanner.Rules.Constraint;
 
 namespace ShiftPlanner.Engine.SchedulingEngine.GoogleCp;
 
@@ -53,56 +54,56 @@ internal class GoogleCpSolver : ISolver
         return _solver.Value(value);
     }
 
-    public void AddSumConstraint(IReadOnlyCollection<VariableName> variableNames, Constraint constraint, uint bound)
+    public void AddSumConstraint(IReadOnlyCollection<VariableName> variableNames, RConstraint constraint, uint bound)
     {
         var variables = variableNames.Select(v => _variables[v]).ToArray();
         switch (constraint)
         {
-            case Constraint.Eq:
+            case RConstraint.Eq:
                 _model.Add(LinearExpr.Sum(variables) == bound);
                 break;
-            case Constraint.Gte:
+            case RConstraint.Gte:
                 _model.Add(LinearExpr.Sum(variables) >= bound);
                 break;
-            case Constraint.Lte:
+            case RConstraint.Lte:
                 _model.Add(LinearExpr.Sum(variables) <= bound);
                 break;
             default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));
         }
     }
 
-    public void AddVariableConstraint(VariableName variableName, Constraint constraint, int value)
+    public void AddVariableConstraint(VariableName variableName, RConstraint constraint, int value)
     {
         var variable = _variables[variableName];
         switch (constraint)
         {
-            case Constraint.Eq:
+            case RConstraint.Eq:
                 _model.Add(variable == value);
                 break;
-            case Constraint.Gte:
+            case RConstraint.Gte:
                 _model.Add(variable >= value);
                 break;
-            case Constraint.Lte:
+            case RConstraint.Lte:
                 _model.Add(variable <= value);
                 break;
             default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));
         }
     }
 
-    public void AddSumRelationConstraint(IReadOnlyCollection<VariableName> variableNames1, Constraint constraint, IReadOnlyCollection<VariableName> variableNames2)
+    public void AddSumRelationConstraint(IReadOnlyCollection<VariableName> variableNames1, RConstraint constraint, IReadOnlyCollection<VariableName> variableNames2)
     {
         var variables1 = variableNames1.Select(v => _variables[v]).ToArray();
         var variables2 = variableNames2.Select(v => _variables[v]).ToArray();
 
         switch (constraint)
         {
-            case Constraint.Eq:
+            case RConstraint.Eq:
                 _model.Add(LinearExpr.Sum(variables1) == LinearExpr.Sum(variables2));
                 break;
-            case Constraint.Gte:
+            case RConstraint.Gte:
                 _model.Add(LinearExpr.Sum(variables1) >= LinearExpr.Sum(variables2));
                 break;
-            case Constraint.Lte:
+            case RConstraint.Lte:
                 _model.Add(LinearExpr.Sum(variables1) <= LinearExpr.Sum(variables2));
                 break;
             default: throw new InvalidEnumArgumentException(nameof(constraint), (int) constraint, typeof(Constraint));

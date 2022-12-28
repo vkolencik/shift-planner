@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ShiftPlanner.Contracts\ShiftPlanner.Contracts.csproj" />
     <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj" />
+    <ProjectReference Include="..\ShiftPlanner.Rules\ShiftPlanner.Rules.csproj" />
   </ItemGroup>
 
 </Project>
