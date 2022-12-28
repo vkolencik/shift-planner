@@ -4,9 +4,9 @@ namespace ShiftPlanner.Rules.Ruleset;
 
 public class NoAlternativeDayShiftsRule : IRule
 {
-    private readonly MonthScheduleParameters _parameters;
+    private readonly IMonthScheduleParameters _parameters;
 
-    public NoAlternativeDayShiftsRule(MonthScheduleParameters parameters)
+    public NoAlternativeDayShiftsRule(IMonthScheduleParameters parameters)
     {
         _parameters = parameters;
     }

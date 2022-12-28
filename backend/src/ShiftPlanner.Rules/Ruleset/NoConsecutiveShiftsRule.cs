@@ -4,9 +4,9 @@ namespace ShiftPlanner.Rules.Ruleset;
 
 public class NoConsecutiveShiftsRule : IRule
 {
-    private readonly MonthScheduleParameters _parameters;
+    private readonly IMonthScheduleParameters _parameters;
 
-    public NoConsecutiveShiftsRule(MonthScheduleParameters parameters)
+    public NoConsecutiveShiftsRule(IMonthScheduleParameters parameters)
     {
         _parameters = parameters;
     }

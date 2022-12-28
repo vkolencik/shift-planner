@@ -61,47 +61,6 @@ internal static class Rules
         LimitShiftsOnDays(monthScheduleParameters, engine, monthScheduleParameters.Days.Where(d => d.DayOfWeek is DayOfWeek.Sunday), 1);
     }
 
-    public static void AlwaysScheduleAlternatesOverWeekends(MonthScheduleParameters monthScheduleParameters, ISchedulingEngine engine)
-    {
-        var fridays = monthScheduleParameters.Days.Where(d => d.DayOfWeek == DayOfWeek.Friday).ToArray();
-        var sundaysAfterFridays = fridays.Select(d => new Day(d.Date.AddDays(2))).Where(d => d.Date.Month == monthScheduleParameters.Month.Month).ToArray();
-
-        foreach (var employeeMonth in monthScheduleParameters.EmployeeMonths)
-        {
-            foreach (var (friday, sunday) in fridays.Zip(sundaysAfterFridays))
-            {
-                foreach (var workplace in monthScheduleParameters.Workplaces)
-                {
-                    var interchangeabilityGroup = monthScheduleParameters.WeekendInterchangeabilityGroups.SingleOrDefault(ig => ig.Contains(workplace)) ?? new HashSet<Workplace> {workplace};
-
-                    engine.AddSumRelationConstraint(
-                        interchangeabilityGroup.Select(w => new ShiftAssignment(employeeMonth.Employee, friday, w)).ToArray(),
-                        Constraint.Eq,
-                        interchangeabilityGroup.Select(w => new ShiftAssignment(employeeMonth.Employee, sunday, w)).ToArray());
-                }
-            }
-        }
-
-        void EnforceWeekendAlternatesFromLastMonth(Day lastMonthDay)
-        {
-            if (lastMonthDay.DayOfWeek == DayOfWeek.Friday)
-            {
-                var shiftsOnFriday = monthScheduleParameters.LastMonthShifts.Where(s => s.Shift.Day == lastMonthDay);
-                var sunday = new Day(lastMonthDay.Date.AddDays(2));
-                foreach (var fridayShift in shiftsOnFriday)
-                {
-                    var workplace = fridayShift.Shift.Workplace;
-                    var interchangeabilityGroup = monthScheduleParameters.WeekendInterchangeabilityGroups.SingleOrDefault(ig => ig.Contains(workplace)) ?? new HashSet<Workplace> {workplace};
-                    engine.AddSumConstraint(interchangeabilityGroup.Select(w => new ShiftAssignment(fridayShift.Employee, sunday, w)).ToArray(), Constraint.Eq, 1);
-                }
-            }
-        }
-
-        var previousMonthDays = monthScheduleParameters.Month.Previous.Days;
-        EnforceWeekendAlternatesFromLastMonth(previousMonthDays.Last());
-        EnforceWeekendAlternatesFromLastMonth(previousMonthDays.ElementAt(previousMonthDays.Count - 2));
-    }
-
     private static void LimitShiftsOnDays(
         MonthScheduleParameters monthScheduleParameters,
         ISchedulingEngine engine,

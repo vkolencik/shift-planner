@@ -20,6 +20,12 @@ static internal class RulesFixture
     internal static readonly Employee Employee2 = new Employee("Employee2", CompetenceLevel.Level2, CapabilitiesBothWorkplaces, Workload.Infinite);
     internal static readonly Employee Employee3 = new Employee("Employee3", CompetenceLevel.Level1, CapabilitiesBothWorkplaces, Workload.Infinite);
 
+    internal static IEnumerable<Workplace> Workplaces => new[] {Workplace1, Workplace2};
+
+    internal static readonly IEnumerable<int> Fridays = new[] {4, 11, 18, 25};
+    internal static readonly IEnumerable<int> Saturdays = new[] {5, 12, 19, 26};
+    internal static readonly IEnumerable<int> Sundays = new[] {6, 13, 20, 27};
+
     internal static readonly ISolverParameters SolverParametersTwoDays = new SolverParameters(
         new[] {Day1, Day2},
         new[] {Employee1, Employee2},
