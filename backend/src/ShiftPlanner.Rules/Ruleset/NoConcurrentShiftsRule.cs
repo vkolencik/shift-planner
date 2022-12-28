@@ -1,23 +1,23 @@
 ﻿using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Rules.Rules;
+namespace ShiftPlanner.Rules.Ruleset;
 
 public class NoConcurrentShiftsRule : IRule
 {
-    private readonly ISolverParameters _schedulingParameters;
+    private readonly ISolverParameters _parameters;
 
-    public NoConcurrentShiftsRule(ISolverParameters schedulingParameters)
+    public NoConcurrentShiftsRule(ISolverParameters parameters)
     {
-        _schedulingParameters = schedulingParameters;
+        _parameters = parameters;
     }
 
     public void Apply(IScheduleConstraintReceiver target)
     {
-        foreach (var employee in _schedulingParameters.Employees)
+        foreach (var employee in _parameters.Employees)
         {
-            foreach (var day in _schedulingParameters.Days)
+            foreach (var day in _parameters.Days)
             {
-                var employeesShiftsThatDay = _schedulingParameters.Workplaces
+                var employeesShiftsThatDay = _parameters.Workplaces
                     .Select(w => new ShiftAssignment(employee, day, w))
                     .ToArray();
 

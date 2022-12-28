@@ -6,33 +6,6 @@ namespace ShiftPlanner.Engine;
 
 internal static class Rules
 {
-    public static void NoConsecutiveShiftsForEmployee(MonthScheduleParameters schedulingParameters, ISchedulingEngine engine)
-    {
-        foreach (var employee in schedulingParameters.Employees)
-        {
-            foreach (var (day1, day2) in schedulingParameters.Days.Zip(schedulingParameters.Days.Skip(1)))
-            {
-                var employeesShiftsInTwoDays = schedulingParameters.Workplaces
-                    .SelectMany(w => new[] {new ShiftAssignment(employee, day1, w), new ShiftAssignment(employee, day2, w)})
-                    .ToArray();
-
-                engine.AddSumConstraint(employeesShiftsInTwoDays, Constraint.Lte, 1);
-            }
-        }
-
-        var firstDayOfMonth = schedulingParameters.Days.First();
-        var lastDayOfPreviousMonth = schedulingParameters.Month.Previous.Days.Last();
-        var shiftsOnTheLastDayOfPreviousMonth = schedulingParameters.LastMonthShifts.Where(s => s.Shift.Day == lastDayOfPreviousMonth);
-        foreach (var employee in new HashSet<Employee>(shiftsOnTheLastDayOfPreviousMonth.Select(s => s.Employee)))
-        {
-            var shiftsOnFirstDay = schedulingParameters.Workplaces
-                .Select(w => new ShiftAssignment(employee, firstDayOfMonth, w))
-                .ToArray();
-
-            engine.AddSumConstraint(shiftsOnFirstDay, Constraint.Eq, 0);
-        }
-    }
-
     public static void NoAlternativeDayShiftsForEmployee(MonthScheduleParameters schedulingParameters, ISchedulingEngine engine)
     {
         foreach (var employee in schedulingParameters.Employees)

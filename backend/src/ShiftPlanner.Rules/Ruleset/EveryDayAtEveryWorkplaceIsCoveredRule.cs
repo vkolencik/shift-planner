@@ -4,20 +4,20 @@ namespace ShiftPlanner.Rules.Rules;
 
 internal class EveryDayAtEveryWorkplaceIsCoveredRule : IRule
 {
-    private readonly ISolverParameters _schedulingParameters;
+    private readonly ISolverParameters _parameters;
 
-    public EveryDayAtEveryWorkplaceIsCoveredRule(ISolverParameters schedulingParameters)
+    public EveryDayAtEveryWorkplaceIsCoveredRule(ISolverParameters parameters)
     {
-        _schedulingParameters = schedulingParameters;
+        _parameters = parameters;
     }
 
     public void Apply(IScheduleConstraintReceiver engine)
     {
-        foreach (var day in _schedulingParameters.Days)
+        foreach (var day in _parameters.Days)
         {
-            foreach (var workplace in _schedulingParameters.Workplaces)
+            foreach (var workplace in _parameters.Workplaces)
             {
-                var shiftsOnDayAtWorkplace = _schedulingParameters.Employees
+                var shiftsOnDayAtWorkplace = _parameters.Employees
                     .Select(e => new ShiftAssignment(e, day, workplace))
                     .ToArray();
 
