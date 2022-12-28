@@ -4,7 +4,7 @@ using ShiftPlanner.Rules.Ruleset;
 
 namespace ShiftPlanner.Rules.Tests.Ruleset;
 
-using static ShiftPlanner.Rules.Tests.RulesFixture;
+using static RulesFixture;
 
 public class AlwaysScheduleAlternatesOnWeekendsRuleShould
 {
