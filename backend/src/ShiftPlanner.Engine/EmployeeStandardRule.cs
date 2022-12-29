@@ -7,13 +7,6 @@ namespace ShiftPlanner.Engine;
 
 internal static class EmployeeStandardRule
 {
-    public static void AssignShiftsByPreferencePercentages(
-        SchedulerParameters monthScheduleParameters,
-        ISchedulingEngine engine)
-    {
-        monthScheduleParameters.EmployeeMonths.ToList().ForEach(em => AddEmployeePreferencePercentages(monthScheduleParameters, engine, em));
-    }
-
     public static void SpreadShiftsEvenlyThroughoutMonth(SchedulerParameters schedulingParams, ISchedulingEngine engine)
     {
         var daysInMonth = schedulingParams.Month.Days.Count;
@@ -51,25 +44,6 @@ internal static class EmployeeStandardRule
                 engine.AddSumConstraint(shiftsInRange, Constraint.Lte, standard.Maximum);
                 // engine.AddSumConstraint(shiftsInRange, Constraint.Gte, standard.Minimum);
             }
-        }
-    }
-
-    private static void AddEmployeePreferencePercentages(
-        SchedulerParameters monthScheduleParameters,
-        ISchedulingEngine engine,
-        EmployeeMonth employeeMonth)
-    {
-        foreach (var capability in employeeMonth.Employee.Capabilities.WorkplaceCapabilities
-                     .OfType<WorkplaceCapability.Green>())
-        {
-            var employeeStandardForWorkplace = ComputeStandard(monthScheduleParameters, employeeMonth, (double) capability.PreferencePercentage / 100);
-
-            var employeeShiftsInMonthForWorkspace = monthScheduleParameters.Month.Days
-                .Select(d => new ShiftAssignment(employeeMonth.Employee, d, capability.Workplace))
-                .ToList();
-
-            engine.AddSumConstraint(employeeShiftsInMonthForWorkspace, Constraint.Gte, employeeStandardForWorkplace.Minimum > 0 ? 1U : 0U);
-            engine.AddSumConstraint(employeeShiftsInMonthForWorkspace, Constraint.Lte, employeeStandardForWorkplace.Maximum);
         }
     }
 

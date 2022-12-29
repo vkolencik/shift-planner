@@ -21,8 +21,6 @@ public class ShiftScheduler
             var rules = RulesetFactory.CreateRuleset(schedulerParameters, flexibility, recorder).ToList();
             rules.ForEach(r => r.Apply(engine));
 
-            EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulerParameters, engine);
-
             EmployeeStandardRule.SpreadShiftsEvenlyThroughoutMonth(schedulerParameters, engine);
 
             var result = engine.Solve();

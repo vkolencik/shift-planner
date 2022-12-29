@@ -30,7 +30,8 @@ public static class RulesetFactory
         yield return new PredefinedShiftsRule(parameters);
 
         IEmployeeStandardCalculator calculator = new EmployeeStandardCalculator(flexibility, parameters);
-        ;
+
         yield return new MonthlyShiftCountRule(calculator, parameters, recorder);
+        yield return new WorkplacePreferencePercentagesRule(calculator, parameters);
     }
 }
