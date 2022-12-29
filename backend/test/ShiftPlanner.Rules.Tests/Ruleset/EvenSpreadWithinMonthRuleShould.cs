@@ -1,24 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Moq;
+﻿using Moq;
 using ShiftPlanner.Domain;
-using ShiftPlanner.Engine.SchedulingEngine;
-using ShiftPlanner.Rules;
-using Xunit;
-using static ShiftPlanner.Engine.Tests.RulesFixture;
+using ShiftPlanner.Rules.Ruleset;
 
-namespace ShiftPlanner.Engine.Tests;
+namespace ShiftPlanner.Rules.Tests.Ruleset;
 
-public class EmployeeStandardRuleShould
+using static RulesFixture;
+
+public class EvenSpreadWithinMonthRuleShould
 {
-    private readonly Mock<ISchedulingEngine> _engineMock;
-    private readonly Mock<ISchedulingParametersRecorder> _recorderMock = new Mock<ISchedulingParametersRecorder>();
-
-    public EmployeeStandardRuleShould()
-    {
-        _engineMock = new Mock<ISchedulingEngine>();
-    }
+    private readonly Mock<IScheduleConstraintReceiver> _receiverMock = new Mock<IScheduleConstraintReceiver>();
 
     [Fact]
     public void SpreadShiftsEvenlyThroughoutMonth()
@@ -26,7 +16,7 @@ public class EmployeeStandardRuleShould
         var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Workplace1, 100)}), Workload.Infinite);
 
         var leave = new Leave(new Day(2022, 2, 1), new Day(2022, 2, 3));
-        var schedulingParams = new SchedulerParameters(
+        var schedulingParams = new MonthScheduleParameters(
             new ScheduledMonth(2022, 2),
             new[]
             {
@@ -40,18 +30,20 @@ public class EmployeeStandardRuleShould
             },
             Array.Empty<ShiftAssignment>(),
             Array.Empty<ShiftAssignment>(),
-            Array.Empty<ISet<Workplace>>(),
-            ScheduleFlexibility.Strict
+            Array.Empty<ISet<Workplace>>()
         );
 
         List<IReadOnlyCollection<ShiftAssignment>> capturedShiftsLte = new List<IReadOnlyCollection<ShiftAssignment>>();
         List<IReadOnlyCollection<ShiftAssignment>> capturedShiftsGte = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedLowerBounds = new List<uint>();
         var capturedUpperBounds = new List<uint>();
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, Capture.In(capturedUpperBounds)));
-        _engineMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, Capture.In(capturedLowerBounds)));
+        _receiverMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsLte), Constraint.Lte, Capture.In(capturedUpperBounds)));
+        _receiverMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedShiftsGte), Constraint.Gte, Capture.In(capturedLowerBounds)));
 
-        EmployeeStandardRule.SpreadShiftsEvenlyThroughoutMonth(schedulingParams, _engineMock.Object);
+        // TODO: Test separately:
+        var standardCalculator = new EmployeeStandardCalculator(ScheduleFlexibility.Strict, schedulingParams);
+        var rule = new EvenSpreadWithinMonthRule(standardCalculator, schedulingParams);
+        rule.Apply(_receiverMock.Object);
 
         Assert.Equal(4, capturedShiftsLte.Count);
 
@@ -75,6 +67,6 @@ public class EmployeeStandardRuleShould
         // Assert.Equal(4U, capturedLowerBounds.First());
         Assert.Equal(5U, capturedUpperBounds.First());
     }
-
+    
     private static IEnumerable<int> RangeFromTo(int from, int to) => Enumerable.Range(from, to - from + 1);
 }

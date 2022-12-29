@@ -9,7 +9,6 @@ using static RulesFixture;
 public class WorkplacePreferencePercentagesRuleShould
 {
     private readonly Mock<IScheduleConstraintReceiver> _receiverMock = new Mock<IScheduleConstraintReceiver>();
-    private readonly Mock<ISchedulingParametersRecorder> _recorderMock = new Mock<ISchedulingParametersRecorder>();
 
     [Fact]
     public void AssignShiftsToEmployeesAccordingToPreferencePercentages()
