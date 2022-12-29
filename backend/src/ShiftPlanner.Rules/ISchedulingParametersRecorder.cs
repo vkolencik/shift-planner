@@ -1,9 +1,9 @@
 ﻿using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Engine;
+namespace ShiftPlanner.Rules;
 
-internal interface ISchedulingParametersRecorder
+public interface ISchedulingParametersRecorder
 {
     void RecordEmployeeStandard(Employee employeeMonthEmployee, EmployeeStandard employeeStandard);
 }

@@ -18,10 +18,8 @@ public class ShiftScheduler
             var schedulerParameters = GetSchedulerParameters(monthScheduleParameters, flexibility);
             var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(solverParameters);
 
-            var rules = RulesetFactory.CreateRuleset(schedulerParameters).ToList();
+            var rules = RulesetFactory.CreateRuleset(schedulerParameters, flexibility, recorder).ToList();
             rules.ForEach(r => r.Apply(engine));
-
-            EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulerParameters, engine, recorder);
 
             EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulerParameters, engine);
 
