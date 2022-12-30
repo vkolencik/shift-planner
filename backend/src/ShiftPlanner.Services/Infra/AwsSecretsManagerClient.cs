@@ -17,6 +17,24 @@ public class AwsSecretsManagerClient : IAwsSecretsManagerClient
 
     public async Task<T> FetchSecret<T>(string secretArn)
     {
+        var secretJson = await FetchSecretString(secretArn);
+
+        return JsonSerializer.Deserialize<T>(
+                   secretJson,
+                   new JsonSerializerOptions
+                   {
+                       PropertyNameCaseInsensitive = true
+                   })
+               ?? throw new InvalidOperationException($"Couldn't parse secret response JSON while fetching the secret {secretArn}");
+    }
+
+    public Task<string> FetchRawSecret(string secretArn)
+    {
+        return FetchSecretString(secretArn);
+    }
+
+    private async Task<string> FetchSecretString(string secretArn)
+    {
         var request = new GetSecretValueRequest {SecretId = secretArn};
 
         var response = await _client
@@ -28,8 +46,6 @@ public class AwsSecretsManagerClient : IAwsSecretsManagerClient
             throw new InvalidOperationException($"Received {response.HttpStatusCode} status code while fetching the secret {secretArn}");
         }
 
-        var secretJson = response.SecretString;
-
-        return JsonSerializer.Deserialize<T>(secretJson, new JsonSerializerOptions {PropertyNameCaseInsensitive = true}) ?? throw new InvalidOperationException($"Couldn't parse secret response JSON while fetching the secret {secretArn}");
+        return response.SecretString;
     }
 }

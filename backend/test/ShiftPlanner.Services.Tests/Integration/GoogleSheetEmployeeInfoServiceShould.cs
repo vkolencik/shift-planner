@@ -1,4 +1,6 @@
-﻿using ShiftPlanner.Domain;
+﻿using Amazon.SecretsManager;
+using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Infra;
 using ShiftPlanner.Services.Services.Google;
 
 namespace ShiftPlanner.Services.Tests.Integration;
@@ -8,7 +10,7 @@ public class GoogleSheetEmployeeInfoServiceShould
     [Fact]
     public async Task FetchEmployees()
     {
-        var service = new GoogleSheetsEmployeeInfoService();
+        var service = new GoogleSheetsEmployeeInfoService(new AwsSecretsManagerClient(new AmazonSecretsManagerClient()));
 
         var employees = await service.GetEmployees(Workplace.Workplaces);
 

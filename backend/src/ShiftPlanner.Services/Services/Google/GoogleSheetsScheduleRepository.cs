@@ -1,15 +1,20 @@
 ﻿using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using ShiftPlanner.Contracts;
+using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
 
 namespace ShiftPlanner.Services.Services.Google;
 
 public class GoogleSheetsScheduleRepository : GoogleSheetsService, IGoogleSheetsScheduleRepository 
 {
+    public GoogleSheetsScheduleRepository(IAwsSecretsManagerClient secretsManagerClient) : base(secretsManagerClient)
+    {
+    }
+
     public async Task StoreComputedSchedule(ScheduledMonth month, SuccessfulSchedulingResult result)
     {
-        var service = GetGoogleSheetsService();
+        var service = await GetGoogleSheetsService();
 
         service.Spreadsheets.Values.BatchClear(
             new BatchClearValuesRequest() {Ranges = new[] {"Vysledky!A2:G40"}}, SpreadsheetId).Execute();

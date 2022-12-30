@@ -55,7 +55,7 @@ static class Program
 
         if (result is SuccessfulSchedulingResult successResult)
         {
-            IScheduleRepository resultRepository = new GoogleSheetsScheduleRepository();
+            IScheduleRepository resultRepository = services.GetRequiredService<IGoogleSheetsScheduleRepository>();
             Console.Out.WriteLine("Solution found");
             Console.Out.WriteLine($"Flexibility: {successResult.Flexibility.Degree}");
 
