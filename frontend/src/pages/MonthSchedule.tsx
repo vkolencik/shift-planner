@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Schedule, useApi } from '../service/api'
 import {
+  addMonths,
   formatDate,
   getCurrentMonth,
   getDayOfWeek,
@@ -11,10 +12,14 @@ import {
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Alert, Tab, Table, Tabs } from 'react-bootstrap'
 import { sortArrayBy } from '../sort-array-by'
+import { Link, useNavigate } from 'react-router-dom'
+import { faCheck, faEdit } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { workplaces } from '../domain'
 
 export function MonthSchedule (): JSX.Element {
   const [schedule, setSchedule] = useState<Schedule | null | undefined>(undefined)
-  const [month, setMonth] = useState<Month>({month: 1, year: 2023})
+  const [month, setMonth] = useState<Month>(addMonths(getCurrentMonth(), -1))
   const api = useApi()
 
   useEffect(() => {
@@ -29,17 +34,8 @@ export function MonthSchedule (): JSX.Element {
   }
 
   if (schedule === null) {
-    return <Alert variant='warning'>Pro tento měsíc zatím nejsou vygenerované služby</Alert>
+    return <Alert variant="warning">Pro tento měsíc zatím nejsou vygenerované služby</Alert>
   }
-
-  const workplaces = [
-    'A1',
-    'A2',
-    'A3',
-    'RES',
-    'KPR',
-    'URG'
-  ]
 
   const userShifts: { [name: string]: number } = {}
   for (const shift of schedule.shifts) {
@@ -55,38 +51,41 @@ export function MonthSchedule (): JSX.Element {
 
   return <>
     <h1>{getMonthLabel(month)}</h1>
-    <Tabs
-      defaultActiveKey='schedule'
-      id='uncontrolled-tab-example'
-      className='mb-3'
-    >
-      <Tab eventKey='schedule' title='Rozvrh' style={{overflowY:'scroll'}}>
 
-          <Table bordered hover className='table-fit table-sm table-bordered'>
-            <thead className='thead-light table-primary table-bordered'>
-            <tr>
-              <th></th>
-              {workplaces.map(w => <th scope='col'>{w}</th>)}
-            </tr>
-            </thead>
-            <tbody>
-            {getMonthDates(month).map(d =>
-              (<tr className={isWeekend(d) ? 'table-success' : ''}>
-                <th scope='row'>{formatDate(d)} ({getDayOfWeek(d)})</th>
-                {workplaces.map(w => <td>
-                  {schedule?.shifts?.find(s => s.day === d && s.workplace === w)?.user.userName}
-                </td>)}
-              </tr>)
-            )}
-            </tbody>
-          </Table>
+    <div className="float-end"><Link to={`/sluzby/${month.year}/${month.month}/editace`}><FontAwesomeIcon icon={faEdit}/>Upravit</Link></div>
+
+    <Tabs
+      defaultActiveKey="schedule"
+      id="uncontrolled-tab-example"
+      className="mb-3"
+    >
+      <Tab eventKey="schedule" title="Rozvrh" style={{ overflowY: 'scroll' }}>
+
+        <Table bordered hover className="table-fit table-sm table-bordered">
+          <thead className="thead-light table-primary table-bordered">
+          <tr>
+            <th></th>
+            {workplaces.map(w => <th scope="col">{w}</th>)}
+          </tr>
+          </thead>
+          <tbody>
+          {getMonthDates(month).map(d =>
+            (<tr className={isWeekend(d) ? 'table-success' : ''}>
+              <th scope="row">{formatDate(d)} ({getDayOfWeek(d)})</th>
+              {workplaces.map(w => <td>
+                {schedule?.shifts?.find(s => s.day === d && s.workplace === w)?.user.userName}
+              </td>)}
+            </tr>)
+          )}
+          </tbody>
+        </Table>
       </Tab>
-      <Tab eventKey='shiftCounts' title='Počty služeb'>
-        <Table bordered hover className='table-fit table-sm '>
+      <Tab eventKey="shiftCounts" title="Počty služeb">
+        <Table bordered hover className="table-fit table-sm ">
           <tbody>
           {userShiftEntries.map(([userName, shifts]) =>
             (<tr>
-              <th scope='row'>{userName}</th>
+              <th scope="row">{userName}</th>
               <td>{shifts}</td>
             </tr>)
           )}
