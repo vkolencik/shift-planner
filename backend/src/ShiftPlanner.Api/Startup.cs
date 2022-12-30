@@ -1,17 +1,10 @@
 using System.Security.Claims;
-using Amazon;
-using Amazon.DynamoDBv2;
-using Amazon.Extensions.NETCore.Setup;
-using Amazon.SecretsManager;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using ShiftPlanner.Services;
 using ShiftPlanner.Services.Contracts;
-using ShiftPlanner.Services.Infra;
-using ShiftPlanner.Services.Persistence;
-using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Api;
 

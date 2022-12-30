@@ -1,6 +1,5 @@
 ﻿using Amazon;
 using Amazon.SecretsManager;
-using ShiftPlanner.Services;
 using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Infra;
 using ShiftPlanner.Services.Services;

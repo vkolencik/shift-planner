@@ -2,8 +2,8 @@
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine;
 using ShiftPlanner.Services;
-using ShiftPlanner.Services.Services.Google;
 using ShiftPlanner.Services.Persistence;
+using ShiftPlanner.Services.Services.Google;
 
 namespace ShiftPlanner.ScheduleCalculator;
 

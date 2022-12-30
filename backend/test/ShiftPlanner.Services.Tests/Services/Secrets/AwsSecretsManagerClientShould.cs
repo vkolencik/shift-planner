@@ -2,9 +2,7 @@ using System.Net;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
 using Moq;
-using ShiftPlanner.Services;
 using ShiftPlanner.Services.Infra;
-using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Api.Tests.Services;
 

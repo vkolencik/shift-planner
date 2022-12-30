@@ -1,10 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.IO;
-using System.Net.Http;
 using System.Text.Json;
 using Amazon.SecretsManager;
-using ShiftPlanner.Services;
 using ShiftPlanner.Services.Infra;
 using ShiftPlanner.Services.Services;
 
