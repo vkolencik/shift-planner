@@ -1,6 +1,6 @@
-﻿using ShiftPlanner.Contracts;
-using ShiftPlanner.Contracts.Services;
-using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Contracts;
+using ShiftPlanner.Services.Persistence;
 
 namespace ShiftPlanner.Services.Services;
 

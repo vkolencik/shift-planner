@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine;
-using ShiftPlanner.Services.Services.Google;
 using ShiftPlanner.Services;
+using ShiftPlanner.Services.Services.Google;
+using ShiftPlanner.Services.Persistence;
 
 namespace ShiftPlanner.ScheduleCalculator;
 

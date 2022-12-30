@@ -1,6 +1,6 @@
 ﻿using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Api.Contracts;
+namespace ShiftPlanner.Services.Contracts;
 
 public record RequirementModel(
     Tenant Tenant,

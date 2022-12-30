@@ -1,6 +1,7 @@
 ﻿using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Contracts;
 
-namespace ShiftPlanner.Contracts;
+namespace ShiftPlanner.Services.Persistence;
 
 public interface IRequirementEntityConverter
 {

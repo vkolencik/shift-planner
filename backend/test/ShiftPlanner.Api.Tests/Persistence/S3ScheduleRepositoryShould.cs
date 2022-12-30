@@ -3,10 +3,10 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Options;
 using Moq;
-using ShiftPlanner.Contracts;
-using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Persistence;
+using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Api.Tests.Persistence;
 

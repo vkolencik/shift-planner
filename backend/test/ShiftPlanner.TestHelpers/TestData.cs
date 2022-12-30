@@ -1,5 +1,5 @@
-﻿using ShiftPlanner.Api.Contracts;
-using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Contracts;
 
 namespace ShiftPlanner.TestHelpers;
 

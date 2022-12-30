@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ShiftPlanner.Api.Controllers;
-using ShiftPlanner.Contracts;
-using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
 using ShiftPlanner.ScheduleCalculator;
 using ShiftPlanner.Services;
+using ShiftPlanner.Services.Contracts;
+using ShiftPlanner.Services.Services;
 using ShiftPlanner.TestHelpers;
 
 namespace ShiftPlanner.Api.Tests.Controllers;

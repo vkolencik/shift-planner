@@ -2,8 +2,8 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.Extensions.Options;
-using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Contracts;
 
 namespace ShiftPlanner.Services.Persistence;
 

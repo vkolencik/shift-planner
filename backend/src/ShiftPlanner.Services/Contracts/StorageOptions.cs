@@ -1,4 +1,4 @@
-﻿namespace ShiftPlanner.Contracts;
+﻿namespace ShiftPlanner.Services.Contracts;
 
 public class StorageOptions
 {

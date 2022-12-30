@@ -4,8 +4,6 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.S3;
 using Amazon.SecretsManager;
 using Microsoft.Extensions.DependencyInjection;
-using ShiftPlanner.Contracts;
-using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Services.Infra;
 using ShiftPlanner.Services.Persistence;
 using ShiftPlanner.Services.Services;

@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
-using ShiftPlanner.Contracts;
-using ShiftPlanner.Contracts.Services;
+using ShiftPlanner.Services.Contracts;
 
 namespace ShiftPlanner.Services.Services;
 

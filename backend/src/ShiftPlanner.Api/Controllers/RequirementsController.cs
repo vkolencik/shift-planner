@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Api.Controllers;
 

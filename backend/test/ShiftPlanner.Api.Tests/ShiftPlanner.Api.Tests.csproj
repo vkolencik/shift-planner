@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ShiftPlanner.Api\ShiftPlanner.Api.csproj" />
-    <ProjectReference Include="..\..\src\ShiftPlanner.Contracts\ShiftPlanner.Contracts.csproj" />
     <ProjectReference Include="..\..\src\ShiftPlanner.ScheduleCalculator\ShiftPlanner.ScheduleCalculator.csproj" />
     <ProjectReference Include="..\..\src\ShiftPlanner.Services\ShiftPlanner.Services.csproj" />
     <ProjectReference Include="..\ShiftPlanner.TestHelpers\ShiftPlanner.TestHelpers.csproj" />

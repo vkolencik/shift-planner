@@ -2,7 +2,7 @@
 using System.Text.Json;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
-using ShiftPlanner.Contracts.Services;
+using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Services.Infra;
 

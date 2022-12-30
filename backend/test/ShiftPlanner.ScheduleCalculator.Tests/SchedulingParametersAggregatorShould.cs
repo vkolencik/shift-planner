@@ -1,9 +1,8 @@
 using Moq;
-using ShiftPlanner.Api.Contracts;
-using ShiftPlanner.Contracts;
-using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Services;
+using ShiftPlanner.Services.Contracts;
+using ShiftPlanner.Services.Services;
 using ShiftPlanner.TestHelpers;
 
 namespace ShiftPlanner.ScheduleCalculator.Tests;

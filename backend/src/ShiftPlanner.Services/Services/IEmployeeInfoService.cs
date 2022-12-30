@@ -1,6 +1,6 @@
 ﻿using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Contracts.Services;
+namespace ShiftPlanner.Services.Services;
 
 public interface IEmployeeInfoService
 {

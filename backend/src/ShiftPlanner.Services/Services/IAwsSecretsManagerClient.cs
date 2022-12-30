@@ -1,4 +1,4 @@
-﻿namespace ShiftPlanner.Contracts.Services;
+﻿namespace ShiftPlanner.Services.Services;
 
 public interface IAwsSecretsManagerClient
 {

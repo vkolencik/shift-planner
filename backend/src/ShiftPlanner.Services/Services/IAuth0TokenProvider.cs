@@ -1,4 +1,6 @@
-﻿namespace ShiftPlanner.Contracts.Services;
+﻿using ShiftPlanner.Services.Contracts;
+
+namespace ShiftPlanner.Services.Services;
 
 public interface IAuth0TokenProvider
 {
