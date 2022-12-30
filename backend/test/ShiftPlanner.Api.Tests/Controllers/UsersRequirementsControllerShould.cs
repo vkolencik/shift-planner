@@ -2,11 +2,10 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Api.Controllers;
-using ShiftPlanner.Api.Services;
 using ShiftPlanner.Domain;
-using ShiftPlanner.TestHelpers;
+using ShiftPlanner.Services.Contracts;
+using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Api.Tests.Controllers;
 
@@ -110,7 +109,7 @@ public abstract class UsersRequirementsControllerShould
             var response = await controller.Put("tenant-1", "user-id-2", 2022, 10, 12, new RequirementInputModel("hard-no"));
 
             Assert.IsType<OkResult>(response);
-            _requirementsServiceMock.Verify(_ => _.SetRequirement(It.IsAny<RequirementModel>()));
+            _requirementsServiceMock.Verify(_ => _.SetRequirement(It.IsAny<Requirement>()));
         }
     }
 

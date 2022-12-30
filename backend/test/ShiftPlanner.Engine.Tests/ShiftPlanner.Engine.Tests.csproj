@@ -23,7 +23,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ShiftPlanner.Engine\ShiftPlanner.Engine.csproj" />
-    <ProjectReference Include="..\ShiftPlanner.TestHelpers\ShiftPlanner.TestHelpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Functional" />
   </ItemGroup>
 
 </Project>

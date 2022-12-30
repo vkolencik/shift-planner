@@ -22,7 +22,6 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ShiftPlanner.Contracts\ShiftPlanner.Contracts.csproj" />
     <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj" />
     <ProjectReference Include="..\ShiftPlanner.Services\ShiftPlanner.Services.csproj" />
   </ItemGroup>
@@ -36,5 +35,10 @@
     <Content Update="appsettings.Staging.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Contracts" />
+    <Folder Include="Persistence" />
+    <Folder Include="Services" />
   </ItemGroup>
 </Project>

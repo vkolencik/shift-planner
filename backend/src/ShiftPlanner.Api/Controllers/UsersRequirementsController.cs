@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShiftPlanner.Api.Contracts;
-using ShiftPlanner.Api.Services;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Contracts;
+using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Api.Controllers;
 
@@ -56,7 +56,7 @@ public class UsersRequirementsController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
 
-        await _requirementsService.SetRequirement(new RequirementModel(new Tenant(tenant), userId, new Day(year, month, day), requirement.RequirementType));
+        await _requirementsService.SetRequirement(new Requirement(new Tenant(tenant), userId, new Day(year, month, day), requirement.RequirementType));
 
         return Ok();
     }

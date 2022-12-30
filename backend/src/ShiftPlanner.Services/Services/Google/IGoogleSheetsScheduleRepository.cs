@@ -1,4 +1,4 @@
-﻿using ShiftPlanner.Contracts;
+﻿using ShiftPlanner.Services.Persistence;
 
 namespace ShiftPlanner.Services.Services.Google;
 

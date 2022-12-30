@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
-using ShiftPlanner.Contracts;
-using ShiftPlanner.Domain;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Options;
-using ShiftPlanner.Contracts.Services;
+using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Contracts;
+using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Services.Persistence;
 

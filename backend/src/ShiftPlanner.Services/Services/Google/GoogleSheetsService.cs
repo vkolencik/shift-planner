@@ -1,7 +1,6 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
-using ShiftPlanner.Contracts.Services;
 
 namespace ShiftPlanner.Services.Services.Google;
 
