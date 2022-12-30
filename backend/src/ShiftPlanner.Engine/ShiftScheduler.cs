@@ -15,17 +15,10 @@ public class ShiftScheduler
         {
             recorder.Reset();
             var flexibility = new ScheduleFlexibility(degreeOfFlexibility);
-            var schedulerParameters = GetSchedulerParameters(monthScheduleParameters, flexibility);
             var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(solverParameters);
 
-            var rules = RulesetFactory.CreateRuleset(schedulerParameters).ToList();
+            var rules = RulesetFactory.CreateRuleset(monthScheduleParameters, flexibility, recorder).ToList();
             rules.ForEach(r => r.Apply(engine));
-
-            EmployeeStandardRule.SpreadShiftAssignmentEvenlyAmongEmployees(schedulerParameters, engine, recorder);
-
-            EmployeeStandardRule.AssignShiftsByPreferencePercentages(schedulerParameters, engine);
-
-            EmployeeStandardRule.SpreadShiftsEvenlyThroughoutMonth(schedulerParameters, engine);
 
             var result = engine.Solve();
 
@@ -36,18 +29,6 @@ public class ShiftScheduler
         }
 
         return new SolutionNotFound(recorder.GetParameters);
-    }
-
-    private SchedulerParameters GetSchedulerParameters(MonthScheduleParameters monthScheduleParameters, ScheduleFlexibility flexibility)
-    {
-        return new SchedulerParameters(
-            monthScheduleParameters.Month,
-            monthScheduleParameters.EmployeeMonths,
-            monthScheduleParameters.CompetenceGroups,
-            monthScheduleParameters.LastMonthShifts,
-            monthScheduleParameters.FixedShifts,
-            monthScheduleParameters.WeekendInterchangeabilityGroups,
-            flexibility);
     }
 
     private static ISolverParameters GetSolverParameters(MonthScheduleParameters monthScheduleParameters) => monthScheduleParameters;

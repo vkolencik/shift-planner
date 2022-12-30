@@ -9,7 +9,10 @@ public class RulesetFactoryShould
     [Fact]
     public void ReturnAllRulesInRuleset()
     {
-        var ruleset = RulesetFactory.CreateRuleset(new Mock<IMonthScheduleParameters>().Object);
+        var ruleset = RulesetFactory.CreateRuleset(
+            new Mock<IMonthScheduleParameters>().Object,
+            ScheduleFlexibility.Strict, 
+            new Mock<ISchedulingParametersRecorder>().Object);
 
         var allRuleTypes = Assembly.GetAssembly(typeof(RulesetFactory))?
             .GetTypes()
