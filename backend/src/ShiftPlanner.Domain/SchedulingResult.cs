@@ -1,6 +1,4 @@
-﻿using ShiftPlanner.Domain;
-
-namespace ShiftPlanner.Contracts;
+﻿namespace ShiftPlanner.Domain;
 
 public abstract record SchedulingResult(SolutionParameters SolutionParameters);
 
