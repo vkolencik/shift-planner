@@ -104,7 +104,6 @@ export function MonthScheduleEdit (): JSX.Element {
     >
       <Tab eventKey="schedule" title="Rozvrh" style={{ overflowY: 'scroll' }}>
 
-        <pre>{JSON.stringify(editedCoords)}</pre>
         <Table bordered className="table-fit table-sm table-bordered">
           <thead className="thead-light table-primary table-bordered">
           <tr>
