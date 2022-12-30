@@ -1,11 +1,11 @@
 ﻿using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Services.Google;
 
-namespace ShiftPlanner.GoogleSheet.Tests.Integration;
+namespace ShiftPlanner.Services.Tests.Integration;
 
-public class GoogleSheetEmployeeServiceShould
+public class GoogleSheetEmployeeInfoServiceShould
 {
-    [Fact(Skip = "Will be enabled after implementing secret storage for Google credentials")]
-    // [Fact]
+    [Fact]
     public async Task FetchEmployees()
     {
         var service = new GoogleSheetsEmployeeInfoService();

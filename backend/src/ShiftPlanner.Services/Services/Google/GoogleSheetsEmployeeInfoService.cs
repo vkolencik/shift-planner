@@ -5,7 +5,7 @@ using Google.Apis.Sheets.v4.Data;
 using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.GoogleSheet;
+namespace ShiftPlanner.Services.Services.Google;
 
 internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeInfoService
 {

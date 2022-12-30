@@ -3,7 +3,7 @@ using Google.Apis.Sheets.v4.Data;
 using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.GoogleSheet;
+namespace ShiftPlanner.Services.Services.Google;
 
 public class GoogleSheetsScheduleRepository : GoogleSheetsService, IGoogleSheetsScheduleRepository 
 {

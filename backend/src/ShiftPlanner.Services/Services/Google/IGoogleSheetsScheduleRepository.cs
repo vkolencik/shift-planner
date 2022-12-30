@@ -1,6 +1,6 @@
 ﻿using ShiftPlanner.Contracts;
 
-namespace ShiftPlanner.GoogleSheet;
+namespace ShiftPlanner.Services.Services.Google;
 
 public interface IGoogleSheetsScheduleRepository : IScheduleRepository
 {

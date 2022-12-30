@@ -4,7 +4,7 @@ using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
 using ShiftPlanner.Contracts.Services;
 
-namespace ShiftPlanner.Services.Services;
+namespace ShiftPlanner.Services.Infra;
 
 public class AwsSecretsManagerClient : IAwsSecretsManagerClient
 {
