@@ -1,19 +1,18 @@
-﻿using Amazon;
+﻿using ShiftPlanner.Services;
+
+using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.SecretsManager;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using ShiftPlanner.Api;
 using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Api.Services;
 using ShiftPlanner.Contracts;
 using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
-using ShiftPlanner.Engine;
-using ShiftPlanner.GoogleSheet;
-using ShiftPlanner.Services;
+using ShiftPlanner.Services.Infra;
 using ShiftPlanner.Services.Services;
+using ShiftPlanner.Services.Services.Google;
 
 namespace ShiftPlanner.ScheduleCalculator;
 
@@ -56,7 +55,7 @@ static class Program
 
         if (result is SuccessfulSchedulingResult successResult)
         {
-            IScheduleRepository resultRepository = new GoogleSheetsScheduleRepository();
+            IScheduleRepository resultRepository = services.GetRequiredService<IGoogleSheetsScheduleRepository>();
             Console.Out.WriteLine("Solution found");
             Console.Out.WriteLine($"Flexibility: {successResult.Flexibility.Degree}");
 
@@ -65,9 +64,4 @@ static class Program
 
         Console.Out.WriteLine(string.Join('\n', result.SolutionParameters.RecordedStandards.Select(kvp => $"{kvp.Key.Name}: {kvp.Value.Minimum}-{kvp.Value.Maximum}")));
     }
-}
-
-class HttpClientFactory : IHttpClientFactory
-{
-    public HttpClient CreateClient(string name) => new HttpClient();
 }

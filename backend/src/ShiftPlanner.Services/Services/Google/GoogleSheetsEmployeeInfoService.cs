@@ -1,11 +1,9 @@
-﻿using Google.Apis.Auth.OAuth2;
-using Google.Apis.Services;
-using Google.Apis.Sheets.v4;
+﻿using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.GoogleSheet;
+namespace ShiftPlanner.Services.Services.Google;
 
 internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeInfoService
 {
@@ -19,9 +17,13 @@ internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeI
         public const int Capabilities = 5;
     }
 
+    public GoogleSheetsEmployeeInfoService(IAwsSecretsManagerClient secretsManagerClient) : base(secretsManagerClient)
+    {
+    }
+
     public async Task<IReadOnlyCollection<EmployeeInfo>> GetEmployees(IList<Workplace> workplaces)
     {
-        using var service = GetGoogleSheetsService();
+        using var service = await GetGoogleSheetsService();
 
         // Define request parameters.
         String range = "Kose!A3:K100";
@@ -95,26 +97,5 @@ internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeI
             "N" => EmployeeStatus.Inactive,
             _ => throw new ArgumentOutOfRangeException(nameof(statusString), statusString)
         };
-    }
-}
-
-public abstract class GoogleSheetsService
-{
-    private static readonly string[] Scopes = {SheetsService.Scope.Spreadsheets};
-    private static readonly string ApplicationName = "Krtek";
-    protected static readonly string SpreadsheetId = "1iLE1TDFKrUbnzTVX8PmjP5AvvccD2dsFjomD5c5yiJs";
-
-    protected static SheetsService GetGoogleSheetsService()
-    {
-        var credential = GoogleCredential.FromFile("credentials/krtekpoc-credentials.json").CreateScoped(Scopes);
-
-        // Create Google Sheets API service.
-        var service = new SheetsService(
-            new BaseClientService.Initializer
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = ApplicationName
-            });
-        return service;
     }
 }

@@ -44,7 +44,10 @@ export class Backend extends Construct implements IGrantable {
     }
 
     this.backendLambdaFunction.addToRolePolicy(new PolicyStatement({
-      resources: ['arn:aws:secretsmanager:eu-central-1:720500131615:secret:auth0-mgmt-api-key-vdXHOP'],
+      resources: [
+        'arn:aws:secretsmanager:eu-central-1:720500131615:secret:auth0-mgmt-api-key-vdXHOP',
+        'arn:aws:secretsmanager:eu-central-1:720500131615:secret:google-sheets-api-certificate-aY85SJ'
+      ],
       actions: ['secretsmanager:GetSecretValue']
     }))
 

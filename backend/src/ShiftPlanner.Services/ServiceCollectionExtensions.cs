@@ -6,8 +6,8 @@ using Amazon.SecretsManager;
 using Microsoft.Extensions.DependencyInjection;
 using ShiftPlanner.Contracts;
 using ShiftPlanner.Contracts.Services;
-using ShiftPlanner.GoogleSheet;
 using ShiftPlanner.Services.Persistence;
+using ShiftPlanner.Services.Services.Google;
 
 namespace ShiftPlanner.Services;
 
@@ -21,7 +21,10 @@ public static class ServiceCollectionExtensions
         services.AddAWSService<IAmazonSecretsManager>(new AWSOptions() {Region = AwsRegionEndpoint});
         services.AddTransient<IStoredScheduleService, StoredScheduleService>();
         services.AddTransient<IScheduleRepository, S3ScheduleRepository>();
-        services.AddGoogleSheets();
+
+        services.AddTransient<IEmployeeInfoService, GoogleSheetsEmployeeInfoService>();
+        services.AddTransient<IGoogleSheetsScheduleRepository, GoogleSheetsScheduleRepository>();
+        
         return services;
     }
 }

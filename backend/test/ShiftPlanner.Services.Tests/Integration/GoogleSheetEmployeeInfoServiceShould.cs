@@ -1,14 +1,17 @@
-﻿using ShiftPlanner.Domain;
+﻿using Amazon;
+using Amazon.SecretsManager;
+using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Infra;
+using ShiftPlanner.Services.Services.Google;
 
-namespace ShiftPlanner.GoogleSheet.Tests.Integration;
+namespace ShiftPlanner.Services.Tests.Integration;
 
-public class GoogleSheetEmployeeServiceShould
+public class GoogleSheetEmployeeInfoServiceShould
 {
-    [Fact(Skip = "Will be enabled after implementing secret storage for Google credentials")]
-    // [Fact]
+    [Fact]
     public async Task FetchEmployees()
     {
-        var service = new GoogleSheetsEmployeeInfoService();
+        var service = new GoogleSheetsEmployeeInfoService(new AwsSecretsManagerClient(new AmazonSecretsManagerClient(RegionEndpoint.EUCentral1)));
 
         var employees = await service.GetEmployees(Workplace.Workplaces);
 
