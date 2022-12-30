@@ -11,7 +11,7 @@ public class RequirementEntityConverterShould
     [InlineData("leave", true)]
     public void ConvertRequirementToEntity(string requirementType, bool? approved)
     {
-        var model = new RequirementModel(new Tenant("tenant1"), "user-id-abc", new Day(2023, 2, 21), requirementType, approved);
+        var model = new Requirement(new Tenant("tenant1"), "user-id-abc", new Day(2023, 2, 21), requirementType, approved);
         var converter = new RequirementEntityConverter();
 
         var entity = converter.ToEntity(model);
@@ -65,7 +65,7 @@ public class RequirementEntityConverterShould
                 Approved = approved
             };
 
-        var expectedModel = new RequirementModel(new Tenant("tenant1"),"user1", new Day(2022, 11, 19), requirementType, approved);
+        var expectedModel = new Requirement(new Tenant("tenant1"),"user1", new Day(2022, 11, 19), requirementType, approved);
 
         var converter = new RequirementEntityConverter();
 

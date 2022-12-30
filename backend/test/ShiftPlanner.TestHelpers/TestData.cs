@@ -1,5 +1,4 @@
 ﻿using ShiftPlanner.Domain;
-using ShiftPlanner.Services.Contracts;
 
 namespace ShiftPlanner.TestHelpers;
 
@@ -13,6 +12,6 @@ public static class TestData
     public static readonly Tenant Tenant = new Tenant("tenant-1");
     public static readonly ScheduledMonth Month = new ScheduledMonth(2020, 10);
     public static readonly Day Day = new Day(Month, 13);
-    public static readonly RequirementModel Requirement = new RequirementModel(Tenant, "user-1", Day, "hard-no");
+    public static readonly Requirement Requirement = new Requirement(Tenant, "user-1", Day, "hard-no");
     public static readonly Workplace Workplace = new Workplace("workplace1");
 }

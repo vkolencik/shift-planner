@@ -39,7 +39,7 @@ public class DynamoRequirementsRepository : IRequirementsRepository
         return _requirementEntityConverter.RequirementEntitiesToMonthRequirements(entities);
     }
 
-    public async Task SetRequirement(RequirementModel updatedRequirement)
+    public async Task SetRequirement(Requirement updatedRequirement)
     {
         using var context = GetContext();
 
@@ -61,7 +61,7 @@ public class DynamoRequirementsRepository : IRequirementsRepository
         return DeleteResult.Deleted;
     }
 
-    public async Task<IReadOnlyCollection<RequirementModel>> GetRequirementsForMonth(Tenant tenant, ScheduledMonth month)
+    public async Task<IReadOnlyCollection<Requirement>> GetRequirementsForMonth(Tenant tenant, ScheduledMonth month)
     {
         var key = _requirementEntityConverter.GetMonthKey(tenant, month);
 
@@ -81,7 +81,7 @@ public class DynamoRequirementsRepository : IRequirementsRepository
         return entities.Select(e => _requirementEntityConverter.EntityToModel(e)).ToArray();
     }
 
-    public async Task<RequirementModel?> GetRequirement(Tenant tenant, string userId, Day day)
+    public async Task<Requirement?> GetRequirement(Tenant tenant, string userId, Day day)
     {
         var key = _requirementEntityConverter.GetPartitionKey(tenant, userId, day);
 

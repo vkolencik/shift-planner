@@ -10,14 +10,14 @@ public interface IRequirementsRepository
         string userId,
         ScheduledMonth month);
 
-    Task SetRequirement(RequirementModel requirement);
+    Task SetRequirement(Requirement requirement);
 
     Task<DeleteResult> DeleteRequirement(
         Tenant tenant,
         string userId,
         Day day);
 
-    Task<IReadOnlyCollection<RequirementModel>> GetRequirementsForMonth(Tenant tenant, ScheduledMonth month);
+    Task<IReadOnlyCollection<Requirement>> GetRequirementsForMonth(Tenant tenant, ScheduledMonth month);
     
-    Task<RequirementModel?> GetRequirement(Tenant tenant, string userId, Day day);
+    Task<Requirement?> GetRequirement(Tenant tenant, string userId, Day day);
 }

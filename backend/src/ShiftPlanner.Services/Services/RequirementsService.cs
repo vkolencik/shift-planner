@@ -20,7 +20,7 @@ internal class RequirementsService : IRequirementsService
         return _repository.GetRequirements(tenant, userId, month);
     }
 
-    public async Task SetRequirement(RequirementModel requirement)
+    public async Task SetRequirement(Requirement requirement)
     {
         await _repository.SetRequirement(requirement);
     }
@@ -53,7 +53,7 @@ internal class RequirementsService : IRequirementsService
             return ApproveResult.Failure;
         }
         
-        await _repository.SetRequirement(new RequirementModel(tenant, userId, day, "leave", true));
+        await _repository.SetRequirement(new Requirement(tenant, userId, day, "leave", true));
         
         return ApproveResult.Success;
     }

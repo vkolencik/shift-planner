@@ -84,9 +84,9 @@ public class RequirementsServiceShould
             .ReturnsAsync(
                 new[]
                 {
-                    new RequirementModel(TestData.Tenant, "user1", new Day(2022, 12, 2), "hard-no"),
-                    new RequirementModel(TestData.Tenant, "user2", new Day(2022, 12, 3), "soft-yes"),
-                    new RequirementModel(TestData.Tenant, "user2", new Day(2022, 12, 4), "leave", true),
+                    new Requirement(TestData.Tenant, "user1", new Day(2022, 12, 2), "hard-no"),
+                    new Requirement(TestData.Tenant, "user2", new Day(2022, 12, 3), "soft-yes"),
+                    new Requirement(TestData.Tenant, "user2", new Day(2022, 12, 4), "leave", true),
                 });
 
         _userServiceMock
@@ -110,8 +110,8 @@ public class RequirementsServiceShould
         var tenant = TestData.Tenant;
         var userId = "user-123";
         var day = TestData.Day;
-        var requirementFromDb = new RequirementModel(TestData.Tenant, userId, day, "leave");
-        var updatedRequirement = new RequirementModel(TestData.Tenant, userId, day, "leave", true);
+        var requirementFromDb = new Requirement(TestData.Tenant, userId, day, "leave");
+        var updatedRequirement = new Requirement(TestData.Tenant, userId, day, "leave", true);
         
         _repositoryMock
             .Setup(_ => _.GetRequirement(tenant, userId, day))
@@ -147,7 +147,7 @@ public class RequirementsServiceShould
     {
         _repositoryMock
             .Setup(_ => _.GetRequirement(It.IsAny<Tenant>(), It.IsAny<string>(), It.IsAny<Day>()))
-            .ReturnsAsync((RequirementModel?) null);
+            .ReturnsAsync((Requirement?) null);
         var service = CreateService();
         
         var result = await service.Approve(TestData.Tenant, "user-1", TestData.Day);

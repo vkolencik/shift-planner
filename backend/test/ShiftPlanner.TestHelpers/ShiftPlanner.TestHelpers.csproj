@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\ShiftPlanner.Api\ShiftPlanner.Api.csproj" />
       <ProjectReference Include="..\..\src\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj" />
     </ItemGroup>
 

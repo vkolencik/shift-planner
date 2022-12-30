@@ -110,7 +110,7 @@ public abstract class UsersRequirementsControllerShould
             var response = await controller.Put("tenant-1", "user-id-2", 2022, 10, 12, new RequirementInputModel("hard-no"));
 
             Assert.IsType<OkResult>(response);
-            _requirementsServiceMock.Verify(_ => _.SetRequirement(It.IsAny<RequirementModel>()));
+            _requirementsServiceMock.Verify(_ => _.SetRequirement(It.IsAny<Requirement>()));
         }
     }
 

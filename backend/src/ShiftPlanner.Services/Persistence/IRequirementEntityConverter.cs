@@ -5,7 +5,7 @@ namespace ShiftPlanner.Services.Persistence;
 
 public interface IRequirementEntityConverter
 {
-    RequirementEntity ToEntity(RequirementModel updatedRequirement);
+    RequirementEntity ToEntity(Requirement updatedRequirement);
 
     Dictionary<Day, string> RequirementEntitiesToMonthRequirements(IEnumerable<RequirementEntity> entities);
     
@@ -14,5 +14,5 @@ public interface IRequirementEntityConverter
     string GetUserMonthKey(Tenant tenant, string userId, ScheduledMonth month);
     
     string GetMonthKey(Tenant tenant, ScheduledMonth month);
-    RequirementModel EntityToModel(RequirementEntity entity);
+    Requirement EntityToModel(RequirementEntity entity);
 }

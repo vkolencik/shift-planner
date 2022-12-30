@@ -56,7 +56,7 @@ public class UsersRequirementsController : ControllerBase
             return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
 
-        await _requirementsService.SetRequirement(new RequirementModel(new Tenant(tenant), userId, new Day(year, month, day), requirement.RequirementType));
+        await _requirementsService.SetRequirement(new Requirement(new Tenant(tenant), userId, new Day(year, month, day), requirement.RequirementType));
 
         return Ok();
     }

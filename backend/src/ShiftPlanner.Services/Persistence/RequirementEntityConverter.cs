@@ -5,7 +5,7 @@ namespace ShiftPlanner.Services.Persistence;
 
 public class RequirementEntityConverter : IRequirementEntityConverter
 {
-    public RequirementEntity ToEntity(RequirementModel requirement)
+    public RequirementEntity ToEntity(Requirement requirement)
     {
         var tenant = requirement.Tenant;
         var day = requirement.Date;
@@ -32,9 +32,9 @@ public class RequirementEntityConverter : IRequirementEntityConverter
         return entities.ToDictionary(e => DateToDay(e.Date), e => StringToRequirement(e.Requirement));
     }
 
-    public RequirementModel EntityToModel(RequirementEntity entity)
+    public Requirement EntityToModel(RequirementEntity entity)
     {
-        return new RequirementModel(
+        return new Requirement(
             Tenant: StringToTenant(entity.Tenant),
             UserId: StringToUserId(entity.UserId),
             Date: DateToDay(entity.Date),

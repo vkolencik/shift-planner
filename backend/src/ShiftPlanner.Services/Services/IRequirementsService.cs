@@ -7,7 +7,7 @@ public interface IRequirementsService
 {
     Task<Dictionary<Day, string>> GetRequirements(Tenant tenant, string userId, ScheduledMonth month);
 
-    Task SetRequirement(RequirementModel requirement);
+    Task SetRequirement(Requirement requirement);
 
     Task<DeleteResult> DeleteRequirement(Tenant tenant, string userId, Day day);
     

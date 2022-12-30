@@ -1,8 +1,6 @@
-﻿using ShiftPlanner.Domain;
+﻿namespace ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Services.Contracts;
-
-public record RequirementModel(
+public record Requirement(
     Tenant Tenant,
     string UserId,
     Day Date,
