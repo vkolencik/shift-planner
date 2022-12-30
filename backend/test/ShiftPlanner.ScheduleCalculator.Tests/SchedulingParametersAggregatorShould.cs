@@ -1,6 +1,5 @@
 using Moq;
 using ShiftPlanner.Api.Contracts;
-using ShiftPlanner.Api.Services;
 using ShiftPlanner.Contracts;
 using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;

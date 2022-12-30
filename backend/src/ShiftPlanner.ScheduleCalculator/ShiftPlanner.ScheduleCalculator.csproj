@@ -8,14 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ShiftPlanner.Api\ShiftPlanner.Api.csproj" />
       <ProjectReference Include="..\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj" />
       <ProjectReference Include="..\ShiftPlanner.Engine\ShiftPlanner.Engine.csproj" />
+      <ProjectReference Include="..\ShiftPlanner.Services\ShiftPlanner.Services.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="AWSSDK.Core" Version="3.7.103.1" />
       <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.2" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.0" />
     </ItemGroup>
 
 </Project>

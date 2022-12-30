@@ -1,18 +1,9 @@
-﻿using ShiftPlanner.Services;
-
-using Amazon;
-using Amazon.DynamoDBv2;
-using Amazon.Extensions.NETCore.Setup;
-using Amazon.SecretsManager;
-using Microsoft.Extensions.DependencyInjection;
-using ShiftPlanner.Api.Persistence;
-using ShiftPlanner.Api.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
 using ShiftPlanner.Contracts;
-using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
-using ShiftPlanner.Services.Infra;
-using ShiftPlanner.Services.Services;
+using ShiftPlanner.Engine;
 using ShiftPlanner.Services.Services.Google;
+using ShiftPlanner.Services;
 
 namespace ShiftPlanner.ScheduleCalculator;
 
@@ -22,15 +13,6 @@ static class Program
     {
         var services = new ServiceCollection()
             .AddServices()
-            .AddTransient<IRequirementsService, RequirementsService>()
-            .AddTransient<IRequirementsRepository, DynamoRequirementsRepository>()
-            .AddTransient<IRequirementEntityConverter, RequirementEntityConverter>()
-            .AddHttpClient()
-            .AddAWSService<IAmazonDynamoDB>(new AWSOptions() {Region = RegionEndpoint.EUCentral1})
-            .AddAWSService<IAmazonSecretsManager>(new AWSOptions() {Region = RegionEndpoint.EUCentral1})
-            .AddSingleton<IAwsSecretsManagerClient, AwsSecretsManagerClient>()
-            .AddSingleton<IAuth0TokenProvider, Auth0TokenProvider>()
-            .AddSingleton<IUserService, Auth0UserService>()
             .AddSingleton<SchedulingParametersAggregator>()
             .BuildServiceProvider();
 
@@ -39,7 +21,7 @@ static class Program
         var month = new ScheduledMonth(2023, 1);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
 
-        var scheduler = new Engine.ShiftScheduler();
+        var scheduler = new ShiftScheduler();
 
         var result = scheduler.ComputeSchedule(schedulingParams);
 

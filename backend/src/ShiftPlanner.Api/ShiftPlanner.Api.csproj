@@ -37,4 +37,9 @@
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Contracts" />
+    <Folder Include="Persistence" />
+    <Folder Include="Services" />
+  </ItemGroup>
 </Project>

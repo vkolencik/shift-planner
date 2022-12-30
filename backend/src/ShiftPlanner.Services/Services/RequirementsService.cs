@@ -1,11 +1,10 @@
-﻿using ShiftPlanner.Api.Contracts;
-using ShiftPlanner.Api.Persistence;
+﻿using ShiftPlanner.Contracts;
 using ShiftPlanner.Contracts.Services;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Api.Services;
+namespace ShiftPlanner.Services.Services;
 
-public class RequirementsService : IRequirementsService
+internal class RequirementsService : IRequirementsService
 {
     private readonly IRequirementsRepository _repository;
     private readonly IUserService _userService;

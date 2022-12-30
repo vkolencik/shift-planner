@@ -1,4 +1,4 @@
-﻿namespace ShiftPlanner.Api.Services;
+﻿namespace ShiftPlanner.Contracts;
 
 public enum ApproveResult
 {

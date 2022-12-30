@@ -2,11 +2,10 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.Extensions.Options;
-using ShiftPlanner.Api.Contracts;
 using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Api.Persistence;
+namespace ShiftPlanner.Services.Persistence;
 
 public class DynamoRequirementsRepository : IRequirementsRepository
 {

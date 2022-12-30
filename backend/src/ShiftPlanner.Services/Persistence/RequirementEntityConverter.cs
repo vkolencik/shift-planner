@@ -1,7 +1,7 @@
-﻿using ShiftPlanner.Api.Contracts;
+﻿using ShiftPlanner.Contracts;
 using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Api.Persistence;
+namespace ShiftPlanner.Services.Persistence;
 
 public class RequirementEntityConverter : IRequirementEntityConverter
 {
@@ -12,11 +12,11 @@ public class RequirementEntityConverter : IRequirementEntityConverter
         var userId = requirement.UserId;
         
         var date = GetDateString(day);
-        var month = GetMonthString(day);
+        var month = GetMonthString((Day) day);
 
         return new RequirementEntity
         {
-            Key = GetPartitionKey(tenant, userId, day),
+            Key = this.GetPartitionKey(tenant, userId, day),
             TenantUserMonthKey = GetUserMonthKey(tenant, userId, month),
             TenantMonthKey = GetMonthKey(tenant, month),
             Tenant = tenant.Name,

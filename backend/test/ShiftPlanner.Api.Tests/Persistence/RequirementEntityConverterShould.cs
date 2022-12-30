@@ -1,6 +1,6 @@
 ﻿using ShiftPlanner.Api.Contracts;
-using ShiftPlanner.Api.Persistence;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Services.Persistence;
 
 namespace ShiftPlanner.Api.Tests.Persistence;
 

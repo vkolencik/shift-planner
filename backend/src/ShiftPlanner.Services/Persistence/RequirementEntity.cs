@@ -1,6 +1,6 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 
-namespace ShiftPlanner.Api.Persistence;
+namespace ShiftPlanner.Services.Persistence;
 
 [DynamoDBTable("Requirements")]
 public class RequirementEntity
