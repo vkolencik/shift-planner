@@ -1,6 +1,6 @@
 ﻿using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.TestHelpers;
+namespace ShiftPlanner.ScheduleCalculator.Tests;
 
 public static class TestData
 {

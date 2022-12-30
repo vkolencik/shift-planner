@@ -2,7 +2,6 @@ using Moq;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Services;
-using ShiftPlanner.TestHelpers;
 
 namespace ShiftPlanner.ScheduleCalculator.Tests;
 

@@ -4,7 +4,7 @@ using System.Linq;
 using ShiftPlanner.Domain;
 using Xunit;
 
-namespace ShiftPlanner.Engine.Functional.Tests.ShiftScheduler;
+namespace ShiftPlanner.Engine.Tests.Functional.ShiftScheduler;
 
 public class ComputedScheduleShould
 {

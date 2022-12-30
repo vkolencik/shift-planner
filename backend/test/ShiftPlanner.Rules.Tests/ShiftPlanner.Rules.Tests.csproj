@@ -25,7 +25,6 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\ShiftPlanner.Domain\ShiftPlanner.Domain.csproj" />
       <ProjectReference Include="..\..\src\ShiftPlanner.Rules\ShiftPlanner.Rules.csproj" />
-      <ProjectReference Include="..\ShiftPlanner.TestHelpers\ShiftPlanner.TestHelpers.csproj" />
     </ItemGroup>
 
 </Project>

@@ -4,7 +4,7 @@ using ShiftPlanner.Rules;
 using ShiftPlanner.TestHelpers;
 using Xunit;
 
-namespace ShiftPlanner.Engine.Functional.Tests.SchedulingEngine
+namespace ShiftPlanner.Engine.Tests.Functional.SchedulingEngine
 {
     public class SchedulingEngineFunctionalityShould
     {

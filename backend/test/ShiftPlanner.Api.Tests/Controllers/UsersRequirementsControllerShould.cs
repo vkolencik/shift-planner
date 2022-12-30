@@ -6,7 +6,6 @@ using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Services;
-using ShiftPlanner.TestHelpers;
 
 namespace ShiftPlanner.Api.Tests.Controllers;
 

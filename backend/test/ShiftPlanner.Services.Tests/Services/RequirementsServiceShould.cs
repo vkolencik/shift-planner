@@ -3,7 +3,7 @@ using ShiftPlanner.Domain;
 using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Persistence;
 using ShiftPlanner.Services.Services;
-using ShiftPlanner.TestHelpers;
+using TestData = ShiftPlanner.Services.Tests.TestData;
 
 namespace ShiftPlanner.Api.Tests.Services;
 
