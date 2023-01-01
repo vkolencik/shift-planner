@@ -1,5 +1,5 @@
 import { CreateWeekView, DateUserKey, getDayUserKey, WeekView } from './WeeklyOverview'
-import { Shift, User, UserRequirement } from '../service/api'
+import { ShiftAssignment, User, UserRequirement } from '../service/api'
 import { toDay } from '../dates'
 
 describe('Weekly overview should', () => {
@@ -17,7 +17,7 @@ describe('Weekly overview should', () => {
       { userId: 'user1', userName: 'User 1', requirementType: 'soft-yes', date: toDay('2022-12-05'), approved: true },
       { userId: 'user2', userName: 'User 2', requirementType: 'hard-no', date: toDay('2022-12-15'), approved: true },
     ]
-    const shifts: Shift[] = [
+    const shifts: ShiftAssignment[] = [
       { day: toDay('2022-12-01'), workplace: 'X11', user: { userId: 'user2', userName: 'User 2' } },
       { day: toDay('2022-12-21'), workplace: 'ARO', user: { userId: 'user1', userName: 'User 1' } },
     ]

@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import { Schedule, useApi, User } from '../service/api'
+import { Schedule, useApi, User, ValidationError } from '../service/api'
 import {
   Day,
   formatDate,
   getDayOfWeek,
   getMonthDates, getMonthLabel,
   isWeekend,
-  Month
+  Month, toDay
 } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
-import { Alert, Tab, Table, Tabs } from 'react-bootstrap'
+import { Alert, Button, Card, Form, Tab, Table, Tabs } from 'react-bootstrap'
 import { sortArrayBy } from '../sort-array-by'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { workplaces } from '../domain'
 import { UserSelectModal } from '../UserSelectModal'
+import { ListUl } from 'react-bootstrap-icons'
 
 interface CellCoords {
   day: Day,
@@ -28,6 +29,7 @@ export function MonthScheduleEdit (): JSX.Element {
   const api = useApi()
   const [highlightedUserId, setHighlightedUserId] = useState<string | null>(null)
   const [editedCoords, setEditedCoords] = useState<CellCoords | null>(null)
+  const [validationErrors, setValidationErrors] = useState<ValidationError[] | null>(null)
 
   if (params.year === undefined || params.month === undefined) {
     throw new Error('Month params not present')
@@ -89,6 +91,15 @@ export function MonthScheduleEdit (): JSX.Element {
     setEditedCoords(null)
   }
 
+  function handleValidation () {
+    if (schedule === null || schedule === undefined) {
+      throw new Error('Schedule not present for validation')
+    }
+
+    api.schedule.validate(schedule)
+      .then(setValidationErrors)
+  }
+
   return <>
     <UserSelectModal isOpen={editedCoords !== null} onHide={() => setEditedCoords(null)}
                      onUserSelected={handleCellUserSelected}/>
@@ -125,6 +136,22 @@ export function MonthScheduleEdit (): JSX.Element {
           )}
           </tbody>
         </Table>
+
+        <Card style={{ maxWidth: '36em' }}>
+          <Card.Header>Uložení rozvrhu</Card.Header>
+          <Card.Body>
+            <Button
+              variant="secondary"
+              onClick={handleValidation}
+            >
+              Zvalidovat
+            </Button>
+            {validationErrors && <ul>
+              {validationErrors.map(e => <li>{e.shifts.map(s => formatDate(s.day)).join(',')}{e.user === null ? '' : `(${e.user.userName})`}</li>)}
+            </ul>}
+          </Card.Body>
+        </Card>
+
       </Tab>
       <Tab eventKey="shiftCounts" title="Počty služeb">
         <Table bordered className="table-fit table-sm ">

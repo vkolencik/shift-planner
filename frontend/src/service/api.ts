@@ -4,6 +4,7 @@ import { getBaseUrl, getInstance, Instance } from '../instance-config'
 import { Moment } from 'moment'
 import { Day, Month, toDay } from '../dates'
 import { sortArrayBy } from '../sort-array-by'
+import { workplaces } from '../domain'
 
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'
@@ -62,13 +63,21 @@ export function momentToDay (date: Moment): Day {
 }
 
 export interface Schedule {
-  shifts: Shift[]
+  shifts: ShiftAssignment[]
 }
 
 export interface Shift {
   day: Day,
   workplace: string,
+}
+
+export type ShiftAssignment = Shift & {
   user: { userId: string, userName: string }
+}
+
+export interface ValidationError {
+  shifts: Shift[],
+  user: User | null
 }
 
 export function useApi () {
@@ -239,6 +248,22 @@ export function useApi () {
         return {
           shifts: schedule.shifts.filter(s => !excludedUserIds.includes(s.user.userId))
         }
+      },
+      validate: async (schedule: Schedule): Promise<ValidationError[]> => {
+        return [
+          {
+            shifts: [{ day: toDay('2023-01-01'), workplace: 'ARO' }],
+            user: loggedInUser
+          },
+          {
+            shifts: workplaces.map(w => ({ day: toDay('2023-01-10'), workplace: w })),
+            user: null
+          },
+          {
+            shifts: [{ day: toDay('2023-01-20'), workplace: 'ARO' }, { day: toDay('2023-01-21'), workplace: 'ARO' }],
+            user: loggedInUser
+          }
+        ]
       }
     }
   })
