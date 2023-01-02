@@ -260,7 +260,7 @@ export function useApi () {
 
         return returnValidationError ? [
           {
-            shifts: [{ day: toDay('2023-01-01'), workplace: 'ARO' }],
+            shifts: [{ day: toDay('2023-01-01'), workplace: 'RES' }],
             user: loggedInUser
           },
           {
@@ -268,7 +268,7 @@ export function useApi () {
             user: null
           },
           {
-            shifts: [{ day: toDay('2023-01-20'), workplace: 'ARO' }, { day: toDay('2023-01-21'), workplace: 'ARO' }],
+            shifts: [{ day: toDay('2023-01-20'), workplace: 'A1' }, { day: toDay('2023-01-21'), workplace: 'A2' }],
             user: loggedInUser
           }
         ] : []

@@ -78,9 +78,22 @@ export function MonthScheduleEdit (): JSX.Element {
   sortArrayBy(userShiftEntries, e => e[0])
 
   function ShiftCell ({ user, coords }: { user: User, coords: CellCoords }) {
+    const isUserHighlighted = user.userId === highlightedUserId
+    const isError = validationErrors !== null
+      && validationErrors.find(e => e.shifts.find(s => s.day === coords.day && s.workplace === coords.workplace) !== undefined) !== undefined
+
+    const classNames = []
+    if (isUserHighlighted) {
+      classNames.push('bg-warning', 'text-white')
+    }
+
+    if (isError) {
+      classNames.push('border', 'border-danger', 'border-3')
+    }
+
     return <td
       key={`${coords.workplace}-${coords.day}`}
-      className={user.userId === highlightedUserId ? 'bg-warning text-white' : ''}
+      className={classNames.join(' ')}
       style={{ cursor: 'pointer' }}
       onMouseOver={() => setHighlightedUserId(user.userId)}
       onMouseOut={() => setHighlightedUserId(null)}
@@ -174,7 +187,7 @@ export function MonthScheduleEdit (): JSX.Element {
                       <ListGroup as="ul" variant="flush">
                         {validationErrors.map(e =>
                           <ListGroupItem as="li" className='text-danger'>
-                            {e.shifts.map(s => formatDate(s.day)).join(', ')}{e.user === null ? '' : ` (${e.user.userName})`}
+                            {Array.from(new Set(e.shifts.map(s => s.day))).map(d => formatDate(d)).join(', ')}{e.user === null ? '' : ` (${e.user.userName})`}
                           </ListGroupItem>)
                         }
                       </ListGroup>
