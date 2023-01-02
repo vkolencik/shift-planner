@@ -5,6 +5,7 @@ import { Moment } from 'moment'
 import { Day, Month, toDay } from '../dates'
 import { sortArrayBy } from '../sort-array-by'
 import { workplaces } from '../domain'
+import { wait } from './wait'
 
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'
@@ -79,6 +80,9 @@ export interface ValidationError {
   shifts: Shift[],
   user: User | null
 }
+
+// TODO: 2023-01-02 remove once schedule validation API is implemented
+let returnValidationError: boolean = false
 
 export function useApi () {
   const { user, getAccessTokenSilently, isAuthenticated } = useAuth0()
@@ -250,7 +254,11 @@ export function useApi () {
         }
       },
       validate: async (schedule: Schedule): Promise<ValidationError[]> => {
-        return [
+        await wait(1500)
+
+        returnValidationError = !returnValidationError
+
+        return returnValidationError ? [
           {
             shifts: [{ day: toDay('2023-01-01'), workplace: 'ARO' }],
             user: loggedInUser
@@ -263,7 +271,7 @@ export function useApi () {
             shifts: [{ day: toDay('2023-01-20'), workplace: 'ARO' }, { day: toDay('2023-01-21'), workplace: 'ARO' }],
             user: loggedInUser
           }
-        ]
+        ] : []
       }
     }
   })
