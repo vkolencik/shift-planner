@@ -181,13 +181,17 @@ export function MonthScheduleEdit (): JSX.Element {
                 {!isValidating && <>
                   {validationErrors !== null && validationErrors.length > 0 && (
                     <>
-                      <Card.Body className='text-white bg-danger'>
+                      <Card.Body className="text-white bg-danger">
                         <Card.Title>Chyby v rozvrhu</Card.Title>
                       </Card.Body>
                       <ListGroup as="ul" variant="flush">
                         {validationErrors.map(e =>
-                          <ListGroupItem as="li" className='text-danger'>
-                            {Array.from(new Set(e.shifts.map(s => s.day))).map(d => formatDate(d)).join(', ')}{e.user === null ? '' : ` (${e.user.userName})`}
+                          <ListGroupItem as="li" className="text-danger">
+                            <strong>
+                              {Array.from(new Set(e.shifts.map(s => s.day))).map(d => formatDate(d)).join(', ')}
+                              {e.user === null ? '' : ` (${e.user.userName})`}:
+                            </strong>
+                            {' '}{e.error}
                           </ListGroupItem>)
                         }
                       </ListGroup>
@@ -212,8 +216,8 @@ export function MonthScheduleEdit (): JSX.Element {
 
                   {isValid &&
                     <Button
-                      variant='success'
-                      className='ms-3'
+                      variant="success"
+                      className="ms-3"
                     >
                       Uložit
                     </Button>

@@ -79,6 +79,7 @@ export type ShiftAssignment = Shift & {
 export interface ValidationError {
   shifts: Shift[],
   user: User | null
+  error: string
 }
 
 // TODO: 2023-01-02 remove once schedule validation API is implemented
@@ -261,15 +262,18 @@ export function useApi () {
         return returnValidationError ? [
           {
             shifts: [{ day: toDay('2023-01-01'), workplace: 'RES' }],
-            user: loggedInUser
+            user: loggedInUser,
+            error: 'Zaměstnanec nemá kvalifikaci na dané oddělení'
           },
           {
             shifts: workplaces.map(w => ({ day: toDay('2023-01-10'), workplace: w })),
-            user: null
+            user: null,
+            error: 'Bla bla bla bla'
           },
           {
-            shifts: [{ day: toDay('2023-01-20'), workplace: 'A1' }, { day: toDay('2023-01-21'), workplace: 'A2' }],
-            user: loggedInUser
+            shifts: [{ day: toDay('2023-01-20'), workplace: 'A1' }, { day: toDay('2023-01-21'), workplace: 'A2' }, { day: toDay('2023-01-21'), workplace: 'A2' }],
+            user: loggedInUser,
+            error: 'Na dané skupině oddělení musí být alespoň jeden zaměstnanec s kvalifikací 1'
           }
         ] : []
       }
