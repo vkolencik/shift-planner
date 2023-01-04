@@ -4,6 +4,8 @@ import { getBaseUrl, getInstance, Instance } from '../instance-config'
 import { Moment } from 'moment'
 import { Day, Month, toDay } from '../dates'
 import { sortArrayBy } from '../sort-array-by'
+import { workplaces } from '../domain'
+import { wait } from './wait'
 
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'
@@ -62,14 +64,27 @@ export function momentToDay (date: Moment): Day {
 }
 
 export interface Schedule {
-  shifts: Shift[]
+  shifts: ShiftAssignment[]
 }
 
 export interface Shift {
   day: Day,
   workplace: string,
+}
+
+export type ShiftAssignment = Shift & {
   user: { userId: string, userName: string }
 }
+
+export interface ValidationError {
+  shifts: Shift[],
+  user: User | null
+  error: string
+}
+
+// TODO: 2023-01-02 remove once schedule validation API is implemented
+let returnValidationError: boolean = false
+let returnSaveError: boolean = false
 
 export function useApi () {
   const { user, getAccessTokenSilently, isAuthenticated } = useAuth0()
@@ -239,6 +254,64 @@ export function useApi () {
         return {
           shifts: schedule.shifts.filter(s => !excludedUserIds.includes(s.user.userId))
         }
+      },
+      validate: async (schedule: Schedule): Promise<ValidationError[]> => {
+        await wait(1500)
+
+        returnValidationError = !returnValidationError
+
+        return returnValidationError ? [
+          {
+            shifts: [{ day: toDay('2023-01-01'), workplace: 'RES' }],
+            user: loggedInUser,
+            error: 'Zaměstnanec nemá kvalifikaci na dané oddělení'
+          },
+          {
+            shifts: workplaces.map(w => ({ day: toDay('2023-01-10'), workplace: w })),
+            user: null,
+            error: 'Bla bla bla bla'
+          },
+          {
+            shifts: [{ day: toDay('2023-01-20'), workplace: 'A1' }, {
+              day: toDay('2023-01-21'),
+              workplace: 'A2'
+            }, { day: toDay('2023-01-21'), workplace: 'A2' }],
+            user: loggedInUser,
+            error: 'Na dané skupině oddělení musí být alespoň jeden zaměstnanec s kvalifikací 1'
+          }
+        ] : []
+      },
+      save: async (schedule: Schedule): Promise<{ success: true } | { success: false, validationErrors: ValidationError[] }> => {
+        await wait(1500)
+
+        returnSaveError = !returnSaveError
+
+        if (returnSaveError) {
+          return {
+            success: false, validationErrors: [
+              {
+                shifts: [{ day: toDay('2023-01-01'), workplace: 'RES' }],
+                user: loggedInUser,
+                error: 'Zaměstnanec nemá kvalifikaci na dané oddělení'
+              },
+              {
+                shifts: workplaces.map(w => ({ day: toDay('2023-01-10'), workplace: w })),
+                user: null,
+                error: 'Bla bla bla bla'
+              },
+              {
+                shifts: [{ day: toDay('2023-01-20'), workplace: 'A1' }, {
+                  day: toDay('2023-01-21'),
+                  workplace: 'A2'
+                }, { day: toDay('2023-01-21'), workplace: 'A2' }],
+                user: loggedInUser,
+                error: 'Na dané skupině oddělení musí být alespoň jeden zaměstnanec s kvalifikací 1'
+              }
+            ]
+          }
+        }
+
+        return { success: true }
       }
     }
   })

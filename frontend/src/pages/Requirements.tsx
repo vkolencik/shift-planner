@@ -8,23 +8,17 @@ import { DateSelectArg, DateUnselectArg } from '@fullcalendar/common'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
-import {
-  EmployeeMonthRequirements,
-  momentToDay,
-  RequirementType,
-  requirementTypes,
-  useApi, User
-} from '../service/api'
+import { EmployeeMonthRequirements, momentToDay, RequirementType, requirementTypes, useApi, User } from '../service/api'
 import { EventSourceInput } from '@fullcalendar/core'
 import { ButtonGroup, Card, Container, FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Permission, usePermissions } from '../auth/auth'
-import { UserSelect } from '../components/UserSelect'
 import { addMonths, getCurrentMonth, getMonthLabel, getStartOfMonth, Month } from '../dates'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { UserSelectModal } from '../UserSelectModal'
 
 type DayDate = moment.Moment
 
@@ -159,16 +153,7 @@ export const Requirements: React.FC = () => {
               <Button variant="secondary" onClick={() => setUserSelectOpen(true)}>Přepnout uživatele</Button>
             </Card.Body>
           </Card>
-          <Modal
-            show={userSelectOpen}
-            onHide={() => setUserSelectOpen(false)}
-            key="user-select-modal"
-          >
-            <Modal.Header closeButton>Přepnout na jiného uživatele</Modal.Header>
-            <Modal.Body>
-              <UserSelect onUserSelected={handleUserSelected} autofocus={true}/>
-            </Modal.Body>
-          </Modal>
+          <UserSelectModal isOpen={userSelectOpen} onHide={() => setUserSelectOpen(false)} onUserSelected={handleUserSelected}/>
         </>
       }
 

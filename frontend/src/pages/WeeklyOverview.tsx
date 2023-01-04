@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { addDays, Day, formatDate, getMonth, getStartOfWeek, getWeekDays, toDay } from '../dates'
-import { RequirementType, requirementTypes, Shift, useApi, User, UserRequirement } from '../service/api'
+import { RequirementType, requirementTypes, ShiftAssignment, useApi, User, UserRequirement } from '../service/api'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Alert, Button, ButtonGroup, Table } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,7 +15,7 @@ type DayInfo =
 
 export interface WeekView {[key: DateUserKey]: DayInfo}
 
-export function CreateWeekView (requirements: UserRequirement[], shifts: Shift[] | null): WeekView {
+export function CreateWeekView (requirements: UserRequirement[], shifts: ShiftAssignment[] | null): WeekView {
   let view: WeekView = {}
 
   for (const requirement of requirements) {
@@ -45,7 +45,7 @@ export function getDayUserKey (userId: string, date: Day): DateUserKey {
 
 export const WeeklyOverview: React.FC = () => {
   const [weekStart, setWeekStart] = useState<Day>(getStartOfWeek())
-  const [shifts, setShifts] = useState<Shift[]>([])
+  const [shifts, setShifts] = useState<ShiftAssignment[]>([])
   const [requirements, setRequirements] = useState<UserRequirement[]>([])
   const [someShiftDataMissing, setSomeShiftDataMissing] = useState<boolean>(false)
   const [loadingWeek, setLoadingWeek] = useState<boolean>(true)

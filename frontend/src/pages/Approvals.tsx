@@ -91,7 +91,7 @@ export function Approvals () {
     </div>
     {userNames.length === 0 && <Alert variant="dark">Nejsou žádné dovolené ke schválení</Alert>}
     {userNames.map(userName => (<>
-      <h2 key={'header-' + userName}><FontAwesomeIcon icon={faUser} style={{ fontSize: '80%' }}/>{userName}</h2>
+      <h2 key={'header-' + userName}><FontAwesomeIcon icon={faUser} style={{ fontSize: '80%' }}/>&nbsp;{userName}</h2>
       <Table striped bordered hover className="table-fit" key={'table' + userName}>
         <thead>
         <tr>
