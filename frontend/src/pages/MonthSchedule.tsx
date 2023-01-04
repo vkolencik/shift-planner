@@ -16,11 +16,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { faCheck, faEdit } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { workplaces } from '../domain'
+import { Permission, usePermissions } from '../auth/auth'
 
 export function MonthSchedule (): JSX.Element {
   const [schedule, setSchedule] = useState<Schedule | null | undefined>(undefined)
   const [month, setMonth] = useState<Month>(addMonths(getCurrentMonth(), -1))
   const api = useApi()
+  const permissions = usePermissions()
 
   useEffect(() => {
     if (schedule === undefined) {
@@ -52,7 +54,10 @@ export function MonthSchedule (): JSX.Element {
   return <>
     <h1>{getMonthLabel(month)}</h1>
 
-    <div className="float-end"><Link to={`/sluzby/${month.year}/${month.month}/editace`}><FontAwesomeIcon icon={faEdit}/>Upravit</Link></div>
+    {permissions.includes(Permission.readRequirementsOfOthers) &&
+      <div className="float-end"><Link to={`/sluzby/${month.year}/${month.month}/editace`}><FontAwesomeIcon
+        icon={faEdit}/>Upravit</Link></div>
+    }
 
     <Tabs
       defaultActiveKey="schedule"
