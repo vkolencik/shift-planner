@@ -281,14 +281,14 @@ export function useApi () {
           }
         ] : []
       },
-      save: async (schedule: Schedule): Promise<{ success: true } | { success: false, validationErrors: ValidationError[] }> => {
+      save: async (schedule: Schedule): Promise<{ isValid: true } | { isValid: false, validationErrors: ValidationError[] }> => {
         await wait(1500)
 
         returnSaveError = !returnSaveError
 
         if (returnSaveError) {
           return {
-            success: false, validationErrors: [
+            isValid: false, validationErrors: [
               {
                 shifts: [{ day: toDay('2023-01-01'), workplace: 'RES' }],
                 user: loggedInUser,

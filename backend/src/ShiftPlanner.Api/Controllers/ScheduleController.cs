@@ -31,11 +31,25 @@ public class ScheduleController : ControllerBase
         return Ok(outputModel);
     }
 
+    [HttpPut("{year}/{month}/:validate")]
+    public async Task<ActionResult<ScheduleValidationOutputModel>> ValidateSchedule(int year, int month, [FromBody] ScheduleInputModel schedule)
+    {
+        return Ok(new ScheduleValidationOutputModel(true));
+    }
+
     private ShiftOutputModel ConvertToOutput(ScheduledShift shift) =>
         new ShiftOutputModel(shift.Day.Date.ToString("yyyy-MM-dd"), shift.Workplace.Name, new UserOutputModel(shift.User.UserId, shift.User.UserName));
 
     public record ScheduleOutputModel(IReadOnlyList<ShiftOutputModel> Shifts);
 
     public record ShiftOutputModel(string Day, string Workplace, UserOutputModel User);
+}
+
+public record ScheduleInputModel
+{
+}
+
+public record ScheduleValidationOutputModel(bool IsValid)
+{
 }
 

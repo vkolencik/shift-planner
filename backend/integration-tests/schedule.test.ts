@@ -41,4 +41,48 @@ describe('schedule endpoint should', () => {
 
     expect(resp.status).toEqual(204)
   })
+
+  it('validate valid schedule', async () => {
+    const scheduleResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01`, getHeaders(token))
+
+    const validSchedule = await scheduleResp.json()
+
+    const scheduleForValidation = validSchedule.shifts.map(s => ({
+      day: s.day,
+      workplace: s.workplace,
+      userId: s.user.userId
+    }))
+
+    const validationResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01/:validate`, {
+      ...getHeaders(token),
+      method: 'put',
+      body: JSON.stringify(scheduleForValidation)
+    })
+
+    expect(validationResp.status).toEqual(200)
+    expect(await validationResp.json()).toEqual({ isValid: true })
+  })
+
+  it('validate invalid schedule', async () => {
+    const scheduleResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01`, getHeaders(token))
+
+    const validSchedule = await scheduleResp.json()
+
+    const scheduleForValidation = validSchedule.shifts.map(s => ({
+      day: s.day,
+      workplace: s.workplace,
+      userId: validSchedule.shifts[0].user.userId
+    }))
+
+    const validationResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01/:validate`, {
+      ...getHeaders(token),
+      method: 'put',
+      body: JSON.stringify(scheduleForValidation)
+    })
+
+    expect(validationResp.status).toEqual(200)
+    const validationResult = await validationResp.json()
+    expect(validationResult).toEqual(expect.objectContaining({isValid: false, validationErrors: expect.toBeArray()}))
+    expect(validationResult.validationErrors).not.toBeEmpty()
+  })
 })

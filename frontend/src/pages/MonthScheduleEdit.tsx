@@ -151,7 +151,7 @@ export function MonthScheduleEdit (): JSX.Element {
     setIsSaving(true)
     api.schedule.save(schedule)
       .then(result => {
-        if (result.success) {
+        if (result.isValid) {
           toast.success('Rozvrh byl uložen')
         } else {
           setValidationErrors(result.validationErrors)
