@@ -29,6 +29,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { workplaces } from '../domain'
 import { UserSelectModal } from '../UserSelectModal'
+import { toast } from 'react-toastify'
 
 interface CellCoords {
   day: Day,
@@ -42,6 +43,7 @@ export function MonthScheduleEdit (): JSX.Element {
   const [highlightedUserId, setHighlightedUserId] = useState<string | null>(null)
   const [editedCoords, setEditedCoords] = useState<CellCoords | null>(null)
   const [isValidating, setIsValidating] = useState<boolean>(false)
+  const [isSaving, setIsSaving] = useState<boolean>(false)
   const [validationErrors, setValidationErrors] = useState<ValidationError[] | null>(null)
 
   if (params.year === undefined || params.month === undefined) {
@@ -91,19 +93,30 @@ export function MonthScheduleEdit (): JSX.Element {
       classNames.push('border', 'border-danger', 'border-3')
     }
 
+    function handleCellClick () {
+      if (!isSaving) {
+        setEditedCoords(coords)
+      }
+    }
+
     return <td
       key={`${coords.workplace}-${coords.day}`}
       className={classNames.join(' ')}
       style={{ cursor: 'pointer' }}
       onMouseOver={() => setHighlightedUserId(user.userId)}
       onMouseOut={() => setHighlightedUserId(null)}
-      onClick={() => setEditedCoords(coords)}
+      onClick={handleCellClick}
     >
       {user.userName}
     </td>
   }
 
   function handleCellUserSelected (user: User) {
+    if (isValid) {
+      // Was valid but got dirty
+      setValidationErrors(null)
+    }
+
     setSchedule(oldSchedule =>
       ({
         shifts: oldSchedule!.shifts.map(s => {
@@ -126,14 +139,34 @@ export function MonthScheduleEdit (): JSX.Element {
     api.schedule.validate(schedule)
       .then(errors => {
         setValidationErrors(errors)
-        setIsValidating(false)
       })
+      .finally(() => {setIsValidating(false)})
+  }
+
+  function handleSave () {
+    if (schedule === null || schedule === undefined) {
+      throw new Error('Schedule not present for saving')
+    }
+
+    setIsSaving(true)
+    api.schedule.save(schedule)
+      .then(result => {
+        if (result.success) {
+          toast.success('Rozvrh byl uložen')
+        } else {
+          setValidationErrors(result.validationErrors)
+          toast.error('Rozvrh nebyl uložen protože obsahuje chyby')
+        }
+      })
+      .finally(() => {setIsSaving(false)})
   }
 
   const isValid = validationErrors !== null && validationErrors.length === 0
   return <>
-    <UserSelectModal isOpen={editedCoords !== null} onHide={() => setEditedCoords(null)}
-                     onUserSelected={handleCellUserSelected}/>
+    <UserSelectModal
+      isOpen={editedCoords !== null}
+      onHide={() => setEditedCoords(null)}
+      onUserSelected={handleCellUserSelected}/>
 
     <h1>{getMonthLabel(month)}</h1>
 
@@ -218,7 +251,12 @@ export function MonthScheduleEdit (): JSX.Element {
                     <Button
                       variant="success"
                       className="ms-3"
+                      onClick={handleSave}
+                      disabled={isSaving}
                     >
+                      {isSaving &&
+                        <><span className="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>&nbsp;</>}
                       Uložit
                     </Button>
                   }

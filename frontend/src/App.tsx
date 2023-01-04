@@ -10,6 +10,8 @@ import { MonthlyOverview } from './pages/MonthlyOverview'
 import { MonthSchedule } from './pages/MonthSchedule'
 import { WeeklyOverview } from './pages/WeeklyOverview'
 import { MonthScheduleEdit } from './pages/MonthScheduleEdit'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 function App () {
   const navigate = useNavigate()
@@ -24,6 +26,19 @@ function App () {
 
   return (
     <div className="d-flex flex-column min-vh-100">
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+
       <NavHeader/>
       <Container fluid={true}>
         <Row>
