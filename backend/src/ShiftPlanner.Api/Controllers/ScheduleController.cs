@@ -11,10 +11,12 @@ namespace ShiftPlanner.Api.Controllers;
 public class ScheduleController : ControllerBase
 {
     private IStoredScheduleService _storedScheduleService;
+    private readonly IScheduleValidator _scheduleValidator;
 
-    public ScheduleController(IStoredScheduleService storedScheduleService)
+    public ScheduleController(IStoredScheduleService storedScheduleService, IScheduleValidator scheduleValidator)
     {
         _storedScheduleService = storedScheduleService;
+        _scheduleValidator = scheduleValidator;
     }
 
     [HttpGet("{year}/{month}")]
@@ -34,22 +36,24 @@ public class ScheduleController : ControllerBase
     [HttpPut("{year}/{month}/:validate")]
     public async Task<ActionResult<ScheduleValidationOutputModel>> ValidateSchedule(int year, int month, [FromBody] ScheduleInputModel schedule)
     {
-        return Ok(new ScheduleValidationOutputModel(true));
+        return Ok(new ScheduleValidationOutputModel(true, null));
     }
 
-    private ShiftOutputModel ConvertToOutput(ScheduledShift shift) =>
-        new ShiftOutputModel(shift.Day.Date.ToString("yyyy-MM-dd"), shift.Workplace.Name, new UserOutputModel(shift.User.UserId, shift.User.UserName));
+    private ShiftAssignmentOutputModel ConvertToOutput(ScheduledShift shift) =>
+        new ShiftAssignmentOutputModel(shift.Day.Date.ToString("yyyy-MM-dd"), shift.Workplace.Name, new UserOutputModel(shift.User.UserId, shift.User.UserName));
 
-    public record ScheduleOutputModel(IReadOnlyList<ShiftOutputModel> Shifts);
-
-    public record ShiftOutputModel(string Day, string Workplace, UserOutputModel User);
 }
 
-public record ScheduleInputModel
-{
-}
+public record ScheduleOutputModel(IReadOnlyList<ShiftAssignmentOutputModel> Shifts);
 
-public record ScheduleValidationOutputModel(bool IsValid)
-{
-}
+public record ShiftAssignmentOutputModel(string Day, string Workplace, UserOutputModel User);
 
+public record ShiftOutputModel(string Day, string Workplace);
+
+public record ScheduleInputModel(IReadOnlyCollection<ShiftAssignmentInputModel> Shifts);
+
+public record ShiftAssignmentInputModel(string Day, string Workplace, string UserId);
+
+public record ScheduleValidationOutputModel(bool IsValid, IReadOnlyCollection<ValidationErrorOutputModel>? Errors);
+
+public record ValidationErrorOutputModel(IReadOnlyCollection<ShiftOutputModel> Shifts, UserOutputModel User, string Error);

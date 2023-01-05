@@ -311,7 +311,7 @@ export function useApi () {
           }
         }
 
-        return { success: true }
+        return { isValid: true }
       }
     }
   })
