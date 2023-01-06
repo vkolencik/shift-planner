@@ -44,19 +44,30 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
 
         var previousMonth = month.Previous;
         var existingShifts = (await _storedScheduleService.GetSchedule(previousMonth)).Shifts;
+
+        var missingUsers = existingShifts.Select(s => s.User.Email).ToHashSet().Except(employeeInfos.Select(ei => ei.Email).ToHashSet()).ToArray();
+
+        if (missingUsers.Any())
+        {
+            throw new InvalidOperationException($"Missing employee infos for {string.Join(", ", missingUsers)}");
+        }
+        
+        var lastMonthShifts = existingShifts.
+            Where(s => s.Day.Month == previousMonth.Month)
+            .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
+            .ToArray();
+        
+        var fixedShifts = existingShifts
+            .Where(ss => ss.Day.Month == month.Month)
+            .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
+            .ToArray();
         
         return new MonthScheduleParameters(
             month,
             employeeMonths,
             CompetenceGroup.CompetenceGroups,
-            existingShifts.
-                Where(s => s.Day.Month == previousMonth.Month)
-                .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
-                .ToArray(),
-            existingShifts
-                .Where(ss => ss.Day.Month == month.Month)
-                .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
-                .ToArray(),
+            lastMonthShifts,
+            fixedShifts,
             Workplace.WeekendInterchangeabilityGroups);
     }
 
