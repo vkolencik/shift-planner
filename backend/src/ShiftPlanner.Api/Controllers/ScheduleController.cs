@@ -12,11 +12,13 @@ public class ScheduleController : ControllerBase
 {
     private IStoredScheduleService _storedScheduleService;
     private readonly IScheduleValidator _scheduleValidator;
+    private readonly IUserService _userService;
 
-    public ScheduleController(IStoredScheduleService storedScheduleService, IScheduleValidator scheduleValidator)
+    public ScheduleController(IStoredScheduleService storedScheduleService, IScheduleValidator scheduleValidator, IUserService userService)
     {
         _storedScheduleService = storedScheduleService;
         _scheduleValidator = scheduleValidator;
+        _userService = userService;
     }
 
     [HttpGet("{year}/{month}")]
@@ -28,20 +30,38 @@ public class ScheduleController : ControllerBase
         {
             return NoContent();
         }
-        
+
         var outputModel = new ScheduleOutputModel(storedSchedule.Shifts.Select(ConvertToOutput).ToArray());
         return Ok(outputModel);
     }
 
     [HttpPut("{year}/{month}/:validate")]
-    public async Task<ActionResult<ScheduleValidationOutputModel>> ValidateSchedule(int year, int month, [FromBody] ScheduleInputModel schedule)
+    public async Task<ActionResult<ScheduleValidationOutputModel>> ValidateSchedule(int year, int month, [FromBody] ScheduleInputModel scheduleInputModel)
     {
-        return Ok(new ScheduleValidationOutputModel(true, null));
+        var users = await _userService.GetAllUsers();
+        var schedule = new Schedule(
+            scheduleInputModel.Shifts
+                .Select(
+                    s => new ScheduledShift(
+                        new Day(DateOnly.ParseExact(s.Day, "yyyy-MM-dd")),
+                        new Workplace(s.Workplace),
+                        users.Single(u => u.UserId == s.UserId)))
+                .ToArray());
+        
+        var validationErrors = await _scheduleValidator.ValidateSchedule(schedule);
+
+        var errorOutputModels = validationErrors
+            .Select(e => new ValidationErrorOutputModel(
+                e.Shifts.Select(s => new ShiftOutputModel(s.Day.Date.ToString("yyyy-MM-dd"), s.Workplace.Name)).ToArray(),
+                e.User == null ? null : new UserOutputModel(e.User.UserId, e.User.UserName),
+                e.ErrorType.ToString())).ToArray();
+        var outputModel = new ScheduleValidationOutputModel(!validationErrors.Any(), errorOutputModels);
+        
+        return Ok(outputModel);
     }
 
     private ShiftAssignmentOutputModel ConvertToOutput(ScheduledShift shift) =>
         new ShiftAssignmentOutputModel(shift.Day.Date.ToString("yyyy-MM-dd"), shift.Workplace.Name, new UserOutputModel(shift.User.UserId, shift.User.UserName));
-
 }
 
 public record ScheduleOutputModel(IReadOnlyList<ShiftAssignmentOutputModel> Shifts);
@@ -54,6 +74,6 @@ public record ScheduleInputModel(IReadOnlyCollection<ShiftAssignmentInputModel> 
 
 public record ShiftAssignmentInputModel(string Day, string Workplace, string UserId);
 
-public record ScheduleValidationOutputModel(bool IsValid, IReadOnlyCollection<ValidationErrorOutputModel>? Errors);
+public record ScheduleValidationOutputModel(bool IsValid, IReadOnlyCollection<ValidationErrorOutputModel> Errors);
 
-public record ValidationErrorOutputModel(IReadOnlyCollection<ShiftOutputModel> Shifts, UserOutputModel User, string Error);
+public record ValidationErrorOutputModel(IReadOnlyCollection<ShiftOutputModel> Shifts, UserOutputModel? User, string Error);

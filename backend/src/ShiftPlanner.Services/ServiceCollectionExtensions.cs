@@ -22,12 +22,15 @@ public static class ServiceCollectionExtensions
         services.AddAWSService<IAmazonSecretsManager>(new AWSOptions() {Region = AwsRegionEndpoint});
         services.AddSingleton<IAwsSecretsManagerClient, AwsSecretsManagerClient>();
         services.AddSingleton<IAuth0TokenProvider, Auth0TokenProvider>();
-        services.AddSingleton<IUserService, Auth0UserService>();
-        services.AddTransient<IStoredScheduleService, StoredScheduleService>();
-        services.AddTransient<IScheduleRepository, S3ScheduleRepository>();
-        services.AddTransient<IRequirementsService, RequirementsService>();
+        
         services.AddTransient<IRequirementEntityConverter, RequirementEntityConverter>();
         services.AddTransient<IRequirementsRepository, DynamoRequirementsRepository>();
+        services.AddTransient<IScheduleRepository, S3ScheduleRepository>();
+
+        services.AddSingleton<IUserService, Auth0UserService>();
+        services.AddTransient<IStoredScheduleService, StoredScheduleService>();
+        services.AddTransient<IRequirementsService, RequirementsService>();
+        services.AddTransient<IScheduleValidator, ScheduleValidator>();
 
         services.AddTransient<IEmployeeInfoService, GoogleSheetsEmployeeInfoService>();
         services.AddTransient<IGoogleSheetsScheduleRepository, GoogleSheetsScheduleRepository>();

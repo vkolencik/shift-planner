@@ -4,7 +4,7 @@ using Amazon.SecretsManager.Model;
 using Moq;
 using ShiftPlanner.Services.Infra;
 
-namespace ShiftPlanner.Api.Tests.Services;
+namespace ShiftPlanner.Services.Tests.Services.Secrets;
 
 public class AwsSecretsManagerClientShould
 {
