@@ -15,6 +15,7 @@ internal class GoogleCpSolver : ISolver
     {
         _model = new CpModel();
         _solver = new CpSolver();
+        _solver.StringParameters = "enumerate_all_solutions:true";
     }
 
     public void NewBoolVar(VariableName variableName)
@@ -31,7 +32,7 @@ internal class GoogleCpSolver : ISolver
 
     public void Solve()
     {
-        _status = _solver.Solve(_model);
+        _status = _solver.Solve(_model, new LimitSolutionCallback(1));
     }
 
     public long Result(VariableName variableName)
@@ -118,4 +119,28 @@ internal class GoogleCpSolver : ISolver
         CpSolverStatus.Optimal => SolverStatus.Success,
         _ => throw new NotSupportedException($"Unsupported solver status {_solver.Response.Status}")
     };
+
+    class LimitSolutionCallback : CpSolverSolutionCallback
+    {
+        private int solutionCount = 0;
+        private readonly int _solutionLimit;
+
+        public LimitSolutionCallback(int solutionLimit)
+        {
+            _solutionLimit = solutionLimit;
+        }
+
+        public override void OnSolutionCallback()
+        {
+            solutionCount++;
+            Console.WriteLine("Solution found");
+            if (solutionCount >= _solutionLimit)
+            {
+                Console.WriteLine($"Stop search after {_solutionLimit} solutions");
+                StopSearch();
+            }
+        }
+   
+    }
 }
+
