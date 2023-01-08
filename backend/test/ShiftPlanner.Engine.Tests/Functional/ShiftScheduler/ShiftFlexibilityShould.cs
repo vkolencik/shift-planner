@@ -15,9 +15,9 @@ public class ShiftFlexibilityShould
 
         var workplaceA = new Workplace("A");
         var workplaceB = new Workplace("B");
-        MonthScheduleParameters parameters = new MonthScheduleParameters(
+        var parameters = new MonthScheduleParameters(
             new ScheduledMonth(2022, 2),
-            Enumerable.Range(1, 5).Select(
+            Enumerable.Range(1, 4).Select(
                     i => new EmployeeMonth(
                         new Employee(
                             $"EmployeeA{i}",
@@ -31,7 +31,7 @@ public class ShiftFlexibilityShould
                             Workload.Infinite
                         )))
                 .Concat(
-                    Enumerable.Range(1, 20).Select(
+                    Enumerable.Range(1, 8).Select(
                         i => new EmployeeMonth(
                             new Employee(
                                 $"EmployeeB{i}",

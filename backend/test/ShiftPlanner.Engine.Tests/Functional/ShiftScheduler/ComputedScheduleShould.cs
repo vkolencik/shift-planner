@@ -464,6 +464,21 @@ public class ComputedScheduleShould
         Assert.Empty(schedule.Shifts.Where(s => s.Employee == lastMonthThursdayEmployee && s.Shift.Day == new Day(_scheduledMonth, 1)));
     }
 
+    [Fact]
+    public void HaveAtLeastOneWeekendShiftForEachEmployee()
+    {
+        var schedule = ComputeSchedule();
+
+        foreach (var employee in Employees)
+        {
+            var weekendDayShifts = schedule.Shifts
+                .Where(s => s.Employee == employee && s.Shift.Day.DayOfWeek == DayOfWeek.Saturday || s.Shift.Day.DayOfWeek == DayOfWeek.Sunday)
+                .ToArray();
+
+            Assert.True(weekendDayShifts.Length > 0, $"Employee {employee.Name} doesn't have any weekend shifts");
+        }
+    }
+
     private PlannedSchedule ComputeSchedule() => ComputeSchedule(CreateParameters());
 
     private PlannedSchedule ComputeSchedule(MonthScheduleParameters parameters)
