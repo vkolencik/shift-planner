@@ -3,6 +3,7 @@ using ShiftPlanner.Domain;
 using ShiftPlanner.Engine;
 using ShiftPlanner.Services;
 using ShiftPlanner.Services.Persistence;
+using ShiftPlanner.Services.Services;
 using ShiftPlanner.Services.Services.Google;
 
 namespace ShiftPlanner.ScheduleCalculator;
@@ -13,10 +14,9 @@ static class Program
     {
         var services = new ServiceCollection()
             .AddServices()
-            .AddSingleton<SchedulingParametersAggregator>()
             .BuildServiceProvider();
 
-        var aggregator = services.GetRequiredService<SchedulingParametersAggregator>();
+        var aggregator = services.GetRequiredService<ISchedulingParametersAggregator>();
 
         var month = new ScheduledMonth(2023, 2);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);

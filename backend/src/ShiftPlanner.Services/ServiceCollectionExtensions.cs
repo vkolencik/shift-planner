@@ -35,6 +35,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IEmployeeInfoService, GoogleSheetsEmployeeInfoService>();
         services.AddTransient<IGoogleSheetsScheduleRepository, GoogleSheetsScheduleRepository>();
         
+        services.AddTransient<ISchedulingParametersAggregator, SchedulingParametersAggregator>();
+        
         return services;
     }
 }

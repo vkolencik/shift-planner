@@ -3,7 +3,7 @@ using ShiftPlanner.Domain;
 using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Services;
 
-namespace ShiftPlanner.ScheduleCalculator.Tests;
+namespace ShiftPlanner.Services.Tests.Services;
 
 public class SchedulingParametersAggregatorShould
 {

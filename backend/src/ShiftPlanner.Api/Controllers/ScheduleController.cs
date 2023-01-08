@@ -13,8 +13,12 @@ public class ScheduleController : ControllerBase
     private IStoredScheduleService _storedScheduleService;
     private readonly IScheduleValidator _scheduleValidator;
     private readonly IUserService _userService;
+    private readonly ISchedulingParametersAggregator _paramsAggregator;
 
-    public ScheduleController(IStoredScheduleService storedScheduleService, IScheduleValidator scheduleValidator, IUserService userService)
+    public ScheduleController(
+        IStoredScheduleService storedScheduleService,
+        IScheduleValidator scheduleValidator,
+        IUserService userService)
     {
         _storedScheduleService = storedScheduleService;
         _scheduleValidator = scheduleValidator;
@@ -36,7 +40,11 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPut("{year}/{month}/:validate")]
-    public async Task<ActionResult<ScheduleValidationOutputModel>> ValidateSchedule(int year, int month, [FromBody] ScheduleInputModel scheduleInputModel)
+    public async Task<ActionResult<ScheduleValidationOutputModel>> ValidateSchedule(
+        [FromRoute] string tenant,
+        [FromRoute] int year,
+        [FromRoute] int month,
+        [FromBody] ScheduleInputModel scheduleInputModel)
     {
         var users = await _userService.GetAllUsers();
         var schedule = new Schedule(
@@ -47,16 +55,17 @@ public class ScheduleController : ControllerBase
                         new Workplace(s.Workplace),
                         users.Single(u => u.UserId == s.UserId)))
                 .ToArray());
-        
-        var validationErrors = await _scheduleValidator.ValidateSchedule(schedule);
+
+        var validationErrors = await _scheduleValidator.ValidateSchedule(new Tenant(tenant), new ScheduledMonth(year, month), schedule);
 
         var errorOutputModels = validationErrors
-            .Select(e => new ValidationErrorOutputModel(
-                e.Shifts.Select(s => new ShiftOutputModel(s.Day.Date.ToString("yyyy-MM-dd"), s.Workplace.Name)).ToArray(),
-                e.User == null ? null : new UserOutputModel(e.User.UserId, e.User.UserName),
-                e.ErrorType.ToString())).ToArray();
+            .Select(
+                e => new ValidationErrorOutputModel(
+                    e.Shifts.Select(s => new ShiftOutputModel(s.Day.Date.ToString("yyyy-MM-dd"), s.Workplace.Name)).ToArray(),
+                    e.User == null ? null : new UserOutputModel(e.User.UserId, e.User.UserName),
+                    e.ErrorType.ToString())).ToArray();
         var outputModel = new ScheduleValidationOutputModel(!validationErrors.Any(), errorOutputModels);
-        
+
         return Ok(outputModel);
     }
 

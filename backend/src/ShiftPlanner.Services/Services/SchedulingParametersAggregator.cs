@@ -1,8 +1,7 @@
 ﻿using ShiftPlanner.Domain;
 using ShiftPlanner.Services.Contracts;
-using ShiftPlanner.Services.Services;
 
-namespace ShiftPlanner.ScheduleCalculator;
+namespace ShiftPlanner.Services.Services;
 
 internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
 {

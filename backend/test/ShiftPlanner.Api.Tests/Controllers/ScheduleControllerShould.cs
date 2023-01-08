@@ -11,8 +11,8 @@ namespace ShiftPlanner.Api.Tests.Controllers;
 public abstract class ScheduleControllerShould
 {
     private readonly Mock<IStoredScheduleService> _storedScheduleServiceMock = new Mock<IStoredScheduleService>();
-    private readonly Mock<IScheduleValidator> _scheduleValidator = new Mock<IScheduleValidator>();
-    private readonly Mock<IUserService> _userService = new Mock<IUserService>();
+    private readonly Mock<IScheduleValidator> _scheduleValidatorMock = new Mock<IScheduleValidator>();
+    private readonly Mock<IUserService> _userServiceMock = new Mock<IUserService>();
 
     public class Get : ScheduleControllerShould
     {
@@ -54,11 +54,11 @@ public abstract class ScheduleControllerShould
         [Fact]
         public async Task ValidateSchedule_GivenValidSchedule()
         {
-            _scheduleValidator.Setup(_ => _.ValidateSchedule(It.IsAny<Schedule>())).ReturnsAsync(Array.Empty<ScheduleValidationError>());
+            _scheduleValidatorMock.Setup(_ => _.ValidateSchedule(It.IsAny<Tenant>(), It.IsAny<ScheduledMonth>(), It.IsAny<Schedule>())).ReturnsAsync(Array.Empty<ScheduleValidationError>());
             var controller = CreateController();
 
-            var response = await controller.ValidateSchedule(2027, 7, new ScheduleInputModel(Array.Empty<ShiftAssignmentInputModel>()));
-            
+            var response = await controller.ValidateSchedule("tenant1", 2027, 7, new ScheduleInputModel(Array.Empty<ShiftAssignmentInputModel>()));
+
             var result = Assert.IsType<OkObjectResult>(response.Result);
 
             Assert.Equal(new ScheduleValidationOutputModel(true, Array.Empty<ValidationErrorOutputModel>()), (ScheduleValidationOutputModel?) result.Value);
@@ -71,6 +71,7 @@ public abstract class ScheduleControllerShould
             var day = new Day(2023, 1, 5);
             var dayString = "2023-01-05";
             var workplace = new Workplace("ARO");
+            var tenant = TestData.Tenant;
 
             IReadOnlyCollection<ValidationErrorOutputModel> errors = new[]
             {
@@ -82,22 +83,22 @@ public abstract class ScheduleControllerShould
                 {
                     new ScheduledShift(day, workplace, user),
                 });
-            
+
             var scheduleInputModel = new ScheduleInputModel(new[] {new ShiftAssignmentInputModel(dayString, workplace.Name, user.UserId)});
 
             var validatedSchedules = new List<Schedule>();
 
-            _userService
+            _userServiceMock
                 .Setup(_ => _.GetAllUsers())
-                .ReturnsAsync(new [] {user});
-            
-            _scheduleValidator
-                .Setup(_ => _.ValidateSchedule(Capture.In(validatedSchedules)))
+                .ReturnsAsync(new[] {user});
+
+            _scheduleValidatorMock
+                .Setup(_ => _.ValidateSchedule(tenant, new ScheduledMonth(2027, 7), Capture.In(validatedSchedules)))
                 .ReturnsAsync(new[] {new ScheduleValidationError(new[] {new Shift(day, workplace)}, user, ScheduleErrorType.Unknown)});
 
             var controller = CreateController();
-            
-            var response = await controller.ValidateSchedule(2027, 7, scheduleInputModel);
+
+            var response = await controller.ValidateSchedule(tenant.Name, 2027, 7, scheduleInputModel);
 
             var result = Assert.IsType<OkObjectResult>(response.Result);
 
@@ -114,6 +115,9 @@ public abstract class ScheduleControllerShould
 
     private ScheduleController CreateController()
     {
-        return new ScheduleController(_storedScheduleServiceMock.Object, _scheduleValidator.Object, _userService.Object);
+        return new ScheduleController(
+            _storedScheduleServiceMock.Object,
+            _scheduleValidatorMock.Object,
+            _userServiceMock.Object);
     }
 }
