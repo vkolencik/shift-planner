@@ -60,12 +60,13 @@ internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeI
                 continue;
             }
 
-            // var workloadString = (string) row[RowIndices.Workload];
-            // if (string.IsNullOrWhiteSpace(workloadString))
-            // {
-            //     continue;
-            // }
-            var workload = new Workload(0, 0);
+            var workloadMinString = (string) row[RowIndices.WorkloadMin];
+            var workloadMaxString = (string) row[RowIndices.WorkloadMax];
+            if (string.IsNullOrWhiteSpace(workloadMinString) || string.IsNullOrWhiteSpace(workloadMaxString))
+            {
+                continue;
+            }
+            var workload = new Workload(uint.Parse(workloadMinString), uint.Parse(workloadMaxString));
 
             var statusString = (string) row[RowIndices.DisabledFlag];
             var employeeStatus = ParseEmployeeStatus(statusString);
