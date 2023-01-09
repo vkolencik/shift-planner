@@ -12,8 +12,9 @@ internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeI
         public const int Name = 1;
         public const int Email = 2;
         public const int CompetenceLevel = 3;
-        public const int Workload = 4;
-        public const int Capabilities = 5;
+        public const int WorkloadMin = 4;
+        public const int WorkloadMax = 5;
+        public const int Capabilities = 6;
     }
 
     public GoogleSheetsEmployeeInfoService(IAwsSecretsManagerClient secretsManagerClient) : base(secretsManagerClient)
@@ -25,7 +26,7 @@ internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeI
         using var service = await GetGoogleSheetsService();
 
         // Define request parameters.
-        String range = "Kose!A3:K100";
+        String range = "Kose!A3:L100";
         SpreadsheetsResource.ValuesResource.GetRequest request =
             service.Spreadsheets.Values.Get(SpreadsheetId, range);
 
@@ -59,12 +60,12 @@ internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeI
                 continue;
             }
 
-            var workloadString = (string) row[RowIndices.Workload];
-            if (string.IsNullOrWhiteSpace(workloadString))
-            {
-                continue;
-            }
-            var workload = Workload.GetByName(workloadString);
+            // var workloadString = (string) row[RowIndices.Workload];
+            // if (string.IsNullOrWhiteSpace(workloadString))
+            // {
+            //     continue;
+            // }
+            var workload = new Workload(0, 0);
 
             var statusString = (string) row[RowIndices.DisabledFlag];
             var employeeStatus = ParseEmployeeStatus(statusString);

@@ -31,7 +31,7 @@ public class GoogleSheetEmployeeInfoServiceShould
                 new WorkplaceCapability.Green(Workplace.Kpr, 30),
                 new WorkplaceCapability.Green(Workplace.Urg, 40)
             }, testerEmployee.Capabilities.WorkplaceCapabilities);
-        Assert.Equal(Workload.Full, testerEmployee.Workload);
+        Assert.Equal(new Workload(27, 42), testerEmployee.Workload);
         Assert.Equal(EmployeeStatus.Disabled, testerEmployee.EmployeeStatus);
 
         var tester2Employee = employees.Last();
@@ -48,7 +48,7 @@ public class GoogleSheetEmployeeInfoServiceShould
                 new WorkplaceCapability.Red(Workplace.Kpr),
                 new WorkplaceCapability.Red(Workplace.Urg),
             }, tester2Employee.Capabilities.WorkplaceCapabilities);
-        Assert.Equal(Workload.Workload07, tester2Employee.Workload);
+        Assert.Equal(new Workload(0, 1), tester2Employee.Workload);
         Assert.Equal(EmployeeStatus.Disabled, testerEmployee.EmployeeStatus);
     }
 }
