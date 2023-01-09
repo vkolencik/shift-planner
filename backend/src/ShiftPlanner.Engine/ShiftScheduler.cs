@@ -7,28 +7,39 @@ public class ShiftScheduler
 {
     public SchedulingResult ComputeSchedule(MonthScheduleParameters monthScheduleParameters)
     {
-        var solverParameters = GetSolverParameters(monthScheduleParameters);
-        var recorder = new SchedulingParametersRecorder();
+        var flexibilityVariator = new SequenceFlexibilityVariator<SchedulingResult>(new ScheduleFlexibility(50));
 
-        for (uint degreeOfFlexibility = 0; degreeOfFlexibility <= 50; degreeOfFlexibility++)
-        {
-            recorder.Reset();
-            var flexibility = new ScheduleFlexibility(degreeOfFlexibility);
-            var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(solverParameters);
+        var result = flexibilityVariator.ExecuteWithVariableFlexibility(new SolverSchedulingStrategy(monthScheduleParameters));
 
-            var rules = RulesetFactory.CreateRuleset(monthScheduleParameters, flexibility, recorder).ToList();
-            rules.ForEach(r => r.Apply(engine));
-
-            var result = engine.Solve();
-
-            if (result != null)
-            {
-                return new SuccessfulSchedulingResult(result, flexibility, recorder.GetParameters);
-            }
-        }
-
-        return new SolutionNotFound(recorder.GetParameters);
+        return result.Result;
     }
 
-    private static ISolverParameters GetSolverParameters(MonthScheduleParameters monthScheduleParameters) => monthScheduleParameters;
+    private class SolverSchedulingStrategy : IVariableFlexibilityStrategy<SchedulingResult>
+    {
+        private readonly MonthScheduleParameters _parameters;
+        private readonly SchedulingParametersRecorder _recorder = new SchedulingParametersRecorder();
+
+        public SolverSchedulingStrategy(MonthScheduleParameters parameters)
+        {
+            _parameters = parameters;
+        }
+
+        public bool PerformWithFlexibilityValue(ScheduleFlexibility flexibility, out SchedulingResult result)
+        {
+            _recorder.Reset();
+            var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(_parameters);
+
+            var rules = RulesetFactory.CreateRuleset(_parameters, flexibility, _recorder).ToList();
+            rules.ForEach(r => r.Apply(engine));
+
+            var scheduleResult = engine.Solve();
+            
+            result = scheduleResult is not null
+                ? new SuccessfulSchedulingResult(scheduleResult, flexibility, _recorder.GetParameters)
+                : new SolutionNotFound(_recorder.GetParameters);
+
+            return scheduleResult is not null;
+        }
+    }
 }
+
