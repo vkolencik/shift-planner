@@ -34,7 +34,7 @@ public class MonthlyShiftCountRule : IRule
             .SelectMany(d => _parameters.Workplaces.Select(w => new ShiftAssignment(employeeMonth.Employee, d, w)))
             .ToList();
 
-        engine.AddSumConstraint(employeeShiftsInMonth, Constraint.Gte, employeeStandard.Minimum);
+        engine.AddSumConstraint(employeeShiftsInMonth, Constraint.Gte, employeeStandard.Minimum - 1);
         engine.AddSumConstraint(employeeShiftsInMonth, Constraint.Lte, employeeStandard.Maximum);
         recorder.RecordEmployeeStandard(employeeMonth.Employee, employeeStandard);
     }
