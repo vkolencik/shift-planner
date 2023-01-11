@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const rawShifts = JSON.parse(fs.readFileSync('shifts.json'))
+const rawShifts = JSON.parse(fs.readFileSync('shifts2.json'))
 
 const workplaces = [
   'A1',
@@ -11,7 +11,7 @@ const workplaces = [
   'URG'
 ]
 
-const users = JSON.parse(fs.readFileSync('users.json')).Result
+const users = JSON.parse(fs.readFileSync('./users.json'))
 
 let shiftUsers = []
 for (const day of rawShifts) {
@@ -20,7 +20,7 @@ for (const day of rawShifts) {
 
 shiftUsers = [...new Set(shiftUsers)]
 
-const userNames = users.map(u => u.UserName)
+const userNames = users.map(u => u.userName)
 const notFoundUsers = shiftUsers.filter(name => userNames.indexOf(name) < 0)
 console.log(notFoundUsers)
 
@@ -31,7 +31,7 @@ for (const day of rawShifts) {
     shifts.push({
       Day: day.date,
       Workplace: workplaces[i],
-      UserId: users.find(u => u.UserName === day.shifts[i].name).UserId
+      UserId: users.find(u => u.userName === day.shifts[i].name).userId
     })
   }
 }

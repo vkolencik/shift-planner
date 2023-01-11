@@ -14,6 +14,7 @@ public class S3ScheduleRepositoryShould
 {
     private readonly Mock<IAmazonS3> _s3ClientMock;
     private readonly Mock<IUserService> _userServiceMock;
+    private readonly Mock<IEmployeeInfoService> _employeeInfoServiceMock;
 
     public S3ScheduleRepositoryShould()
     {
@@ -101,6 +102,7 @@ public class S3ScheduleRepositoryShould
         return new S3ScheduleRepository(
             _s3ClientMock.Object,
             _userServiceMock.Object,
-            Options.Create(new StorageOptions {StoragePrefix = "_test123-"}));
+            Options.Create(new StorageOptions {StoragePrefix = "_test123-"}),
+            _employeeInfoServiceMock.Object);
     }
 }

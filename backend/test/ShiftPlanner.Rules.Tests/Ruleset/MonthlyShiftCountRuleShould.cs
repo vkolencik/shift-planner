@@ -106,8 +106,8 @@ public class MonthlyShiftCountRuleShould
             capturedShiftsFullMonthLte.Select(_ => _.ToHashSet()));
     }
     
-        [Theory]
-    [MemberData(nameof(GetAllWorkloads))]
+    [Theory]
+    [MemberData(nameof(GetWorkloads))]
     public void TakeEmployeeMaxStandardIntoAccount(Workload workload)
     {
         var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Workplace1, 100)}), workload);
@@ -145,7 +145,7 @@ public class MonthlyShiftCountRuleShould
     }
 
     [Theory]
-    [MemberData(nameof(GetAllWorkloads))]
+    [MemberData(nameof(GetWorkloads))]
     public void TakeEmployeeMaxStandardIntoAccountIncludingLeave(Workload workload)
     {
         var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Workplace1, 100)}), workload);
@@ -185,13 +185,11 @@ public class MonthlyShiftCountRuleShould
         // Assert.Equal(Math.Floor((double) workload.MaximumShiftsPerMonth / 2), gteBound);
     }
 
-    public static IEnumerable<object[]> GetAllWorkloads() => new[]
+    public static IEnumerable<object[]> GetWorkloads() => new[]
     {
-        Workload.Workload04,
-        Workload.Workload05,
-        Workload.Workload06,
-        Workload.Workload07,
-        Workload.Workload08,
-        Workload.Full
+        new Workload(0, 1),
+        new Workload(4, 5),
+        new Workload(7, 8),
+        new Workload(8, 8)
     }.Select(_ => new object[] {_});
 }

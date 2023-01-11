@@ -174,9 +174,9 @@ public class EngineShould
             Enumerable.Range(1, 5).Select(d => new Day(2022, 2, d)).ToArray(),
             new Employee[]
             {
-                new Employee("Hynek", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(workplace1, 100)})),
-                new Employee("Vilem", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(workplace1, 100)})),
-                new Employee("Jarmila", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(workplace1, 100)})),
+                new Employee("Hynek", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(workplace1, 100)}), new Workload(5, 7)),
+                new Employee("Vilem", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(workplace1, 100)}), new Workload(5, 7)),
+                new Employee("Jarmila", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(workplace1, 100)}), new Workload(5, 7)),
             },
             workplaces);
     }
