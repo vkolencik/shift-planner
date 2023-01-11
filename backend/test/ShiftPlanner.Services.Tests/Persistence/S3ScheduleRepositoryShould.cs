@@ -8,7 +8,7 @@ using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Persistence;
 using ShiftPlanner.Services.Services;
 
-namespace ShiftPlanner.Api.Tests.Persistence;
+namespace ShiftPlanner.Services.Tests.Persistence;
 
 public class S3ScheduleRepositoryShould
 {
