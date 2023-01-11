@@ -24,6 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\ShiftPlanner.Engine\ShiftPlanner.Engine.csproj" />
       <ProjectReference Include="..\..\src\ShiftPlanner.Services\ShiftPlanner.Services.csproj" />
     </ItemGroup>
 

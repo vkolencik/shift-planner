@@ -16,8 +16,9 @@ public class S3ScheduleRepositoryShould
     private readonly Mock<IUserService> _userServiceMock;
     private readonly Mock<IEmployeeInfoService> _employeeInfoServiceMock;
 
-    public S3ScheduleRepositoryShould()
+    public S3ScheduleRepositoryShould(Mock<IEmployeeInfoService> employeeInfoServiceMock)
     {
+        _employeeInfoServiceMock = employeeInfoServiceMock;
         _s3ClientMock = new Mock<IAmazonS3>(MockBehavior.Strict);
         _userServiceMock = new Mock<IUserService>();
     }
