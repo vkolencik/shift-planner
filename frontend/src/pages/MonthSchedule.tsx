@@ -12,15 +12,15 @@ import {
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Alert, Tab, Table, Tabs } from 'react-bootstrap'
 import { sortArrayBy } from '../sort-array-by'
-import { Link, useNavigate } from 'react-router-dom'
-import { faCheck, faEdit } from '@fortawesome/free-solid-svg-icons'
+import { Link } from 'react-router-dom'
+import { faEdit } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { workplaces } from '../domain'
 import { Permission, usePermissions } from '../auth/auth'
 
 export function MonthSchedule (): JSX.Element {
   const [schedule, setSchedule] = useState<Schedule | null | undefined>(undefined)
-  const [month, setMonth] = useState<Month>(addMonths(getCurrentMonth(), -1))
+  const [month, setMonth] = useState<Month>({year: 2023, month: 2})
   const api = useApi()
   const permissions = usePermissions()
 
