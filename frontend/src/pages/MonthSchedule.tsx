@@ -59,13 +59,13 @@ export function MonthSchedule (): JSX.Element {
       <Button variant="outline-secondary" onClick={handleNextMonth}><FontAwesomeIcon icon={faArrowRight}/></Button>
     </ButtonGroup>
 
-    {schedule === undefined && <LoadingSpinner/>}
-    {schedule === null && <Alert variant="warning">Pro tento měsíc zatím nejsou vygenerované služby</Alert>}
-    {schedule && <MonthScheduleInner month={month} schedule={schedule}/>}
+    {schedule === undefined
+      ? <LoadingSpinner/>
+      : <MonthScheduleInner month={month} schedule={schedule}/>}
   </Container>)
 }
 
-function MonthScheduleInner ({ month, schedule}: { month: Month, schedule: Schedule }): JSX.Element {
+function MonthScheduleInner ({ month, schedule }: { month: Month, schedule: Schedule | null }): JSX.Element {
   const permissions = usePermissions()
 
   return <>
@@ -75,6 +75,8 @@ function MonthScheduleInner ({ month, schedule}: { month: Month, schedule: Sched
       <div className="float-end"><Link to={`/sluzby/${month.year}/${month.month}/editace`}><FontAwesomeIcon
         icon={faEdit}/>Upravit</Link></div>
     }
+
+    {schedule === null && <Alert variant="warning">Pro tento měsíc zatím nejsou vygenerované služby</Alert>}
 
     {schedule !== null &&
       <Tabs
