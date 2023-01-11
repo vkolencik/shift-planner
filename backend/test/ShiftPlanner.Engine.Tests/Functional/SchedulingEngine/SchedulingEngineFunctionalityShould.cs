@@ -12,7 +12,7 @@ namespace ShiftPlanner.Engine.Tests.Functional.SchedulingEngine
         public void ComputeBasicSchedule()
         {
             var aro = new Workplace("ARO");
-            var vojta = new Employee("Vojta", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(aro, 100)}));
+            var vojta = new Employee("Vojta", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(aro, 100)}), new Workload(5, 7));
 
             var inputParams = new SolverParameters(
                 new ScheduledMonth(2022, 2).Days,

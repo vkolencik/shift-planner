@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Options;
@@ -12,29 +13,47 @@ public class S3ScheduleRepository : IScheduleRepository
 {
     private readonly IAmazonS3 _s3Client;
     private readonly IUserService _userService;
+    private readonly IEmployeeInfoService _employeeInfoService;
     private readonly StorageOptions _options;
 
-    public S3ScheduleRepository(IAmazonS3 s3Client, IUserService userService, IOptions<StorageOptions> options)
+    public S3ScheduleRepository(IAmazonS3 s3Client, IUserService userService, IOptions<StorageOptions> options,
+        IEmployeeInfoService employeeInfoService)
     {
         _s3Client = s3Client;
         _userService = userService;
+        _employeeInfoService = employeeInfoService;
         _options = options.Value;
     }
 
     public async Task StoreComputedSchedule(ScheduledMonth month, SuccessfulSchedulingResult result)
     {
-        throw new NotImplementedException();
-        // Create a GetObject request
+        // TODO: implement this properly
+
+        var employeeInfos = await _employeeInfoService.GetEmployees(Workplace.Workplaces);
+        var users = await _userService.GetAllUsers();
+        
+        var storedSchedule = new StoredSchedule(result.PlannedSchedule.Shifts.Select(s =>
+            new StoredScheduledShift(
+                s.Shift.Day.Date.ToString("yyyy-MM-dd"),
+                s.Shift.Workplace.Name,
+                users.Single(u => u.Email == employeeInfos.Single(ei => ei.Name == s.Employee.Name).Email).UserId
+                )).ToArray());
+        
+        var byteArray = Encoding.ASCII.GetBytes(JsonSerializer.Serialize(storedSchedule));
+        var seekableStream = new MemoryStream(byteArray);
+        seekableStream.Position = 0;
+        
         var request = new PutObjectRequest
         {
             BucketName = GetBucketName(),
             Key = GetFilePath(month),
+            InputStream = seekableStream
         };
 
         await _s3Client.PutObjectAsync(request);
     }
 
-    private static string GetFilePath(ScheduledMonth month) => $"{GetMonthPrefix(month)}{new DateTime().Ticks}.json";
+    private static string GetFilePath(ScheduledMonth month) => $"{GetMonthPrefix(month)}{DateTime.Now.Ticks}.json";
 
     private static string GetMonthPrefix(ScheduledMonth month) => $"{month.Year}/{month.Month:D2}/";
 

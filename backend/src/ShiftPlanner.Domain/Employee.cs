@@ -6,14 +6,6 @@ public record Employee(
     Capabilities Capabilities,
     Workload Workload)
 {
-    public Employee(
-        string name,
-        CompetenceLevel competenceLevel,
-        Capabilities capabilities)
-        : this(name, competenceLevel, capabilities, Workload.Full)
-    {
-    }
-
     public virtual bool Equals(Employee? other)
     {
         if (ReferenceEquals(null, other)) return false;
