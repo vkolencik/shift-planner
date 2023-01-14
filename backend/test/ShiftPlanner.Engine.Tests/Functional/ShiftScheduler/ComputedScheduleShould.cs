@@ -323,7 +323,7 @@ public class ComputedScheduleShould
     [Fact]
     public void SpreadAssignedShiftsEvenlyAcrossMonthTakingLeavesIntoAccount()
     {
-        var scheduler = new Engine.ShiftScheduler();
+        var scheduler = new Engine.ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)));
 
         var week1Start = 1;
         var week2Start = 8;
@@ -483,7 +483,7 @@ public class ComputedScheduleShould
 
     private PlannedSchedule ComputeSchedule(MonthScheduleParameters parameters)
     {
-        var scheduler = new Engine.ShiftScheduler();
+        var scheduler = new Engine.ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)));
 
         var result = scheduler.ComputeSchedule(parameters);
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);

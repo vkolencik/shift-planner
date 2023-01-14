@@ -1,3 +1,5 @@
-﻿namespace ShiftPlanner.Services.Services;
+﻿using ShiftPlanner.Services.Contracts;
 
-public record ScheduleValidationResult;
+namespace ShiftPlanner.Services.Services;
+
+public record ScheduleValidationResult(IReadOnlyCollection<ScheduleValidationError> Errors);

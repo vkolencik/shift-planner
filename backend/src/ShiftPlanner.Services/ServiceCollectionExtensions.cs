@@ -4,6 +4,8 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.S3;
 using Amazon.SecretsManager;
 using Microsoft.Extensions.DependencyInjection;
+using ShiftPlanner.Domain;
+using ShiftPlanner.Engine;
 using ShiftPlanner.Services.Infra;
 using ShiftPlanner.Services.Persistence;
 using ShiftPlanner.Services.Services;
@@ -30,6 +32,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IUserService, Auth0UserService>();
         services.AddTransient<IStoredScheduleService, StoredScheduleService>();
         services.AddTransient<IRequirementsService, RequirementsService>();
+        services.AddTransient<IFlexibilityVariator>(_ => new SequenceFlexibilityVariator(new ScheduleFlexibility(50)));
         services.AddTransient<IScheduleValidator, ScheduleValidator>();
 
         services.AddTransient<IEmployeeInfoService, GoogleSheetsEmployeeInfoService>();

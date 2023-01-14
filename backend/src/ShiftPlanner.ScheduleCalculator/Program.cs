@@ -21,7 +21,7 @@ static class Program
         var month = new ScheduledMonth(2023, 2);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
 
-        var scheduler = new ShiftScheduler();
+        var scheduler = new ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)));
 
         var result = scheduler.ComputeSchedule(schedulingParams);
 

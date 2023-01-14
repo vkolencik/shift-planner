@@ -5,11 +5,16 @@ namespace ShiftPlanner.Engine;
 
 public class ShiftScheduler
 {
+    private readonly IFlexibilityVariator _flexibilityVariator;
+
+    public ShiftScheduler(IFlexibilityVariator flexibilityVariator)
+    {
+        _flexibilityVariator = flexibilityVariator;
+    }
+
     public SchedulingResult ComputeSchedule(MonthScheduleParameters monthScheduleParameters)
     {
-        var flexibilityVariator = new SequenceFlexibilityVariator<SchedulingResult>(new ScheduleFlexibility(50));
-
-        var result = flexibilityVariator.ExecuteWithVariableFlexibility(new SolverSchedulingStrategy(monthScheduleParameters));
+        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new SolverSchedulingStrategy(monthScheduleParameters));
 
         return result.Result;
     }

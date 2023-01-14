@@ -1,6 +1,6 @@
 ﻿namespace ShiftPlanner.Engine;
 
-public interface IFlexibilityVariator<TResult>
+public interface IFlexibilityVariator
 {
-    VariableFlexibilityCalculationResult<TResult> ExecuteWithVariableFlexibility(IVariableFlexibilityStrategy<TResult> strategy);
+    VariableFlexibilityCalculationResult<TResult> ExecuteWithVariableFlexibility<TResult>(IVariableFlexibilityStrategy<TResult> strategy);
 }

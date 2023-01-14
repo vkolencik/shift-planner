@@ -9,7 +9,7 @@ public class SequenceFlexibilityVariatorShould
     public void ReturnFirstResult_WhenItsSuccessful()
     {
         var strategy = new TestStrategy(ScheduleFlexibility.Strict, 13, 7);
-        var variator = new SequenceFlexibilityVariator<int>(new ScheduleFlexibility(20));
+        var variator = new SequenceFlexibilityVariator(new ScheduleFlexibility(20));
 
         var result = variator.ExecuteWithVariableFlexibility(strategy);
 
@@ -23,7 +23,7 @@ public class SequenceFlexibilityVariatorShould
     {
         var successfulFlexibilityThreshold = new ScheduleFlexibility(5);
         var strategy = new TestStrategy(successfulFlexibilityThreshold, 17, 7);
-        var variator = new SequenceFlexibilityVariator<int>(new ScheduleFlexibility(20));
+        var variator = new SequenceFlexibilityVariator(new ScheduleFlexibility(20));
 
         var result = variator.ExecuteWithVariableFlexibility(strategy);
 
@@ -37,7 +37,7 @@ public class SequenceFlexibilityVariatorShould
     {
         var strategy = new TestStrategy(new ScheduleFlexibility(500), 17, 7);
         var maxFlexibility = new ScheduleFlexibility(20u);
-        var variator = new SequenceFlexibilityVariator<int>(maxFlexibility);
+        var variator = new SequenceFlexibilityVariator(maxFlexibility);
 
         var result = variator.ExecuteWithVariableFlexibility(strategy);
 

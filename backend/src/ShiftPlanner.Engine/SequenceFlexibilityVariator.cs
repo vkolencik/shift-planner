@@ -2,7 +2,7 @@
 
 namespace ShiftPlanner.Engine;
 
-public class SequenceFlexibilityVariator<TResult> : IFlexibilityVariator<TResult>
+public class SequenceFlexibilityVariator : IFlexibilityVariator
 {
     private readonly ScheduleFlexibility _maxFlexibility;
 
@@ -11,7 +11,7 @@ public class SequenceFlexibilityVariator<TResult> : IFlexibilityVariator<TResult
         _maxFlexibility = maxFlexibility;
     }
 
-    public VariableFlexibilityCalculationResult<TResult> ExecuteWithVariableFlexibility(IVariableFlexibilityStrategy<TResult> strategy)
+    public VariableFlexibilityCalculationResult<TResult> ExecuteWithVariableFlexibility<TResult>(IVariableFlexibilityStrategy<TResult> strategy)
     {
         TResult? result = default(TResult);
 

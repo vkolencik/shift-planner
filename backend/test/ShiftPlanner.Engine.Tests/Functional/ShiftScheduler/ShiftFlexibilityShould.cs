@@ -11,7 +11,7 @@ public class ShiftFlexibilityShould
     [Fact]
     public void MakeSchedulerUltimatelyFindASolution()
     {
-        var scheduler = new Engine.ShiftScheduler();
+        var scheduler = new Engine.ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)));
 
         var workplaceA = new Workplace("A");
         var workplaceB = new Workplace("B");
