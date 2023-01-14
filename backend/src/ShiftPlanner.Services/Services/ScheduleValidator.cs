@@ -17,7 +17,10 @@ public class ScheduleValidator : IScheduleValidator
 
     public async Task<IReadOnlyCollection<ScheduleValidationError>> ValidateSchedule(Tenant tenant, ScheduledMonth month, Schedule schedule)
     {
-        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new ScheduleValidationStrategy());
+        var parameters = await _paramsAggregator.GetSchedulingParameters(tenant, month);
+        
+        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new ScheduleValidationStrategy(parameters));
+        
         if (result.IsSuccess)
         {
             return Array.Empty<ScheduleValidationError>();
@@ -28,9 +31,16 @@ public class ScheduleValidator : IScheduleValidator
 
     public class ScheduleValidationStrategy : IVariableFlexibilityStrategy<ScheduleValidationResult>
     {
+        public ScheduleValidationStrategy(MonthScheduleParameters parameters)
+        {
+            Parameters = parameters;
+        }
+
         public bool PerformWithFlexibilityValue(ScheduleFlexibility flexibility, out ScheduleValidationResult result)
         {
             throw new NotImplementedException();
         }
+
+        public MonthScheduleParameters Parameters { get; }
     }
 }

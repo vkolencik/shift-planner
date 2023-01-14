@@ -36,8 +36,8 @@ public class ScheduleValidatorShould
 
         Assert.Empty(errors);
         var strategy = Assert.Single(capturedStrategies);
-        Assert.IsType<ScheduleValidator.ScheduleValidationStrategy>(strategy);
-
+        var validationStrategy = Assert.IsType<ScheduleValidator.ScheduleValidationStrategy>(strategy);
+        Assert.Equal(parameters, validationStrategy.Parameters);
     }
 
     [Fact]
