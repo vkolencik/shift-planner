@@ -133,7 +133,9 @@ export const WeeklyOverview: React.FC = () => {
     let available = users.length
 
     for (const user of users) {
-      if (weeklyView[getDayUserKey(user.userId, day)] !== undefined){
+      const dailyStatus = weeklyView[getDayUserKey(user.userId, day)]
+      if (
+        dailyStatus !== undefined && (dailyStatus.status === 'day-after' || dailyStatus.status === 'unavailable')) {
         available--
       }
     }
@@ -143,13 +145,13 @@ export const WeeklyOverview: React.FC = () => {
 
   return <div className="container">
     <ButtonGroup>
-      <Button variant='outline-secondary' onClick={handlePreviousWeek}><FontAwesomeIcon icon={faArrowLeft}/></Button>
-      <Button variant='outline-secondary' onClick={handleCurrentWeek}>Aktuální týden</Button>
-      <Button variant='outline-secondary' onClick={handleNextWeek}><FontAwesomeIcon icon={faArrowRight}/></Button>
+      <Button variant="outline-secondary" onClick={handlePreviousWeek}><FontAwesomeIcon icon={faArrowLeft}/></Button>
+      <Button variant="outline-secondary" onClick={handleCurrentWeek}>Aktuální týden</Button>
+      <Button variant="outline-secondary" onClick={handleNextWeek}><FontAwesomeIcon icon={faArrowRight}/></Button>
     </ButtonGroup>
     {someShiftDataMissing && <Alert variant="warning">Pro toto období zatím nebyl vygenerován rozvrh služeb.</Alert>}
     <Table>
-      <thead className='thead-light table-primary'>
+      <thead className="thead-light table-primary">
       <tr>
         <th scope="col"></th>
         {weekDays.map(d => <th scope="col" className="text-center">{formatDate(d)}</th>)}
