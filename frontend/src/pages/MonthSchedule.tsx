@@ -16,6 +16,7 @@ import { faArrowLeft, faArrowRight, faEdit } from '@fortawesome/free-solid-svg-i
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { workplaces } from '../domain'
 import { Permission, usePermissions } from '../auth/auth'
+import { Printer } from 'react-bootstrap-icons'
 
 function getUserShiftEntries (schedule: Schedule): [string, number][] {
   const userShifts: { [name: string]: number } = {}
@@ -54,7 +55,7 @@ export function MonthSchedule (): JSX.Element {
   }
 
   return (<Container>
-    <ButtonGroup>
+    <ButtonGroup className="no-print">
       <Button variant="outline-secondary" onClick={handlePreviousMonth}><FontAwesomeIcon icon={faArrowLeft}/></Button>
       <Button variant="outline-secondary" onClick={handleNextMonth}><FontAwesomeIcon icon={faArrowRight}/></Button>
     </ButtonGroup>
@@ -72,7 +73,7 @@ function MonthScheduleInner ({ month, schedule }: { month: Month, schedule: Sche
     <h1>{getMonthLabel(month)}</h1>
 
     {permissions.includes(Permission.readRequirementsOfOthers) &&
-      <div className="float-end"><Link to={`/sluzby/${month.year}/${month.month}/editace`}><FontAwesomeIcon
+      <div className="float-end no-print"><Link to={`/sluzby/${month.year}/${month.month}/editace`}><FontAwesomeIcon
         icon={faEdit}/>Upravit</Link></div>
     }
 
@@ -85,6 +86,12 @@ function MonthScheduleInner ({ month, schedule }: { month: Month, schedule: Sche
         className="mb-3"
       >
         <Tab eventKey="schedule" title="Rozvrh" style={{ overflowY: 'scroll' }}>
+
+          <div className="float-end">
+            <button className="btn btn-primary no-print" onClick={window.print}>
+              <Printer/>&nbsp;Tisk
+            </button>
+          </div>
 
           <Table bordered hover className="table-fit table-sm table-bordered">
             <thead className="thead-light table-primary table-bordered">
