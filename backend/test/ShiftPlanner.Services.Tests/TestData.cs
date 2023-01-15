@@ -14,4 +14,7 @@ public static class TestData
     public static readonly Day Day = new Day(Month, 13);
     public static readonly Requirement Requirement = new Requirement(Tenant, "user-1", Day, "hard-no");
     public static readonly Workplace Workplace = new Workplace("workplace1");
+
+    public static MonthScheduleParameters MonthSchedulingParameters => new MonthScheduleParameters(
+        Month, Array.Empty<EmployeeMonth>(), Array.Empty<CompetenceGroup>(), Array.Empty<ShiftAssignment>(), Array.Empty<ShiftAssignment>(), Array.Empty<ISet<Workplace>>());
 }

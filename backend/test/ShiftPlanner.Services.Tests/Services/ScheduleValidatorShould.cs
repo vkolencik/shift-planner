@@ -1,6 +1,7 @@
 ﻿using Moq;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine;
+using ShiftPlanner.Rules;
 using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Services;
 
@@ -10,16 +11,15 @@ public class ScheduleValidatorShould
 {
     private readonly Mock<ISchedulingParametersAggregator> _paramsAggregatorMock = new Mock<ISchedulingParametersAggregator>();
     private readonly Mock<IFlexibilityVariator> _flexibilityVariatorMock = new Mock<IFlexibilityVariator>();
-    
+    private readonly Mock<IRulesetFactory> _rulesetFactoryMock = new Mock<IRulesetFactory>();
+
     [Fact]
     public async Task ValidateSchedule_GivenValidSchedule()
     {
         var tenant = TestData.Tenant;
         var schedule = new Schedule(Array.Empty<ScheduledShift>());
         var month = new ScheduledMonth(2000, 1);
-        var parameters = new MonthScheduleParameters(
-            month, Array.Empty<EmployeeMonth>(), Array.Empty<CompetenceGroup>(), Array.Empty<ShiftAssignment>(), Array.Empty<ShiftAssignment>(), Array.Empty<ISet<Workplace>>()
-        );
+        var parameters = TestData.MonthSchedulingParameters;
         
         _paramsAggregatorMock
             .Setup(_ => _.GetSchedulingParameters(tenant, month))
@@ -36,7 +36,7 @@ public class ScheduleValidatorShould
 
         Assert.Empty(errors);
         var strategy = Assert.Single(capturedStrategies);
-        var validationStrategy = Assert.IsType<ScheduleValidator.ScheduleValidationStrategy>(strategy);
+        var validationStrategy = Assert.IsType<ScheduleValidationStrategy>(strategy);
         Assert.Equal(parameters, validationStrategy.Parameters);
     }
 
@@ -62,6 +62,6 @@ public class ScheduleValidatorShould
 
     private ScheduleValidator CreateValidator()
     {
-        return new ScheduleValidator(_paramsAggregatorMock.Object, _flexibilityVariatorMock.Object);
+        return new ScheduleValidator(_paramsAggregatorMock.Object, _flexibilityVariatorMock.Object, _rulesetFactoryMock.Object);
     }
 }

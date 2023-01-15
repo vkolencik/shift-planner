@@ -6,15 +6,17 @@ namespace ShiftPlanner.Engine;
 public class ShiftScheduler
 {
     private readonly IFlexibilityVariator _flexibilityVariator;
+    private readonly IRulesetFactory _rulesetFactory;
 
-    public ShiftScheduler(IFlexibilityVariator flexibilityVariator)
+    public ShiftScheduler(IFlexibilityVariator flexibilityVariator, IRulesetFactory rulesetFactory)
     {
         _flexibilityVariator = flexibilityVariator;
+        _rulesetFactory = rulesetFactory;
     }
 
     public SchedulingResult ComputeSchedule(MonthScheduleParameters monthScheduleParameters)
     {
-        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new SolverSchedulingStrategy(monthScheduleParameters));
+        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new SolverSchedulingStrategy(monthScheduleParameters, _rulesetFactory));
 
         return result.Result;
     }
@@ -22,11 +24,13 @@ public class ShiftScheduler
     private class SolverSchedulingStrategy : IVariableFlexibilityStrategy<SchedulingResult>
     {
         private readonly MonthScheduleParameters _parameters;
+        private readonly IRulesetFactory _rulesetFactory;
         private readonly SchedulingParametersRecorder _recorder = new SchedulingParametersRecorder();
 
-        public SolverSchedulingStrategy(MonthScheduleParameters parameters)
+        public SolverSchedulingStrategy(MonthScheduleParameters parameters, IRulesetFactory rulesetFactory)
         {
             _parameters = parameters;
+            _rulesetFactory = rulesetFactory;
         }
 
         public bool PerformWithFlexibilityValue(ScheduleFlexibility flexibility, out SchedulingResult result)
@@ -34,7 +38,7 @@ public class ShiftScheduler
             _recorder.Reset();
             var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(_parameters);
 
-            var rules = RulesetFactory.CreateRuleset(_parameters, flexibility, _recorder).ToList();
+            var rules = _rulesetFactory.CreateRuleset(_parameters, flexibility, _recorder).ToList();
             rules.ForEach(r => r.Apply(engine));
 
             var scheduleResult = engine.Solve();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Engine;
+using ShiftPlanner.Rules;
 using ShiftPlanner.Services;
 using ShiftPlanner.Services.Persistence;
 using ShiftPlanner.Services.Services;
@@ -21,7 +22,7 @@ static class Program
         var month = new ScheduledMonth(2023, 2);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
 
-        var scheduler = new ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)));
+        var scheduler = new ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)), new RulesetFactory());
 
         var result = scheduler.ComputeSchedule(schedulingParams);
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ShiftPlanner.Domain;
+using ShiftPlanner.Rules;
 using Xunit;
 
 namespace ShiftPlanner.Engine.Tests.Functional.ShiftScheduler;
@@ -323,7 +324,7 @@ public class ComputedScheduleShould
     [Fact]
     public void SpreadAssignedShiftsEvenlyAcrossMonthTakingLeavesIntoAccount()
     {
-        var scheduler = new Engine.ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)));
+        var scheduler = new Engine.ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)), new RulesetFactory());
 
         var week1Start = 1;
         var week2Start = 8;
@@ -483,7 +484,7 @@ public class ComputedScheduleShould
 
     private PlannedSchedule ComputeSchedule(MonthScheduleParameters parameters)
     {
-        var scheduler = new Engine.ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)));
+        var scheduler = new Engine.ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)), new RulesetFactory());
 
         var result = scheduler.ComputeSchedule(parameters);
         var successResult = Assert.IsType<SuccessfulSchedulingResult>(result);

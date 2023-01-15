@@ -65,7 +65,7 @@ describe('schedule endpoint should', () => {
     expect(await validationResp.json()).toEqual(expect.objectContaining({ isValid: true }))
   })
 
-  it('validate invalid schedule', async () => {
+  it('return validation errors given invalid schedule', async () => {
     const scheduleResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01`, getHeaders(token))
 
     const validSchedule = await scheduleResp.json()

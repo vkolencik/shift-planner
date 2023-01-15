@@ -1,5 +1,6 @@
 ﻿using ShiftPlanner.Domain;
 using ShiftPlanner.Engine;
+using ShiftPlanner.Rules;
 using ShiftPlanner.Services.Contracts;
 
 namespace ShiftPlanner.Services.Services;
@@ -8,18 +9,20 @@ public class ScheduleValidator : IScheduleValidator
 {
     private readonly ISchedulingParametersAggregator _paramsAggregator;
     private readonly IFlexibilityVariator _flexibilityVariator;
+    private readonly IRulesetFactory _rulesetFactory;
 
-    public ScheduleValidator(ISchedulingParametersAggregator paramsAggregator, IFlexibilityVariator flexibilityVariator)
+    public ScheduleValidator(ISchedulingParametersAggregator paramsAggregator, IFlexibilityVariator flexibilityVariator, IRulesetFactory rulesetFactory)
     {
         _paramsAggregator = paramsAggregator;
         _flexibilityVariator = flexibilityVariator;
+        _rulesetFactory = rulesetFactory;
     }
 
     public async Task<IReadOnlyCollection<ScheduleValidationError>> ValidateSchedule(Tenant tenant, ScheduledMonth month, Schedule schedule)
     {
         var parameters = await _paramsAggregator.GetSchedulingParameters(tenant, month);
         
-        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new ScheduleValidationStrategy(parameters));
+        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new ScheduleValidationStrategy(parameters, _rulesetFactory));
         
         if (result.IsSuccess)
         {
@@ -27,20 +30,5 @@ public class ScheduleValidator : IScheduleValidator
         }
 
         return result.Result.Errors;
-    }
-
-    public class ScheduleValidationStrategy : IVariableFlexibilityStrategy<ScheduleValidationResult>
-    {
-        public ScheduleValidationStrategy(MonthScheduleParameters parameters)
-        {
-            Parameters = parameters;
-        }
-
-        public bool PerformWithFlexibilityValue(ScheduleFlexibility flexibility, out ScheduleValidationResult result)
-        {
-            throw new NotImplementedException();
-        }
-
-        public MonthScheduleParameters Parameters { get; }
     }
 }
