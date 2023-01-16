@@ -22,7 +22,7 @@ public class ScheduleValidator : IScheduleValidator
     {
         var parameters = await _paramsAggregator.GetSchedulingParameters(tenant, month);
         
-        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new ScheduleValidationStrategy(parameters, _rulesetFactory, new ReceiverFactory()));
+        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new ScheduleValidationStrategy(schedule, parameters, _rulesetFactory, new ReceiverFactory()));
         
         if (result.IsSuccess)
         {
@@ -34,6 +34,36 @@ public class ScheduleValidator : IScheduleValidator
 
     private class ReceiverFactory : IValidatingReceiverFactory
     {
-        public IScheduleValidatingConstraintReceiver GetReceiver() => null!;
+        public IScheduleValidatingConstraintReceiver GetReceiver(Schedule schedule) => new ScheduleValidatingConstraintReceiver(schedule);
+    }
+}
+
+internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstraintReceiver
+{
+    private readonly Schedule _schedule;
+
+    public ScheduleValidatingConstraintReceiver(Schedule schedule)
+    {
+        _schedule = schedule;
+    }
+
+    public void AddSumConstraint(IReadOnlyCollection<ShiftAssignment> shifts, Constraint constraint, uint bound)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddVariableConstraint(ShiftAssignment shift, Constraint constraint, int value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddSumRelationConstraint(IReadOnlyCollection<ShiftAssignment> shifts1, Constraint constraint, IReadOnlyCollection<ShiftAssignment> shifts2)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IReadOnlyCollection<ScheduleValidationError> GetErrors()
+    {
+        throw new NotImplementedException();
     }
 }
