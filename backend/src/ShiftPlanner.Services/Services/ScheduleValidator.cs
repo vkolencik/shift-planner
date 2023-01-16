@@ -22,7 +22,7 @@ public class ScheduleValidator : IScheduleValidator
     {
         var parameters = await _paramsAggregator.GetSchedulingParameters(tenant, month);
         
-        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new ScheduleValidationStrategy(parameters, _rulesetFactory));
+        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new ScheduleValidationStrategy(parameters, _rulesetFactory, new ReceiverFactory()));
         
         if (result.IsSuccess)
         {
@@ -30,5 +30,10 @@ public class ScheduleValidator : IScheduleValidator
         }
 
         return result.Result.Errors;
+    }
+
+    private class ReceiverFactory : IValidatingReceiverFactory
+    {
+        public IScheduleValidatingConstraintReceiver GetReceiver() => null!;
     }
 }

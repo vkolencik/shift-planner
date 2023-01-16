@@ -5,13 +5,15 @@ using ShiftPlanner.Services.Contracts;
 
 namespace ShiftPlanner.Services.Services;
 
-public class ScheduleValidationStrategy : IVariableFlexibilityStrategy<ScheduleValidationResult>
+internal class ScheduleValidationStrategy : IVariableFlexibilityStrategy<ScheduleValidationResult>
 {
     private readonly IRulesetFactory _rulesetFactory;
+    private readonly IValidatingReceiverFactory _receiverFactory;
 
-    public ScheduleValidationStrategy(MonthScheduleParameters parameters, IRulesetFactory rulesetFactory)
+    public ScheduleValidationStrategy(MonthScheduleParameters parameters, IRulesetFactory rulesetFactory, IValidatingReceiverFactory receiverFactory)
     {
         _rulesetFactory = rulesetFactory;
+        _receiverFactory = receiverFactory;
         Parameters = parameters;
     }
 
@@ -22,7 +24,9 @@ public class ScheduleValidationStrategy : IVariableFlexibilityStrategy<ScheduleV
 
         foreach (var rule in rules)
         {
-            rule.Apply(null);
+            var receiver = _receiverFactory.GetReceiver();
+            rule.Apply(receiver);
+            errors.AddRange(receiver.GetErrors());
         }
 
         result = new ScheduleValidationResult(errors);
@@ -30,4 +34,14 @@ public class ScheduleValidationStrategy : IVariableFlexibilityStrategy<ScheduleV
     }
 
     public MonthScheduleParameters Parameters { get; }
+}
+
+public interface IScheduleValidatingConstraintReceiver : IScheduleConstraintReceiver
+{
+    IReadOnlyCollection<ScheduleValidationError> GetErrors();
+}
+
+public interface IValidatingReceiverFactory
+{
+    IScheduleValidatingConstraintReceiver GetReceiver();
 }
