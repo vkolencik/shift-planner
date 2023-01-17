@@ -7,6 +7,7 @@ namespace ShiftPlanner.Services.Services;
 internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstraintReceiver
 {
     private readonly Schedule _schedule;
+    private readonly IReadOnlyCollection<ScheduleValidationError> _errors = new List<ScheduleValidationError>();
 
     public ScheduleValidatingConstraintReceiver(Schedule schedule)
     {
@@ -15,7 +16,7 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
 
     public void AddSumConstraint(IReadOnlyCollection<ShiftAssignment> shifts, Constraint constraint, uint bound)
     {
-        throw new NotImplementedException();
+        
     }
 
     public void AddVariableConstraint(ShiftAssignment shift, Constraint constraint, int value)
@@ -28,8 +29,5 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
         throw new NotImplementedException();
     }
 
-    public IReadOnlyCollection<ScheduleValidationError> GetErrors()
-    {
-        throw new NotImplementedException();
-    }
+    public IReadOnlyCollection<ScheduleValidationError> GetErrors() => _errors;
 }
