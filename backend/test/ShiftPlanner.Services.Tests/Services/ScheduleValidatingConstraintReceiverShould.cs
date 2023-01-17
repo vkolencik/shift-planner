@@ -42,4 +42,19 @@ public class ScheduleValidatingConstraintReceiverShould
         
         Assert.Empty(receiver.GetErrors());
     }
+
+    [Fact]
+    public void AddError_GivenInvalidSumConstraint()
+    {
+        var receiver = new ScheduleValidatingConstraintReceiver(Schedule);
+        receiver.AddSumConstraint(new []
+        {
+            new ShiftAssignment(Employee1, Day1, Workplace1), 
+            new ShiftAssignment(Employee2, Day1, Workplace2), 
+            new ShiftAssignment(Employee2, Day2, Workplace1), 
+        }, Constraint.Eq, 3);
+        
+        var error = Assert.Single(receiver.GetErrors());
+        Assert.Equal(new ScheduleValidationError(new [] {new Shift(Day1, Workplace1)}, null, ScheduleErrorType.Unknown), error);
+    }
 }
