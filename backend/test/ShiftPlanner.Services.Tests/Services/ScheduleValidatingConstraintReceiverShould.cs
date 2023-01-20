@@ -29,8 +29,13 @@ public class ScheduleValidatingConstraintReceiverShould
     private static readonly Capabilities Capabilities = new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) });
 
 
-    [Fact]
-    public void NotAddErrors_GivenValidSumConstraint()
+    [Theory]
+    [InlineData(Constraint.Eq, 2)]
+    [InlineData(Constraint.Gte, 1)]
+    [InlineData(Constraint.Gte, 2)]
+    [InlineData(Constraint.Lte, 2)]
+    [InlineData(Constraint.Lte, 3)]
+    public void NotAddErrors_GivenValidSumConstraint(Constraint constraint, uint bound)
     {
         var receiver = new ScheduleValidatingConstraintReceiver(Schedule);
         receiver.AddSumConstraint(new []
@@ -38,13 +43,16 @@ public class ScheduleValidatingConstraintReceiverShould
             new ShiftAssignment(Employee1, Day1, Workplace1), 
             new ShiftAssignment(Employee2, Day1, Workplace2), 
             new ShiftAssignment(Employee2, Day2, Workplace1), 
-        }, Constraint.Eq, 2);
+        }, constraint, bound);
         
         Assert.Empty(receiver.GetErrors());
     }
 
-    [Fact]
-    public void AddError_GivenInvalidSumConstraint()
+    [Theory]
+    [InlineData(Constraint.Eq, 3)]
+    [InlineData(Constraint.Gte, 3)]
+    [InlineData(Constraint.Lte, 1)]
+    public void AddError_GivenInvalidSumConstraint(Constraint constraint, uint bound)
     {
         var receiver = new ScheduleValidatingConstraintReceiver(Schedule);
         
@@ -53,7 +61,7 @@ public class ScheduleValidatingConstraintReceiverShould
             new ShiftAssignment(Employee1, Day1, Workplace1), 
             new ShiftAssignment(Employee2, Day1, Workplace2), 
             new ShiftAssignment(Employee2, Day2, Workplace1), 
-        }, Constraint.Eq, 3);
+        }, constraint, bound);
         
         var error = Assert.Single(receiver.GetErrors());
         

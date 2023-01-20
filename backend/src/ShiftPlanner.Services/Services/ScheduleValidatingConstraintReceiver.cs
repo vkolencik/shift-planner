@@ -25,13 +25,20 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
                         && ss.User.UserName == rs.Employee.Name))
             .ToArray();
 
-        if (shiftsInSchedule.Count() == bound)
+        var sumValue = shiftsInSchedule.Length;
+
+        var isSatisfied =  constraint switch
         {
-            return;
+            Constraint.Eq => sumValue == bound,
+            Constraint.Gte => sumValue >= bound,
+            Constraint.Lte => sumValue <= bound
+        };
+
+
+        if (!isSatisfied)
+        {
+            _errors.Add(new ScheduleValidationError(shiftsInSchedule.Select(s => s.Shift).ToArray(), null, ScheduleErrorType.Unknown));
         }
-        
-        _errors.Add(new ScheduleValidationError(shiftsInSchedule.Select(s => s.Shift).ToArray(), null, ScheduleErrorType.Unknown));
-        
     }
 
     public void AddVariableConstraint(ShiftAssignment shift, Constraint constraint, int value)
