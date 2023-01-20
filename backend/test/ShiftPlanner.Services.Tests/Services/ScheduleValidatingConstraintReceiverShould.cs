@@ -23,7 +23,7 @@ public class ScheduleValidatingConstraintReceiverShould
         new ScheduledShift(Day1, Workplace1, User1), 
         new ScheduledShift(Day1, Workplace2, User2), 
         new ScheduledShift(Day2, Workplace1, User1), 
-        new ScheduledShift(Day1, Workplace2, User3), 
+        new ScheduledShift(Day2, Workplace2, User3), 
     });
 
     private static readonly Capabilities Capabilities = new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) });
@@ -47,6 +47,7 @@ public class ScheduleValidatingConstraintReceiverShould
     public void AddError_GivenInvalidSumConstraint()
     {
         var receiver = new ScheduleValidatingConstraintReceiver(Schedule);
+        
         receiver.AddSumConstraint(new []
         {
             new ShiftAssignment(Employee1, Day1, Workplace1), 
@@ -55,6 +56,13 @@ public class ScheduleValidatingConstraintReceiverShould
         }, Constraint.Eq, 3);
         
         var error = Assert.Single(receiver.GetErrors());
-        Assert.Equal(new ScheduleValidationError(new [] {new Shift(Day1, Workplace1)}, null, ScheduleErrorType.Unknown), error);
+        
+        Assert.Equal(new []
+        {
+            new Shift(Day1, Workplace1),
+            new Shift(Day1, Workplace2),
+        }, error.Shifts);
+        Assert.Null(error.User);
+        Assert.Equal(ScheduleErrorType.Unknown, error.ErrorType);
     }
 }
