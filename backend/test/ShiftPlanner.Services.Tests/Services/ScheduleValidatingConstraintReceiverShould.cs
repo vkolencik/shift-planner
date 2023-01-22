@@ -118,4 +118,43 @@ public abstract class ScheduleValidatingConstraintReceiverShould
             Assert.Equal(errorType, error.ErrorType);
         }
     }
+    
+    public class SumRelationshipConstraint : ScheduleValidatingConstraintReceiverShould
+    {
+        [Fact]
+        public void NotAddErrors_GivenValidSumConstraint()
+        {
+            var receiver = new ScheduleValidatingConstraintReceiver(Schedule, ScheduleErrorType.Unknown);
+            
+            receiver.AddSumRelationConstraint(
+                new[] {new ShiftAssignment(Employee1, Day1, Workplace1)},
+                Constraint.Eq,
+                new[] {new ShiftAssignment(Employee1, Day2, Workplace1)});
+
+            Assert.Empty(receiver.GetErrors());
+        }
+
+        [Fact]
+        public void AddError_GivenInvalidSumConstraint()
+        {
+            var errorType = ScheduleErrorType.EveryDayIsCovered;
+            var receiver = new ScheduleValidatingConstraintReceiver(Schedule, errorType);
+
+            receiver.AddSumRelationConstraint(
+                new[] {new ShiftAssignment(Employee1, Day1, Workplace1)},
+                Constraint.Eq,
+                new[] {new ShiftAssignment(Employee1, Day2, Workplace2)});
+
+            var error = Assert.Single(receiver.GetErrors());
+
+            Assert.Equal(
+                new[]
+                {
+                    new Shift(Day1, Workplace1),
+                    new Shift(Day2, Workplace2),
+                }, error.Shifts);
+            Assert.Null(error.User);
+            Assert.Equal(errorType, error.ErrorType);
+        }
+    }
 }
