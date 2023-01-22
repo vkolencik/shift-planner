@@ -267,7 +267,7 @@ export function MonthScheduleEdit (): JSX.Element {
                     Zvalidovat
                   </Button>
 
-                  {isPassable &&
+                  {false && isPassable &&
                     <Button
                       variant="success"
                       className="ms-3"
