@@ -33,7 +33,9 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
 
         if (!isSatisfied)
         {
-            _errors.Add(new ScheduleValidationError(shiftsInSchedule.Select(s => s.Shift).ToArray(), GetUserName(shifts), _scheduleErrorType));
+            var userName = GetUserName(shifts);
+            var errorShifts = constraint == Constraint.Gte && userName is not null || shiftsInSchedule.Any() ? shiftsInSchedule : shifts;
+            _errors.Add(new ScheduleValidationError(errorShifts.Select(s => s.Shift).ToArray(), GetUserName(shifts), _scheduleErrorType));
         }
     }
 
@@ -59,7 +61,7 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
 
         if (!isSatisfied)
         {
-            _errors.Add(new ScheduleValidationError(new[] {shift.Shift}, null, _scheduleErrorType));
+            _errors.Add(new ScheduleValidationError(new[] {shift.Shift}, shift.Employee.Name, _scheduleErrorType));
         }
     }
 
@@ -87,7 +89,10 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
         
         if (!isSatisfied)
         {
-            _errors.Add(new ScheduleValidationError(shifts1.Concat(shifts2).Select(s => s.Shift).ToHashSet().ToArray(), null, _scheduleErrorType));
+            _errors.Add(new ScheduleValidationError(
+                shifts1.Concat(shifts2).Select(s => s.Shift).ToHashSet().ToArray(),
+                GetUserName(shifts1.Concat(shifts2).ToArray()),
+                _scheduleErrorType));
         }
     }
 

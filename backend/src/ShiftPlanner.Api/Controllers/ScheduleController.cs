@@ -69,6 +69,29 @@ public class ScheduleController : ControllerBase
         return Ok(outputModel);
     }
 
+    [HttpPut("{year}/{month}/:save")]
+    public async Task<ActionResult> SaveSchedule(
+        [FromRoute] string tenant,
+        [FromRoute] int year,
+        [FromRoute] int month,
+        [FromBody] ScheduleInputModel scheduleInputModel)
+    {
+        var users = await _userService.GetAllUsers();
+        
+        var schedule = new Schedule(
+            scheduleInputModel.Shifts
+                .Select(
+                    s => new ScheduledShift(
+                        new Day(DateOnly.ParseExact(s.Day, "yyyy-MM-dd")),
+                        new Workplace(s.Workplace),
+                        users.Single(u => u.UserId == s.UserId)))
+                .ToArray());
+        
+        // _storedScheduleService.
+
+        return Ok();
+    }
+
     private ShiftAssignmentOutputModel ConvertToOutput(ScheduledShift shift) =>
         new ShiftAssignmentOutputModel(shift.Day.Date.ToString("yyyy-MM-dd"), shift.Workplace.Name, new UserOutputModel(shift.User.UserId, shift.User.UserName));
 }
