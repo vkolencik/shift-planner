@@ -83,6 +83,6 @@ public record ScheduleInputModel(IReadOnlyCollection<ShiftAssignmentInputModel> 
 
 public record ShiftAssignmentInputModel(string Day, string Workplace, string UserId);
 
-public record ScheduleValidationOutputModel(bool IsValid, IReadOnlyCollection<ValidationErrorOutputModel> Errors);
+public record ScheduleValidationOutputModel(bool IsValid, IReadOnlyCollection<ValidationErrorOutputModel> ValidationErrors);
 
 public record ValidationErrorOutputModel(IReadOnlyCollection<ShiftOutputModel> Shifts, UserOutputModel? User, string Error);

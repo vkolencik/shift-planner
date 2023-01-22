@@ -6,6 +6,8 @@ describe('schedule endpoint should', () => {
   let token
   let token2
   beforeAll(async () => {
+    jest.setTimeout(20000)
+
     token = await getToken('testUser1')
     token2 = await getToken('testUser2')
   })
@@ -43,6 +45,7 @@ describe('schedule endpoint should', () => {
   })
 
   it('validate valid schedule', async () => {
+    jest.setTimeout(20000)
     const scheduleResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01`, getHeaders(token))
 
     const validSchedule = await scheduleResp.json()
@@ -62,10 +65,13 @@ describe('schedule endpoint should', () => {
     })
 
     expect(validationResp.status).toEqual(200)
-    expect(await validationResp.json()).toEqual(expect.objectContaining({ isValid: true }))
+    const validationResult = await validationResp.json()
+    expect(validationResult).toEqual(expect.objectContaining({ isValid: true }))
+    expect(!validationResult.validationErrors || validationResult.validationErrors.length == 0).toBeTruthy()
   })
 
   it('return validation errors given invalid schedule', async () => {
+    jest.setTimeout(20000)
     const scheduleResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01`, getHeaders(token))
 
     const validSchedule = await scheduleResp.json()

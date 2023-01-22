@@ -39,7 +39,12 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
 
     public void AddVariableConstraint(ShiftAssignment shift, Constraint constraint, uint value)
     {
-        var shiftInSchedule = _schedule.Shifts.Single(ss => ss.Workplace == shift.Shift.Workplace && ss.Day == shift.Shift.Day);
+        var shiftInSchedule = _schedule.Shifts.SingleOrDefault(ss => ss.Workplace == shift.Shift.Workplace && ss.Day == shift.Shift.Day);
+
+        if (shiftInSchedule is null)
+        {
+            throw new InvalidOperationException($"Shift on {shift.Shift.Day} in {shift.Shift.Workplace} not found.");
+        }
 
         var scheduleValue = shiftInSchedule.User.UserName == shift.Employee.Name ? 1 : 0;
 

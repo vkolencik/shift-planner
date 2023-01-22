@@ -15,4 +15,6 @@ public record Workplace(string Name)
     new [] {
         new HashSet<Workplace> {Kpr, Urg}
     };
+
+    public override string ToString() => Name;
 }

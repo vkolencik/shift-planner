@@ -106,7 +106,7 @@ public abstract class ScheduleControllerShould
             Assert.Equal(expectedSchedule.Shifts, validatedSchedule.Shifts);
             var outputModel = (ScheduleValidationOutputModel?) result.Value ?? throw new InvalidOperationException();
             Assert.False(outputModel.IsValid);
-            var error = Assert.Single(outputModel.Errors);
+            var error = Assert.Single(outputModel.ValidationErrors);
             Assert.Equal("Unknown", error.Error);
             Assert.Equal(new UserOutputModel(user.UserId, user.UserName), error.User);
             Assert.Equal(new ShiftOutputModel(dayString, workplace.Name), error.Shifts.Single());

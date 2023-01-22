@@ -37,7 +37,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
         var employeeMonths = activeEmployeeInfos.Select(
                 ei => new EmployeeMonth(
                     new Employee(ei.Name, ei.CompetenceLevel, ei.Capabilities, ei.Workload),
-                    GetLeavesForEmployee(employeeRequirements, userIdsByEmail[ei.Email])
+                    GetLeavesForEmployee(month, employeeRequirements, userIdsByEmail[ei.Email])
                 ))
             .ToArray();
 
@@ -75,13 +75,13 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
         return new Employee(ei.Name, ei.CompetenceLevel, ei.Capabilities, ei.Workload);
     }
     
-    private IReadOnlyCollection<Leave> GetLeavesForEmployee(IReadOnlyCollection<UserRequirementModel> employeeRequirements, string userId) =>
+    private IReadOnlyCollection<Leave> GetLeavesForEmployee(ScheduledMonth month, IReadOnlyCollection<UserRequirementModel> employeeRequirements, string userId) =>
         employeeRequirements
             .Where(req => req.UserId == userId)
             .Where(req => AbsenceRequirementTypes.Contains(req.RequirementType))
             .Select(req => new Leave(req.Date, req.Date, req.RequirementType == "leave"))
             .Concat(userId == "auth0|637f84e6841043dd7a9d449e"  // Tesarik
-                ? new ScheduledMonth(2023, 2).Days
+                ? month.Days
                     .Where(d => d.DayOfWeek == DayOfWeek.Saturday || d.DayOfWeek == DayOfWeek.Sunday)
                     .Select(d => new Leave(d, d, false))
                 : Array.Empty<Leave>())

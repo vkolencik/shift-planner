@@ -8,10 +8,10 @@ namespace ShiftPlanner.Services.Services;
 public class ScheduleValidator : IScheduleValidator
 {
     private readonly ISchedulingParametersAggregator _paramsAggregator;
-    private readonly IFlexibilityVariator _flexibilityVariator;
+    private readonly IValidationFlexibilityVariator _flexibilityVariator;
     private readonly IRulesetFactory _rulesetFactory;
 
-    public ScheduleValidator(ISchedulingParametersAggregator paramsAggregator, IFlexibilityVariator flexibilityVariator, IRulesetFactory rulesetFactory)
+    public ScheduleValidator(ISchedulingParametersAggregator paramsAggregator, IValidationFlexibilityVariator flexibilityVariator, IRulesetFactory rulesetFactory)
     {
         _paramsAggregator = paramsAggregator;
         _flexibilityVariator = flexibilityVariator;

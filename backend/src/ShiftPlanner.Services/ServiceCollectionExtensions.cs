@@ -34,6 +34,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IStoredScheduleService, StoredScheduleService>();
         services.AddTransient<IRequirementsService, RequirementsService>();
         services.AddTransient<IFlexibilityVariator>(_ => new SequenceFlexibilityVariator(new ScheduleFlexibility(50)));
+        services.AddTransient<IValidationFlexibilityVariator>(_ => new SingleFlexibilityVariator(new ScheduleFlexibility(50)));
         services.AddTransient<IRulesetFactory, RulesetFactory>();
         services.AddTransient<IScheduleValidator, ScheduleValidator>();
 

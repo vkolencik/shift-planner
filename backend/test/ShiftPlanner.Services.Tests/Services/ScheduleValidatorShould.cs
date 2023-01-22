@@ -10,7 +10,7 @@ namespace ShiftPlanner.Services.Tests.Services;
 public class ScheduleValidatorShould
 {
     private readonly Mock<ISchedulingParametersAggregator> _paramsAggregatorMock = new Mock<ISchedulingParametersAggregator>();
-    private readonly Mock<IFlexibilityVariator> _flexibilityVariatorMock = new Mock<IFlexibilityVariator>();
+    private readonly Mock<IValidationFlexibilityVariator> _flexibilityVariatorMock = new Mock<IValidationFlexibilityVariator>();
     private readonly Mock<IRulesetFactory> _rulesetFactoryMock = new Mock<IRulesetFactory>();
 
     [Fact]
