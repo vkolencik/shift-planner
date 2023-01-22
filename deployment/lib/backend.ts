@@ -30,7 +30,7 @@ export class Backend extends Construct implements IGrantable {
         ASPNETCORE_ENVIRONMENT: environment === Environment.Production ? 'Production' : 'Staging'
       },
       runtime: Runtime.DOTNET_6,
-      timeout: Duration.seconds(30),
+      timeout: Duration.seconds(120),
      logRetention: RetentionDays.ONE_MONTH,
     })
 
