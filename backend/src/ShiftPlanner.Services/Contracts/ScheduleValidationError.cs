@@ -8,5 +8,18 @@ public enum ScheduleErrorType
 {
     Unknown,
     EveryDayIsCovered,
-    NoConcurrentShifts
+    NoConcurrentShifts,
+    NoConsecutiveShifts,
+    NoAlternativeDayShifts,
+    AlwaysAlternatesOverWeekends,
+    WeekendLimit,
+    MinNumberOfWeekends,
+    NoSubsequentWeekends,
+    Leaves,
+    WorkplaceCapability,
+    CompetenceGroupQualification,
+    PredefinedShifts,
+    MonthlyShiftCount,
+    WorkplacePreferencePercentage,
+    EvenSpreadWithinMonth
 }
