@@ -76,8 +76,26 @@ public abstract class ScheduleValidatingConstraintReceiverShould
                     new Shift(Day1, Workplace1),
                     new Shift(Day1, Workplace2),
                 }, error.Shifts);
-            Assert.Null(error.User);
+            Assert.Null(error.UserName);
             Assert.Equal(errorType, error.ErrorType);
+        }
+
+        [Fact]
+        public void AddErrorWithUser_GivenInvalidSumConstraintWithTheSameUserInAllShifts()
+        {
+            var errorType = ScheduleErrorType.EveryDayIsCovered;
+            var receiver = new ScheduleValidatingConstraintReceiver(Schedule, errorType);
+
+            receiver.AddSumConstraint(
+                new[]
+                {
+                    new ShiftAssignment(Employee2, Day1, Workplace2),
+                    new ShiftAssignment(Employee2, Day2, Workplace1),
+                }, Constraint.Eq, 100);
+
+            var error = Assert.Single(receiver.GetErrors());
+
+            Assert.Equal(Employee2.Name, error.UserName);
         }
     }
 
@@ -114,7 +132,7 @@ public abstract class ScheduleValidatingConstraintReceiverShould
                 {
                     new Shift(Day1, Workplace2),
                 }, error.Shifts);
-            Assert.Null(error.User);
+            Assert.Null(error.UserName);
             Assert.Equal(errorType, error.ErrorType);
         }
     }
@@ -153,7 +171,7 @@ public abstract class ScheduleValidatingConstraintReceiverShould
                     new Shift(Day1, Workplace1),
                     new Shift(Day2, Workplace2),
                 }, error.Shifts);
-            Assert.Null(error.User);
+            Assert.Null(error.UserName);
             Assert.Equal(errorType, error.ErrorType);
         }
     }

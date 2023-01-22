@@ -94,7 +94,7 @@ public abstract class ScheduleControllerShould
 
             _scheduleValidatorMock
                 .Setup(_ => _.ValidateSchedule(tenant, new ScheduledMonth(2027, 7), Capture.In(validatedSchedules)))
-                .ReturnsAsync(new[] {new ScheduleValidationError(new[] {new Shift(day, workplace)}, user, ScheduleErrorType.Unknown)});
+                .ReturnsAsync(new[] {new ScheduleValidationError(new[] {new Shift(day, workplace)}, user.UserName, ScheduleErrorType.Unknown)});
 
             var controller = CreateController();
 

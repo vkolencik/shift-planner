@@ -51,7 +51,10 @@ internal class ScheduleValidationStrategy : IVariableFlexibilityStrategy<Schedul
 
         foreach (var rule in rules)
         {
-            var errorType = _ruleErrorMapping[rule.GetType()];
+            if (!_ruleErrorMapping.TryGetValue(rule.GetType(), out var errorType))
+            {
+                errorType = ScheduleErrorType.Unknown;
+            }
 
             var receiver = _receiverFactory.GetReceiver(_schedule, errorType);
 

@@ -33,8 +33,15 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
 
         if (!isSatisfied)
         {
-            _errors.Add(new ScheduleValidationError(shiftsInSchedule.Select(s => s.Shift).ToArray(), null, _scheduleErrorType));
+            _errors.Add(new ScheduleValidationError(shiftsInSchedule.Select(s => s.Shift).ToArray(), GetUserName(shifts), _scheduleErrorType));
         }
+    }
+
+    private string? GetUserName(IReadOnlyCollection<ShiftAssignment> shifts)
+    {
+        var uniqueNames = shifts.Select(s => s.Employee.Name).ToHashSet();
+
+        return uniqueNames.Count == 1 ? uniqueNames.Single() : null;
     }
 
     public void AddVariableConstraint(ShiftAssignment shift, Constraint constraint, uint value)

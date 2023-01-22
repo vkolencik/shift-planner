@@ -2,7 +2,7 @@
 
 namespace ShiftPlanner.Services.Contracts;
 
-public record ScheduleValidationError(IReadOnlyCollection<Shift> Shifts, User? User, ScheduleErrorType ErrorType);
+public record ScheduleValidationError(IReadOnlyCollection<Shift> Shifts, string? UserName, ScheduleErrorType ErrorType);
 
 public enum ScheduleErrorType
 {
