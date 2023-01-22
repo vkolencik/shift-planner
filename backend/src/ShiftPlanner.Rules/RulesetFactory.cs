@@ -1,5 +1,4 @@
 ﻿using ShiftPlanner.Domain;
-using ShiftPlanner.Rules.Rules;
 using ShiftPlanner.Rules.Ruleset;
 
 namespace ShiftPlanner.Rules;

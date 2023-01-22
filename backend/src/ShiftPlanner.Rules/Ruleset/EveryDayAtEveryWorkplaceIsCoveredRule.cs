@@ -1,8 +1,8 @@
 ﻿using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.Rules.Rules;
+namespace ShiftPlanner.Rules.Ruleset;
 
-internal class EveryDayAtEveryWorkplaceIsCoveredRule : IRule
+public class EveryDayAtEveryWorkplaceIsCoveredRule : IRule
 {
     private readonly ISolverParameters _parameters;
 

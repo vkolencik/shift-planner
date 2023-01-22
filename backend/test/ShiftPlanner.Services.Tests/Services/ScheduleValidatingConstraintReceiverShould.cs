@@ -37,7 +37,7 @@ public class ScheduleValidatingConstraintReceiverShould
     [InlineData(Constraint.Lte, 3)]
     public void NotAddErrors_GivenValidSumConstraint(Constraint constraint, uint bound)
     {
-        var receiver = new ScheduleValidatingConstraintReceiver(Schedule);
+        var receiver = new ScheduleValidatingConstraintReceiver(Schedule, ScheduleErrorType.Unknown);
         receiver.AddSumConstraint(new []
         {
             new ShiftAssignment(Employee1, Day1, Workplace1), 
@@ -54,7 +54,8 @@ public class ScheduleValidatingConstraintReceiverShould
     [InlineData(Constraint.Lte, 1)]
     public void AddError_GivenInvalidSumConstraint(Constraint constraint, uint bound)
     {
-        var receiver = new ScheduleValidatingConstraintReceiver(Schedule);
+        var errorType = ScheduleErrorType.EveryDayIsCovered;
+        var receiver = new ScheduleValidatingConstraintReceiver(Schedule, errorType);
         
         receiver.AddSumConstraint(new []
         {
@@ -71,6 +72,6 @@ public class ScheduleValidatingConstraintReceiverShould
             new Shift(Day1, Workplace2),
         }, error.Shifts);
         Assert.Null(error.User);
-        Assert.Equal(ScheduleErrorType.Unknown, error.ErrorType);
+        Assert.Equal(errorType, error.ErrorType);
     }
 }

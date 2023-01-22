@@ -7,11 +7,13 @@ namespace ShiftPlanner.Services.Services;
 internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstraintReceiver
 {
     private readonly Schedule _schedule;
+    private readonly ScheduleErrorType _scheduleErrorType;
     private readonly List<ScheduleValidationError> _errors = new List<ScheduleValidationError>();
 
-    public ScheduleValidatingConstraintReceiver(Schedule schedule)
+    public ScheduleValidatingConstraintReceiver(Schedule schedule, ScheduleErrorType scheduleErrorType)
     {
         _schedule = schedule;
+        _scheduleErrorType = scheduleErrorType;
     }
 
     public void AddSumConstraint(IReadOnlyCollection<ShiftAssignment> shifts, Constraint constraint, uint bound)
@@ -31,13 +33,14 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
         {
             Constraint.Eq => sumValue == bound,
             Constraint.Gte => sumValue >= bound,
-            Constraint.Lte => sumValue <= bound
+            Constraint.Lte => sumValue <= bound,
+            _ => throw new ArgumentOutOfRangeException(nameof(constraint), constraint, null)
         };
 
 
         if (!isSatisfied)
         {
-            _errors.Add(new ScheduleValidationError(shiftsInSchedule.Select(s => s.Shift).ToArray(), null, ScheduleErrorType.Unknown));
+            _errors.Add(new ScheduleValidationError(shiftsInSchedule.Select(s => s.Shift).ToArray(), null, _scheduleErrorType));
         }
     }
 

@@ -34,6 +34,6 @@ public class ScheduleValidator : IScheduleValidator
 
     private class ReceiverFactory : IValidatingReceiverFactory
     {
-        public IScheduleValidatingConstraintReceiver GetReceiver(Schedule schedule) => new ScheduleValidatingConstraintReceiver(schedule);
+        public IScheduleValidatingConstraintReceiver GetReceiver(Schedule schedule, ScheduleErrorType scheduleErrorType) => new ScheduleValidatingConstraintReceiver(schedule, scheduleErrorType);
     }
 }

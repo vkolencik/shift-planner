@@ -1,6 +1,7 @@
 ﻿using ShiftPlanner.Domain;
 using ShiftPlanner.Engine;
 using ShiftPlanner.Rules;
+using ShiftPlanner.Rules.Ruleset;
 using ShiftPlanner.Services.Contracts;
 
 namespace ShiftPlanner.Services.Services;
@@ -26,7 +27,14 @@ internal class ScheduleValidationStrategy : IVariableFlexibilityStrategy<Schedul
 
         foreach (var rule in rules)
         {
-            var receiver = _receiverFactory.GetReceiver(_schedule);
+            var errorType = ScheduleErrorType.Unknown;
+            if (rule.GetType() ==  typeof(EveryDayAtEveryWorkplaceIsCoveredRule))
+            {
+                errorType = ScheduleErrorType.EveryDayIsCovered;
+            }
+            
+            var receiver = _receiverFactory.GetReceiver(_schedule, errorType);
+            
             rule.Apply(receiver);
             errors.AddRange(receiver.GetErrors());
         }
@@ -45,5 +53,5 @@ public interface IScheduleValidatingConstraintReceiver : IScheduleConstraintRece
 
 public interface IValidatingReceiverFactory
 {
-    IScheduleValidatingConstraintReceiver GetReceiver(Schedule schedule);
+    IScheduleValidatingConstraintReceiver GetReceiver(Schedule schedule, ScheduleErrorType scheduleErrorType);
 }

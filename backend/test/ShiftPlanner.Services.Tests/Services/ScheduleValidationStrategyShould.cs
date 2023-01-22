@@ -30,7 +30,7 @@ public class ScheduleValidationStrategyShould
         receiver2Mock.Setup(_ => _.GetErrors()).Returns(Array.Empty<ScheduleValidationError>());
         var receiver1 = receiver1Mock.Object;
         var receiver2 = receiver2Mock.Object;
-        _validatingReceiverFactoryMock.SetupSequence(_ => _.GetReceiver(schedule)).Returns(receiver1).Returns(receiver2);
+        _validatingReceiverFactoryMock.SetupSequence(_ => _.GetReceiver(schedule, ScheduleErrorType.Unknown)).Returns(receiver1).Returns(receiver2);
 
         rule1Mock.Setup(_ => _.Apply(receiver1)).Verifiable();
         rule2Mock.Setup(_ => _.Apply(receiver2)).Verifiable();
@@ -67,7 +67,7 @@ public class ScheduleValidationStrategyShould
         var receiver1 = receiver1Mock.Object;
         var receiver2 = receiver2Mock.Object;
         _validatingReceiverFactoryMock
-            .SetupSequence(_ => _.GetReceiver(It.IsAny<Schedule>()))
+            .SetupSequence(_ => _.GetReceiver(It.IsAny<Schedule>(), It.IsAny<ScheduleErrorType>()))
             .Returns(receiver1)
             .Returns(receiver2);
 

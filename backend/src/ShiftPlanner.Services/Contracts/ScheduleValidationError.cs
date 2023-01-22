@@ -6,5 +6,7 @@ public record ScheduleValidationError(IReadOnlyCollection<Shift> Shifts, User? U
 
 public enum ScheduleErrorType
 {
-    Unknown
+    Unknown,
+    EveryDayIsCovered,
+    NoConcurrentShifts
 }
