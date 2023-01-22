@@ -79,7 +79,7 @@ namespace ShiftPlanner.Engine.SchedulingEngine
             _solver.AddSumConstraint(shiftVariables, constraint, bound);
         }
 
-        public void AddVariableConstraint(ShiftAssignment shift, Constraint constraint, int value)
+        public void AddVariableConstraint(ShiftAssignment shift, Constraint constraint, uint value)
         {
             _solver.AddVariableConstraint(
                 VariableName.Schedule(_employees[shift.Employee], _days[shift.Shift.Day], _workplaces[shift.Shift.Workplace]),

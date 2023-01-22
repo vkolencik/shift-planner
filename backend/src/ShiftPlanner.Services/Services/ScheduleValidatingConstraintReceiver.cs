@@ -29,14 +29,7 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
 
         var sumValue = shiftsInSchedule.Length;
 
-        var isSatisfied =  constraint switch
-        {
-            Constraint.Eq => sumValue == bound,
-            Constraint.Gte => sumValue >= bound,
-            Constraint.Lte => sumValue <= bound,
-            _ => throw new ArgumentOutOfRangeException(nameof(constraint), constraint, null)
-        };
-
+        var isSatisfied = IsSatisfied(sumValue, constraint, bound);
 
         if (!isSatisfied)
         {
@@ -44,9 +37,29 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
         }
     }
 
-    public void AddVariableConstraint(ShiftAssignment shift, Constraint constraint, int value)
+    private static bool IsSatisfied(int testedValue, Constraint constraint, uint bound)
     {
-        throw new NotImplementedException();
+        return constraint switch
+        {
+            Constraint.Eq => testedValue == bound,
+            Constraint.Gte => testedValue >= bound,
+            Constraint.Lte => testedValue <= bound,
+            _ => throw new ArgumentOutOfRangeException(nameof(constraint), constraint, null)
+        };
+    }
+
+    public void AddVariableConstraint(ShiftAssignment shift, Constraint constraint, uint value)
+    {
+        var shiftInSchedule = _schedule.Shifts.Single(ss => ss.Workplace == shift.Shift.Workplace && ss.Day == shift.Shift.Day);
+
+        var scheduleValue = shiftInSchedule.User.UserName == shift.Employee.Name ? 1 : 0;
+
+        var isSatisfied = IsSatisfied(scheduleValue, constraint, value);
+
+        if (!isSatisfied)
+        {
+            _errors.Add(new ScheduleValidationError(new[] {shift.Shift}, null, _scheduleErrorType));
+        }
     }
 
     public void AddSumRelationConstraint(IReadOnlyCollection<ShiftAssignment> shifts1, Constraint constraint, IReadOnlyCollection<ShiftAssignment> shifts2)

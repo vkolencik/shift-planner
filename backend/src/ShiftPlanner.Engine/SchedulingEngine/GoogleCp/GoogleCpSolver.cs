@@ -73,7 +73,7 @@ internal class GoogleCpSolver : ISolver
         }
     }
 
-    public void AddVariableConstraint(VariableName variableName, RConstraint constraint, int value)
+    public void AddVariableConstraint(VariableName variableName, RConstraint constraint, uint value)
     {
         var variable = _variables[variableName];
         switch (constraint)

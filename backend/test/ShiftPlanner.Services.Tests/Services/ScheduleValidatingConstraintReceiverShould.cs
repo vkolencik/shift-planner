@@ -5,7 +5,7 @@ using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Services.Tests.Services;
 
-public class ScheduleValidatingConstraintReceiverShould
+public abstract class ScheduleValidatingConstraintReceiverShould
 {
     private static readonly Workplace Workplace1 = new Workplace("workplace1");
     private static readonly Workplace Workplace2 = new Workplace("workplace2");
@@ -18,60 +18,104 @@ public class ScheduleValidatingConstraintReceiverShould
     private static readonly User User3 = new User("user3", "User 3", "user3@krtek.me");
     private static readonly Employee Employee3 = new Employee("User 3", CompetenceLevel.Level1, Capabilities, Workload.Infinite);
 
-    private static readonly Schedule Schedule = new Schedule(new []
-    {
-        new ScheduledShift(Day1, Workplace1, User1), 
-        new ScheduledShift(Day1, Workplace2, User2), 
-        new ScheduledShift(Day2, Workplace1, User1), 
-        new ScheduledShift(Day2, Workplace2, User3), 
-    });
-
-    private static readonly Capabilities Capabilities = new Capabilities(new [] { new WorkplaceCapability.Green(Workplace1, 100) });
-
-
-    [Theory]
-    [InlineData(Constraint.Eq, 2)]
-    [InlineData(Constraint.Gte, 1)]
-    [InlineData(Constraint.Gte, 2)]
-    [InlineData(Constraint.Lte, 2)]
-    [InlineData(Constraint.Lte, 3)]
-    public void NotAddErrors_GivenValidSumConstraint(Constraint constraint, uint bound)
-    {
-        var receiver = new ScheduleValidatingConstraintReceiver(Schedule, ScheduleErrorType.Unknown);
-        receiver.AddSumConstraint(new []
+    private static readonly Schedule Schedule = new Schedule(
+        new[]
         {
-            new ShiftAssignment(Employee1, Day1, Workplace1), 
-            new ShiftAssignment(Employee2, Day1, Workplace2), 
-            new ShiftAssignment(Employee2, Day2, Workplace1), 
-        }, constraint, bound);
-        
-        Assert.Empty(receiver.GetErrors());
+            new ScheduledShift(Day1, Workplace1, User1),
+            new ScheduledShift(Day1, Workplace2, User2),
+            new ScheduledShift(Day2, Workplace1, User1),
+            new ScheduledShift(Day2, Workplace2, User3),
+        });
+
+    private static readonly Capabilities Capabilities = new Capabilities(new[] {new WorkplaceCapability.Green(Workplace1, 100)});
+
+    public class SumConstraint : ScheduleValidatingConstraintReceiverShould
+    {
+        [Theory]
+        [InlineData(Constraint.Eq, 2)]
+        [InlineData(Constraint.Gte, 1)]
+        [InlineData(Constraint.Gte, 2)]
+        [InlineData(Constraint.Lte, 2)]
+        [InlineData(Constraint.Lte, 3)]
+        public void NotAddErrors_GivenValidSumConstraint(Constraint constraint, uint bound)
+        {
+            var receiver = new ScheduleValidatingConstraintReceiver(Schedule, ScheduleErrorType.Unknown);
+            receiver.AddSumConstraint(
+                new[]
+                {
+                    new ShiftAssignment(Employee1, Day1, Workplace1),
+                    new ShiftAssignment(Employee2, Day1, Workplace2),
+                    new ShiftAssignment(Employee2, Day2, Workplace1),
+                }, constraint, bound);
+
+            Assert.Empty(receiver.GetErrors());
+        }
+
+        [Theory]
+        [InlineData(Constraint.Eq, 3)]
+        [InlineData(Constraint.Gte, 3)]
+        [InlineData(Constraint.Lte, 1)]
+        public void AddError_GivenInvalidSumConstraint(Constraint constraint, uint bound)
+        {
+            var errorType = ScheduleErrorType.EveryDayIsCovered;
+            var receiver = new ScheduleValidatingConstraintReceiver(Schedule, errorType);
+
+            receiver.AddSumConstraint(
+                new[]
+                {
+                    new ShiftAssignment(Employee1, Day1, Workplace1),
+                    new ShiftAssignment(Employee2, Day1, Workplace2),
+                    new ShiftAssignment(Employee2, Day2, Workplace1),
+                }, constraint, bound);
+
+            var error = Assert.Single(receiver.GetErrors());
+
+            Assert.Equal(
+                new[]
+                {
+                    new Shift(Day1, Workplace1),
+                    new Shift(Day1, Workplace2),
+                }, error.Shifts);
+            Assert.Null(error.User);
+            Assert.Equal(errorType, error.ErrorType);
+        }
     }
 
-    [Theory]
-    [InlineData(Constraint.Eq, 3)]
-    [InlineData(Constraint.Gte, 3)]
-    [InlineData(Constraint.Lte, 1)]
-    public void AddError_GivenInvalidSumConstraint(Constraint constraint, uint bound)
+    public class VariableConstraint : ScheduleValidatingConstraintReceiverShould
     {
-        var errorType = ScheduleErrorType.EveryDayIsCovered;
-        var receiver = new ScheduleValidatingConstraintReceiver(Schedule, errorType);
-        
-        receiver.AddSumConstraint(new []
+        [Theory]
+        [InlineData(Constraint.Eq, 1)]
+        [InlineData(Constraint.Gte, 0)]
+        [InlineData(Constraint.Gte, 1)]
+        [InlineData(Constraint.Lte, 1)]
+        [InlineData(Constraint.Lte, 2)]
+        public void NotAddErrors_GivenValidVariableConstraint(Constraint constraint, uint bound)
         {
-            new ShiftAssignment(Employee1, Day1, Workplace1), 
-            new ShiftAssignment(Employee2, Day1, Workplace2), 
-            new ShiftAssignment(Employee2, Day2, Workplace1), 
-        }, constraint, bound);
-        
-        var error = Assert.Single(receiver.GetErrors());
-        
-        Assert.Equal(new []
+            var receiver = new ScheduleValidatingConstraintReceiver(Schedule, ScheduleErrorType.Unknown);
+            receiver.AddVariableConstraint(new ShiftAssignment(Employee1, Day1, Workplace1), constraint, bound);
+
+            Assert.Empty(receiver.GetErrors());
+        }
+
+        [Theory]
+        [InlineData(Constraint.Eq, 1)]
+        [InlineData(Constraint.Gte, 1)]
+        public void AddError_GivenInvalidVariableConstraint(Constraint constraint, uint bound)
         {
-            new Shift(Day1, Workplace1),
-            new Shift(Day1, Workplace2),
-        }, error.Shifts);
-        Assert.Null(error.User);
-        Assert.Equal(errorType, error.ErrorType);
+            var errorType = ScheduleErrorType.NoConcurrentShifts;
+            var receiver = new ScheduleValidatingConstraintReceiver(Schedule, errorType);
+
+            receiver.AddVariableConstraint(new ShiftAssignment(Employee1, Day1, Workplace2), constraint, bound);
+
+            var error = Assert.Single(receiver.GetErrors());
+
+            Assert.Equal(
+                new[]
+                {
+                    new Shift(Day1, Workplace2),
+                }, error.Shifts);
+            Assert.Null(error.User);
+            Assert.Equal(errorType, error.ErrorType);
+        }
     }
 }
