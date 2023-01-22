@@ -132,7 +132,7 @@ public abstract class ScheduleValidatingConstraintReceiverShould
                 {
                     new Shift(Day1, Workplace2),
                 }, error.Shifts);
-            Assert.Null(error.UserName);
+            Assert.Equal(Employee1.Name, error.UserName);
             Assert.Equal(errorType, error.ErrorType);
         }
     }
@@ -171,7 +171,7 @@ public abstract class ScheduleValidatingConstraintReceiverShould
                     new Shift(Day1, Workplace1),
                     new Shift(Day2, Workplace2),
                 }, error.Shifts);
-            Assert.Null(error.UserName);
+            Assert.Equal(Employee1.Name, error.UserName);
             Assert.Equal(errorType, error.ErrorType);
         }
     }
