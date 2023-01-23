@@ -71,7 +71,6 @@ public class Startup
 
         services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
-
         services.AddControllers();
 
         services.AddServices();

@@ -2,7 +2,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { getBaseUrl, getInstance, Instance } from '../instance-config'
 import { Moment } from 'moment'
-import { Day, Month, toDay } from '../dates'
+import { Day, Month, parseDate, toDay } from '../dates'
 import { sortArrayBy } from '../sort-array-by'
 import { workplaces } from '../domain'
 import { wait } from './wait'
@@ -255,63 +255,77 @@ export function useApi () {
           shifts: schedule.shifts.filter(s => !excludedUserIds.includes(s.user.userId))
         }
       },
-      validate: async (schedule: Schedule): Promise<ValidationError[]> => {
-        await wait(1500)
+      validate: async (month: Month, schedule: Schedule): Promise<ValidationError[]> => {
+        const token = await getAccessTokenSilently({
+          audience: 'https://b.krtek.me',
+          scope: ''
+        })
 
-        returnValidationError = !returnValidationError
-
-        return returnValidationError ? [
-          {
-            shifts: [{ day: toDay('2023-01-01'), workplace: 'RES' }],
-            user: loggedInUser,
-            error: 'Zaměstnanec nemá kvalifikaci na dané oddělení'
-          },
-          {
-            shifts: workplaces.map(w => ({ day: toDay('2023-01-10'), workplace: w })),
-            user: null,
-            error: 'Bla bla bla bla'
-          },
-          {
-            shifts: [{ day: toDay('2023-01-20'), workplace: 'A1' }, {
-              day: toDay('2023-01-21'),
-              workplace: 'A2'
-            }, { day: toDay('2023-01-21'), workplace: 'A2' }],
-            user: loggedInUser,
-            error: 'Na dané skupině oddělení musí být alespoň jeden zaměstnanec s kvalifikací 1'
-          }
-        ] : []
-      },
-      save: async (schedule: Schedule): Promise<{ success: true } | { success: false, validationErrors: ValidationError[] }> => {
-        await wait(1500)
-
-        returnSaveError = !returnSaveError
-
-        if (returnSaveError) {
-          return {
-            success: false, validationErrors: [
-              {
-                shifts: [{ day: toDay('2023-01-01'), workplace: 'RES' }],
-                user: loggedInUser,
-                error: 'Zaměstnanec nemá kvalifikaci na dané oddělení'
-              },
-              {
-                shifts: workplaces.map(w => ({ day: toDay('2023-01-10'), workplace: w })),
-                user: null,
-                error: 'Bla bla bla bla'
-              },
-              {
-                shifts: [{ day: toDay('2023-01-20'), workplace: 'A1' }, {
-                  day: toDay('2023-01-21'),
-                  workplace: 'A2'
-                }, { day: toDay('2023-01-21'), workplace: 'A2' }],
-                user: loggedInUser,
-                error: 'Na dané skupině oddělení musí být alespoň jeden zaměstnanec s kvalifikací 1'
-              }
-            ]
-          }
+        const scheduleToSend = {
+          shifts: schedule.shifts.map(s => ({
+            day: s.day,
+            workplace: s.workplace,
+            userId: s.user.userId
+          }))
         }
 
-        return { success: true }
+        const response = await fetch(`${baseUrl}/api/${tenant}/schedule/${month.year}/${padDateComponent(month.month)}/:validate`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(scheduleToSend)
+          })
+
+        if (response.status !== 200) {
+          throw new Error(`Validation error returned unexpected status: ${response.status}`)
+        }
+
+        let validationResult = await response.json()
+
+        if (validationResult.isValid) {
+          return []
+        }
+
+        const errors: ValidationError[] = validationResult.validationErrors
+
+        sortArrayBy(errors, e => {
+          const days = e.shifts.map(s => s.day)
+          days.sort()
+          return days.length > 0 ? days[0] : ''
+        })
+
+        return errors.filter(e => e.error !== 'WorkplacePreferencePercentage')
+      },
+      save: async (month: Month, schedule: Schedule): Promise<void> => {
+        const token = await getAccessTokenSilently({
+          audience: 'https://b.krtek.me',
+          scope: ''
+        })
+
+        const scheduleToSend = {
+          shifts: schedule.shifts.map(s => ({
+            day: s.day,
+            workplace: s.workplace,
+            userId: s.user.userId
+          }))
+        }
+
+        const response = await fetch(`${baseUrl}/api/${tenant}/schedule/${month.year}/${padDateComponent(month.month)}/:save`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(scheduleToSend)
+          })
+
+        if (response.status !== 200) {
+          throw new Error(`Validation error returned unexpected status: ${response.status}`)
+        }
       }
     }
   })

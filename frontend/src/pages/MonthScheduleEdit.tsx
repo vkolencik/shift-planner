@@ -36,6 +36,29 @@ interface CellCoords {
   workplace: string
 }
 
+function getErrorMessage (error: string): string {
+  const messageMapping: { [key: string]: string } = {
+    Unknown: 'Jiná chyba',
+    EveryDayIsCovered: 'Nepokryty všechny směny',
+    NoConcurrentShifts: 'Více paralelních směn uživatele',
+    NoConsecutiveShifts: 'Po sobě jdoucí směny',
+    NoAlternativeDayShifts: 'Obkročka mimo víkend',
+    AlwaysAlternatesOverWeekends: 'Chybějící obkročka o víkendu',
+    WeekendLimit: 'Překročen limit víkendových služeb',
+    MinNumberOfWeekends: 'Nedostatečný počet víkendových služeb',
+    NoSubsequentWeekends: 'Dva po sobě jdoucí víkendy',
+    Leaves: 'Dovolená',
+    WorkplaceCapability: 'Nedodržena kvalifikace na pracovišti',
+    CompetenceGroupQualification: 'Chybí alespoň 1 uživatel s kvalifikací 1',
+    PredefinedShifts: 'Neodpovídá předdefinovaným službám',
+    MonthlyShiftCount: 'Nesprávný celkový počet směn v měsíci',
+    WorkplacePreferencePercentage: 'Nedodržena procentuální preference na pracovišti',
+    EvenSpreadWithinMonth: 'Nedodrženo rovnoměrné rozložení služeb v měsíci'
+  }
+
+  return messageMapping[error] || 'Neznámá chyba'
+}
+
 export function MonthScheduleEdit (): JSX.Element {
   const params = useParams()
   const [schedule, setSchedule] = useState<Schedule | null | undefined>(undefined)
@@ -136,7 +159,7 @@ export function MonthScheduleEdit (): JSX.Element {
     }
 
     setIsValidating(true)
-    api.schedule.validate(schedule)
+    api.schedule.validate(month, schedule)
       .then(errors => {
         setValidationErrors(errors)
       })
@@ -149,19 +172,16 @@ export function MonthScheduleEdit (): JSX.Element {
     }
 
     setIsSaving(true)
-    api.schedule.save(schedule)
-      .then(result => {
-        if (result.success) {
-          toast.success('Rozvrh byl uložen')
-        } else {
-          setValidationErrors(result.validationErrors)
-          toast.error('Rozvrh nebyl uložen protože obsahuje chyby')
-        }
+    api.schedule.save(month, schedule)
+      .then(() => {
+        toast.success('Rozvrh byl uložen')
       })
       .finally(() => {setIsSaving(false)})
   }
 
   const isValid = validationErrors !== null && validationErrors.length === 0
+  const isPassable = validationErrors !== null
+
   return <>
     <UserSelectModal
       isOpen={editedCoords !== null}
@@ -215,7 +235,7 @@ export function MonthScheduleEdit (): JSX.Element {
                   {validationErrors !== null && validationErrors.length > 0 && (
                     <>
                       <Card.Body className="text-white bg-danger">
-                        <Card.Title>Chyby v rozvrhu</Card.Title>
+                        <Card.Title>Chyby v rozvrhu ({validationErrors.length})</Card.Title>
                       </Card.Body>
                       <ListGroup as="ul" variant="flush">
                         {validationErrors.map(e =>
@@ -224,7 +244,7 @@ export function MonthScheduleEdit (): JSX.Element {
                               {Array.from(new Set(e.shifts.map(s => s.day))).map(d => formatDate(d)).join(', ')}
                               {e.user === null ? '' : ` (${e.user.userName})`}:
                             </strong>
-                            {' '}{e.error}
+                            {' '}{getErrorMessage(e.error)}
                           </ListGroupItem>)
                         }
                       </ListGroup>
@@ -247,7 +267,7 @@ export function MonthScheduleEdit (): JSX.Element {
                     Zvalidovat
                   </Button>
 
-                  {isValid &&
+                  {false && isPassable &&
                     <Button
                       variant="success"
                       className="ms-3"

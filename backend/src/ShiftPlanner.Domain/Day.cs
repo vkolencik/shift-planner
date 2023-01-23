@@ -56,4 +56,6 @@ public record Day(DateOnly Date) : IComparable<Day>
     {
         return Date.GetHashCode();
     }
+
+    public override string ToString() => Date.ToString();
 }

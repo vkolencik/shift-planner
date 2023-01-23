@@ -1,16 +1,14 @@
 ﻿using ShiftPlanner.Domain;
-using ShiftPlanner.Rules.Rules;
 using ShiftPlanner.Rules.Ruleset;
 
 namespace ShiftPlanner.Rules;
 
-public static class RulesetFactory
+public class RulesetFactory : IRulesetFactory
 {
-    public static IEnumerable<IRule> CreateRuleset(
+    public IEnumerable<IRule> CreateRuleset(
         IMonthScheduleParameters parameters,
         ScheduleFlexibility flexibility,
-        ISchedulingParametersRecorder recorder
-    )
+        ISchedulingParametersRecorder recorder)
     {
         yield return new EveryDayAtEveryWorkplaceIsCoveredRule(parameters);
         yield return new NoConcurrentShiftsRule(parameters);

@@ -5,30 +5,50 @@ namespace ShiftPlanner.Engine;
 
 public class ShiftScheduler
 {
-    public SchedulingResult ComputeSchedule(MonthScheduleParameters monthScheduleParameters)
+    private readonly IFlexibilityVariator _flexibilityVariator;
+    private readonly IRulesetFactory _rulesetFactory;
+
+    public ShiftScheduler(IFlexibilityVariator flexibilityVariator, IRulesetFactory rulesetFactory)
     {
-        var solverParameters = GetSolverParameters(monthScheduleParameters);
-        var recorder = new SchedulingParametersRecorder();
-
-        for (uint degreeOfFlexibility = 0; degreeOfFlexibility <= 50; degreeOfFlexibility++)
-        {
-            recorder.Reset();
-            var flexibility = new ScheduleFlexibility(degreeOfFlexibility);
-            var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(solverParameters);
-
-            var rules = RulesetFactory.CreateRuleset(monthScheduleParameters, flexibility, recorder).ToList();
-            rules.ForEach(r => r.Apply(engine));
-
-            var result = engine.Solve();
-
-            if (result != null)
-            {
-                return new SuccessfulSchedulingResult(result, flexibility, recorder.GetParameters);
-            }
-        }
-
-        return new SolutionNotFound(recorder.GetParameters);
+        _flexibilityVariator = flexibilityVariator;
+        _rulesetFactory = rulesetFactory;
     }
 
-    private static ISolverParameters GetSolverParameters(MonthScheduleParameters monthScheduleParameters) => monthScheduleParameters;
+    public SchedulingResult ComputeSchedule(MonthScheduleParameters monthScheduleParameters)
+    {
+        var result = _flexibilityVariator.ExecuteWithVariableFlexibility(new SolverSchedulingStrategy(monthScheduleParameters, _rulesetFactory));
+
+        return result.Result;
+    }
+
+    private class SolverSchedulingStrategy : IVariableFlexibilityStrategy<SchedulingResult>
+    {
+        private readonly MonthScheduleParameters _parameters;
+        private readonly IRulesetFactory _rulesetFactory;
+        private readonly SchedulingParametersRecorder _recorder = new SchedulingParametersRecorder();
+
+        public SolverSchedulingStrategy(MonthScheduleParameters parameters, IRulesetFactory rulesetFactory)
+        {
+            _parameters = parameters;
+            _rulesetFactory = rulesetFactory;
+        }
+
+        public bool PerformWithFlexibilityValue(ScheduleFlexibility flexibility, out SchedulingResult result)
+        {
+            _recorder.Reset();
+            var engine = SchedulingEngine.Engine.CreateGoogleSolverEngine(_parameters);
+
+            var rules = _rulesetFactory.CreateRuleset(_parameters, flexibility, _recorder).ToList();
+            rules.ForEach(r => r.Apply(engine));
+
+            var scheduleResult = engine.Solve();
+            
+            result = scheduleResult is not null
+                ? new SuccessfulSchedulingResult(scheduleResult, flexibility, _recorder.GetParameters)
+                : new SolutionNotFound(_recorder.GetParameters);
+
+            return scheduleResult is not null;
+        }
+    }
 }
+

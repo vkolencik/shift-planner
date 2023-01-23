@@ -1,8 +1,7 @@
 ﻿using ShiftPlanner.Domain;
-using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Persistence;
 
-namespace ShiftPlanner.Api.Tests.Persistence;
+namespace ShiftPlanner.Services.Tests.Persistence;
 
 public class RequirementEntityConverterShould
 {

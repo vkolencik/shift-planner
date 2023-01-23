@@ -4,7 +4,7 @@ using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Infra;
 using ShiftPlanner.Services.Services;
 
-namespace ShiftPlanner.Api.Tests.Integration;
+namespace ShiftPlanner.Services.Tests.Integration;
 
 public class Auth0UserServiceShould
 {

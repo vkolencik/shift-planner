@@ -2,7 +2,7 @@
 using Amazon.SecretsManager;
 using ShiftPlanner.Services.Infra;
 
-namespace ShiftPlanner.Api.Tests.Integration;
+namespace ShiftPlanner.Services.Tests.Integration;
 
 public class AwsSecretsManagerFunctionalityShould
 {

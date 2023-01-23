@@ -5,6 +5,7 @@ const config: Config = {
   testEnvironment: 'node',
   silent: false,
   setupFilesAfterEnv: ['jest-extended/all'],
+  testTimeout: 120000,
   globals: {
     backendBaseUrl: 'http://localhost:65041',
     testUserId: 'auth0|633015ee115794a47e8166d8',

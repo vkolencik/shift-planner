@@ -1,4 +1,4 @@
-﻿namespace ShiftPlanner.Api.Tests.Integration;
+﻿namespace ShiftPlanner.Services.Tests.Integration;
 
 public class TestHttpClientFactory : IHttpClientFactory
 {

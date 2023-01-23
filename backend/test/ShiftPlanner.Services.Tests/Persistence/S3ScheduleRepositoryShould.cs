@@ -18,6 +18,7 @@ public class S3ScheduleRepositoryShould
 
     public S3ScheduleRepositoryShould()
     {
+        _employeeInfoServiceMock = new Mock<IEmployeeInfoService>();
         _s3ClientMock = new Mock<IAmazonS3>(MockBehavior.Strict);
         _userServiceMock = new Mock<IUserService>();
         _employeeInfoServiceMock = new Mock<IEmployeeInfoService>();

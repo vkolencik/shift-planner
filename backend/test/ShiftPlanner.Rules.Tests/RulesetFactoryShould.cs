@@ -9,7 +9,7 @@ public class RulesetFactoryShould
     [Fact]
     public void ReturnAllRulesInRuleset()
     {
-        var ruleset = RulesetFactory.CreateRuleset(
+        var ruleset = new RulesetFactory().CreateRuleset(
             new Mock<IMonthScheduleParameters>().Object,
             ScheduleFlexibility.Strict, 
             new Mock<ISchedulingParametersRecorder>().Object);
