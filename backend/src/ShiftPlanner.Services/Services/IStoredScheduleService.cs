@@ -6,5 +6,5 @@ namespace ShiftPlanner.Services.Services;
 public interface IStoredScheduleService
 {
     Task<Schedule?> GetSchedule(ScheduledMonth month);
-    // Task StoreSchedule(ScheduledMonth month, Schedule month);
+    Task StoreSchedule(Tenant tenant, ScheduledMonth month, Schedule schedule);
 }

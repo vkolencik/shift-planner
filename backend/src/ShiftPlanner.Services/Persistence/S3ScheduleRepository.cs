@@ -39,10 +39,27 @@ public class S3ScheduleRepository : IScheduleRepository
                 users.Single(u => u.Email == employeeInfos.Single(ei => ei.Name == s.Employee.Name).Email).UserId
                 )).ToArray());
         
+        await StoreScheduleInternal(month, storedSchedule);
+    }
+
+    public async Task StoreSchedule(ScheduledMonth month, Schedule schedule)
+    {
+        var storedSchedule = new StoredSchedule(
+            schedule.Shifts.Select(
+                s => new StoredScheduledShift(
+                    s.Day.Date.ToString("yyyy-MM-dd"),
+                    s.Workplace.Name,
+                    s.User.UserId)).ToArray());
+        
+        await StoreScheduleInternal(month, storedSchedule);
+    }
+
+    private async Task StoreScheduleInternal(ScheduledMonth month, StoredSchedule storedSchedule)
+    {
         var byteArray = Encoding.ASCII.GetBytes(JsonSerializer.Serialize(storedSchedule));
         var seekableStream = new MemoryStream(byteArray);
         seekableStream.Position = 0;
-        
+
         var request = new PutObjectRequest
         {
             BucketName = GetBucketName(),

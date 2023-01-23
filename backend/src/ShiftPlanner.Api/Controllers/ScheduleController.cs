@@ -47,14 +47,7 @@ public class ScheduleController : ControllerBase
         [FromBody] ScheduleInputModel scheduleInputModel)
     {
         var users = await _userService.GetAllUsers();
-        var schedule = new Schedule(
-            scheduleInputModel.Shifts
-                .Select(
-                    s => new ScheduledShift(
-                        new Day(DateOnly.ParseExact(s.Day, "yyyy-MM-dd")),
-                        new Workplace(s.Workplace),
-                        users.Single(u => u.UserId == s.UserId)))
-                .ToArray());
+        var schedule = ConvertInputModel(scheduleInputModel, users);
 
         var validationErrors = await _scheduleValidator.ValidateSchedule(new Tenant(tenant), new ScheduledMonth(year, month), schedule);
 
@@ -69,6 +62,18 @@ public class ScheduleController : ControllerBase
         return Ok(outputModel);
     }
 
+    private static Schedule ConvertInputModel(ScheduleInputModel scheduleInputModel, IReadOnlyCollection<User> users)
+    {
+        return new Schedule(
+            scheduleInputModel.Shifts
+                .Select(
+                    s => new ScheduledShift(
+                        new Day(DateOnly.ParseExact(s.Day, "yyyy-MM-dd")),
+                        new Workplace(s.Workplace),
+                        users.Single(u => u.UserId == s.UserId)))
+                .ToArray());
+    }
+
     [HttpPut("{year}/{month}/:save")]
     public async Task<ActionResult> SaveSchedule(
         [FromRoute] string tenant,
@@ -78,17 +83,10 @@ public class ScheduleController : ControllerBase
     {
         var users = await _userService.GetAllUsers();
         
-        var schedule = new Schedule(
-            scheduleInputModel.Shifts
-                .Select(
-                    s => new ScheduledShift(
-                        new Day(DateOnly.ParseExact(s.Day, "yyyy-MM-dd")),
-                        new Workplace(s.Workplace),
-                        users.Single(u => u.UserId == s.UserId)))
-                .ToArray());
-        
-        // _storedScheduleService.
+        var schedule = ConvertInputModel(scheduleInputModel, users);
 
+        await _storedScheduleService.StoreSchedule(new Tenant(tenant), new ScheduledMonth(year, month), schedule);
+        
         return Ok();
     }
 

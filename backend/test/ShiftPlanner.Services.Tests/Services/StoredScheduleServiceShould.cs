@@ -37,4 +37,22 @@ public class StoredScheduleServiceShould
 
         Assert.Equal(new[] {shift}, schedule.Shifts);
     }
+
+    [Fact]
+    public async Task StoreSchedule()
+    {
+        var tenant = TestData.Tenant;
+        var month = new ScheduledMonth(2023, 1);
+        var day = new Day(month, 1);
+        var workplace = TestData.Workplace;
+        var user = new User("user-id-1", "user name", "user1@krtek.me");
+        var schedule = new Schedule(new [] { new ScheduledShift(day, workplace, user) });
+
+        _scheduleRepositoryMock
+            .Setup(_ => _.StoreSchedule(month, schedule));
+
+        var service = new StoredScheduleService(_scheduleRepositoryMock.Object);
+
+        await service.StoreSchedule(tenant, month, schedule);
+    }
 }
