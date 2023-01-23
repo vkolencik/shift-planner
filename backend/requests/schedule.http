@@ -8,3 +8,10 @@ Content-Type: application/json
 ### Fetch schedule
 GET {{backendBaseUrl}}/api/fnb/schedule/2023/02
 Authorization: Bearer {{accessToken}}
+
+### Validate schedule
+PUT {{backendBaseUrl}}/api/fnb/schedule/2023/02/:validate
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+< ./schedule-payload.json

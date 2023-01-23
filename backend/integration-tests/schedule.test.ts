@@ -84,8 +84,19 @@ describe('schedule endpoint should', () => {
       }))
     }
 
-    const validationResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01/:validate`, {
+    fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01/:validate`, {
       ...getHeaders(token),
+      method: 'put',
+      body: JSON.stringify(scheduleForValidation),
+
+    })
+      .then(x => console.log(x))
+      .catch(reason => {
+      console.log(reason)
+    })
+
+    const validationResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01/:validate`, {
+    ...getHeaders(token),
       method: 'put',
       body: JSON.stringify(scheduleForValidation)
     })
