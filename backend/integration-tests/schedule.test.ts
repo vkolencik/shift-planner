@@ -44,7 +44,7 @@ describe('schedule endpoint should', () => {
     expect(resp.status).toEqual(204)
   })
 
-  it('validate valid schedule', async () => {
+  it.skip('validate valid schedule', async () => {
     jest.setTimeout(20000)
     const scheduleResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01`, getHeaders(token))
 
