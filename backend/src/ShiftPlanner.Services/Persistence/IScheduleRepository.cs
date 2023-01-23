@@ -6,5 +6,6 @@ namespace ShiftPlanner.Services.Persistence;
 public interface IScheduleRepository
 {
     Task StoreComputedSchedule(ScheduledMonth month, SuccessfulSchedulingResult result);
+    Task StoreSchedule(ScheduledMonth month, Schedule schedule);
     Task<Schedule?> LoadSchedule(ScheduledMonth month);
 }

@@ -113,6 +113,46 @@ public abstract class ScheduleControllerShould
         }
     }
 
+    public class Save : ScheduleControllerShould
+    {
+        [Fact]
+        public async Task SaveSchedule()
+        {
+            var user = new User("user-1", "User 1", "user1@krtek.me");
+            var day = new Day(2023, 1, 5);
+            var dayString = "2023-01-05";
+            var workplace = new Workplace("ARO");
+            var tenant = TestData.Tenant;
+
+
+            var expectedSchedule = new Schedule(
+                new[]
+                {
+                    new ScheduledShift(day, workplace, user),
+                });
+
+            var scheduleInputModel = new ScheduleInputModel(new[] {new ShiftAssignmentInputModel(dayString, workplace.Name, user.UserId)});
+
+            var storedSchedules = new List<Schedule>();
+
+            _userServiceMock
+                .Setup(_ => _.GetAllUsers())
+                .ReturnsAsync(new[] {user});
+
+            _storedScheduleServiceMock
+                .Setup(_ => _.StoreSchedule(tenant, new ScheduledMonth(2027, 7), Capture.In(storedSchedules)));
+
+            var controller = CreateController();
+
+            var response = await controller.SaveSchedule(tenant.Name, 2027, 7, scheduleInputModel);
+
+            Assert.IsType<OkResult>(response);
+
+            var storedSchedule = Assert.Single(storedSchedules);
+            Assert.Equal(expectedSchedule.Shifts, storedSchedule.Shifts);
+        }
+    }
+
     private ScheduleController CreateController()
     {
         return new ScheduleController(

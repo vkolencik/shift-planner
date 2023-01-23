@@ -34,6 +34,11 @@ public class GoogleSheetsScheduleRepository : GoogleSheetsService, IGoogleSheets
         }
     }
 
+    public Task StoreSchedule(ScheduledMonth month, Schedule schedule)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<Schedule> LoadSchedule(ScheduledMonth month)
     {
         throw new NotImplementedException();

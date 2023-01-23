@@ -45,7 +45,6 @@ describe('schedule endpoint should', () => {
   })
 
   it.skip('validate valid schedule', async () => {
-    jest.setTimeout(20000)
     const scheduleResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01`, getHeaders(token))
 
     const validSchedule = await scheduleResp.json()
@@ -71,7 +70,6 @@ describe('schedule endpoint should', () => {
   })
 
   it('return validation errors given invalid schedule', async () => {
-    jest.setTimeout(20000)
     const scheduleResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01`, getHeaders(token))
 
     const validSchedule = await scheduleResp.json()
@@ -84,19 +82,8 @@ describe('schedule endpoint should', () => {
       }))
     }
 
-    fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01/:validate`, {
-      ...getHeaders(token),
-      method: 'put',
-      body: JSON.stringify(scheduleForValidation),
-
-    })
-      .then(x => console.log(x))
-      .catch(reason => {
-      console.log(reason)
-    })
-
     const validationResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01/:validate`, {
-    ...getHeaders(token),
+      ...getHeaders(token),
       method: 'put',
       body: JSON.stringify(scheduleForValidation)
     })
@@ -105,5 +92,27 @@ describe('schedule endpoint should', () => {
     const validationResult = await validationResp.json()
     expect(validationResult).toEqual(expect.objectContaining({ isValid: false, validationErrors: expect.toBeArray() }))
     expect(validationResult.validationErrors).not.toBeEmpty()
+  })
+
+  it.skip('save schedule', async () => {
+    const scheduleResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01`, getHeaders(token))
+
+    const validSchedule = await scheduleResp.json()
+
+    const scheduleForSaving = {
+      shifts: validSchedule.shifts.map(s => ({
+        day: s.day,
+        workplace: s.workplace,
+        userId: validSchedule.shifts[0].user.userId
+      }))
+    }
+
+    const validationResp = await fetch(`${backendBaseUrl}/api/${tenant}/schedule/2023/01/:save`, {
+      ...getHeaders(token),
+      method: 'put',
+      body: JSON.stringify(scheduleForSaving)
+    })
+
+    expect(validationResp.status).toEqual(200)
   })
 })

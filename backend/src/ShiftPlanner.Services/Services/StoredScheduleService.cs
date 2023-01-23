@@ -18,4 +18,9 @@ internal class StoredScheduleService : IStoredScheduleService
     {
         return await _scheduleRepository.LoadSchedule(month);
     }
+
+    public async Task StoreSchedule(Tenant tenant, ScheduledMonth month, Schedule schedule)
+    {
+        await _scheduleRepository.StoreSchedule(month, schedule);
+    }
 }
