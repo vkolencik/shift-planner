@@ -1,7 +1,7 @@
 import moment, { Moment } from 'moment'
 
-export const currentMonth = 2
-export const currentYear = 2023
+const currentMonth = 3
+const currentYear = 2023
 
 export function getMonthLabel (month: Month) {
   return getStartOfMonth(month).toLocaleString('default', { month: 'long' }) + ' ' + currentYear

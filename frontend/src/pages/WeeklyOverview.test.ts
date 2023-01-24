@@ -15,6 +15,7 @@ describe('Weekly overview should', () => {
       { userId: 'user1', userName: 'User 1', requirementType: 'only-afternoon', date: toDay('2022-12-03'), approved: true },
       { userId: 'user1', userName: 'User 1', requirementType: 'only-morning', date: toDay('2022-12-04'), approved: true },
       { userId: 'user1', userName: 'User 1', requirementType: 'soft-yes', date: toDay('2022-12-05'), approved: true },
+      { userId: 'user1', userName: 'User 1', requirementType: 'hard-no', date: toDay('2022-12-22'), approved: true },
       { userId: 'user2', userName: 'User 2', requirementType: 'hard-no', date: toDay('2022-12-15'), approved: true },
     ]
     const shifts: ShiftAssignment[] = [

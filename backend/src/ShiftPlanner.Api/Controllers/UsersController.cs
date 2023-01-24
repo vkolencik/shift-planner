@@ -16,7 +16,6 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Policy = Claims.ReadRequirementsOfOthers)]
     public async Task<ActionResult<IEnumerable<UserOutputModel>>> GetUsers()
     {
         var users = await _userService.GetAllUsers();

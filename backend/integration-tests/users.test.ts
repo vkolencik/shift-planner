@@ -35,9 +35,4 @@ describe('Users endpoint should', () => {
 
     expect(resp.status).toEqual(401)
   })
-
-  it('return forbidden when user is not manager', async () => {
-    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/`, getHeaders(token2))
-    expect(resp.status).toEqual(403)
-  })
 })

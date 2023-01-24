@@ -19,22 +19,15 @@ export const useUserList = (): User[] => {
 export const WithUserList: React.FC<PropsWithChildren> = ({ children }) => {
   const api = useApi()
   const permissions = usePermissions()
-  const canSeeUsers = () => permissions.includes(Permission.readRequirementsOfOthers)
   const [users, setUsers] = useState<User[] | null>(null)
   useEffect(() => {
-      if (canSeeUsers()) {
-        api.users.get().then(setUsers)
-      }
+      api.users.get().then(setUsers)
     },
     [])
-
-  if (!canSeeUsers()) {
-    return <>{children}</>
-  }
 
   if (users === null) {
     return <LoadingSpinner/>
   }
-  
+
   return <UserListContext.Provider value={users}>{children}</UserListContext.Provider>
 }
