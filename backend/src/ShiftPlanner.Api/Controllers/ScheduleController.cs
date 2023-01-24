@@ -75,6 +75,7 @@ public class ScheduleController : ControllerBase
     }
 
     [HttpPut("{year}/{month}/:save")]
+    [Authorize(Claims.ModifySchedule)]
     public async Task<ActionResult> SaveSchedule(
         [FromRoute] string tenant,
         [FromRoute] int year,

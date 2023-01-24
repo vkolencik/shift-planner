@@ -6,6 +6,7 @@ import { Alert, Button, ButtonGroup, Table } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBan, faCheck, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { useUserList } from '../service/users'
+import { Permission, usePermissions } from '../auth/auth'
 
 type DayInfo =
   undefined
@@ -51,6 +52,7 @@ export const WeeklyOverview: React.FC = () => {
   const [loadingWeek, setLoadingWeek] = useState<boolean>(true)
   const users = useUserList()
   const api = useApi()
+  const permissions = usePermissions()
 
   useEffect(() => {
     setRequirements([])
@@ -143,6 +145,8 @@ export const WeeklyOverview: React.FC = () => {
     dailyAvailabilities.push(available)
   }
 
+  const requiredAvailabilities = [26, 26, 27, 25, 22, null, null]
+
   return <div className="container">
     <ButtonGroup>
       <Button variant="outline-secondary" onClick={handlePreviousWeek}><FontAwesomeIcon icon={faArrowLeft}/></Button>
@@ -160,12 +164,18 @@ export const WeeklyOverview: React.FC = () => {
         <th scope="row">K dispozici</th>
         {dailyAvailabilities.map(a => <th scope="col" className="text-center">{a}</th>)}
       </tr>
+      <tr>
+        <th scope="row">Potřebný počet</th>
+        {requiredAvailabilities.map(n => <th scope="col" className="text-center">{n}</th>)}
+      </tr>
       </thead>
       <tbody>
-      {users.map(u =>
+      {users.map((u, i) =>
         <tr key={u.userId}>
           <th scope="row">{u.userName}</th>
-          {weekDays.map(d => <DayCell day={d} userId={u.userId}/>)}
+          {permissions.includes(Permission.readRequirementsOfOthers)
+            ? weekDays.map(d => <DayCell day={d} userId={u.userId}/>)
+            : (i == 0 ? <td colSpan={7} rowSpan={users.length} className="table-secondary"><span style={{position: 'sticky', left: '20px', top: '50vh'}}>Tento uživatel nemá k dispozici náhled</span></td> : <></>)}
         </tr>
       )}
       </tbody>

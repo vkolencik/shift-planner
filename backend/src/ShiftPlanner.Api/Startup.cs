@@ -67,6 +67,8 @@ public class Startup
             {
                 options.AddPolicy(Claims.ReadRequirementsOfOthers, policy => policy.RequireClaim("permissions", Claims.ReadRequirementsOfOthers));
                 options.AddPolicy(Claims.ApproveRequirementsOfOthers, policy => policy.RequireClaim("permissions", Claims.ApproveRequirementsOfOthers));
+                options.AddPolicy(Claims.ModifySchedule, policy => policy.RequireClaim("permissions", Claims.ModifySchedule));
+                options.AddPolicy(Claims.ModifyRequirementsOfOthers, policy => policy.RequireClaim("permissions", Claims.ModifyRequirementsOfOthers));
             });
 
         services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
