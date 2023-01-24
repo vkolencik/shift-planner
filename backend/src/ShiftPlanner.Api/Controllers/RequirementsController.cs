@@ -6,6 +6,7 @@ using ShiftPlanner.Services.Services;
 namespace ShiftPlanner.Api.Controllers;
 
 [Route("api/{tenant}/requirements")]
+[Authorize]
 public class RequirementsController : ControllerBase
 {
     private readonly IRequirementsService _requirementsService;

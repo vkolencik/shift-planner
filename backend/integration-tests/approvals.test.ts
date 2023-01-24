@@ -28,11 +28,6 @@ describe('approval workflow', () => {
       expect(resp.status).toEqual(401)
     })
 
-    it('return unauthorized when the user doesn\'t have permissions', async () => {
-      const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/requirements/2022/12`, getHeaders(token2))
-      expect(resp.status).toEqual(403)
-    })
-
     it('return requirements from all users', async () => {
       await putRequirement({ ...requirementParams, requirementType: 'hard-no', userId: testUserId }, token)
       await putRequirement({ ...requirementParams, requirementType: 'soft-yes', userId: testUser2Id }, token2)
