@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { MonthRequirements, RequirementType, useApi, User } from '../service/api'
 import {
   dateToString,
-  getCurrentMonth,
+  getActiveMonth,
   getNumberOfDaysOfMonth,
   isWeekend,
   parseDate
@@ -60,7 +60,7 @@ export const MonthlyOverview: React.FC = () => {
   const users = useUserList()
   const [requirements, setRequirements] = useState<MonthRequirements | null>(null)
 
-  const month = getCurrentMonth()
+  const month = getActiveMonth()
   useEffect(() => {
     if (requirements === null) {
       api.requirements.getMonth(month).then(setRequirements)
@@ -86,7 +86,7 @@ export const MonthlyOverview: React.FC = () => {
     requirementsPerUserDay[`${requirement.userId}-${day}`] = requirement.requirementType
   }
 
-  const currentMonth = getCurrentMonth()
+  const currentMonth = getActiveMonth()
   const weekends: number[] = days.filter(day => isWeekend(dateToString(currentMonth.year, currentMonth.month, day)))
 
   return <div className='big-table'>

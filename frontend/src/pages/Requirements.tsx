@@ -15,7 +15,7 @@ import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Permission, usePermissions } from '../auth/auth'
-import { addMonths, getCurrentMonth, getMonthLabel, getStartOfMonth, Month } from '../dates'
+import { addMonths, getActiveMonth, getMonthLabel, getStartOfMonth, Month } from '../dates'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { UserSelectModal } from '../UserSelectModal'
@@ -55,7 +55,7 @@ export const Requirements: React.FC = () => {
   const [user, setUser] = useState<User>(api.users.loggedInUser)
   const permissions = usePermissions()
   const [userSelectOpen, setUserSelectOpen] = useState<boolean>(false)
-  const [month, setMonth] = useState<Month>(getCurrentMonth())
+  const [month, setMonth] = useState<Month>(getActiveMonth())
 
   useEffect(() => {
     if (selectedDateRange === null && calendarRef.current) {
@@ -118,7 +118,7 @@ export const Requirements: React.FC = () => {
   }
 
   const handlePreviousMonth = () => {setMonth(oldMonth => addMonths(oldMonth, -1))}
-  const handleCurrentMonth = () => {setMonth(getCurrentMonth)}
+  const handleCurrentMonth = () => {setMonth(getActiveMonth)}
   const handleNextMonth = () => {setMonth(oldMonth => addMonths(oldMonth, 1))}
 
   const oneDayRange = selectedDateRange !== null && selectedDateRange.from.isSame(selectedDateRange.to, 'day')
@@ -216,7 +216,7 @@ export const Requirements: React.FC = () => {
               <FontAwesomeIcon icon={faArrowLeft}/>
             </Button>
             <Button variant="outline-secondary"
-                    disabled={month.month === getCurrentMonth().month && month.year === getCurrentMonth().year}
+                    disabled={month.month === getActiveMonth().month && month.year === getActiveMonth().year}
                     onClick={handleCurrentMonth}>
               Aktuální měsíc
             </Button>
