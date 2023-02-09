@@ -72,7 +72,7 @@ function MonthScheduleInner ({ month, schedule }: { month: Month, schedule: Sche
   return <>
     <h1>{getMonthLabel(month)}</h1>
 
-    {permissions.includes(Permission.readRequirementsOfOthers) &&
+    {permissions.includes(Permission.modifySchedule) &&
       <div className="float-end no-print"><Link to={`/sluzby/${month.year}/${month.month}/editace`}><FontAwesomeIcon
         icon={faEdit}/>Upravit</Link></div>
     }
