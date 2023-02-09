@@ -38,6 +38,7 @@ export function MonthSchedule (): JSX.Element {
   const api = useApi()
   const [month, setMonth] = useState<Month>({ year: 2023, month: 2 })
   const [schedule, setSchedule] = useState<Schedule | null | undefined>(undefined)
+  const permissions = usePermissions()
 
   useEffect(() => {
     api.schedule.get(month)
@@ -50,6 +51,10 @@ export function MonthSchedule (): JSX.Element {
   }
 
   function handleNextMonth () {
+    if (!permissions.includes(Permission.modifySchedule) && month.year === 2023 && month.month === 2) {
+      return
+    }
+
     setSchedule(undefined)
     setMonth(prevMonth => addMonths(prevMonth, 1))
   }
