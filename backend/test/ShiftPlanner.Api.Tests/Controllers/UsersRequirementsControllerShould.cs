@@ -50,6 +50,16 @@ public abstract class UsersRequirementsControllerShould
         }
 
         [Fact]
+        public async Task ReturnForbidden_GivenReadOnlyMonth()
+        {
+            var controller = CreateController("user-id-1");
+
+            var response = await controller.Put("tenant-1", "user-id-2", 2022, 10, 1, new RequirementInputModel("hard-no"));
+
+            Assert.IsType<ForbidResult>(response);
+        }
+
+        [Fact]
         public async Task ReturnOkReadingRequirementsOfDifferentUser_WhenCallerIsManager()
         {
             var tenant = TestData.Tenant;

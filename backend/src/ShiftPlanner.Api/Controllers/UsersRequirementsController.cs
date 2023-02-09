@@ -11,10 +11,12 @@ namespace ShiftPlanner.Api.Controllers;
 public class UsersRequirementsController : ControllerBase
 {
     private readonly IRequirementsService _requirementsService;
+    private readonly IPermissionsChecker _permissionsChecker;
 
-    public UsersRequirementsController(IRequirementsService requirementsService)
+    public UsersRequirementsController(IRequirementsService requirementsService, IPermissionsChecker permissionsChecker)
     {
         _requirementsService = requirementsService;
+        _permissionsChecker = permissionsChecker;
     }
 
     // GET api/values
@@ -27,7 +29,7 @@ public class UsersRequirementsController : ControllerBase
     {
         var loggedInUserId = User.Identity.Name;
 
-        if (loggedInUserId != userId && !User.Claims.Any(c => c.Type == "permissions" && c.Value == Claims.ReadRequirementsOfOthers))
+        if (!_permissionsChecker.CanReadRequirementsOfUser(userId))
         {
             return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
         }
