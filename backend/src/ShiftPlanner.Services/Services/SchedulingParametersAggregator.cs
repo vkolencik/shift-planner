@@ -86,5 +86,11 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
                         .Where(d => d.DayOfWeek == DayOfWeek.Saturday || d.DayOfWeek == DayOfWeek.Sunday)
                         .Select(d => new Leave(d, d, false))
                     : Array.Empty<Leave>())
+            .Concat(
+                userId == "auth0|637f84ec841043dd7a9d44dc" // Jansky
+                    ? month.Days
+                        .Where(d => d.DayOfWeek == DayOfWeek.Saturday)
+                        .Select(d => new Leave(d, d, false))
+                    : Array.Empty<Leave>())
             .ToArray();
 }
