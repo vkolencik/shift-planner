@@ -36,7 +36,7 @@ function getUserShiftEntries (schedule: Schedule): [string, number][] {
 
 export function MonthSchedule (): JSX.Element {
   const api = useApi()
-  const [month, setMonth] = useState<Month>({ year: 2023, month: 2 })
+  const [month, setMonth] = useState<Month>({ year: 2023, month: 3 })
   const [schedule, setSchedule] = useState<Schedule | null | undefined>(undefined)
   const permissions = usePermissions()
 
