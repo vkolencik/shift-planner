@@ -50,17 +50,16 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
         {
             throw new InvalidOperationException($"Missing employee infos for {string.Join(", ", missingUsers)}");
         }
-        
-        var lastMonthShifts = existingShifts.
-            Where(s => s.Day.Month == previousMonth.Month)
+
+        var lastMonthShifts = existingShifts.Where(s => s.Day.Month == previousMonth.Month)
             .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
             .ToArray();
-        
+
         var fixedShifts = existingShifts
             .Where(ss => ss.Day.Month == month.Month)
             .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
             .ToArray();
-        
+
         return new MonthScheduleParameters(
             month,
             employeeMonths,
@@ -74,16 +73,24 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
     {
         return new Employee(ei.Name, ei.CompetenceLevel, ei.Capabilities, ei.Workload);
     }
-    
+
     private IReadOnlyCollection<Leave> GetLeavesForEmployee(ScheduledMonth month, IReadOnlyCollection<UserRequirementModel> employeeRequirements, string userId) =>
         employeeRequirements
             .Where(req => req.UserId == userId)
             .Where(req => AbsenceRequirementTypes.Contains(req.RequirementType))
             .Select(req => new Leave(req.Date, req.Date, req.RequirementType == "leave"))
-            .Concat(userId == "auth0|637f84e6841043dd7a9d449e"  // Tesarik
-                ? month.Days
-                    .Where(d => d.DayOfWeek == DayOfWeek.Saturday || d.DayOfWeek == DayOfWeek.Sunday)
-                    .Select(d => new Leave(d, d, false))
-                : Array.Empty<Leave>())
+            .Concat(
+                (userId == "auth0|637f84e6841043dd7a9d449e" // Tesarik
+                 || userId == "auth0|637f84e6841043dd7a9d449f") // Tesarova
+                    ? month.Days
+                        .Where(d => d.DayOfWeek == DayOfWeek.Saturday || d.DayOfWeek == DayOfWeek.Sunday)
+                        .Select(d => new Leave(d, d, false))
+                    : Array.Empty<Leave>())
+            .Concat(
+                userId == "auth0|637f84ec841043dd7a9d44dc" // Jansky
+                    ? month.Days
+                        .Where(d => d.DayOfWeek == DayOfWeek.Saturday)
+                        .Select(d => new Leave(d, d, false))
+                    : Array.Empty<Leave>())
             .ToArray();
 }

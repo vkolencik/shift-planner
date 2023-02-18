@@ -36,7 +36,7 @@ function getUserShiftEntries (schedule: Schedule): [string, number][] {
 
 export function MonthSchedule (): JSX.Element {
   const api = useApi()
-  const [month, setMonth] = useState<Month>({ year: 2023, month: 2 })
+  const [month, setMonth] = useState<Month>({ year: 2023, month: 3 })
   const [schedule, setSchedule] = useState<Schedule | null | undefined>(undefined)
 
   useEffect(() => {
@@ -72,7 +72,7 @@ function MonthScheduleInner ({ month, schedule }: { month: Month, schedule: Sche
   return <>
     <h1>{getMonthLabel(month)}</h1>
 
-    {permissions.includes(Permission.readRequirementsOfOthers) &&
+    {permissions.includes(Permission.modifySchedule) &&
       <div className="float-end no-print"><Link to={`/sluzby/${month.year}/${month.month}/editace`}><FontAwesomeIcon
         icon={faEdit}/>Upravit</Link></div>
     }
