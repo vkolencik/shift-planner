@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using ShiftPlanner.Api.Controllers;
 using ShiftPlanner.Services;
 using ShiftPlanner.Services.Contracts;
 
@@ -74,6 +75,10 @@ public class Startup
         services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 
         services.AddControllers();
+
+        services.AddHttpContextAccessor();
+        services.AddTransient<IPermissionsChecker, PermissionsChecker>();
+        services.AddTransient<IUserAccessor, UserAccessor>();
 
         services.AddServices();
     }

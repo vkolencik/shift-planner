@@ -27,11 +27,9 @@ public class UsersRequirementsController : ControllerBase
         [FromRoute] int year,
         [FromRoute] int month)
     {
-        var loggedInUserId = User.Identity.Name;
-
         if (!_permissionsChecker.CanReadRequirementsOfUser(userId))
         {
-            return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
+            return StatusCode(StatusCodes.Status403Forbidden, $"User is not permitted to fetch requirements of user {userId}");
         }
 
         var requirements = await _requirementsService.GetRequirements(new Tenant(tenant), userId, new ScheduledMonth(year, month));
@@ -51,11 +49,9 @@ public class UsersRequirementsController : ControllerBase
         [FromRoute] int day,
         [FromBody] RequirementInputModel requirement)
     {
-        var loggedInUserId = User.Identity.Name;
-
-        if (loggedInUserId != userId && !User.HasClaim("permissions", Claims.ModifyRequirementsOfOthers))
+        if (!_permissionsChecker.CanModifyRequirementsOfUser(userId))
         {
-            return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
+            return StatusCode(StatusCodes.Status403Forbidden, $"User cannot modify requirements of user {userId}");
         }
 
         await _requirementsService.SetRequirement(new Requirement(new Tenant(tenant), userId, new Day(year, month, day), requirement.RequirementType));
@@ -71,12 +67,9 @@ public class UsersRequirementsController : ControllerBase
         [FromRoute] int month,
         [FromRoute] int day)
     {
-        var loggedInUserId = User.Identity.Name;
-
-        if (loggedInUserId != userId
-            && !(User.HasClaim("permissions", Claims.ModifyRequirementsOfOthers) || User.HasClaim("permissions", Claims.ApproveRequirementsOfOthers)))
+        if (!(_permissionsChecker.CanModifyRequirementsOfUser(userId) || _permissionsChecker.CanApproveRequirements()))
         {
-            return StatusCode(StatusCodes.Status403Forbidden, $"User {loggedInUserId} cannot fetch requirements of user {userId}");
+            return StatusCode(StatusCodes.Status403Forbidden, $"User cannot fetch requirements of user {userId}");
         }
 
         DeleteResult result = await _requirementsService.DeleteRequirement(new Tenant(tenant), userId, new Day(year, month, day));

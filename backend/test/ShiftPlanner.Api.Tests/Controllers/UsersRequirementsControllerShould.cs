@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ShiftPlanner.Api.Controllers;
@@ -12,7 +10,19 @@ namespace ShiftPlanner.Api.Tests.Controllers;
 public abstract class UsersRequirementsControllerShould
 {
     private readonly string _userId = "user-id-1";
-    private readonly Mock<IRequirementsService> _requirementsServiceMock = new Mock<IRequirementsService>();
+    private readonly Mock<IRequirementsService> _requirementsServiceMock;
+    private readonly Mock<IPermissionsChecker> _permissionsCheckerMock;
+
+    protected UsersRequirementsControllerShould()
+    {
+        _requirementsServiceMock = new Mock<IRequirementsService>();
+        _permissionsCheckerMock = new Mock<IPermissionsChecker>();
+
+        _permissionsCheckerMock.Setup(_ => _.CanReadRequirementsOfOthers()).Returns(true);
+        _permissionsCheckerMock.Setup(_ => _.CanReadRequirementsOfUser(It.IsAny<string>())).Returns(true);
+        _permissionsCheckerMock.Setup(_ => _.CanApproveRequirements()).Returns(true);
+        _permissionsCheckerMock.Setup(_ => _.CanModifyRequirementsOfUser(It.IsAny<string>())).Returns(true);
+    }
 
     public class Get : UsersRequirementsControllerShould
     {
@@ -39,24 +49,16 @@ public abstract class UsersRequirementsControllerShould
         }
 
         [Fact]
-        public async Task ReturnForbidden_GivenTokenForDifferentUser()
+        public async Task ReturnForbidden_WhenUserHasNoPermissions()
         {
-            var controller = CreateController("user-id-1");
+            var userId = "user-id-2";
+            _permissionsCheckerMock.Setup(_ => _.CanReadRequirementsOfUser(userId)).Returns(false);
+            var controller = CreateController();
 
-            var response = await controller.Get("tenant-1", "user-id-2", 2022, 10);
+            var response = await controller.Get("tenant-1", userId, 2022, 10);
 
             var result = Assert.IsType<ObjectResult>(response.Result);
             Assert.Equal(403, result.StatusCode);
-        }
-
-        [Fact]
-        public async Task ReturnForbidden_GivenReadOnlyMonth()
-        {
-            var controller = CreateController("user-id-1");
-
-            var response = await controller.Put("tenant-1", "user-id-2", 2022, 10, 1, new RequirementInputModel("hard-no"));
-
-            Assert.IsType<ForbidResult>(response);
         }
 
         [Fact]
@@ -71,7 +73,7 @@ public abstract class UsersRequirementsControllerShould
 
             _requirementsServiceMock.Setup(_ => _.GetRequirements(tenant, _userId, month)).ReturnsAsync(requirements);
 
-            var controller = CreateController("user-id-1", new[] {Claims.ReadRequirementsOfOthers});
+            var controller = CreateController();
 
             var response = await controller.Get(tenant.Name, _userId, month.Year, month.Month);
 
@@ -101,25 +103,16 @@ public abstract class UsersRequirementsControllerShould
         }
 
         [Fact]
-        public async Task ReturnForbidden_GivenTokenForDifferentUser()
+        public async Task ReturnForbidden_WhenUserHasNoPermissions()
         {
-            var controller = CreateController("user-id-1");
+            var userId = "user-id-2";
+            _permissionsCheckerMock.Setup(_ => _.CanModifyRequirementsOfUser(userId)).Returns(false);
+            var controller = CreateController();
 
-            var response = await controller.Put("tenant-1", "user-id-2", 2022, 10, 12, new RequirementInputModel("hard-no"));
+            var response = await controller.Put("tenant-1", userId, 2022, 10, 12, new RequirementInputModel("hard-no"));
 
             var result = Assert.IsType<ObjectResult>(response);
             Assert.Equal(403, result.StatusCode);
-        }
-
-        [Fact]
-        public async Task CreateNewRequirement_GivenTokenForManager()
-        {
-            var controller = CreateController("user-id-1", new[] {Claims.ModifyRequirementsOfOthers});
-
-            var response = await controller.Put("tenant-1", "user-id-2", 2022, 10, 12, new RequirementInputModel("hard-no"));
-
-            Assert.IsType<OkResult>(response);
-            _requirementsServiceMock.Verify(_ => _.SetRequirement(It.IsAny<Requirement>()));
         }
     }
 
@@ -156,32 +149,17 @@ public abstract class UsersRequirementsControllerShould
         }
 
         [Fact]
-        public async Task ReturnForbidden_GivenTokenForDifferentUser()
+        public async Task ReturnForbidden_WhenUserDoesntHavePermissions()
         {
-            var controller = CreateController("user-id-1");
+            var userId = "user-id-2";
+            _permissionsCheckerMock.Setup(_ => _.CanModifyRequirementsOfUser(userId)).Returns(false);
+            _permissionsCheckerMock.Setup(_ => _.CanApproveRequirements()).Returns(false);
+            var controller = CreateController();
 
-            var response = await controller.Delete("tenant-1", "user-id-2", 2022, 10, 12);
+            var response = await controller.Delete("tenant-1", userId, 2022, 10, 12);
 
             var result = Assert.IsType<ObjectResult>(response);
             Assert.Equal(403, result.StatusCode);
-        }
-
-        [Theory]
-        [InlineData(Claims.ApproveRequirementsOfOthers)]
-        [InlineData(Claims.ModifyRequirementsOfOthers)]
-        public async Task DeleteOtherUserRequirement_WhenDeletedByManager(string claim)
-        {
-            var tenant = TestData.Tenant;
-            var day = new Day(2022, 10, 18);
-            _requirementsServiceMock.Setup(_ => _.DeleteRequirement(tenant, "userId2", day))
-                .ReturnsAsync(DeleteResult.Deleted);
-            var controller = CreateController(_userId, new[] {claim});
-
-            var response = await controller.Delete(tenant.Name, "userId2", day.Year, day.Month, day.DayOfMonth);
-
-            _requirementsServiceMock.Verify(_ => _.DeleteRequirement(tenant, "userId2", day));
-
-            Assert.IsType<OkResult>(response);
         }
     }
 
@@ -196,7 +174,7 @@ public abstract class UsersRequirementsControllerShould
                 .Setup(_ => _.Approve(tenant, _userId, day))
                 .ReturnsAsync(ApproveResult.Success)
                 .Verifiable();
-            var controller = CreateController(_userId, new[] {Claims.ApproveRequirementsOfOthers});
+            var controller = CreateController();
 
             var result = await controller.Approve(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth, new ApprovalInputModel(true));
 
@@ -209,7 +187,7 @@ public abstract class UsersRequirementsControllerShould
         [InlineData(ApproveResult.Failure, typeof(BadRequestResult))]
         public async Task ReturnErrorStatus_WhenApprovalNotsuccessful(ApproveResult approvalResult, Type expectedResultType)
         {
-            var controller = CreateController(_userId, new[] {Claims.ApproveRequirementsOfOthers});
+            var controller = CreateController();
 
             _requirementsServiceMock
                 .Setup(_ => _.Approve(It.IsAny<Tenant>(), It.IsAny<string>(), It.IsAny<Day>()))
@@ -221,28 +199,6 @@ public abstract class UsersRequirementsControllerShould
         }
     }
 
-    private UsersRequirementsController CreateController() => CreateController(_userId);
-
-    private UsersRequirementsController CreateController(string userId) => CreateController(userId, Array.Empty<string>());
-
-    private UsersRequirementsController CreateController(string userId, string[] permissions)
-    {
-        var user = new ClaimsPrincipal(
-            new ClaimsIdentity(
-                new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, userId)
-                }.Concat(permissions.Select(p => new Claim("permissions", p))),
-                "mock"));
-
-        var controller = new UsersRequirementsController(_requirementsServiceMock.Object)
-        {
-            ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext() {User = user}
-            }
-        };
-
-        return controller;
-    }
+    private UsersRequirementsController CreateController()
+        => new UsersRequirementsController(_requirementsServiceMock.Object, _permissionsCheckerMock.Object);
 }

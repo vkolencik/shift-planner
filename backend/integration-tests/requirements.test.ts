@@ -156,6 +156,16 @@ describe('users requirements resource should', () => {
     expect(requirements[`${activeYear}-${activeMonth}-06`]).toBeFalsy()
   })
 
+  it('not allow adding requirement in the past for normal user', async () => {
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2020/01/01`, {
+      ...getHeaders(token2),
+      method: 'put',
+      body: JSON.stringify({ requirementType: 'hard-no' })
+    })
+
+    expect(resp.status).toEqual(403)
+  })
+
   describe('give access to another user\'s requirements to manager when', () => {
     it('deleting other user\'s requirement when deleted by manager', async () => {
       await putRequirement({ ...requirementParams, userId: testUser2Id }, token2)
