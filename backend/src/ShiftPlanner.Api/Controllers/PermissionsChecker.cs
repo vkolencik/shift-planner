@@ -30,12 +30,24 @@ class PermissionsChecker : IPermissionsChecker
             return false;
         }
 
-        if (day <= _clock.Today)
+        return IsModifiableOnDay(day);
+    }
+
+    private bool IsModifiableOnDay(Day day)
+    {
+        var today = _clock.Today;
+
+        var activeMonthAfterMonths = today.DayOfMonth < 25 ? 1 : 2;
+        var activeMonth = today.Date.AddMonths(activeMonthAfterMonths);
+        
+        if (day.Year != activeMonth.Year || day.Month != activeMonth.Month)
         {
             return false;
         }
 
-        return true;
+        var isReadOnly = activeMonthAfterMonths == 1 && today.DayOfMonth >= 5;
+        
+        return !isReadOnly;
     }
 
     public bool CanApproveRequirements() =>  _userAccessor.HasClaim(Claims.ApproveRequirementsOfOthers);

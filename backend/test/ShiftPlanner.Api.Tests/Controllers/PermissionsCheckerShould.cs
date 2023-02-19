@@ -73,21 +73,30 @@ public abstract class PermissionsCheckerShould
             Assert.Equal(expectedResult, hasPermission);
         }
 
-        [Fact]
-        public void DisallowModificationAfterCutoffDate()
+        [Theory]
+        [InlineData("Requirement in the past", 4, 14, 3, 1, false)]
+        [InlineData("Requirement today", 3, 1, 3, 1, false)]
+        [InlineData("Requirement before month is made active", 2, 24, 4, 1, false)]
+        [InlineData("Requirement after month is made active", 2, 25, 4, 1, true)]
+        [InlineData("Requirement right before month is made read-only", 3, 4, 4, 1, true)]
+        [InlineData("Requirement right after month is made read-only", 3, 5, 4, 1, false)]
+        [InlineData("Requirement far in the future", 3, 1, 6, 1, false)]
+#pragma warning disable xUnit1026
+        public void DisallowModificationAfterCutoffDate(string description, int currentMonth, int currentDay, int requirementMonth, int requirementDay, bool isPermitted)
+#pragma warning restore xUnit1026
         {
             var userId = "user-id-1";
-            var day = new Day(2023, 3, 1);
+            var day = new Day(2023, requirementMonth, requirementDay);
 
             _userAccessorMock.Setup(_ => _.GetLoggedInUserId()).Returns(userId);
             _userAccessorMock.Setup(_ => _.HasClaim(Claims.ModifyRequirementsOfOthers)).Returns(false);
-            _clockMock.Setup(_ => _.Today).Returns(new Day(2023, 4, 14));
+            _clockMock.Setup(_ => _.Today).Returns(new Day(2023, currentMonth, currentDay));
 
             var permissionsChecker = new PermissionsChecker(_userAccessorMock.Object, _clockMock.Object);
 
-            var hasPermission = permissionsChecker.CanModifyRequirement(day, "another-user-id");
+            var hasPermission = permissionsChecker.CanModifyRequirement(day, userId);
 
-            Assert.False(hasPermission);
+            Assert.Equal(isPermitted, hasPermission);
         }
     }
 
