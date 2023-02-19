@@ -52,8 +52,7 @@
     },
     "transformIgnorePatterns": [
       "/node_modules/(?!(react[\\-]icons/all))"
-    ],
-    "preset": "ts-jest"
+    ]
   },
   "browserslist": {
     "production": [
