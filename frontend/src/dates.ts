@@ -66,6 +66,11 @@ export function getActiveMonth (): Month {
   return { year: currentMonth.year(), month: currentMonth.month() + 1 }
 }
 
+export function isActiveMonthWritable(): boolean {
+  const today = moment()
+  return today.date() >= 25  || today.date() < 4
+}
+
 export function getMonthDays (month: Month): number[] {
   return new Array(getNumberOfDaysOfMonth(month)).fill(1).map((_, i) => i + 1)
 }

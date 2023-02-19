@@ -168,7 +168,7 @@ describe('users requirements resource should', () => {
 
   describe('give access to another user\'s requirements to manager when', () => {
     it('deleting other user\'s requirement when deleted by manager', async () => {
-      await putRequirement({ ...requirementParams, userId: testUser2Id }, token2)
+      await putRequirement({ ...requirementParams, userId: testUser2Id }, token)
 
       const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/${activeYear}/${activeMonth}/06`, {
         method: 'delete',

@@ -10,12 +10,19 @@ import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
 import { EmployeeMonthRequirements, momentToDay, RequirementType, requirementTypes, useApi, User } from '../service/api'
 import { EventSourceInput } from '@fullcalendar/core'
-import { ButtonGroup, Card, Container, FormCheck, Spinner } from 'react-bootstrap'
+import { Alert, ButtonGroup, Card, Container, FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Permission, usePermissions } from '../auth/auth'
-import { addMonths, getActiveMonth, getMonthLabel, getStartOfMonth, Month } from '../dates'
+import {
+  addMonths,
+  getActiveMonth,
+  getMonthLabel,
+  getStartOfMonth,
+  isActiveMonthWritable,
+  Month
+} from '../dates'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { UserSelectModal } from '../UserSelectModal'
@@ -139,8 +146,13 @@ export const Requirements: React.FC = () => {
     setUserSelectOpen(false)
   }
 
+  const isWritable = isActiveMonthWritable() || permissions.includes(Permission.modifyRequirementsOfOthers)
+
   return (
     <>
+      {isActiveMonthWritable() ||
+        <Alert variant="warning">Aktuální měsíc je již uzamčen (pouze pro čtení).</Alert>
+      }
       {permissions.includes(Permission.modifyRequirementsOfOthers)
         && permissions.includes(Permission.readRequirementsOfOthers)
         && <>
@@ -157,7 +169,7 @@ export const Requirements: React.FC = () => {
         </>
       }
 
-      {selectedDateRange &&
+      {selectedDateRange && isWritable &&
         <Modal
           show={true}
           onHide={() => {
