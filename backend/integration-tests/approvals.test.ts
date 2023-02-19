@@ -30,7 +30,7 @@ describe('approval workflow', () => {
 
     it('return requirements from all users', async () => {
       await putRequirement({ ...requirementParams, requirementType: 'hard-no', userId: testUserId }, token)
-      await putRequirement({ ...requirementParams, requirementType: 'soft-yes', userId: testUser2Id }, token2)
+      await putRequirement({ ...requirementParams, requirementType: 'soft-yes', userId: testUser2Id }, token)
 
       const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/requirements/2022/12`, getHeaders(token))
       expect(resp.status).toEqual(200)
@@ -47,7 +47,7 @@ describe('approval workflow', () => {
 
   describe('approval endpoint should', () => {
     it('approve requirement', async () => {
-      await putRequirement({ ...requirementParams, requirementType: 'leave', userId: testUser2Id }, token2)
+      await putRequirement({ ...requirementParams, requirementType: 'leave', userId: testUser2Id }, token)
 
       const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12/06/approval`, {
         ...getHeaders(token),
@@ -69,7 +69,7 @@ describe('approval workflow', () => {
     })
 
     it('return bad request when requirement is not leave', async () => {
-      await putRequirement({ ...requirementParams, requirementType: 'hard-no', userId: testUser2Id }, token2)
+      await putRequirement({ ...requirementParams, requirementType: 'hard-no', userId: testUser2Id }, token)
 
       const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12/06/approval`, {
         ...getHeaders(token),
@@ -100,7 +100,7 @@ describe('approval workflow', () => {
     })
 
     it('return forbidden when user is not admin', async () => {
-      await putRequirement({ ...requirementParams, requirementType: 'leave', userId: testUser2Id }, token2)
+      await putRequirement({ ...requirementParams, requirementType: 'leave', userId: testUser2Id }, token)
       const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/2022/12/06/approval`, {
         ...getHeaders(token2),
         method: 'put',

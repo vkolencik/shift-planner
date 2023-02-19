@@ -10,12 +10,19 @@ import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
 import { EmployeeMonthRequirements, momentToDay, RequirementType, requirementTypes, useApi, User } from '../service/api'
 import { EventSourceInput } from '@fullcalendar/core'
-import { ButtonGroup, Card, Container, FormCheck, Spinner } from 'react-bootstrap'
+import { Alert, ButtonGroup, Card, Container, FormCheck, Spinner } from 'react-bootstrap'
 import FormCheckLabel from 'react-bootstrap/FormCheckLabel'
 import FormCheckInput from 'react-bootstrap/FormCheckInput'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Permission, usePermissions } from '../auth/auth'
-import { addMonths, getCurrentMonth, getMonthLabel, getStartOfMonth, Month } from '../dates'
+import {
+  addMonths,
+  getActiveMonth,
+  getMonthLabel,
+  getStartOfMonth,
+  isActiveMonthWritable,
+  Month
+} from '../dates'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { UserSelectModal } from '../UserSelectModal'
@@ -55,7 +62,7 @@ export const Requirements: React.FC = () => {
   const [user, setUser] = useState<User>(api.users.loggedInUser)
   const permissions = usePermissions()
   const [userSelectOpen, setUserSelectOpen] = useState<boolean>(false)
-  const [month, setMonth] = useState<Month>(getCurrentMonth())
+  const [month, setMonth] = useState<Month>(getActiveMonth())
 
   useEffect(() => {
     if (selectedDateRange === null && calendarRef.current) {
@@ -118,7 +125,7 @@ export const Requirements: React.FC = () => {
   }
 
   const handlePreviousMonth = () => {setMonth(oldMonth => addMonths(oldMonth, -1))}
-  const handleCurrentMonth = () => {setMonth(getCurrentMonth)}
+  const handleCurrentMonth = () => {setMonth(getActiveMonth)}
   const handleNextMonth = () => {setMonth(oldMonth => addMonths(oldMonth, 1))}
 
   const oneDayRange = selectedDateRange !== null && selectedDateRange.from.isSame(selectedDateRange.to, 'day')
@@ -139,8 +146,13 @@ export const Requirements: React.FC = () => {
     setUserSelectOpen(false)
   }
 
+  const isWritable = isActiveMonthWritable() || permissions.includes(Permission.modifyRequirementsOfOthers)
+
   return (
     <>
+      {isActiveMonthWritable() ||
+        <Alert variant="warning">Aktuální měsíc je již uzamčen (pouze pro čtení).</Alert>
+      }
       {permissions.includes(Permission.modifyRequirementsOfOthers)
         && permissions.includes(Permission.readRequirementsOfOthers)
         && <>
@@ -157,7 +169,7 @@ export const Requirements: React.FC = () => {
         </>
       }
 
-      {selectedDateRange &&
+      {selectedDateRange && isWritable &&
         <Modal
           show={true}
           onHide={() => {
@@ -216,7 +228,7 @@ export const Requirements: React.FC = () => {
               <FontAwesomeIcon icon={faArrowLeft}/>
             </Button>
             <Button variant="outline-secondary"
-                    disabled={month.month === getCurrentMonth().month && month.year === getCurrentMonth().year}
+                    disabled={month.month === getActiveMonth().month && month.year === getActiveMonth().year}
                     onClick={handleCurrentMonth}>
               Aktuální měsíc
             </Button>

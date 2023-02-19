@@ -1,10 +1,8 @@
 import moment, { Moment } from 'moment'
 
-const currentMonth = 3
-const currentYear = 2023
 
 export function getMonthLabel (month: Month) {
-  return getStartOfMonth(month).toLocaleString('default', { month: 'long' }) + ' ' + currentYear
+  return getStartOfMonth(month).toLocaleString('default', { month: 'long' }) + ' ' + month.year
 }
 
 export const getStartOfMonth = (month: Month): Date => new Date(month.year, month.month - 1, 1)
@@ -60,8 +58,17 @@ export interface Month {
   month: number
 }
 
-export function getCurrentMonth (): Month {
-  return { year: currentYear, month: currentMonth }
+export function getActiveMonth (): Month {
+  const today = moment()
+  const monthsToAdd = today.date() < 25 ? 1 : 2
+  const currentMonth = today.add(monthsToAdd, 'month')
+
+  return { year: currentMonth.year(), month: currentMonth.month() + 1 }
+}
+
+export function isActiveMonthWritable(): boolean {
+  const today = moment()
+  return today.date() >= 25  || today.date() < 4
 }
 
 export function getMonthDays (month: Month): number[] {
