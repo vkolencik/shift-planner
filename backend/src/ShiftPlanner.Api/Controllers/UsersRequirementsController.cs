@@ -47,14 +47,17 @@ public class UsersRequirementsController : ControllerBase
         [FromRoute] int year,
         [FromRoute] int month,
         [FromRoute] int day,
-        [FromBody] RequirementInputModel requirement)
+        [FromBody] RequirementInputModel requirementModel)
     {
-        if (!_permissionsChecker.CanModifyRequirementsOfUser(userId))
+        var date = new Day(year, month, day);
+        
+        if (!_permissionsChecker.CanModifyRequirement(date, userId))
         {
             return StatusCode(StatusCodes.Status403Forbidden, $"User cannot modify requirements of user {userId}");
         }
 
-        await _requirementsService.SetRequirement(new Requirement(new Tenant(tenant), userId, new Day(year, month, day), requirement.RequirementType));
+        var requirement = new Requirement(new Tenant(tenant), userId, date, requirementModel.RequirementType);
+        await _requirementsService.SetRequirement(requirement);
 
         return Ok();
     }
@@ -67,12 +70,14 @@ public class UsersRequirementsController : ControllerBase
         [FromRoute] int month,
         [FromRoute] int day)
     {
-        if (!(_permissionsChecker.CanModifyRequirementsOfUser(userId) || _permissionsChecker.CanApproveRequirements()))
+        var date = new Day(year, month, day);
+
+        if (!(_permissionsChecker.CanModifyRequirement(date, userId) || _permissionsChecker.CanApproveRequirements()))
         {
             return StatusCode(StatusCodes.Status403Forbidden, $"User cannot fetch requirements of user {userId}");
         }
 
-        DeleteResult result = await _requirementsService.DeleteRequirement(new Tenant(tenant), userId, new Day(year, month, day));
+        DeleteResult result = await _requirementsService.DeleteRequirement(new Tenant(tenant), userId, date);
 
         return result switch
         {

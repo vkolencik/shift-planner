@@ -18,10 +18,9 @@ public abstract class UsersRequirementsControllerShould
         _requirementsServiceMock = new Mock<IRequirementsService>();
         _permissionsCheckerMock = new Mock<IPermissionsChecker>();
 
-        _permissionsCheckerMock.Setup(_ => _.CanReadRequirementsOfOthers()).Returns(true);
         _permissionsCheckerMock.Setup(_ => _.CanReadRequirementsOfUser(It.IsAny<string>())).Returns(true);
         _permissionsCheckerMock.Setup(_ => _.CanApproveRequirements()).Returns(true);
-        _permissionsCheckerMock.Setup(_ => _.CanModifyRequirementsOfUser(It.IsAny<string>())).Returns(true);
+        _permissionsCheckerMock.Setup(_ => _.CanModifyRequirement(It.IsAny<Day>(), It.IsAny<string>())).Returns(true);
     }
 
     public class Get : UsersRequirementsControllerShould
@@ -106,10 +105,11 @@ public abstract class UsersRequirementsControllerShould
         public async Task ReturnForbidden_WhenUserHasNoPermissions()
         {
             var userId = "user-id-2";
-            _permissionsCheckerMock.Setup(_ => _.CanModifyRequirementsOfUser(userId)).Returns(false);
+            var day = new Day(2022, 10, 12);
+            _permissionsCheckerMock.Setup(_ => _.CanModifyRequirement(day, userId)).Returns(false);
             var controller = CreateController();
 
-            var response = await controller.Put("tenant-1", userId, 2022, 10, 12, new RequirementInputModel("hard-no"));
+            var response = await controller.Put("tenant-1", userId, day.Year, day.Month, day.DayOfMonth, new RequirementInputModel("hard-no"));
 
             var result = Assert.IsType<ObjectResult>(response);
             Assert.Equal(403, result.StatusCode);
@@ -152,11 +152,12 @@ public abstract class UsersRequirementsControllerShould
         public async Task ReturnForbidden_WhenUserDoesntHavePermissions()
         {
             var userId = "user-id-2";
-            _permissionsCheckerMock.Setup(_ => _.CanModifyRequirementsOfUser(userId)).Returns(false);
+            var day = new Day(2022, 10, 12);
+            _permissionsCheckerMock.Setup(_ => _.CanModifyRequirement(day, userId)).Returns(false);
             _permissionsCheckerMock.Setup(_ => _.CanApproveRequirements()).Returns(false);
             var controller = CreateController();
 
-            var response = await controller.Delete("tenant-1", userId, 2022, 10, 12);
+            var response = await controller.Delete("tenant-1", userId, day.Year, day.Month, day.DayOfMonth);
 
             var result = Assert.IsType<ObjectResult>(response);
             Assert.Equal(403, result.StatusCode);

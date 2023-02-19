@@ -77,6 +77,7 @@ public class Startup
         services.AddControllers();
 
         services.AddHttpContextAccessor();
+        services.AddTransient<IClock, Clock>();
         services.AddTransient<IPermissionsChecker, PermissionsChecker>();
         services.AddTransient<IUserAccessor, UserAccessor>();
 
