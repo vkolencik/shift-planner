@@ -1,7 +1,6 @@
 import React, { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { useApi, User } from './api'
-import { Permission, usePermissions } from '../auth/auth'
-import { SpinnerProps } from 'react-bootstrap'
+import { usePermissions } from '../auth/auth'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 
 const UserListContext = createContext<User[] | null>(null)

@@ -12,6 +12,7 @@ import { WeeklyOverview } from './pages/WeeklyOverview'
 import { MonthScheduleEdit } from './pages/MonthScheduleEdit'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import { Leaves } from './pages/Leaves'
 
 function App () {
   const navigate = useNavigate()
@@ -49,6 +50,7 @@ function App () {
               <Route path="/tydenik" element={<WeeklyOverview/>}/>
               <Route path="/mesicnik" element={<MonthlyOverview/>}/>
               <Route path="/schvalovani" element={<Approvals/>}/>
+              <Route path="/dovolene" element={<Leaves/>}/>
               <Route path="/sluzby" element={<MonthSchedule/>}/>
               <Route path="/sluzby/:year/:month/editace" element={<MonthScheduleEdit/>}/>
               <Route path="/konference" element={<h1>Konference</h1>}/>

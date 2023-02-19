@@ -2,10 +2,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { getBaseUrl, getInstance, Instance } from '../instance-config'
 import { Moment } from 'moment'
-import { Day, Month, parseDate, toDay } from '../dates'
+import { Day, getMonth, Month, parseDate, toDay } from '../dates'
 import { sortArrayBy } from '../sort-array-by'
-import { workplaces } from '../domain'
-import { wait } from './wait'
 
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'
@@ -82,9 +80,10 @@ export interface ValidationError {
   error: string
 }
 
-// TODO: 2023-01-02 remove once schedule validation API is implemented
-let returnValidationError: boolean = false
-let returnSaveError: boolean = false
+export interface Leave {
+  userId: string,
+  day: Day
+}
 
 export function useApi () {
   const { user, getAccessTokenSilently, isAuthenticated } = useAuth0()
@@ -117,6 +116,9 @@ export function useApi () {
       throw new Error(`Error deleting requirement: ${await response.text()}`)
     }
   }
+
+  const leaves: Leave[] = [
+  ]
 
   return ({
     requirements: {
@@ -210,6 +212,20 @@ export function useApi () {
         if (response.status !== 200) {
           throw new Error(`Error approving requirement: ${await response.text()}`)
         }
+      }
+    },
+
+    leaves: {
+      getMonth: async (month: Month): Promise<Leave[]> => {
+        return Promise.resolve(leaves.filter(l => getMonth(l.day).year === month.year && getMonth(l.day).month === month.month))
+      },
+      add: async (userId: string, day: Day): Promise<Leave> => {
+        const leave = {
+          day: day,
+          userId: userId
+        }
+        leaves.push(leave)
+        return Promise.resolve(leave)
       }
     },
 
