@@ -38,4 +38,20 @@ describe('Weekly overview should', () => {
 
     expect(view).toEqual(expectedView)
   })
+
+  it('Prioritize Day-after before requirements', () => {
+    const requirements: UserRequirement[] = [
+      { userId: 'user1', userName: 'User 1', requirementType: 'leave', date: toDay('2022-12-02'), approved: true }
+    ]
+
+    const shifts: ShiftAssignment[] = [
+      { day: toDay('2022-12-01'), workplace: 'X11', user: { userId: 'user1', userName: 'User 1' } }
+    ]
+
+    const view = CreateWeekView(requirements, shifts)
+
+    expect(view).toEqual(expect.objectContaining({
+      ['user1:2022-12-02' as DateUserKey]: { status: 'day-after' }
+    }))
+  })
 })
