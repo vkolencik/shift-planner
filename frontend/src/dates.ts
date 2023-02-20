@@ -1,6 +1,5 @@
 import moment, { Moment } from 'moment'
 
-
 export function getMonthLabel (month: Month) {
   return getStartOfMonth(month).toLocaleString('default', { month: 'long' }) + ' ' + month.year
 }
@@ -23,7 +22,7 @@ export const parseDate = (date: string) => {
   return new Date(year, month - 1, day)
 }
 
-export function isWeekend (day: string) {
+export function isWeekend (day: Day) {
   const date = parseDate(day)
   return date.getDay() == 0 || date.getDay() == 6
 }
@@ -33,19 +32,20 @@ export function toDay (date: string): Day {
 }
 
 const dayFormat = 'YYYY-MM-DD'
-function getMoment(date: Day): Moment {
+
+function getMoment (date: Day): Moment {
   return moment(date, dayFormat)
 }
 
-function formatMoment(moment: Moment): Day {
+function formatMoment (moment: Moment): Day {
   return toDay(moment.format(dayFormat))
 }
 
-export function addDays(date: Day, days: number): Day {
+export function addDays (date: Day, days: number): Day {
   return formatMoment(getMoment(date).add(days, 'days'))
 }
 
-export function addMonths(month: Month, months: number) {
+export function addMonths (month: Month, months: number) {
   return getMonth(formatMoment(moment(getStartOfMonth(month)).add(months, 'months')))
 }
 
@@ -66,9 +66,9 @@ export function getActiveMonth (): Month {
   return { year: currentMonth.year(), month: currentMonth.month() + 1 }
 }
 
-export function isActiveMonthWritable(): boolean {
+export function isActiveMonthWritable (): boolean {
   const today = moment()
-  return today.date() >= 25  || today.date() < 4
+  return today.date() >= 25 || today.date() < 4
 }
 
 export function getMonthDays (month: Month): number[] {
@@ -76,11 +76,11 @@ export function getMonthDays (month: Month): number[] {
 }
 
 export function getMonthDates (month: Month): Day[] {
-  return getMonthDays(month).map(d => toDay(dateToString(month.year, month.month, d)))
+  return getMonthDays(month).map(d => getDay(month.year, month.month, d))
 }
 
-export function dateToString (year: number, month: number, day: number) {
-  return `${year}-${padDateComponent(month)}-${padDateComponent(day)}`
+export function getDay (year: number, month: number, day: number): Day {
+  return toDay(`${year}-${padDateComponent(month)}-${padDateComponent(day)}`)
 }
 
 function padDateComponent (value: number): string {
@@ -118,4 +118,9 @@ export function getMonth (date: Day): Month {
     year: moment.year(),
     month: moment.month() + 1
   }
+}
+
+export function getMonthDay (date: Day): number {
+  const moment = getMoment(date)
+  return moment.date()
 }

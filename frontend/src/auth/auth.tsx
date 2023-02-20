@@ -10,7 +10,8 @@ export enum Permission {
   readRequirementsOfOthers = 'read:requirements_of_others',
   approveRequirementsOfOthers = 'approve:requirements_of_others',
   modifyRequirementsOfOthers = 'modify:requirements_of_others',
-  modifySchedule = 'modify:schedule'
+  modifySchedule = 'modify:schedule',
+  prerelease = 'prerelease'
 }
 
 export const usePermissions = (): Permission[] => {

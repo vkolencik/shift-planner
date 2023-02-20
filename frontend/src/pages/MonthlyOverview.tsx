@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { MonthRequirements, RequirementType, useApi, User } from '../service/api'
 import {
-  dateToString,
+  getDay,
   getActiveMonth,
   getNumberOfDaysOfMonth,
   isWeekend,
@@ -67,7 +67,7 @@ export const MonthlyOverview: React.FC = () => {
     }
   }, [])
 
-  if (requirements == null || users == null) {
+  if (requirements == null) {
     return <LoadingSpinner/>
   }
 
@@ -87,7 +87,7 @@ export const MonthlyOverview: React.FC = () => {
   }
 
   const currentMonth = getActiveMonth()
-  const weekends: number[] = days.filter(day => isWeekend(dateToString(currentMonth.year, currentMonth.month, day)))
+  const weekends: number[] = days.filter(day => isWeekend(getDay(currentMonth.year, currentMonth.month, day)))
 
   return <div className='big-table'>
     <button className='btn btn-primary no-print' onClick={window.print}>
