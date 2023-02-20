@@ -119,3 +119,8 @@ export function getMonth (date: Day): Month {
     month: moment.month() + 1
   }
 }
+
+export function getMonthDay (date: Day): number {
+  const moment = getMoment(date)
+  return moment.date()
+}
