@@ -3,11 +3,12 @@ import { Leave, useApi } from '../service/api'
 import { useUserList } from '../service/users'
 import {
   addMonths,
-  Day, formatDate,
+  Day,
+  formatDate,
   getActiveMonth,
-  getMonthDates, getMonthDay,
+  getMonthDates,
+  getMonthDay,
   getMonthLabel,
-  getNumberOfDaysOfMonth,
   isWeekend,
   Month
 } from '../dates'
@@ -17,6 +18,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import './Leaves.css'
 import Modal from 'react-bootstrap/Modal'
+import { toast } from 'react-toastify'
+
+const maxLeavesPerDay = 1
 
 export const Leaves: React.FC = () => {
   const api = useApi()
@@ -38,9 +42,13 @@ export const Leaves: React.FC = () => {
     return <LoadingSpinner/>
   }
 
-  const daysInMonth = getNumberOfDaysOfMonth(month)
   const days = getMonthDates(month)
   const weekends: Day[] = days.filter(day => isWeekend(day))
+
+  const leavesPerDay = Object.fromEntries(days.map(d => [d, 0]))
+  for (const leave of leaves) {
+    leavesPerDay[leave.day]++
+  }
 
   const handlePreviousMonth = () => setMonth(prevMonth => addMonths(prevMonth, -1))
   const handleNextMonth = () => setMonth(prevMonth => addMonths(prevMonth, 1))
@@ -56,6 +64,11 @@ export const Leaves: React.FC = () => {
   }
 
   const handleAddLeave = async (day: Day) => {
+    if (leavesPerDay[day] >= maxLeavesPerDay) {
+      toast.error(`Překročen maximální počet dovolených v daný den (${maxLeavesPerDay})`)
+      return
+    }
+
     setLoading(true)
     const leave = await api.leaves.add(api.users.loggedInUser.userId, day)
     if (leaves === null) {
@@ -97,8 +110,6 @@ export const Leaves: React.FC = () => {
   return <div className="container">
     {loading && <LoadingSpinner/>}
 
-    {loading && <div>LOADING</div>}
-
     {leaveToDelete &&
       <Modal
         show={true}
@@ -123,7 +134,6 @@ export const Leaves: React.FC = () => {
       </Modal>
     }
 
-
     <ButtonGroup>
       <Button variant="outline-secondary" onClick={handlePreviousMonth}><FontAwesomeIcon icon={faArrowLeft}/></Button>
       <Button variant="outline-secondary" onClick={handleNextMonth}><FontAwesomeIcon icon={faArrowRight}/></Button>
@@ -134,8 +144,14 @@ export const Leaves: React.FC = () => {
       <tr>
         <th>Datum</th>
         {days.map(day => weekends.includes(day)
-          ? <th scope="col" className="weekend-day text-center">{getMonthDay(day)}</th>
-          : <th scope="col" className="text-center">{getMonthDay(day)}</th>)}
+          ? <th scope="col" className="weekend-day text-center">{getMonthDay(day)}.</th>
+          : <th scope="col" className="text-center">{getMonthDay(day)}.</th>)}
+      </tr>
+      <tr className="subtitle">
+        <th>Počet dovolených</th>
+        {days.map(day => weekends.includes(day)
+          ? <th scope="col" className="weekend-day text-center">{leavesPerDay[day]}</th>
+          : <th scope="col" className="text-center">{leavesPerDay[day]}</th>)}
       </tr>
       </thead>
       <tbody>
