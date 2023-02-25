@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { addDays, Day, formatDate, getMonth, getStartOfWeek, getWeekDays, toDay } from '../dates'
-import { RequirementType, requirementTypes, ShiftAssignment, useApi, User, UserRequirement } from '../service/api'
+import { RequirementType, requirementTypes, ShiftAssignment, useApi, UserRequirement } from '../service/api'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Alert, Button, ButtonGroup, Table } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBan, faCheck, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faArrowRight, faBan, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { useUserList } from '../service/users'
 import { Permission, usePermissions } from '../auth/auth'
 
@@ -175,7 +175,7 @@ export const WeeklyOverview: React.FC = () => {
           <th scope="row">{u.userName}</th>
           {permissions.includes(Permission.readRequirementsOfOthers)
             ? weekDays.map(d => <DayCell day={d} userId={u.userId}/>)
-            : (i == 0 ? <td colSpan={7} rowSpan={users.length} className="table-secondary"><span style={{position: 'sticky', left: '20px', top: '50vh'}}>Tento uživatel nemá k dispozici náhled</span></td> : <></>)}
+            : (i === 0 ? <td colSpan={7} rowSpan={users.length} className="table-secondary"><span style={{position: 'sticky', left: '20px', top: '50vh'}}>Tento uživatel nemá k dispozici náhled</span></td> : <></>)}
         </tr>
       )}
       </tbody>

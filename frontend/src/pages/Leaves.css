@@ -9,7 +9,10 @@ td.leave {
 tr.own-row {
     outline: 2px solid red;
 }
-table { border-collapse: collapse; }
+
+table {
+    border-collapse: collapse;
+}
 
 tr.own-row td.leave {
     background-color: crimson;
@@ -17,4 +20,9 @@ tr.own-row td.leave {
 
 tr.own-row td {
     cursor: pointer;
+}
+
+tr.subtitle th {
+    font-weight: normal;
+    font-size: 75%;
 }
