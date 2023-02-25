@@ -16,15 +16,23 @@ export const formatDateMoment = (date: Moment) => date.format('dd. MM. yyyy')
 
 export type Day = string & { __isDay: true }
 
-export const parseDate = (date: string) => {
+export const parseDate = (date: string): Date => {
   const [year, month, day] = date.split('-').map(dateComponent => parseInt(dateComponent, 10))
 
   return new Date(year, month - 1, day)
 }
 
-export function isWeekend (day: Day) {
+export function getDayOfWeekNumber(day: Day): number {
   const date = parseDate(day)
-  return date.getDay() == 0 || date.getDay() == 6
+
+  const dayOfWeek = date.getDay()
+
+  return dayOfWeek === 0 ? 7 : dayOfWeek
+}
+
+export function isWeekend (day: Day) {
+  const dayOfWeek = getDayOfWeekNumber(day)
+  return dayOfWeek === 6 || dayOfWeek === 7
 }
 
 export function toDay (date: string): Day {

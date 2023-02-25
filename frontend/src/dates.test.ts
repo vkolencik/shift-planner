@@ -1,4 +1,4 @@
-import { getActiveMonth } from './dates'
+import { getActiveMonth, getDayOfWeekNumber, isWeekend, toDay } from './dates'
 
 describe('dates should', () => {
   beforeAll(() => {
@@ -19,4 +19,27 @@ describe('dates should', () => {
 
       expect(currentMonth).toEqual(expectedMonth)
     }))
+
+  describe(isWeekend.name, () => {
+    ;[
+      '2023-02-25', '2023-02-26'
+    ].map(d => toDay(d)).forEach(d => it(`Consider ${d} to be weekend day`, () => {
+      expect(isWeekend(d)).toEqual(true)
+    }))
+
+  })
+
+  describe(getDayOfWeekNumber.name, () => {
+    ([
+      ['2023-02-20', 1],
+      ['2023-02-21', 2],
+      ['2023-02-22', 3],
+      ['2023-02-23', 4],
+      ['2023-02-24', 5],
+      ['2023-02-25', 6],
+      ['2023-02-26', 7]
+    ] as [string, number][]).forEach(([day, expectedWeekdayNumber]) => it(`Return weekday number for ${day}`, () =>{
+      expect(getDayOfWeekNumber(toDay(day))).toEqual(expectedWeekdayNumber)
+    }))
+  })
 })

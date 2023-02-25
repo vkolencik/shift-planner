@@ -5,7 +5,7 @@ import {
   addMonths,
   Day,
   formatDate,
-  getActiveMonth,
+  getActiveMonth, getDayOfWeekNumber, getMonth,
   getMonthDates,
   getMonthDay,
   getMonthLabel,
@@ -20,13 +20,33 @@ import './Leaves.css'
 import Modal from 'react-bootstrap/Modal'
 import { toast } from 'react-toastify'
 
-const maxLeavesPerDay = 1
+const minEmployeesPerWeekday = [
+  36,
+  36,
+  37,
+  34,
+  32,
+  32,
+  32
+]
+
+const minEmployeesInSummer = 32
+
+const getMinAvailableEmployeesForDay = (day: Day): number => {
+  const month = getMonth(day)
+
+  if (month.month === 7 || month.month === 8) {
+    return minEmployeesInSummer
+  }
+
+  return minEmployeesPerWeekday[getDayOfWeekNumber(day) - 1]
+}
 
 export const Leaves: React.FC = () => {
   const api = useApi()
   const users = useUserList()
   const [leaves, setLeaves] = useState<Leave[] | null>(null)
-  const [month, setMonth] = useState<Month>(getActiveMonth)
+  const [month, setMonth] = useState<Month>(addMonths(getActiveMonth(), 1))
   const [loading, setLoading] = useState<boolean>(false)
   const [leaveToDelete, setLeaveToDelete] = useState<Day | null>(null)
 
@@ -50,7 +70,9 @@ export const Leaves: React.FC = () => {
     leavesPerDay[leave.day]++
   }
 
-  const handlePreviousMonth = () => setMonth(prevMonth => addMonths(prevMonth, -1))
+  const handlePreviousMonth = () => setMonth(prevMonth => {
+    return addMonths(prevMonth, -1)
+  })
   const handleNextMonth = () => setMonth(prevMonth => addMonths(prevMonth, 1))
 
   const handleOwnCellClick = async (day: Day) => {
@@ -64,8 +86,10 @@ export const Leaves: React.FC = () => {
   }
 
   const handleAddLeave = async (day: Day) => {
-    if (leavesPerDay[day] >= maxLeavesPerDay) {
-      toast.error(`Překročen maximální počet dovolených v daný den (${maxLeavesPerDay})`)
+    const minAvailableEmployees = getMinAvailableEmployeesForDay(day)
+    const leavesInDay = leavesPerDay[day]
+    if (users.length - leavesInDay - 1 < minAvailableEmployees) {
+      toast.error(`Překročen maximální počet dovolených v daný den (celkem ${users.length} zaměstnanců, ${leavesInDay} již naplánovaných dovolených, je třeba minimálně ${minAvailableEmployees} zaměstnanců k dipozici)`)
       return
     }
 
@@ -148,10 +172,13 @@ export const Leaves: React.FC = () => {
           : <th scope="col" className="text-center">{getMonthDay(day)}.</th>)}
       </tr>
       <tr className="subtitle">
-        <th>Počet dovolených</th>
-        {days.map(day => weekends.includes(day)
-          ? <th scope="col" className="weekend-day text-center">{leavesPerDay[day]}</th>
-          : <th scope="col" className="text-center">{leavesPerDay[day]}</th>)}
+        <th>dovolené&nbsp;/&nbsp;maximum</th>
+        {days.map(day => {
+          return <th scope="col" className={`${weekends.includes(day) ? 'weekend-day' : ''} text-center`}>
+            {leavesPerDay[day]}/{users.length - getMinAvailableEmployeesForDay(day)}
+          </th>
+
+        })}
       </tr>
       </thead>
       <tbody>
