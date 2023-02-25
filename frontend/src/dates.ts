@@ -87,6 +87,17 @@ export function getMonthDates (month: Month): Day[] {
   return getMonthDays(month).map(d => getDay(month.year, month.month, d))
 }
 
+export function compareMonths(month1: Month, month2: Month): (-1 | 0 | 1) {
+  const date1 =  getStartOfMonth(month1).getTime()
+  const date2 =  getStartOfMonth(month2).getTime()
+
+  if (date1 == date2) {
+    return 0
+  }
+
+  return date1 < date2 ? -1 : 1
+}
+
 export function getDay (year: number, month: number, day: number): Day {
   return toDay(`${year}-${padDateComponent(month)}-${padDateComponent(day)}`)
 }

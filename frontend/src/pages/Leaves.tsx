@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Leave, useApi } from '../service/api'
 import { useUserList } from '../service/users'
 import {
-  addMonths,
+  addMonths, compareMonths,
   Day,
   formatDate,
   getActiveMonth, getDayOfWeekNumber, getMonth,
@@ -42,11 +42,15 @@ const getMinAvailableEmployeesForDay = (day: Day): number => {
   return minEmployeesPerWeekday[getDayOfWeekNumber(day) - 1]
 }
 
+const minMonth: Month = addMonths(getActiveMonth(), 1)
+const maxMonth: Month = { year: minMonth.year, month: 12 }
+
 export const Leaves: React.FC = () => {
+
   const api = useApi()
   const users = useUserList()
   const [leaves, setLeaves] = useState<Leave[] | null>(null)
-  const [month, setMonth] = useState<Month>(addMonths(getActiveMonth(), 1))
+  const [month, setMonth] = useState<Month>(minMonth)
   const [loading, setLoading] = useState<boolean>(false)
   const [leaveToDelete, setLeaveToDelete] = useState<Day | null>(null)
 
@@ -70,10 +74,9 @@ export const Leaves: React.FC = () => {
     leavesPerDay[leave.day]++
   }
 
-  const handlePreviousMonth = () => setMonth(prevMonth => {
-    return addMonths(prevMonth, -1)
-  })
-  const handleNextMonth = () => setMonth(prevMonth => addMonths(prevMonth, 1))
+  const handlePreviousMonth = () => setMonth(prevMonth => compareMonths(prevMonth, minMonth) === 0 ? prevMonth : addMonths(prevMonth, -1))
+
+  const handleNextMonth = () => setMonth(prevMonth => compareMonths(prevMonth, maxMonth) === 0 ? prevMonth : addMonths(prevMonth, 1))
 
   const handleOwnCellClick = async (day: Day) => {
     const hasLeave = leaves!.find(l => l.day === day && l.userId === api.users.loggedInUser.userId) !== undefined
@@ -159,8 +162,10 @@ export const Leaves: React.FC = () => {
     }
 
     <ButtonGroup>
-      <Button variant="outline-secondary" onClick={handlePreviousMonth}><FontAwesomeIcon icon={faArrowLeft}/></Button>
-      <Button variant="outline-secondary" onClick={handleNextMonth}><FontAwesomeIcon icon={faArrowRight}/></Button>
+      <Button variant="outline-secondary" onClick={handlePreviousMonth} disabled={compareMonths(month, minMonth) === 0}><FontAwesomeIcon
+        icon={faArrowLeft}/></Button>
+      <Button variant="outline-secondary" onClick={handleNextMonth}
+              disabled={compareMonths(month, maxMonth) === 0}><FontAwesomeIcon icon={faArrowRight}/></Button>
     </ButtonGroup>
     <h2>{getMonthLabel(month)}</h2>
     <Table bordered hover className="table-bordered">
