@@ -98,6 +98,26 @@ public abstract class PermissionsCheckerShould
 
             Assert.Equal(isPermitted, hasPermission);
         }
+
+        [Theory]
+        [InlineData(2023, 12, 31, true)]
+        [InlineData(2024, 1, 1, false)]
+        public void AllowOrForbidModificationAfterCutoffDateForLeaveRequirement(int requirementYear, int requirementMonth, int requirementDay, bool shouldBeAllowed)
+        {
+            var userId = "user-id-1";
+            var requirementDate = new Day(requirementYear, requirementMonth, requirementDay);
+
+            _userAccessorMock.Setup(_ => _.GetLoggedInUserId()).Returns(userId);
+            _userAccessorMock.Setup(_ => _.HasClaim(Claims.ModifyRequirementsOfOthers)).Returns(false);
+            _clockMock.Setup(_ => _.Today).Returns(new Day(2023, 1, 1));
+
+            var permissionsChecker = new PermissionsChecker(_userAccessorMock.Object, _clockMock.Object);
+
+            var hasPermission = permissionsChecker.CanModifyRequirement(requirementDate, userId, "leave");
+
+            Assert.Equal(shouldBeAllowed, hasPermission);
+            
+        }
     }
 
     public class ApproveRequirements : PermissionsCheckerShould

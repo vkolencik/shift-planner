@@ -178,7 +178,7 @@ describe('users requirements resource should', () => {
   })
 
   it('allow adding leave till the end of the year for normal user', async () => {
-    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/${activeYear}/12/31`, {
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/${moment().year()}/12/31`, {
       ...getHeaders(token2),
       method: 'put',
       body: JSON.stringify({ requirementType: 'leave' })
