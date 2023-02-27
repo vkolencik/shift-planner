@@ -18,7 +18,7 @@ class PermissionsChecker : IPermissionsChecker
         return userId == _userAccessor.GetLoggedInUserId() || _userAccessor.HasClaim(Claims.ReadRequirementsOfOthers);
     }
 
-    public bool CanModifyRequirement(Day day, string userId)
+    public bool CanModifyRequirement(Day day, string userId, string requirementType)
     {
         if (_userAccessor.HasClaim(Claims.ModifyRequirementsOfOthers))
         {

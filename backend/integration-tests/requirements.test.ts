@@ -12,7 +12,7 @@ describe('users requirements resource should', () => {
 
   const activeYear = activeMonthDate.year()
   const activeMonthNumber = activeMonthDate.month() + 1
-  const activeMonth = (activeMonthNumber < 10 ? '0' : '') + activeMonthNumber
+  const activeMonth: string = (activeMonthNumber < 10 ? '0' : '') + activeMonthNumber
 
   const requirementParams: RequirementParams = {
     tenant: testTenant,
@@ -57,7 +57,8 @@ describe('users requirements resource should', () => {
   it('return forbidden when putting new requirement for different user', async () => {
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/${activeYear}/${activeMonth}/${activeMonth}`, {
       ...getHeaders(token2),
-      method: 'put'
+      method: 'put',
+      body: JSON.stringify({ requirementType: 'hard-no' })
     })
 
     expect(resp.status).toEqual(403)
@@ -164,6 +165,26 @@ describe('users requirements resource should', () => {
     })
 
     expect(resp.status).toEqual(403)
+  })
+
+  it('not allow adding requirement in the far future for normal user', async () => {
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/${activeYear + 1}/${activeMonth}/01`, {
+      ...getHeaders(token2),
+      method: 'put',
+      body: JSON.stringify({ requirementType: 'hard-no' })
+    })
+
+    expect(resp.status).toEqual(403)
+  })
+
+  it('allow adding leave till the end of the year for normal user', async () => {
+    const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/${activeYear}/12/31`, {
+      ...getHeaders(token2),
+      method: 'put',
+      body: JSON.stringify({ requirementType: 'leave' })
+    })
+
+    expect(resp.status).toEqual(200)
   })
 
   describe('give access to another user\'s requirements to manager when', () => {

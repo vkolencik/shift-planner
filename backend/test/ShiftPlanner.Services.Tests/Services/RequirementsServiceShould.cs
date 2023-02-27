@@ -18,6 +18,23 @@ public class RequirementsServiceShould
     }
 
     [Fact]
+    public async Task GetRequirement()
+    {
+        var tenant = TestData.Tenant;
+        var userId = "user-id";
+        var day = TestData.Day;
+
+        var requirement = new Requirement(tenant, userId, day, "hard-no");
+        _repositoryMock.Setup(_ => _.GetRequirement(tenant, userId, day)).ReturnsAsync(requirement);
+
+        var service = CreateService();
+
+        var returnedRequirement = await service.GetRequirement(tenant, userId, day);
+
+        Assert.Equal(requirement, returnedRequirement);
+    }
+
+    [Fact]
     public async Task GetRequirements()
     {
         var tenant = TestData.Tenant;
@@ -45,24 +62,20 @@ public class RequirementsServiceShould
         _repositoryMock.Verify(_ => _.SetRequirement(requirement));
     }
 
-    [Theory]
-    [InlineData(DeleteResult.Deleted)]
-    [InlineData(DeleteResult.NotFound)]
-    public async Task DeleteRequirement(DeleteResult repositoryResult)
+    [Fact]
+    public async Task DeleteRequirement()
     {
         var tenant = TestData.Tenant;
         var userId = "user-id";
         var day = new Day(2022, 10, 18);
         _repositoryMock.Setup(_ => _.DeleteRequirement(tenant, userId, day))
-            .ReturnsAsync(repositoryResult)
             .Verifiable();
 
         var service = CreateService();
 
-        var serviceResult = await service.DeleteRequirement(tenant, userId, day);
+        await service.DeleteRequirement(tenant, userId, day);
 
         _repositoryMock.VerifyAll();
-        Assert.Equal(repositoryResult, serviceResult);
     }
 
     [Fact]

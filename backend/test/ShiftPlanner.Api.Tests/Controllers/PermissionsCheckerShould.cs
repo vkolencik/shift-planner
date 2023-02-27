@@ -53,7 +53,7 @@ public abstract class PermissionsCheckerShould
 
             var permissionsChecker = new PermissionsChecker(_userAccessorMock.Object, _clockMock.Object);
 
-            var hasPermission = permissionsChecker.CanModifyRequirement(new Day(2023, 4, 1), userId);
+            var hasPermission = permissionsChecker.CanModifyRequirement(new Day(2023, 4, 1), userId, "hard-no");
 
             Assert.True(hasPermission);
         }
@@ -68,7 +68,7 @@ public abstract class PermissionsCheckerShould
 
             var permissionsChecker = new PermissionsChecker(_userAccessorMock.Object, _clockMock.Object);
 
-            var hasPermission = permissionsChecker.CanModifyRequirement(TestData.Day, "another-user-id");
+            var hasPermission = permissionsChecker.CanModifyRequirement(TestData.Day, "another-user-id", "hard-no");
 
             Assert.Equal(expectedResult, hasPermission);
         }
@@ -94,7 +94,7 @@ public abstract class PermissionsCheckerShould
 
             var permissionsChecker = new PermissionsChecker(_userAccessorMock.Object, _clockMock.Object);
 
-            var hasPermission = permissionsChecker.CanModifyRequirement(day, userId);
+            var hasPermission = permissionsChecker.CanModifyRequirement(day, userId, "hard-no");
 
             Assert.Equal(isPermitted, hasPermission);
         }

@@ -47,18 +47,12 @@ public class DynamoRequirementsRepository : IRequirementsRepository
         await context.SaveAsync(entity);
     }
 
-    public async Task<DeleteResult> DeleteRequirement(Tenant tenant, string userId, Day day)
+    public async Task DeleteRequirement(Tenant tenant, string userId, Day day)
     {
         using var context = GetContext();
         var key = _requirementEntityConverter.GetPartitionKey(tenant, userId, day);
-        var existingRequirement = await context.LoadAsync<RequirementEntity>(key);
-        if (existingRequirement is null)
-        {
-            return DeleteResult.NotFound;
-        }
 
         await context.DeleteAsync<RequirementEntity>(key);
-        return DeleteResult.Deleted;
     }
 
     public async Task<IReadOnlyCollection<Requirement>> GetRequirementsForMonth(Tenant tenant, ScheduledMonth month)
