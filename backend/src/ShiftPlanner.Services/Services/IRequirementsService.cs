@@ -9,9 +9,11 @@ public interface IRequirementsService
 
     Task SetRequirement(Requirement requirement);
 
-    Task<DeleteResult> DeleteRequirement(Tenant tenant, string userId, Day day);
+    Task DeleteRequirement(Tenant tenant, string userId, Day day);
     
     Task<IReadOnlyCollection<UserRequirementModel>> GetRequirementsOverviewForMonth(Tenant tenant, ScheduledMonth month);
+
+    Task<Requirement?> GetRequirement(Tenant tenant, string userId, Day day);
     
     Task<ApproveResult> Approve(Tenant tenant, string userId, Day day);
 }

@@ -25,9 +25,9 @@ internal class RequirementsService : IRequirementsService
         await _repository.SetRequirement(requirement);
     }
 
-    public Task<DeleteResult> DeleteRequirement(Tenant tenant, string userId, Day day)
+    public async Task DeleteRequirement(Tenant tenant, string userId, Day day)
     {
-        return _repository.DeleteRequirement(tenant, userId, day);
+        await _repository.DeleteRequirement(tenant, userId, day);
     }
 
     public async Task<IReadOnlyCollection<UserRequirementModel>> GetRequirementsOverviewForMonth(Tenant tenant, ScheduledMonth month)
@@ -37,6 +37,11 @@ internal class RequirementsService : IRequirementsService
         // TODO: handle deleted user case here
         var userRequirements = requirements.Select(r => new UserRequirementModel(r.UserId, users.Single(u => u.UserId == r.UserId).UserName, r.Date, r.RequirementType, r.Approved)).ToArray();
         return userRequirements;
+    }
+
+    public async Task<Requirement?> GetRequirement(Tenant tenant, string userId, Day day)
+    {
+        return await _repository.GetRequirement(tenant, userId, day);
     }
 
     public async Task<ApproveResult> Approve(Tenant tenant, string userId, Day day)

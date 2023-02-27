@@ -18,7 +18,7 @@ class PermissionsChecker : IPermissionsChecker
         return userId == _userAccessor.GetLoggedInUserId() || _userAccessor.HasClaim(Claims.ReadRequirementsOfOthers);
     }
 
-    public bool CanModifyRequirement(Day day, string userId)
+    public bool CanModifyRequirement(Day day, string userId, string requirementType)
     {
         if (_userAccessor.HasClaim(Claims.ModifyRequirementsOfOthers))
         {
@@ -30,7 +30,11 @@ class PermissionsChecker : IPermissionsChecker
             return false;
         }
 
-        return IsModifiableOnDay(day);
+        return requirementType switch
+        {
+            "leave" => IsLeaveModifiableOnDay(day),
+            _ => IsModifiableOnDay(day)
+        };
     }
 
     private bool IsModifiableOnDay(Day day)
@@ -48,6 +52,15 @@ class PermissionsChecker : IPermissionsChecker
         var isReadOnly = activeMonthAfterMonths == 1 && today.DayOfMonth >= 5;
         
         return !isReadOnly;
+    }
+
+    private bool IsLeaveModifiableOnDay(Day day)
+    {
+        var today = _clock.Today;
+
+        var endOfYear = new DateOnly(today.Year, 12, 31);
+
+        return day.Date <= endOfYear;
     }
 
     public bool CanApproveRequirements() =>  _userAccessor.HasClaim(Claims.ApproveRequirementsOfOthers);

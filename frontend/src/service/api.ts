@@ -4,6 +4,7 @@ import { getBaseUrl, getInstance, Instance } from '../instance-config'
 import { Moment } from 'moment'
 import { Day, getMonth, Month, parseDate, toDay } from '../dates'
 import { sortArrayBy } from '../sort-array-by'
+import { aggregateRequirements } from '../requirements/aggregate-requirements'
 
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'
@@ -117,22 +118,7 @@ export function useApi () {
     }
   }
 
-  const leaves: Leave[] = [
-    {day: toDay('2023-04-20'), userId: 'auth0|6313a5ba9b10486b3d672dad'},
-    {day: toDay('2023-04-21'), userId: 'auth0|6313a5ba9b10486b3d672dad'},
-    {day: toDay('2023-04-22'), userId: 'auth0|6313a5ba9b10486b3d672dad'},
-    {day: toDay('2023-04-23'), userId: 'auth0|6313a5ba9b10486b3d672dad'},
-    {day: toDay('2023-04-10'), userId: 'auth0|637f84e4841043dd7a9d4491'},
-    {day: toDay('2023-04-11'), userId: 'auth0|637f84e4841043dd7a9d4491'},
-    {day: toDay('2023-04-12'), userId: 'auth0|637f84e4841043dd7a9d4491'},
-    {day: toDay('2023-04-13'), userId: 'auth0|637f84e4841043dd7a9d4491'},
-    {day: toDay('2023-04-01'), userId: 'auth0|637f84e8841043dd7a9d44b3'},
-    {day: toDay('2023-04-02'), userId: 'auth0|637f84e8841043dd7a9d44b3'},
-    {day: toDay('2023-04-03'), userId: 'auth0|637f84e8841043dd7a9d44b3'},
-    {day: toDay('2023-04-04'), userId: 'auth0|637f84e8841043dd7a9d44b3'},
-  ]
-
-  return ({
+  const api = {
     requirements: {
       get: async (userId: string, month: Month): Promise<EmployeeMonthRequirements> =>
         getAccessTokenSilently({
@@ -228,26 +214,13 @@ export function useApi () {
     },
 
     leaves: {
-      getMonth: async (month: Month): Promise<Leave[]> => {
-        const monthLeaves = leaves.filter(l => getMonth(l.day).year === month.year && getMonth(l.day).month === month.month)
-        return Promise.resolve(monthLeaves)
-      },
-      add: async (userId: string, day: Day): Promise<Leave> => {
-        const leave = {
-          day: day,
-          userId: userId
-        }
-        leaves.push(leave)
-        return new Promise((resolve) => {
-          setTimeout(() => resolve(leave), 500)
-        })
-      },
-      delete: async (userId: string, day: Day): Promise<void> => {
-        leaves.splice(leaves.findIndex(l => !(l.day === day && l.userId === userId)), 1)
-        return new Promise((resolve) => {
-          setTimeout(() => resolve(), 500)
-        })
-      }
+      getMonth: async (month: Month): Promise<Leave[]> =>
+        api.requirements.getMonth(month)
+          .then(requirements => requirements.filter(r => r.requirementType === 'leave').map(r => ({userId: r.userId, day: r.date}))),
+      add: async (userId: string, day: Day): Promise<Leave> =>
+        api.requirements.put(userId, day, 'leave')
+          .then(() => ({ day: day, userId: userId })),
+      delete: async (userId: string, day: Day): Promise<void> => api.requirements.delete(userId, day)
     },
 
     users: {
@@ -365,5 +338,7 @@ export function useApi () {
         }
       }
     }
-  })
+  }
+
+  return api
 }

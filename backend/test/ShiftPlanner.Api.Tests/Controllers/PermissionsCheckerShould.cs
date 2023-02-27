@@ -53,7 +53,7 @@ public abstract class PermissionsCheckerShould
 
             var permissionsChecker = new PermissionsChecker(_userAccessorMock.Object, _clockMock.Object);
 
-            var hasPermission = permissionsChecker.CanModifyRequirement(new Day(2023, 4, 1), userId);
+            var hasPermission = permissionsChecker.CanModifyRequirement(new Day(2023, 4, 1), userId, "hard-no");
 
             Assert.True(hasPermission);
         }
@@ -68,7 +68,7 @@ public abstract class PermissionsCheckerShould
 
             var permissionsChecker = new PermissionsChecker(_userAccessorMock.Object, _clockMock.Object);
 
-            var hasPermission = permissionsChecker.CanModifyRequirement(TestData.Day, "another-user-id");
+            var hasPermission = permissionsChecker.CanModifyRequirement(TestData.Day, "another-user-id", "hard-no");
 
             Assert.Equal(expectedResult, hasPermission);
         }
@@ -94,9 +94,29 @@ public abstract class PermissionsCheckerShould
 
             var permissionsChecker = new PermissionsChecker(_userAccessorMock.Object, _clockMock.Object);
 
-            var hasPermission = permissionsChecker.CanModifyRequirement(day, userId);
+            var hasPermission = permissionsChecker.CanModifyRequirement(day, userId, "hard-no");
 
             Assert.Equal(isPermitted, hasPermission);
+        }
+
+        [Theory]
+        [InlineData(2023, 12, 31, true)]
+        [InlineData(2024, 1, 1, false)]
+        public void AllowOrForbidModificationAfterCutoffDateForLeaveRequirement(int requirementYear, int requirementMonth, int requirementDay, bool shouldBeAllowed)
+        {
+            var userId = "user-id-1";
+            var requirementDate = new Day(requirementYear, requirementMonth, requirementDay);
+
+            _userAccessorMock.Setup(_ => _.GetLoggedInUserId()).Returns(userId);
+            _userAccessorMock.Setup(_ => _.HasClaim(Claims.ModifyRequirementsOfOthers)).Returns(false);
+            _clockMock.Setup(_ => _.Today).Returns(new Day(2023, 1, 1));
+
+            var permissionsChecker = new PermissionsChecker(_userAccessorMock.Object, _clockMock.Object);
+
+            var hasPermission = permissionsChecker.CanModifyRequirement(requirementDate, userId, "leave");
+
+            Assert.Equal(shouldBeAllowed, hasPermission);
+            
         }
     }
 

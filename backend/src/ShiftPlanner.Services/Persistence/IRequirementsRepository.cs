@@ -12,7 +12,7 @@ public interface IRequirementsRepository
 
     Task SetRequirement(Requirement requirement);
 
-    Task<DeleteResult> DeleteRequirement(
+    Task DeleteRequirement(
         Tenant tenant,
         string userId,
         Day day);

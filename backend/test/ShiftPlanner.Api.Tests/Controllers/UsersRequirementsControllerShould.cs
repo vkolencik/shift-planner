@@ -20,7 +20,7 @@ public abstract class UsersRequirementsControllerShould
 
         _permissionsCheckerMock.Setup(_ => _.CanReadRequirementsOfUser(It.IsAny<string>())).Returns(true);
         _permissionsCheckerMock.Setup(_ => _.CanApproveRequirements()).Returns(true);
-        _permissionsCheckerMock.Setup(_ => _.CanModifyRequirement(It.IsAny<Day>(), It.IsAny<string>())).Returns(true);
+        _permissionsCheckerMock.Setup(_ => _.CanModifyRequirement(It.IsAny<Day>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
     }
 
     public class Get : UsersRequirementsControllerShould
@@ -106,10 +106,11 @@ public abstract class UsersRequirementsControllerShould
         {
             var userId = "user-id-2";
             var day = new Day(2022, 10, 12);
-            _permissionsCheckerMock.Setup(_ => _.CanModifyRequirement(day, userId)).Returns(false);
+            var requirementType = "hard-no";
+            _permissionsCheckerMock.Setup(_ => _.CanModifyRequirement(day, userId, requirementType)).Returns(false);
             var controller = CreateController();
 
-            var response = await controller.Put("tenant-1", userId, day.Year, day.Month, day.DayOfMonth, new RequirementInputModel("hard-no"));
+            var response = await controller.Put("tenant-1", userId, day.Year, day.Month, day.DayOfMonth, new RequirementInputModel(requirementType));
 
             var result = Assert.IsType<ObjectResult>(response);
             Assert.Equal(403, result.StatusCode);
@@ -123,10 +124,11 @@ public abstract class UsersRequirementsControllerShould
         {
             var tenant = TestData.Tenant;
             var day = new Day(2022, 10, 18);
-            _requirementsServiceMock.Setup(_ => _.DeleteRequirement(tenant, _userId, day))
-                .ReturnsAsync(DeleteResult.Deleted);
+            _requirementsServiceMock.Setup(_ => _.GetRequirement(tenant,_userId, day))
+                .ReturnsAsync(new Requirement(tenant, _userId, day, "hard-no"));
+            
             var controller = CreateController();
-
+            
             var response = await controller.Delete(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth);
 
             _requirementsServiceMock.Verify(_ => _.DeleteRequirement(tenant, _userId, day));
@@ -139,8 +141,9 @@ public abstract class UsersRequirementsControllerShould
         {
             var tenant = TestData.Tenant;
             var day = new Day(2022, 10, 18);
-            _requirementsServiceMock.Setup(_ => _.DeleteRequirement(tenant, _userId, day))
-                .ReturnsAsync(DeleteResult.NotFound);
+            _requirementsServiceMock.Setup(_ => _.GetRequirement(tenant, _userId, day))
+                .ReturnsAsync((Requirement?) null);
+
             var controller = CreateController();
 
             var response = await controller.Delete(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth);
@@ -151,13 +154,16 @@ public abstract class UsersRequirementsControllerShould
         [Fact]
         public async Task ReturnForbidden_WhenUserDoesntHavePermissions()
         {
-            var userId = "user-id-2";
+            var tenant = TestData.Tenant;
             var day = new Day(2022, 10, 12);
-            _permissionsCheckerMock.Setup(_ => _.CanModifyRequirement(day, userId)).Returns(false);
+            _requirementsServiceMock.Setup(_ => _.GetRequirement(tenant,_userId, day))
+                .ReturnsAsync(new Requirement(tenant, _userId, day, "hard-no"));
+            
+            _permissionsCheckerMock.Setup(_ => _.CanModifyRequirement(day, _userId, It.IsAny<string>())).Returns(false);
             _permissionsCheckerMock.Setup(_ => _.CanApproveRequirements()).Returns(false);
             var controller = CreateController();
 
-            var response = await controller.Delete("tenant-1", userId, day.Year, day.Month, day.DayOfMonth);
+            var response = await controller.Delete(tenant.Name, _userId, day.Year, day.Month, day.DayOfMonth);
 
             var result = Assert.IsType<ObjectResult>(response);
             Assert.Equal(403, result.StatusCode);
