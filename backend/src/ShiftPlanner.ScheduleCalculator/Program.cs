@@ -19,7 +19,7 @@ static class Program
 
         var aggregator = services.GetRequiredService<ISchedulingParametersAggregator>();
 
-        var month = new ScheduledMonth(2023, 3);
+        var month = new ScheduledMonth(2023, 4);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
 
         var scheduler = new ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)), new RulesetFactory());
@@ -39,12 +39,12 @@ static class Program
         if (result is SuccessfulSchedulingResult successResult)
         {
             IScheduleRepository resultRepositoryGoogleSheet = services.GetRequiredService<IGoogleSheetsScheduleRepository>();
-            IScheduleRepository resultRepositoryS3 = services.GetRequiredService<IScheduleRepository>();
+            // IScheduleRepository resultRepositoryS3 = services.GetRequiredService<IScheduleRepository>();
             Console.Out.WriteLine("Solution found");
             Console.Out.WriteLine($"Flexibility: {successResult.Flexibility.Degree}");
 
             await resultRepositoryGoogleSheet.StoreComputedSchedule(month, successResult);
-            await resultRepositoryS3.StoreComputedSchedule(month, successResult);
+            // await resultRepositoryS3.StoreComputedSchedule(month, successResult);
         }
 
         Console.Out.WriteLine(string.Join('\n', result.SolutionParameters.RecordedStandards.Select(kvp => $"{kvp.Key.Name}: {kvp.Value.Minimum}-{kvp.Value.Maximum}")));

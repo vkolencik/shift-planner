@@ -34,7 +34,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
         var users = await _userService.GetAllUsers();
         var userIdsByEmail = users.ToDictionary(u => u.Email, u => u.UserId);
 
-        var employeeMonths = activeEmployeeInfos.Select(
+        var activeEmployeeMonths = activeEmployeeInfos.Select(
                 ei => new EmployeeMonth(
                     new Employee(ei.Name, ei.CompetenceLevel, ei.Capabilities, ei.Workload),
                     GetLeavesForEmployee(month, employeeRequirements, userIdsByEmail[ei.Email])
@@ -62,7 +62,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
 
         return new MonthScheduleParameters(
             month,
-            employeeMonths,
+            activeEmployeeMonths,
             CompetenceGroup.CompetenceGroups,
             lastMonthShifts,
             fixedShifts,

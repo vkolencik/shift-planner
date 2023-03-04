@@ -10,7 +10,12 @@ public record Capabilities
             throw new ArgumentException("Percentual capabilities must add up to 100 %", nameof(workplaceCapabilities));
         }
 
-        this.WorkplaceCapabilities = workplaceCapabilities;
+        WorkplaceCapabilities = workplaceCapabilities;
+    }
+
+    private Capabilities()
+    {
+        WorkplaceCapabilities = Array.Empty<WorkplaceCapability>();
     }
 
     public ISet<Workplace> AllowedWorkplaces => new HashSet<Workplace>(
@@ -20,8 +25,5 @@ public record Capabilities
 
     public IReadOnlyCollection<WorkplaceCapability> WorkplaceCapabilities { get; init; }
 
-    public void Deconstruct(out IReadOnlyCollection<WorkplaceCapability> WorkplaceCapabilities)
-    {
-        WorkplaceCapabilities = this.WorkplaceCapabilities;
-    }
+    public static Capabilities Empty => new Capabilities();
 }
