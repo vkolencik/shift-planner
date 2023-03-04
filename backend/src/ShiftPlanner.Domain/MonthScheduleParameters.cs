@@ -8,6 +8,7 @@ public interface IMonthScheduleParameters : ISolverParameters
     IReadOnlyCollection<ShiftAssignment> LastMonthShifts { get; }
     IReadOnlyCollection<ShiftAssignment> FixedShifts { get; }
     IReadOnlyCollection<ISet<Workplace>> WeekendInterchangeabilityGroups { get; }
+    IReadOnlyCollection<ShiftAssignment> ActiveEmployeeLastMonthShifts { get; }
 }
 
 public record MonthScheduleParameters(
@@ -23,4 +24,5 @@ public record MonthScheduleParameters(
     public IReadOnlyCollection<Employee> Employees => EmployeeMonths.Select(em => em.Employee).ToArray();
 
     public IReadOnlyCollection<Workplace> Workplaces => CompetenceGroups.SelectMany(cg => cg.Workplaces).ToArray();
+    public IReadOnlyCollection<ShiftAssignment> ActiveEmployeeLastMonthShifts => Array.Empty<ShiftAssignment>();
 }
