@@ -76,7 +76,7 @@ export function getActiveMonth (): Month {
 
 export function isActiveMonthWritable (): boolean {
   const today = moment()
-  return today.date() >= 25 || today.date() < 4
+  return today.date() >= 25 || today.date() <= 5
 }
 
 export function getMonthDays (month: Month): number[] {

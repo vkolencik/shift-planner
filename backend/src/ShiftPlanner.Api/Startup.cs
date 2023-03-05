@@ -24,6 +24,13 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddOptions<StorageOptions>().Bind(Configuration.GetSection(StorageOptions.SectionName)).ValidateDataAnnotations();
+
+        services.AddLogging(
+            logging =>
+            {
+                logging.ClearProviders();
+                logging.AddConsole();
+            });
         
         services.AddCors(
             options =>

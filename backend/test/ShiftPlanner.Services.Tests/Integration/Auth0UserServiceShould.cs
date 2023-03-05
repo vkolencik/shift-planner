@@ -1,5 +1,6 @@
 ﻿using Amazon;
 using Amazon.SecretsManager;
+using Microsoft.Extensions.Logging.Abstractions;
 using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Infra;
 using ShiftPlanner.Services.Services;
@@ -11,7 +12,7 @@ public class Auth0UserServiceShould
     [Fact]
     public async Task ReturnAllUsers()
     {
-        var service = new Auth0UserService(new Auth0TokenProvider(new TestHttpClientFactory()), new AwsSecretsManagerClient(new AmazonSecretsManagerClient(RegionEndpoint.EUCentral1)));
+        var service = new Auth0UserService(new Auth0TokenProvider(new TestHttpClientFactory()), new AwsSecretsManagerClient(new AmazonSecretsManagerClient(RegionEndpoint.EUCentral1)), NullLogger<Auth0UserService>.Instance);
         
         var users = await service.GetAllUsers();
 
