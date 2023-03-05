@@ -4,6 +4,8 @@ namespace ShiftPlanner.Api.Controllers;
 
 class PermissionsChecker : IPermissionsChecker
 {
+    private const int RequirementsDeadlineDate = 5;
+    private const int RequirementsOpenDate = 25;
     private readonly IUserAccessor _userAccessor;
     private readonly IClock _clock;
 
@@ -41,7 +43,7 @@ class PermissionsChecker : IPermissionsChecker
     {
         var today = _clock.Today;
 
-        var activeMonthAfterMonths = today.DayOfMonth < 25 ? 1 : 2;
+        var activeMonthAfterMonths = today.DayOfMonth < RequirementsOpenDate ? 1 : 2;
         var activeMonth = today.Date.AddMonths(activeMonthAfterMonths);
         
         if (day.Year != activeMonth.Year || day.Month != activeMonth.Month)
@@ -49,7 +51,7 @@ class PermissionsChecker : IPermissionsChecker
             return false;
         }
 
-        var isReadOnly = activeMonthAfterMonths == 1 && today.DayOfMonth >= 5;
+        var isReadOnly = activeMonthAfterMonths == 1 && today.DayOfMonth > RequirementsDeadlineDate;
         
         return !isReadOnly;
     }
