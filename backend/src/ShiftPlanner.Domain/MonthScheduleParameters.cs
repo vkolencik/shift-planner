@@ -24,5 +24,5 @@ public record MonthScheduleParameters(
     public IReadOnlyCollection<Employee> Employees => EmployeeMonths.Select(em => em.Employee).ToArray();
 
     public IReadOnlyCollection<Workplace> Workplaces => CompetenceGroups.SelectMany(cg => cg.Workplaces).ToArray();
-    public IReadOnlyCollection<ShiftAssignment> ActiveEmployeeLastMonthShifts => Array.Empty<ShiftAssignment>();
+    public IReadOnlyCollection<ShiftAssignment> ActiveEmployeeLastMonthShifts => LastMonthShifts.Where(lms => Employees.Contains(lms.Employee)).ToArray();
 }

@@ -59,7 +59,7 @@ public class NoSubsequentWeekendsRule : IRule
                 return;
             }
 
-            var lastMonthWeekendShifts = _parameters.LastMonthShifts.Where(s => lastWeekendOfLastMonth.Contains(s.Shift.Day));
+            var lastMonthWeekendShifts = _parameters.ActiveEmployeeLastMonthShifts.Where(s => lastWeekendOfLastMonth.Contains(s.Shift.Day));
             foreach (var employee in lastMonthWeekendShifts.Select(s => s.Employee).ToHashSet())
             {
                 target.AddSumConstraint(_parameters.Workplaces.SelectMany(w => subsequentWeekend.Select(d => new ShiftAssignment(employee, d, w))).ToArray(), Constraint.Eq, 0);

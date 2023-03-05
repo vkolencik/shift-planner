@@ -46,7 +46,7 @@ public class NoAlternativeDayShiftsRule : IRule
             }
 
             var thisMonthDay = new Day(previousMonthDay.Date.AddDays(2));
-            var shiftsOnPreviousMonthDay = _parameters.LastMonthShifts.Where(s => s.Shift.Day == previousMonthDay);
+            var shiftsOnPreviousMonthDay = _parameters.ActiveEmployeeLastMonthShifts.Where(s => s.Shift.Day == previousMonthDay);
             foreach (var employee in new HashSet<Employee>(shiftsOnPreviousMonthDay.Select(s => s.Employee)))
             {
                 var shiftsOnDay = _parameters.Workplaces

@@ -27,7 +27,7 @@ public class NoConsecutiveShiftsRule : IRule
 
         var firstDayOfMonth = _parameters.Days.First();
         var lastDayOfPreviousMonth = _parameters.Month.Previous.Days.Last();
-        var shiftsOnTheLastDayOfPreviousMonth = _parameters.LastMonthShifts.Where(s => s.Shift.Day == lastDayOfPreviousMonth);
+        var shiftsOnTheLastDayOfPreviousMonth = _parameters.ActiveEmployeeLastMonthShifts.Where(s => s.Shift.Day == lastDayOfPreviousMonth);
         foreach (var employee in new HashSet<Employee>(shiftsOnTheLastDayOfPreviousMonth.Select(s => s.Employee)))
         {
             var shiftsOnFirstDay = _parameters.Workplaces

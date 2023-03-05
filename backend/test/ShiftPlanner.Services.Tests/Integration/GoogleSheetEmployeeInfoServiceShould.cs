@@ -8,7 +8,7 @@ namespace ShiftPlanner.Services.Tests.Integration;
 
 public class GoogleSheetEmployeeInfoServiceShould
 {
-    [Fact(Skip = "Skipped until the new format is implemented")]
+    [Fact]
     public async Task FetchEmployees()
     {
         var service = new GoogleSheetsEmployeeInfoService(new AwsSecretsManagerClient(new AmazonSecretsManagerClient(RegionEndpoint.EUCentral1)));
