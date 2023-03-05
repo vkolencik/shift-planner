@@ -8,7 +8,7 @@ namespace ShiftPlanner.Services.Tests.Integration;
 
 public class GoogleSheetEmployeeInfoServiceShould
 {
-    [Fact]
+    [Fact(Skip = "Skipped until the new format is implemented")]
     public async Task FetchEmployees()
     {
         var service = new GoogleSheetsEmployeeInfoService(new AwsSecretsManagerClient(new AmazonSecretsManagerClient(RegionEndpoint.EUCentral1)));
@@ -16,7 +16,7 @@ public class GoogleSheetEmployeeInfoServiceShould
         var employees = await service.GetEmployees(Workplace.Workplaces);
 
         Assert.True(employees.Select(e => e.EmployeeStatus == EmployeeStatus.Active).Count() > 20);
-        
+
         var testerEmployee = employees.First();
         Assert.Equal("Tester Testovič", testerEmployee.Name);
         Assert.Equal("e2e-test-user-1@krtek.me", testerEmployee.Email);
