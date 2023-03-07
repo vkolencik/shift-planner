@@ -14,7 +14,7 @@ public class WeekendShiftLimitRule : IRule
     public void Apply(IScheduleConstraintReceiver target)
     {
         LimitShiftsOnDays(_parameters, target, _parameters.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday), 1);
-        LimitShiftsOnDays(_parameters, target, _parameters.Days.Where(d => d.DayOfWeek is DayOfWeek.Sunday), 1);
+        LimitShiftsOnDays(_parameters, target, _parameters.Days.Where(d => d.DayOfWeek is DayOfWeek.Sunday), 2);
     }
 
     private static void LimitShiftsOnDays(

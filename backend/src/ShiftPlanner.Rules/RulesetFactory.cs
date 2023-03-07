@@ -17,15 +17,15 @@ public class RulesetFactory : IRulesetFactory
         yield return new NoAlternativeDayShiftsRule(parameters);
 
         yield return new AlwaysScheduleAlternatesOverWeekendsRule(parameters);
+        // yield return new NoSubsequentWeekendsRule(parameters);
         yield return new WeekendShiftLimitRule(parameters);
         yield return new MinNumberOfWeekendShiftsRule(parameters);
-        yield return new NoSubsequentWeekendsRule(parameters);
 
         yield return new LeaveRule(parameters);
-
+        
         yield return new WorkplaceCapabilityRule(parameters);
         yield return new CompetenceGroupQualificationRule(parameters);
-
+        
         yield return new PredefinedShiftsRule(parameters);
 
         IEmployeeStandardCalculator calculator = new EmployeeStandardCalculator(flexibility, parameters);
