@@ -4,6 +4,7 @@ namespace ShiftPlanner.Engine;
 
 public class SequenceFlexibilityVariator : IFlexibilityVariator
 {
+    private const uint InitialFlexibilityDegree = 0u;
     private readonly ScheduleFlexibility _maxFlexibility;
 
     public SequenceFlexibilityVariator(ScheduleFlexibility maxFlexibility)
@@ -13,9 +14,14 @@ public class SequenceFlexibilityVariator : IFlexibilityVariator
 
     public VariableFlexibilityCalculationResult<TResult> ExecuteWithVariableFlexibility<TResult>(IVariableFlexibilityStrategy<TResult> strategy)
     {
+        if (_maxFlexibility.Degree < InitialFlexibilityDegree)
+        {
+            throw new ArgumentException($"Max flexibility ({_maxFlexibility.Degree}) is lower than initial flexibility ({InitialFlexibilityDegree})");
+        }
+        
         TResult? result = default(TResult);
 
-        for (var flexibilityDegree = 0u; flexibilityDegree <= _maxFlexibility.Degree; flexibilityDegree++)
+        for (var flexibilityDegree = InitialFlexibilityDegree; flexibilityDegree <= _maxFlexibility.Degree; flexibilityDegree++)
         {
             var flexibility = new ScheduleFlexibility(flexibilityDegree);
             var isSuccess = strategy.PerformWithFlexibilityValue(flexibility, out result);
