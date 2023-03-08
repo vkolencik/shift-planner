@@ -1,7 +1,6 @@
 using System;
 using ShiftPlanner.Domain;
 using ShiftPlanner.Rules;
-using ShiftPlanner.TestHelpers;
 using Xunit;
 
 namespace ShiftPlanner.Engine.Tests.Functional.SchedulingEngine

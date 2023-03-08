@@ -363,6 +363,7 @@ public class ComputedScheduleShould
         var result = scheduler.ComputeSchedule(
             new MonthScheduleParameters(
                 _scheduledMonth,
+                Array.Empty<Employee>(),
                 oddWeekLeaveEmployees.Concat(evenWeekLeaveEmployees).ToArray(),
                 new[] {new CompetenceGroup(new[] {Aro1})},
                 Array.Empty<ShiftAssignment>(),
@@ -496,6 +497,7 @@ public class ComputedScheduleShould
     {
         return new MonthScheduleParameters(
             _scheduledMonth,
+            Array.Empty<Employee>(),
             _employeeMonths,
             _competenceGroups,
             Array.Empty<ShiftAssignment>(),

@@ -1,5 +1,4 @@
 ﻿using ShiftPlanner.Domain;
-using ShiftPlanner.TestHelpers;
 
 namespace ShiftPlanner.Rules.Tests;
 
@@ -40,6 +39,7 @@ static internal class RulesFixture
     
     internal static readonly MonthScheduleParameters MonthScheduleParameters = new MonthScheduleParameters(
         ScheduledMonth,
+        Array.Empty<Employee>(),
         new[]
         {
             new EmployeeMonth(Employee1, new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 2))}),

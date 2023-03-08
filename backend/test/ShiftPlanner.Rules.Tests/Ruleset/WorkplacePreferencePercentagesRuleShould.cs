@@ -19,6 +19,7 @@ public class WorkplacePreferencePercentagesRuleShould
         var employee = new Employee("Employee", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Workplace1, 20), new WorkplaceCapability.Green(Workplace2, 80)}), Workload.Infinite);
         var schedulingParams = new MonthScheduleParameters(
             new ScheduledMonth(2022, 2),
+            Array.Empty<Employee>(),
             new[]
             {
                 new EmployeeMonth(employee)

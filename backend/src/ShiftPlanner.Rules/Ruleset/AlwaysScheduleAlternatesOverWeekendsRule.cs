@@ -36,7 +36,7 @@ public class AlwaysScheduleAlternatesOverWeekendsRule : IRule
         {
             if (lastMonthDay.DayOfWeek == DayOfWeek.Friday)
             {
-                var shiftsOnFriday = _parameters.ActiveEmployeeLastMonthShifts.Where(s => s.Shift.Day == lastMonthDay).Where(s => _parameters.Employees.Contains(s.Employee));
+                var shiftsOnFriday = _parameters.ActiveEmployeeLastMonthShifts.Where(s => s.Shift.Day == lastMonthDay);
                 var sunday = new Day(lastMonthDay.Date.AddDays(2));
                 foreach (var fridayShift in shiftsOnFriday)
                 {

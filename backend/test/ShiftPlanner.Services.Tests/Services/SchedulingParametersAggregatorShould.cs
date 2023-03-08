@@ -115,5 +115,8 @@ public class SchedulingParametersAggregatorShould
         Assert.Equal(new HashSet<ShiftAssignment>(expectedLastMonthShifts), new HashSet<ShiftAssignment>(parameters.LastMonthShifts));
         Assert.Equal(new HashSet<ShiftAssignment>(expectedFixedShifts), new HashSet<ShiftAssignment>(parameters.FixedShifts));
         Assert.Equal(Workplace.WeekendInterchangeabilityGroups, parameters.WeekendInterchangeabilityGroups);
+
+        var externista = Assert.Single(parameters.ExternalEmployees);
+        Assert.Equal("Externista 1", externista.Name);
     }
 }

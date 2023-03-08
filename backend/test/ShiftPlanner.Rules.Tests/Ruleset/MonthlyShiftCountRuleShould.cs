@@ -19,6 +19,7 @@ public class MonthlyShiftCountRuleShould
 
         var schedulingParams = new MonthScheduleParameters(
             new ScheduledMonth(2022, 2),
+            Array.Empty<Employee>(),
             new[]
             {
                 new EmployeeMonth(Employee1),
@@ -57,6 +58,7 @@ public class MonthlyShiftCountRuleShould
 
         var schedulingParams = new MonthScheduleParameters(
             new ScheduledMonth(2022, 2),
+            Array.Empty<Employee>(),
             new[]
             {
                 new EmployeeMonth(
@@ -117,6 +119,7 @@ public class MonthlyShiftCountRuleShould
         var month = new ScheduledMonth(2022, 2);
         var schedulingParams = new MonthScheduleParameters(
             month,
+            Array.Empty<Employee>(),
             new[]
             {
                 new EmployeeMonth(employee)
@@ -155,6 +158,7 @@ public class MonthlyShiftCountRuleShould
         var month = new ScheduledMonth(2022, 2);
         var schedulingParams = new MonthScheduleParameters(
             month,
+            Array.Empty<Employee>(),
             new[]
             {
                 new EmployeeMonth(employee, new[] {new Leave(new Day(2022, 2, 1), new Day(2022, 2, 14))})

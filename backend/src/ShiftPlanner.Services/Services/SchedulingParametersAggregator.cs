@@ -55,17 +55,32 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
             .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
             .ToArray();
 
-        var fixedShifts = existingShifts
+        var externistaInfo = employeeInfos.Single(ei => ei.Email == "externista1@bulovka.cz");
+        var externista = new Employee(externistaInfo.Name, externistaInfo.CompetenceLevel, externistaInfo.Capabilities, externistaInfo.Workload);
+        var predefinedShifts = existingShifts
             .Where(ss => ss.Day.Month == month.Month)
             .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
+            .Concat(new []
+            {
+                new ShiftAssignment(externista, new Day(2023, 4, 4), Workplace.Urg), 
+                new ShiftAssignment(externista, new Day(2023, 4, 6), Workplace.Urg), 
+                new ShiftAssignment(externista, new Day(2023, 4, 11), Workplace.Urg), 
+                new ShiftAssignment(externista, new Day(2023, 4, 18), Workplace.Urg), 
+                new ShiftAssignment(externista, new Day(2023, 4, 25), Workplace.Urg), 
+                new ShiftAssignment(externista, new Day(2023, 4, 26), Workplace.Urg), 
+                new ShiftAssignment(externista, new Day(2023, 4, 16), Workplace.Urg), 
+                new ShiftAssignment(externista, new Day(2023, 4, 22), Workplace.Urg), 
+                new ShiftAssignment(externista, new Day(2023, 4, 23), Workplace.Urg), 
+            })
             .ToArray();
 
         return new MonthScheduleParameters(
             month,
+            new [] {externista},
             activeEmployeeMonths,
             CompetenceGroup.CompetenceGroups,
             lastMonthShifts,
-            fixedShifts,
+            predefinedShifts,
             Workplace.WeekendInterchangeabilityGroups);
     }
 

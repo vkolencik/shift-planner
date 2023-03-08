@@ -17,7 +17,8 @@ public class MonthScheduleParametersShould
         var activeEmployeeLastMonthShift = new ShiftAssignment(activeEmployee, new Day(2000, 1, 1), workplace);
         var inactiveEmployeeLastMonthShift = new ShiftAssignment(inactiveEmployee, new Day(2000, 1, 2), workplace);
         var parameters = new MonthScheduleParameters(
-            new ScheduledMonth(2000, 1), 
+            new ScheduledMonth(2000, 1),
+            Array.Empty<Employee>(),
             new EmployeeMonth[] { new EmployeeMonth(activeEmployee) },
             Array.Empty<CompetenceGroup>(),
             new []

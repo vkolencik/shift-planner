@@ -1,5 +1,4 @@
 ﻿using ShiftPlanner.Domain;
-using ShiftPlanner.TestHelpers;
 
 namespace ShiftPlanner.Engine.Tests;
 

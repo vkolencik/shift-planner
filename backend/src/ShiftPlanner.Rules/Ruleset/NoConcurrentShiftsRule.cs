@@ -13,7 +13,7 @@ public class NoConcurrentShiftsRule : IRule
 
     public void Apply(IScheduleConstraintReceiver target)
     {
-        foreach (var employee in _parameters.Employees)
+        foreach (var employee in _parameters.AllEmployees)
         {
             foreach (var day in _parameters.Days)
             {
