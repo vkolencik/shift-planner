@@ -27,6 +27,7 @@ public class RulesetFactory : IRulesetFactory
         yield return new CompetenceGroupQualificationRule(parameters);
         
         yield return new PredefinedShiftsRule(parameters);
+        yield return new ExternalEmployeeRule(parameters);
 
         IEmployeeStandardCalculator calculator = new EmployeeStandardCalculator(flexibility, parameters);
 
