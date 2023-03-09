@@ -39,12 +39,12 @@ static class Program
         if (result is SuccessfulSchedulingResult successResult)
         {
             IScheduleRepository resultRepositoryGoogleSheet = services.GetRequiredService<IGoogleSheetsScheduleRepository>();
-            // IScheduleRepository resultRepositoryS3 = services.GetRequiredService<IScheduleRepository>();
+            IScheduleRepository resultRepositoryS3 = services.GetRequiredService<IScheduleRepository>();
             Console.Out.WriteLine("Solution found");
             Console.Out.WriteLine($"Flexibility: {successResult.Flexibility.Degree}");
 
             await resultRepositoryGoogleSheet.StoreComputedSchedule(month, successResult);
-            // await resultRepositoryS3.StoreComputedSchedule(month, successResult);
+            await resultRepositoryS3.StoreComputedSchedule(month, successResult);
         }
 
         // Console.Out.WriteLine(string.Join('\n', result.SolutionParameters.RecordedStandards.Select(kvp => $"{kvp.Key.Name}: {kvp.Value.Minimum}-{kvp.Value.Maximum}")));

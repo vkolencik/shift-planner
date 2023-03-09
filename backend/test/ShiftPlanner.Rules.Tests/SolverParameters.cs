@@ -7,5 +7,5 @@ public record SolverParameters(
     IReadOnlyCollection<Employee> Employees,
     IReadOnlyCollection<Workplace> Workplaces) : ISolverParameters
 {
-    public IReadOnlyCollection<Employee> AllEmployees => Array.Empty<Employee>();
+    public IReadOnlyCollection<Employee> AllEmployees => Employees;
 };

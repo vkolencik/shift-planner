@@ -55,7 +55,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
             .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
             .ToArray();
 
-        var externistaInfo = employeeInfos.Single(ei => ei.Email == "externista1@bulovka.cz");
+        var externistaInfo = employeeInfos.SingleOrDefault(ei => ei.Email == "externista1@bulovka.cz");
         var externista = new Employee(externistaInfo.Name, externistaInfo.CompetenceLevel, externistaInfo.Capabilities, externistaInfo.Workload);
         var predefinedShifts = existingShifts
             .Where(ss => ss.Day.Month == month.Month)

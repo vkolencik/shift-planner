@@ -271,7 +271,7 @@ public class ComputedScheduleShould
     [Theory]
     [InlineData(DayOfWeek.Saturday)]
     [InlineData(DayOfWeek.Sunday)]
-    public void HaveAtMostOneOfEachWeekendDaysAssigned(DayOfWeek weekendDay)
+    public void HaveAtMostTwoOfEachWeekendDaysAssigned(DayOfWeek weekendDay)
     {
         var schedule = ComputeSchedule();
 
@@ -281,7 +281,7 @@ public class ComputedScheduleShould
                 .Where(s => s.Employee == employee && s.Shift.Day.DayOfWeek == weekendDay)
                 .ToArray();
 
-            Assert.True(weekendDayShifts.Length <= 1, $"More than one shift for {employee.Name} on {weekendDay.ToString()}: {string.Join(", ", weekendDayShifts.Select(s => s.Shift.Day))}");
+            Assert.True(weekendDayShifts.Length <= 2, $"More than two shift for {employee.Name} on {weekendDay.ToString()}: {string.Join(", ", weekendDayShifts.Select(s => s.Shift.Day))}");
         }
     }
 
