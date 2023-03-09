@@ -69,9 +69,9 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
                     new ShiftAssignment(externista, new Day(2023, 4, 18), Workplace.Urg),
                     new ShiftAssignment(externista, new Day(2023, 4, 25), Workplace.Urg),
                     new ShiftAssignment(externista, new Day(2023, 4, 26), Workplace.Urg),
-                    // new ShiftAssignment(externista, new Day(2023, 4, 16), Workplace.Urg),
+                    new ShiftAssignment(externista, new Day(2023, 4, 16), Workplace.Urg),
                     new ShiftAssignment(externista, new Day(2023, 4, 22), Workplace.Urg),
-                    // new ShiftAssignment(externista, new Day(2023, 4, 23), Workplace.Urg), 
+                    new ShiftAssignment(externista, new Day(2023, 4, 23), Workplace.Urg), 
                 })
             .ToArray();
 
@@ -106,12 +106,6 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
                 userId == "auth0|637f84e6841043dd7a9d44a0" // Touficova
                     ? month.Days
                         .Where(d => d.DayOfWeek == DayOfWeek.Friday || d.DayOfWeek == DayOfWeek.Sunday)
-                        .Select(d => new Leave(d, d, false))
-                    : Array.Empty<Leave>())
-            .Concat(
-                userId == "auth0|637f84ec841043dd7a9d44dc" // Jansky
-                    ? month.Days
-                        .Where(d => d.DayOfWeek == DayOfWeek.Saturday)
                         .Select(d => new Leave(d, d, false))
                     : Array.Empty<Leave>())
             .ToArray();

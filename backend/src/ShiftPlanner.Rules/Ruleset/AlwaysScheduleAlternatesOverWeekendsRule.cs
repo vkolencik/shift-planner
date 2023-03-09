@@ -24,10 +24,24 @@ public class AlwaysScheduleAlternatesOverWeekendsRule : IRule
                 {
                     var interchangeabilityGroup = _parameters.WeekendInterchangeabilityGroups.SingleOrDefault(ig => ig.Contains(workplace)) ?? new HashSet<Workplace> {workplace};
 
-                    target.AddSumRelationConstraint(
-                        interchangeabilityGroup.Select(w => new ShiftAssignment(employeeMonth.Employee, friday, w)).ToArray(),
-                        Constraint.Eq,
-                        interchangeabilityGroup.Select(w => new ShiftAssignment(employeeMonth.Employee, sunday, w)).ToArray());
+                    var workplacesWithFixedShifts = _parameters.FixedShifts
+                        .Where(fs => interchangeabilityGroup.Contains(fs.Shift.Workplace) && (fs.Shift.Day == friday || fs.Shift.Day == sunday))
+                        .Select(fs => fs.Shift.Workplace)
+                        .ToHashSet();
+
+                    if (workplacesWithFixedShifts.Any())
+                    {
+                        interchangeabilityGroup = interchangeabilityGroup.Except(
+                            workplacesWithFixedShifts).ToHashSet();
+                    }
+
+                    if (interchangeabilityGroup.Any())
+                    {
+                        target.AddSumRelationConstraint(
+                            interchangeabilityGroup.Select(w => new ShiftAssignment(employeeMonth.Employee, friday, w)).ToArray(),
+                            Constraint.Eq,
+                            interchangeabilityGroup.Select(w => new ShiftAssignment(employeeMonth.Employee, sunday, w)).ToArray());
+                    }
                 }
             }
         }
