@@ -17,7 +17,7 @@ public class RulesetFactory : IRulesetFactory
         yield return new NoAlternativeDayShiftsRule(parameters);
 
         yield return new AlwaysScheduleAlternatesOverWeekendsRule(parameters);
-        // yield return new NoSubsequentWeekendsRule(parameters);
+        yield return new NoSubsequentWeekendsRule(parameters);
         yield return new WeekendShiftLimitRule(parameters);
         yield return new MinNumberOfWeekendShiftsRule(parameters);
 
