@@ -17,15 +17,18 @@ public class WeekendShiftLimitRule : IRule
         {
             var maxSats = 2u;
             var maxSuns = 2u;
+            var maxWeekends = 3u;
 
             if (employeeMonth.Employee.Name == "Jánský")
             {
                 maxSats = 0;
                 maxSuns = 1;
+                maxWeekends = 1u;
             }
             
             LimitShiftsOnDays(employeeMonth.Employee, _parameters.Workplaces, target, _parameters.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday), maxSats);
             LimitShiftsOnDays(employeeMonth.Employee, _parameters.Workplaces, target, _parameters.Days.Where(d => d.DayOfWeek is DayOfWeek.Sunday), maxSuns);
+            LimitShiftsOnDays(employeeMonth.Employee, _parameters.Workplaces, target, _parameters.Days.Where(d => d.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday), maxWeekends);
         }
     }
 
