@@ -18,6 +18,8 @@ import { workplaces } from '../domain'
 import { Permission, usePermissions } from '../auth/auth'
 import { Printer } from 'react-bootstrap-icons'
 
+const currentMonth: Month = {year: 2023, month: 4}
+
 function getUserShiftEntries (schedule: Schedule): [string, number][] {
   const userShifts: { [name: string]: number } = {}
 
@@ -36,7 +38,7 @@ function getUserShiftEntries (schedule: Schedule): [string, number][] {
 
 export function MonthSchedule (): JSX.Element {
   const api = useApi()
-  const [month, setMonth] = useState<Month>({ year: 2023, month: 3 })
+  const [month, setMonth] = useState<Month>(currentMonth)
   const [schedule, setSchedule] = useState<Schedule | null | undefined>(undefined)
   const permissions = usePermissions()
 
@@ -51,7 +53,7 @@ export function MonthSchedule (): JSX.Element {
   }
 
   function handleNextMonth () {
-    if (!permissions.includes(Permission.approveRequirementsOfOthers) && month.year === 2023 && month.month === 3) {
+    if (!permissions.includes(Permission.approveRequirementsOfOthers) && month.year === currentMonth.year && month.month === currentMonth.month) {
       return
     }
 
