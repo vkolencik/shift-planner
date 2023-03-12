@@ -98,13 +98,6 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
             .Where(req => AbsenceRequirementTypes.Contains(req.RequirementType))
             .Select(req => new Leave(req.Date, req.Date, req.RequirementType == "leave"))
             .Concat(
-                (userId == "auth0|637f84e6841043dd7a9d449e" // Tesarik
-                 || userId == "auth0|637f84e6841043dd7a9d449f") // Tesarova
-                    ? month.Days
-                        .Where(d => d.DayOfWeek == DayOfWeek.Saturday || d.DayOfWeek == DayOfWeek.Sunday)
-                        .Select(d => new Leave(d, d, false))
-                    : Array.Empty<Leave>())
-            .Concat(
                 userId == "auth0|637f84e6841043dd7a9d44a0" // Touficova
                     ? month.Days
                         .Where(d => d.DayOfWeek == DayOfWeek.Friday || d.DayOfWeek == DayOfWeek.Sunday)
