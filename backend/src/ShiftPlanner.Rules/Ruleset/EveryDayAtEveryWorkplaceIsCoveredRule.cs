@@ -17,7 +17,7 @@ public class EveryDayAtEveryWorkplaceIsCoveredRule : IRule
         {
             foreach (var workplace in _parameters.Workplaces)
             {
-                var shiftsOnDayAtWorkplace = _parameters.Employees
+                var shiftsOnDayAtWorkplace = _parameters.AllEmployees
                     .Select(e => new ShiftAssignment(e, day, workplace))
                     .ToArray();
 

@@ -1,6 +1,7 @@
 ﻿using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using ShiftPlanner.Domain;
+using InvalidOperationException = System.InvalidOperationException;
 
 namespace ShiftPlanner.Services.Services.Google;
 
@@ -8,7 +9,7 @@ internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeI
 {
     private static class RowIndices
     {
-        public const int DisabledFlag = 0;
+        public const int StatusFlag = 0;
         public const int Name = 1;
         public const int Email = 2;
         public const int CompetenceLevel = 3;
@@ -43,53 +44,82 @@ internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeI
 
         foreach (var row in values)
         {
-            if (row.Count < 4)
-            {
-                continue;
-            }
-            
             var name = (string) row[RowIndices.Name];
             if (string.IsNullOrEmpty(name))
             {
                 break;
             }
 
-            var competenceLevelString = (string) row[RowIndices.CompetenceLevel];
-            if (string.IsNullOrWhiteSpace(competenceLevelString))
-            {
-                continue;
-            }
-
-            var workloadMinString = (string) row[RowIndices.WorkloadMin];
-            var workloadMaxString = (string) row[RowIndices.WorkloadMax];
-            if (string.IsNullOrWhiteSpace(workloadMinString) || string.IsNullOrWhiteSpace(workloadMaxString))
-            {
-                continue;
-            }
-            var workload = new Workload(uint.Parse(workloadMinString), uint.Parse(workloadMaxString));
-
-            var statusString = (string) row[RowIndices.DisabledFlag];
+            var statusString = (string?) row[RowIndices.StatusFlag];
             var employeeStatus = ParseEmployeeStatus(statusString);
+
             var email = (string) row[RowIndices.Email];
-            var competenceLevel = (CompetenceLevel) int.Parse(competenceLevelString);
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new InvalidOperationException($"Missing email for employee name {name}");
+            }
 
-            var capabilitiesArray = row.Skip(RowIndices.Capabilities).ToArray();
-            var paddedCapabilitiesArray = capabilitiesArray.Concat(Enumerable.Repeat("", workplaces.Count - capabilitiesArray.Length)).ToArray();
-            var capabilities = paddedCapabilitiesArray
-                .Select(
-                    (cellValue, i) =>
-                        string.IsNullOrWhiteSpace((string) cellValue)
-                            ? new WorkplaceCapability.Red(workplaces[i]) as WorkplaceCapability
-                            : new WorkplaceCapability.Green(workplaces[i], uint.Parse((string) cellValue)))
-                .ToArray();
+            if (row.Count <= RowIndices.Capabilities)
+            {
+                // Disabled employee without full set of data
+                if (employeeStatus == EmployeeStatus.Active)
+                {
+                    throw new InvalidOperationException($"Active employee {name} doesn't have full data set");
+                }
+                
+                employees.Add(CreateEmptyEmployee(employeeStatus, name, email));
+                continue;
+            }
 
-            employees.Add(new EmployeeInfo(name, email, competenceLevel, new Capabilities(capabilities), workload, employeeStatus));
+            var competenceLevel = ParseCompetenceLevel((string) row[RowIndices.CompetenceLevel]);
+
+            var workload = ParseWorkload((string?) row[RowIndices.WorkloadMin], (string?) row[RowIndices.WorkloadMax]);
+
+            var capabilitiesArray = row.Skip(RowIndices.Capabilities).Cast<string?>().ToArray();
+            Capabilities capabilities = ParseCapabilities(capabilitiesArray, workplaces);
+
+            employees.Add(new EmployeeInfo(name, email, competenceLevel, capabilities, workload, employeeStatus));
         }
 
         return employees;
     }
 
-    private static EmployeeStatus ParseEmployeeStatus(string statusString)
+    private Capabilities ParseCapabilities(string?[] capabilitiesArray, IList<Workplace> workplaces)
+    {
+        if (capabilitiesArray.All(string.IsNullOrWhiteSpace))
+        {
+            return Capabilities.Empty;
+        }
+        
+        var paddedCapabilitiesArray = capabilitiesArray.Concat(Enumerable.Repeat("", workplaces.Count - capabilitiesArray.Length)).ToArray();
+        var capabilities = paddedCapabilitiesArray
+            .Select(
+                (cellValue, i) =>
+                    string.IsNullOrWhiteSpace(cellValue)
+                        ? new WorkplaceCapability.Red(workplaces[i]) as WorkplaceCapability
+                        : new WorkplaceCapability.Green(workplaces[i], uint.Parse((string) cellValue)))
+            .ToArray();
+        
+        return new Capabilities(capabilities);
+    }
+
+    private static Workload ParseWorkload(string? min, string? max)
+        => string.IsNullOrWhiteSpace(min) || string.IsNullOrWhiteSpace(max) ? Workload.None : new Workload(uint.Parse(min), uint.Parse(max));
+
+    private static CompetenceLevel ParseCompetenceLevel(string? competenceLevelString)
+        => string.IsNullOrWhiteSpace(competenceLevelString) ? CompetenceLevel.None : (CompetenceLevel) int.Parse(competenceLevelString);
+
+    private EmployeeInfo CreateEmptyEmployee(EmployeeStatus status, string name, string email)
+    {
+        if (status == EmployeeStatus.Active)
+        {
+            throw new InvalidOperationException($"Cannot create empty active employee (name {name})");
+        }
+
+        return new EmployeeInfo(name, email, CompetenceLevel.None, Capabilities.Empty, Workload.None, status);
+    }
+
+    private static EmployeeStatus ParseEmployeeStatus(string? statusString)
     {
         return statusString switch
         {

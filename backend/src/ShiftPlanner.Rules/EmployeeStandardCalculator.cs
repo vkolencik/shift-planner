@@ -18,11 +18,12 @@ public class EmployeeStandardCalculator : IEmployeeStandardCalculator
         double multiplier,
         double flexibilityMultiplier = 1)
     {
+        const int leaveFactor = 1;
         var daysCount = (double) _parameters.Month.Days.Count;
         var totalRequiredCapacity = daysCount * _parameters.Workplaces.Count;
         var capacityReductionByLeaves = employeeMonth.Leaves.Where(l => l.ReducesCapacity).Sum(l => l.LengthDays);
-        var totalEmployeeCapacity = (double) _parameters.EmployeeMonths.Sum(em => daysCount - em.Leaves.Where(l => l.ReducesCapacity).Sum(l => l.LengthDays));
-        var employeeCapacity = daysCount - capacityReductionByLeaves;
+        var totalEmployeeCapacity = (double) _parameters.EmployeeMonths.Sum(em => daysCount - leaveFactor * em.Leaves.Where(l => l.ReducesCapacity).Sum(l => l.LengthDays));
+        var employeeCapacity = daysCount - leaveFactor * capacityReductionByLeaves;
         var flexibilityModifier = flexibilityMultiplier * _flexibility.Degree / 10;
         var preciseStandard = totalRequiredCapacity * employeeCapacity / totalEmployeeCapacity;
         var standardLb = Math.Max(employeeMonth.Employee.Workload.MinimumShiftsPerMonth * employeeCapacity / daysCount, multiplier * preciseStandard - flexibilityModifier);

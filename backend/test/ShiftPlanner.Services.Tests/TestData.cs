@@ -16,5 +16,5 @@ public static class TestData
     public static readonly Workplace Workplace = new Workplace("workplace1");
 
     public static MonthScheduleParameters MonthSchedulingParameters => new MonthScheduleParameters(
-        Month, Array.Empty<EmployeeMonth>(), Array.Empty<CompetenceGroup>(), Array.Empty<ShiftAssignment>(), Array.Empty<ShiftAssignment>(), Array.Empty<ISet<Workplace>>());
+        Month, Array.Empty<Employee>(), Array.Empty<EmployeeMonth>(), Array.Empty<CompetenceGroup>(), Array.Empty<ShiftAssignment>(), Array.Empty<ShiftAssignment>(), Array.Empty<ISet<Workplace>>());
 }

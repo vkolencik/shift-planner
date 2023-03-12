@@ -19,6 +19,7 @@ public class MinNumberOfWeekendShiftsRuleShould
 
         var schedulingParams = new MonthScheduleParameters(
             new ScheduledMonth(2022, 2),
+            Array.Empty<Employee>(),
             new[]
             {
                 new EmployeeMonth(Employee1),

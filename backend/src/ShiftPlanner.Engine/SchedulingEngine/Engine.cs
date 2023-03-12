@@ -22,7 +22,7 @@ namespace ShiftPlanner.Engine.SchedulingEngine
 
         private void Init(ISolverParameters input)
         {
-            _employees = CreateIndex(input.Employees);
+            _employees = CreateIndex(input.AllEmployees);
             _workplaces = CreateIndex(input.Workplaces);
             _days = CreateIndex(input.Days);
 

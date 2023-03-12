@@ -8,10 +8,12 @@ public interface IMonthScheduleParameters : ISolverParameters
     IReadOnlyCollection<ShiftAssignment> LastMonthShifts { get; }
     IReadOnlyCollection<ShiftAssignment> FixedShifts { get; }
     IReadOnlyCollection<ISet<Workplace>> WeekendInterchangeabilityGroups { get; }
+    IReadOnlyCollection<ShiftAssignment> ActiveEmployeeLastMonthShifts { get; }
 }
 
 public record MonthScheduleParameters(
         ScheduledMonth Month,
+        IReadOnlyCollection<Employee> ExternalEmployees,
         IReadOnlyCollection<EmployeeMonth> EmployeeMonths,
         IReadOnlyCollection<CompetenceGroup> CompetenceGroups,
         IReadOnlyCollection<ShiftAssignment> LastMonthShifts,
@@ -21,6 +23,8 @@ public record MonthScheduleParameters(
 {
     public IReadOnlyCollection<Day> Days => Month.Days;
     public IReadOnlyCollection<Employee> Employees => EmployeeMonths.Select(em => em.Employee).ToArray();
+    public IReadOnlyCollection<Employee> AllEmployees => Employees.Concat(ExternalEmployees).ToArray();
 
     public IReadOnlyCollection<Workplace> Workplaces => CompetenceGroups.SelectMany(cg => cg.Workplaces).ToArray();
+    public IReadOnlyCollection<ShiftAssignment> ActiveEmployeeLastMonthShifts => LastMonthShifts.Where(lms => Employees.Contains(lms.Employee)).ToArray();
 }

@@ -18,6 +18,7 @@ public class EvenSpreadWithinMonthRuleShould
         var leave = new Leave(new Day(2022, 2, 1), new Day(2022, 2, 3));
         var schedulingParams = new MonthScheduleParameters(
             new ScheduledMonth(2022, 2),
+            Array.Empty<Employee>(),
             new[]
             {
                 new EmployeeMonth(

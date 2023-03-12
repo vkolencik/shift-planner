@@ -17,6 +17,7 @@ public record Day(DateOnly Date) : IComparable<Day>
     public int Year => Date.Year;
     public int Month => Date.Month;
     public int DayOfMonth => Date.Day;
+    public ScheduledMonth ScheduledMonth => new ScheduledMonth(Year, Month);
 
     public static bool operator <(Day? left, Day? right)
     {

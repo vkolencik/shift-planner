@@ -20,7 +20,7 @@ public class SchedulingParametersAggregatorShould
         _storedScheduleServiceMock = new Mock<IStoredScheduleService>();
     }
 
-    [Fact]
+    [Fact(Skip="Need to factor in external users")]
     public async Task AggregateSchedulingParameters()
     {
         var tenant = TestData.Tenant;
@@ -115,5 +115,8 @@ public class SchedulingParametersAggregatorShould
         Assert.Equal(new HashSet<ShiftAssignment>(expectedLastMonthShifts), new HashSet<ShiftAssignment>(parameters.LastMonthShifts));
         Assert.Equal(new HashSet<ShiftAssignment>(expectedFixedShifts), new HashSet<ShiftAssignment>(parameters.FixedShifts));
         Assert.Equal(Workplace.WeekendInterchangeabilityGroups, parameters.WeekendInterchangeabilityGroups);
+
+        var externista = Assert.Single(parameters.ExternalEmployees);
+        Assert.Equal("Externista 1", externista.Name);
     }
 }

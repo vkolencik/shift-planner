@@ -14,4 +14,6 @@ public record ScheduledMonth(int Year, int Month)
             return new ScheduledMonth(previousMonthDate.Year, previousMonthDate.Month);
         }
     }
+
+    public override string ToString() => $"{Year}-{Month:D2}";
 }

@@ -19,7 +19,7 @@ static class Program
 
         var aggregator = services.GetRequiredService<ISchedulingParametersAggregator>();
 
-        var month = new ScheduledMonth(2023, 3);
+        var month = new ScheduledMonth(2023, 4);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
 
         var scheduler = new ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)), new RulesetFactory());
@@ -47,6 +47,6 @@ static class Program
             await resultRepositoryS3.StoreComputedSchedule(month, successResult);
         }
 
-        Console.Out.WriteLine(string.Join('\n', result.SolutionParameters.RecordedStandards.Select(kvp => $"{kvp.Key.Name}: {kvp.Value.Minimum}-{kvp.Value.Maximum}")));
+        // Console.Out.WriteLine(string.Join('\n', result.SolutionParameters.RecordedStandards.Select(kvp => $"{kvp.Key.Name}: {kvp.Value.Minimum}-{kvp.Value.Maximum}")));
     }
 }

@@ -14,6 +14,7 @@ public class SchedulingParametersShould
 
         var parameters = new MonthScheduleParameters(
             new ScheduledMonth(2022, 2),
+            Array.Empty<Employee>(),
             Array.Empty<EmployeeMonth>(),
             new[] {new CompetenceGroup(new[] {workplace1}), new CompetenceGroup(new[] {workplace2})},
             Array.Empty<ShiftAssignment>(),

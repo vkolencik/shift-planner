@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
-using ShiftPlanner.Domain;
+﻿using ShiftPlanner.Domain;
 
-namespace ShiftPlanner.TestHelpers;
+namespace ShiftPlanner.Rules.Tests;
 
 public record SolverParameters(
     IReadOnlyCollection<Day> Days,
     IReadOnlyCollection<Employee> Employees,
-    IReadOnlyCollection<Workplace> Workplaces) : ISolverParameters;
+    IReadOnlyCollection<Workplace> Workplaces) : ISolverParameters
+{
+    public IReadOnlyCollection<Employee> AllEmployees => Employees;
+};
