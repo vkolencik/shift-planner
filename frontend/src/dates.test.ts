@@ -20,6 +20,7 @@ describe('dates should', () => {
       { year: 2022, month: 12, date: 31, hours: 23, minutes: 59, expectedMonth: { year: 2023, month: 2 } },
       { year: 2023, month: 5, date: 24, hours: 23, minutes: 59, expectedMonth: { year: 2023, month: 6 } },
       { year: 2023, month: 5, date: 25, hours: 0, minutes: 0, expectedMonth: { year: 2023, month: 7 } },
+      { year: 2023, month: 3, date: 17, hours: 0, minutes: 0, expectedMonth: { year: 2023, month: 5 } }
     ].forEach(({ year, month, date, hours, minutes, expectedMonth }) =>
       it(`get current month for ${year}-${month}-${date} ${hours}:${minutes}`, () => {
         jest.setSystemTime(new Date(year, month - 1, date, hours, minutes))
@@ -71,7 +72,10 @@ describe('dates should', () => {
       { month: 2, date: 25, shouldBeWritable: true },
       { month: 3, date: 4, shouldBeWritable: true },
       { month: 3, date: 5, shouldBeWritable: true },
-      { month: 3, date: 6, shouldBeWritable: false }
+      { month: 3, date: 6, shouldBeWritable: false },
+      { month: 3, date: 17, shouldBeWritable: true },
+      { month: 3, date: 25, shouldBeWritable: true },
+      { month: 3, date: 26, shouldBeWritable: false }
     ]).forEach(data => it(`${data.shouldBeWritable ? 'should' : 'shouldn\'t'} be writable on 2023-${data.month}-${data.date}`, () => {
       jest.setSystemTime(new Date(2023, data.month - 1, data.date, 0, 1))
 
