@@ -80,6 +80,9 @@ public abstract class PermissionsCheckerShould
         [InlineData("Requirement after month is made active", 2, 25, 4, 1, true)]
         [InlineData("Requirement right before month is made read-only", 3, 5, 4, 1, true)]
         [InlineData("Requirement right after month is made read-only", 3, 6, 4, 1, false)]
+        [InlineData("Special case start", 3, 17, 5, 1, true)]
+        [InlineData("Special case end", 3, 25, 5, 1, true)]
+        [InlineData("Special case past", 3, 26, 5, 1, false)]
         [InlineData("Requirement far in the future", 3, 1, 6, 1, false)]
 #pragma warning disable xUnit1026
         public void DisallowModificationAfterCutoffDate(string description, int currentMonth, int currentDay, int requirementMonth, int requirementDay, bool isPermitted)
