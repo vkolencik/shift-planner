@@ -45,7 +45,8 @@ class PermissionsChecker : IPermissionsChecker
 
         if (today.Date >= new DateOnly(2023, 3, 17) && today.Date <= new DateOnly(2023, 4, RequirementsDeadlineDate))
         {
-            return new DateOnly(2023, 3, 17) <= today.Date && today.Date <= new DateOnly(2023, 3, 25);
+            return today.Date <= new DateOnly(2023, 3, 25)
+                   && day.Date >= new DateOnly(2023, 5, 1) && day.Date <= new DateOnly(2023, 5, 31);
         } 
         
         var activeMonthAfterMonths = today.DayOfMonth < RequirementsOpenDate ? 1 : 2;
