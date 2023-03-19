@@ -27,12 +27,12 @@ export const NavHeader: FC = () => {
           <LinkContainer to="/dovolene"><Nav.Link>Dovolené</Nav.Link></LinkContainer>
           <LinkContainer to="/tydenik"><Nav.Link>Týdeník</Nav.Link></LinkContainer>
           <LinkContainer to="/sluzby"><Nav.Link>Služby</Nav.Link></LinkContainer>
-          {false && <LinkContainer to="/konference"><Nav.Link>Konference</Nav.Link></LinkContainer>}
+          {permissions.includes(Permission.prerelease) && false && <LinkContainer to="/konference"><Nav.Link>Konference</Nav.Link></LinkContainer>}
         </Nav>
       </Navbar.Collapse>
       <UserBadge/>
       <Button
-        onClick={() => logout({ returnTo: window.location.protocol + '//' + window.location.host })} className="ms-3">
+        onClick={() => logout({ logoutParams: {returnTo: window.location.protocol + '//' + window.location.host }})} className="ms-3">
         Logout
       </Button>
     </Container>

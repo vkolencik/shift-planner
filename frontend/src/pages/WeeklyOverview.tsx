@@ -172,7 +172,7 @@ export const WeeklyOverview: React.FC = () => {
       <tbody>
       {users.map((u, i) =>
         <tr key={u.userId}>
-          <th scope="row">{u.userName}</th>
+          <th scope="row" style={{width: '1%'}}>{u.userName}</th>
           {permissions.includes(Permission.readRequirementsOfOthers)
             ? weekDays.map(d => <DayCell day={d} userId={u.userId}/>)
             : (i === 0 ? <td colSpan={7} rowSpan={users.length} className="table-secondary"><span style={{position: 'sticky', left: '20px', top: '50vh'}}>Tento uživatel nemá k dispozici náhled</span></td> : <></>)}
