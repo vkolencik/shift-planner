@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
-import FullCalendar, { EventClickArg } from '@fullcalendar/react' // must go before plugins
+import Button from 'react-bootstrap/Button'
+import Modal from 'react-bootstrap/Modal'
+
+import FullCalendar from '@fullcalendar/react' // must go before plugins
+import { DateSelectArg, DateUnselectArg, EventClickArg } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
 import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import csLocale from '@fullcalendar/core/locales/cs'
-import { DateSelectArg, DateUnselectArg } from '@fullcalendar/common'
-import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
+
 import moment from 'moment'
 import { EmployeeMonthRequirements, momentToDay, RequirementType, requirementTypes, useApi, User } from '../service/api'
 import { EventSourceInput } from '@fullcalendar/core'

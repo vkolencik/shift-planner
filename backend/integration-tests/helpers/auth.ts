@@ -69,8 +69,8 @@ export const getToken = (testUser: TestUser = 'testUser1'): Promise<string> =>
         body: new URLSearchParams({
           grant_type: 'password',
           audience: 'https://b.krtek.me',
-          scope: '',
-          ...testUserCredentials
+          ...testUserCredentials,
+          scope: ''
         })
       }))
     .then(resp => resp.json())

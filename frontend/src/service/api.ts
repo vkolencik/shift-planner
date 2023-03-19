@@ -86,8 +86,18 @@ export interface Leave {
   day: Day
 }
 
+
 export function useApi () {
   const { user, getAccessTokenSilently, isAuthenticated } = useAuth0()
+
+  function getAccessToken () {
+    return getAccessTokenSilently({
+      authorizationParams: {
+        audience: 'https://b.krtek.me',
+        scope: '',
+      }
+    })
+  }
 
   if (!isAuthenticated || user === undefined || user.sub === undefined) {
     throw new Error('User is not logged in')
@@ -96,10 +106,7 @@ export function useApi () {
   const loggedInUser: User = { userId: user.sub, userName: user.name || '' }
 
   const deleteForUser = async (userId: string, date: Day): Promise<void> => {
-    const token = await getAccessTokenSilently({
-      audience: 'https://b.krtek.me',
-      scope: ''
-    })
+    const token = await getAccessToken()
 
     if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
       throw new Error(`Invalid date format ${date}`)
@@ -121,10 +128,7 @@ export function useApi () {
   const api = {
     requirements: {
       get: async (userId: string, month: Month): Promise<EmployeeMonthRequirements> =>
-        getAccessTokenSilently({
-          audience: 'https://b.krtek.me',
-          scope: '',
-        })
+        getAccessToken()
           .then(token => fetch(
             `${baseUrl}/api/${tenant}/users/${encodeURIComponent(userId)}/requirements/${month.year}/${month.month}`,
             {
@@ -141,10 +145,7 @@ export function useApi () {
             return resp.json()
           }),
       getMonth: async (month: Month): Promise<MonthRequirements> =>
-        getAccessTokenSilently({
-          audience: 'https://b.krtek.me',
-          scope: '',
-        })
+        getAccessToken()
           .then(token => fetch(
             `${baseUrl}/api/${tenant}/requirements/${month.year}/${padDateComponent(month.month)}`,
             {
@@ -161,10 +162,7 @@ export function useApi () {
             return resp.json()
           }),
       put: async (userId: string, date: Day, requirementType: RequirementType): Promise<void> => {
-        const token = await getAccessTokenSilently({
-          audience: 'https://b.krtek.me',
-          scope: ''
-        })
+        const token = await getAccessToken()
 
         if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
           throw new Error(`Invalid date format ${date}`)
@@ -188,10 +186,7 @@ export function useApi () {
       delete: deleteForUser,
 
       approve: async (userId: string, date: Day) => {
-        const token = await getAccessTokenSilently({
-          audience: 'https://b.krtek.me',
-          scope: ''
-        })
+        const token = await getAccessToken()
 
         if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
           throw new Error(`Invalid date format ${date}`)
@@ -225,10 +220,7 @@ export function useApi () {
 
     users: {
       get: async (): Promise<User[]> => {
-        const token = await getAccessTokenSilently({
-          audience: 'https://b.krtek.me',
-          scope: ''
-        })
+        const token = await getAccessToken()
 
         const response = await fetch(`${baseUrl}/api/${tenant}/users`, { headers: { Authorization: `Bearer ${token}` } })
 
@@ -245,10 +237,7 @@ export function useApi () {
 
     schedule: {
       get: async (month: Month): Promise<Schedule | null> => {
-        const token = await getAccessTokenSilently({
-          audience: 'https://b.krtek.me',
-          scope: ''
-        })
+        const token = await getAccessToken()
 
         const response = await fetch(`${baseUrl}/api/${tenant}/schedule/${month.year}/${padDateComponent(month.month)}`, { headers: { Authorization: `Bearer ${token}` } })
 
@@ -266,10 +255,7 @@ export function useApi () {
         }
       },
       validate: async (month: Month, schedule: Schedule): Promise<ValidationError[]> => {
-        const token = await getAccessTokenSilently({
-          audience: 'https://b.krtek.me',
-          scope: ''
-        })
+        const token = await getAccessToken()
 
         const scheduleToSend = {
           shifts: schedule.shifts.map(s => ({
@@ -310,10 +296,7 @@ export function useApi () {
         return errors.filter(e => e.error !== 'WorkplacePreferencePercentage')
       },
       save: async (month: Month, schedule: Schedule): Promise<void> => {
-        const token = await getAccessTokenSilently({
-          audience: 'https://b.krtek.me',
-          scope: ''
-        })
+        const token = await getAccessToken()
 
         const scheduleToSend = {
           shifts: schedule.shifts.map(s => ({
