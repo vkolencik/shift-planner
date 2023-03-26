@@ -75,7 +75,8 @@ describe('dates should', () => {
       { month: 3, date: 6, shouldBeWritable: false },
       { month: 3, date: 17, shouldBeWritable: true },
       { month: 3, date: 25, shouldBeWritable: true },
-      { month: 3, date: 26, shouldBeWritable: false }
+      { month: 3, date: 26, shouldBeWritable: true },
+      { month: 3, date: 27, shouldBeWritable: false }
     ]).forEach(data => it(`${data.shouldBeWritable ? 'should' : 'shouldn\'t'} be writable on 2023-${data.month}-${data.date}`, () => {
       jest.setSystemTime(new Date(2023, data.month - 1, data.date, 0, 1))
 

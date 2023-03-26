@@ -83,7 +83,8 @@ public abstract class PermissionsCheckerShould
         [InlineData("Requirement right after month is made read-only", 3, 6, 4, 1, false)]
         [InlineData("Special case start", 3, 17, 5, 1, true)]
         [InlineData("Special case end", 3, 25, 5, 1, true)]
-        [InlineData("Special case past", 3, 26, 5, 1, false)]
+        [InlineData("Special case past", 3, 26, 5, 1, true)]
+        [InlineData("Special case past", 3, 27, 5, 1, false)]
         [InlineData("Special case another month", 3, 18, 12, 1, false)]
         [InlineData("Requirement far in the future", 3, 1, 6, 1, false)]
 #pragma warning disable xUnit1026
