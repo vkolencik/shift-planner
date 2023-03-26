@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight, faBan, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { useUserList } from '../service/users'
 import { Permission, usePermissions } from '../auth/auth'
+import { isExternalUser } from '../users'
 
 type DayInfo =
   undefined
@@ -132,7 +133,7 @@ export const WeeklyOverview: React.FC = () => {
 
   const dailyAvailabilities = []
   for (const day of weekDays) {
-    let available = users.length
+    let available = users.filter(u => !isExternalUser(u)).length
 
     for (const user of users) {
       const dailyStatus = weeklyView[getDayUserKey(user.userId, day)]

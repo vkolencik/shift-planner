@@ -12,6 +12,7 @@ import { Table } from 'react-bootstrap'
 import {Printer} from 'react-bootstrap-icons'
 import './MonthlyOverview.css'
 import { useUserList } from '../service/users'
+import { isExternalUser } from '../users'
 
 type CellDetails = { cssClass: string, titleText: string, cellText: string }
 const absenceClasses: { [requirementType in RequirementType]: CellDetails } = {
@@ -74,7 +75,7 @@ export const MonthlyOverview: React.FC = () => {
   const daysInMonth = getNumberOfDaysOfMonth(month)
   const days = new Array(daysInMonth).fill(1).map((_, i) => i + 1)
 
-  const dailySums = new Array(daysInMonth).fill(users.length - 6)
+  const dailySums = new Array(daysInMonth).fill(users.filter(u => !isExternalUser(u)).length - 6)
 
   const requirementsPerUserDay: { [key: string]: string } = {}
   const countsAsAbsence = (r: RequirementType) => r === 'leave' || r === 'hard-no' || r === 'only-afternoon'
