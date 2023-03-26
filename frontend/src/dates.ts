@@ -83,7 +83,7 @@ export function isActiveMonthWritable (): boolean {
   const today = moment()
 
   if (today.year() === 2023 && today.month() === 2 && today.date() > 5) {
-    return (17 <= today.date() && today.date() <= 25)
+    return (17 <= today.date() && today.date() <= 26)
   }
 
   if (today.year() === 2023 && today.month() === 3 && today.date() < 25) {

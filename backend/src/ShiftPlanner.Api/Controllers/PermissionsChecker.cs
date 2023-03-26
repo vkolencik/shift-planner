@@ -45,7 +45,7 @@ class PermissionsChecker : IPermissionsChecker
 
         if (today.Date >= new DateOnly(2023, 3, 17) && today.Date <= new DateOnly(2023, 4, RequirementsDeadlineDate))
         {
-            return today.Date <= new DateOnly(2023, 3, 25)
+            return today.Date <= new DateOnly(2023, 3, 26)
                    && day.Date >= new DateOnly(2023, 5, 1) && day.Date <= new DateOnly(2023, 5, 31);
         } 
         
