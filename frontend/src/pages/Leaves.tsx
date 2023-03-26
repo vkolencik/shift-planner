@@ -13,7 +13,7 @@ import {
   Month
 } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
-import { Button, ButtonGroup, Table } from 'react-bootstrap'
+import { Alert, Button, ButtonGroup, Table } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import './Leaves.css'
@@ -42,15 +42,15 @@ const getMinAvailableEmployeesForDay = (day: Day): number => {
   return minEmployeesPerWeekday[getDayOfWeekNumber(day) - 1]
 }
 
-const minMonth: Month = addMonths(getActiveMonth(), 1)
-const maxMonth: Month = { year: minMonth.year, month: 12 }
+const minWritableMonth: Month = addMonths(getActiveMonth(), 1)
+const maxMonth: Month = { year: minWritableMonth.year, month: 12 }
 
 export const Leaves: React.FC = () => {
 
   const api = useApi()
   const users = useUserList()
   const [leaves, setLeaves] = useState<Leave[] | null>(null)
-  const [month, setMonth] = useState<Month>(minMonth)
+  const [month, setMonth] = useState<Month>(minWritableMonth)
   const [loading, setLoading] = useState<boolean>(false)
   const [leaveToDelete, setLeaveToDelete] = useState<Day | null>(null)
 
@@ -66,6 +66,8 @@ export const Leaves: React.FC = () => {
     return <LoadingSpinner/>
   }
 
+  const isReadOnly = compareMonths(month, minWritableMonth) < 0
+
   const days = getMonthDates(month)
   const weekends: Day[] = days.filter(day => isWeekend(day))
 
@@ -74,7 +76,7 @@ export const Leaves: React.FC = () => {
     leavesPerDay[leave.day]++
   }
 
-  const handlePreviousMonth = () => setMonth(prevMonth => compareMonths(prevMonth, minMonth) === 0 ? prevMonth : addMonths(prevMonth, -1))
+  const handlePreviousMonth = () => setMonth(prevMonth => addMonths(prevMonth, -1))
 
   const handleNextMonth = () => setMonth(prevMonth => compareMonths(prevMonth, maxMonth) === 0 ? prevMonth : addMonths(prevMonth, 1))
 
@@ -122,7 +124,7 @@ export const Leaves: React.FC = () => {
   function DayCell (props: { userId: string, day: Day }) {
     const usersOwnRow = props.userId === api.users.loggedInUser.userId
     const hasLeave = leaves!.find(l => l.day === props.day && l.userId === props.userId) !== undefined
-    if (!usersOwnRow) {
+    if (!usersOwnRow || isReadOnly) {
       return <td className={hasLeave ? 'leave' : ''}></td>
     } else {
       return <td
@@ -161,9 +163,10 @@ export const Leaves: React.FC = () => {
       </Modal>
     }
 
+    {isReadOnly && <Alert variant="warning">Pro tento měsíc již nelze zadávat dovolené.</Alert>}
+
     <ButtonGroup>
-      <Button variant="outline-secondary" onClick={handlePreviousMonth} disabled={compareMonths(month, minMonth) === 0}><FontAwesomeIcon
-        icon={faArrowLeft}/></Button>
+      <Button variant="outline-secondary" onClick={handlePreviousMonth}><FontAwesomeIcon icon={faArrowLeft}/></Button>
       <Button variant="outline-secondary" onClick={handleNextMonth}
               disabled={compareMonths(month, maxMonth) === 0}><FontAwesomeIcon icon={faArrowRight}/></Button>
     </ButtonGroup>
