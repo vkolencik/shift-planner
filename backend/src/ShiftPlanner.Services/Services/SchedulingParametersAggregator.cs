@@ -48,28 +48,23 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
 
         if (missingUsers.Any())
         {
-            throw new InvalidOperationException($"Missing employee infos for {string.Join(", ", missingUsers)}");
+            employeeInfos = employeeInfos.Concat(missingUsers.Select(email => new EmployeeInfo(email, email, CompetenceLevel.None, Capabilities.Empty, Workload.None, EmployeeStatus.Disabled))).ToArray();
         }
 
         var lastMonthShifts = existingShifts.Where(s => s.Day.Month == previousMonth.Month)
             .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
             .ToArray();
 
-        var externistaInfo = employeeInfos.SingleOrDefault(ei => ei.Email == "externista1@bulovka.cz");
-        var externista = new Employee(externistaInfo.Name, externistaInfo.CompetenceLevel, externistaInfo.Capabilities, externistaInfo.Workload);
-        
-        var externalEmployeeShiftAssignments = new ShiftAssignment[]
-        {
-            new ShiftAssignment(externista, new Day(2023, 4, 4), Workplace.Urg),
-            new ShiftAssignment(externista, new Day(2023, 4, 6), Workplace.Urg),
-            new ShiftAssignment(externista, new Day(2023, 4, 11), Workplace.Urg),
-            new ShiftAssignment(externista, new Day(2023, 4, 18), Workplace.Urg),
-            new ShiftAssignment(externista, new Day(2023, 4, 25), Workplace.Urg),
-            new ShiftAssignment(externista, new Day(2023, 4, 26), Workplace.Urg),
-            new ShiftAssignment(externista, new Day(2023, 4, 16), Workplace.Urg),
-            new ShiftAssignment(externista, new Day(2023, 4, 22), Workplace.Urg),
-            new ShiftAssignment(externista, new Day(2023, 4, 23), Workplace.Urg), 
-        };
+        var externalChirurgove = GetExternalEmployee(employeeInfos, "externista-chirurgove@bulovka.cz");
+        var externalMencl = GetExternalEmployee(employeeInfos, "externista-mencl@bulovka.cz");
+        var externalCerny = GetExternalEmployee(employeeInfos, "externista-cerny@bulovka.cz");
+        var externalKral = GetExternalEmployee(employeeInfos, "adam.kral@bulovka.cz");
+
+        var externalEmployeeShiftAssignments = ArraySegment<ShiftAssignment>.Empty
+            .Concat(GenerateExternalEmployeeShiftAssignments(5, externalChirurgove, new[] {2, 9, 16, 23, 30}))
+            .Concat(GenerateExternalEmployeeShiftAssignments(5, externalMencl, new[] {4, 11}))
+            .Concat(GenerateExternalEmployeeShiftAssignments(5, externalCerny, new[] {8, 22}))
+            .Concat(GenerateExternalEmployeeShiftAssignments(5, externalKral, new[] {3, 10, 17, 24, 31, 13}));
 
         var predefinedShifts = existingShifts
             .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
@@ -79,12 +74,24 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
 
         return new MonthScheduleParameters(
             month,
-            new[] {externista},
+            new[] {externalChirurgove, externalMencl, externalCerny, externalKral},
             activeEmployeeMonths,
             CompetenceGroup.CompetenceGroups,
             lastMonthShifts,
             predefinedShifts,
             Workplace.WeekendInterchangeabilityGroups);
+    }
+
+    private static IEnumerable<ShiftAssignment> GenerateExternalEmployeeShiftAssignments(int monthNumber, Employee external1, int[] shiftDates)
+    {
+        return shiftDates.Select(d => new ShiftAssignment(external1, new Day(2023, monthNumber, d), Workplace.Urg));
+    }
+
+    private static Employee GetExternalEmployee(IReadOnlyCollection<EmployeeInfo> employeeInfos, string email)
+    {
+        var externalUserInfo = employeeInfos.SingleOrDefault(ei => ei.Email == email) ?? throw new InvalidOperationException($"Cannot find info for external user {email}");
+        var externalUser = new Employee(externalUserInfo.Name, externalUserInfo.CompetenceLevel, externalUserInfo.Capabilities, externalUserInfo.Workload);
+        return externalUser;
     }
 
     private Employee GetEmployeeFromInfo(EmployeeInfo ei)
