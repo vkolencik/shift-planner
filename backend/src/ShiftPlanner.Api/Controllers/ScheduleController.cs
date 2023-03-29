@@ -55,7 +55,7 @@ public class ScheduleController : ControllerBase
             .Select(
                 e => new ValidationErrorOutputModel(
                     e.Shifts.Select(s => new ShiftOutputModel(s.Day.Date.ToString("yyyy-MM-dd"), s.Workplace.Name)).ToArray(),
-                    e.UserName == null ? null : new UserOutputModel(users.Single(u => u.UserName == e.UserName).UserId, e.UserName),
+                    e.UserName == null ? null : new UserOutputModel(users.SingleOrDefault(u => u.UserName == e.UserName)?.UserId ?? "", e.UserName),
                     e.ErrorType.ToString())).ToArray();
         var outputModel = new ScheduleValidationOutputModel(!validationErrors.Any(), errorOutputModels);
 

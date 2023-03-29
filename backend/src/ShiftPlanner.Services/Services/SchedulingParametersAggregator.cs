@@ -48,7 +48,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
 
         if (missingUsers.Any())
         {
-            throw new InvalidOperationException($"Missing employee infos for {string.Join(", ", missingUsers)}");
+            employeeInfos = employeeInfos.Concat(missingUsers.Select(email => new EmployeeInfo(email, email, CompetenceLevel.None, Capabilities.Empty, Workload.None, EmployeeStatus.Disabled))).ToArray();
         }
 
         var lastMonthShifts = existingShifts.Where(s => s.Day.Month == previousMonth.Month)
