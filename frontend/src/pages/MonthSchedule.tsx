@@ -18,7 +18,7 @@ import { workplaces } from '../domain'
 import { Permission, usePermissions } from '../auth/auth'
 import { Printer } from 'react-bootstrap-icons'
 
-const currentMonth: Month = {year: 2023, month: 5}
+const currentMonth: Month = {year: 2023, month: 6}
 
 function getUserShiftEntries (schedule: Schedule): [string, number][] {
   const userShifts: { [name: string]: number } = {}
