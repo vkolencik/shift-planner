@@ -5,14 +5,16 @@ import {
   getActiveMonth,
   getNumberOfDaysOfMonth,
   isWeekend,
-  parseDate
+  parseDate, Month, addMonths, getMonthLabel
 } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
-import { Table } from 'react-bootstrap'
+import { Button, ButtonGroup, Container, Table } from 'react-bootstrap'
 import {Printer} from 'react-bootstrap-icons'
 import './MonthlyOverview.css'
 import { useUserList } from '../service/users'
 import { isExternalUser } from '../users'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
 type CellDetails = { cssClass: string, titleText: string, cellText: string }
 const absenceClasses: { [requirementType in RequirementType]: CellDetails } = {
@@ -55,22 +57,42 @@ function DayCell ({ requirementType }: { requirementType: string | undefined }) 
     {details?.cellText}
   </td>
 }
-
-export const MonthlyOverview: React.FC = () => {
-  const api = useApi()
-  const users = useUserList()
+export function MonthlyOverview (): JSX.Element {
+  const [month, setMonth] = useState<Month>(getActiveMonth())
   const [requirements, setRequirements] = useState<MonthRequirements | null>(null)
+  const api = useApi()
 
-  const month = getActiveMonth()
   useEffect(() => {
-    if (requirements === null) {
-      api.requirements.getMonth(month).then(setRequirements)
-    }
-  }, [])
+    api.requirements.getMonth(month).then(setRequirements)
+  }, [month])
 
-  if (requirements == null) {
-    return <LoadingSpinner/>
+  function handlePreviousMonth () {
+    setRequirements(null)
+    setMonth(prevMonth => addMonths(prevMonth, -1))
   }
+
+  function handleNextMonth () {
+    setRequirements(null)
+    setMonth(prevMonth => addMonths(prevMonth, 1))
+  }
+
+
+  return (<Container>
+    <ButtonGroup className="no-print">
+      <Button variant="outline-secondary" onClick={handlePreviousMonth}><FontAwesomeIcon icon={faArrowLeft}/></Button>
+      <Button variant="outline-secondary" onClick={handleNextMonth}><FontAwesomeIcon icon={faArrowRight}/></Button>
+    </ButtonGroup>
+
+    <h1>{getMonthLabel(month)}</h1>
+
+    {requirements === null
+      ? <LoadingSpinner/>
+      : <MonthlyOverviewInner month={month} requirements={requirements}/>}
+  </Container>)
+}
+
+export const MonthlyOverviewInner: React.FC<{requirements: MonthRequirements, month: Month}> = ({ month, requirements } ) => {
+  const users = useUserList()
 
   const daysInMonth = getNumberOfDaysOfMonth(month)
   const days = new Array(daysInMonth).fill(1).map((_, i) => i + 1)
