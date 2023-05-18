@@ -79,7 +79,7 @@ export function getActiveMonth (): Month {
   return { year: currentMonth.year(), month: currentMonth.month() + 1 }
 }
 
-export function isActiveMonthWritable (): boolean {
+export function isMonthWritable (month: Month): boolean {
   const today = moment()
 
   if (today.year() === 2023 && today.month() === 2 && today.date() > 5) {

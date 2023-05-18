@@ -21,8 +21,7 @@ import {
   addMonths,
   getActiveMonth,
   getMonthLabel,
-  getStartOfMonth,
-  isActiveMonthWritable,
+  getStartOfMonth, isMonthWritable,
   Month
 } from '../dates'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -148,11 +147,11 @@ export const Requirements: React.FC = () => {
     setUserSelectOpen(false)
   }
 
-  const isWritable = isActiveMonthWritable() || permissions.includes(Permission.modifyRequirementsOfOthers)
+  const isWritable = isMonthWritable(month)
 
   return (
     <>
-      {isActiveMonthWritable() ||
+      {isWritable ||
         <Alert variant="warning">Aktuální měsíc je již uzamčen (pouze pro čtení).</Alert>
       }
       {permissions.includes(Permission.modifyRequirementsOfOthers)
@@ -171,7 +170,7 @@ export const Requirements: React.FC = () => {
         </>
       }
 
-      {selectedDateRange && isWritable &&
+      {selectedDateRange && (isWritable ||  permissions.includes(Permission.modifyRequirementsOfOthers)) &&
         <Modal
           show={true}
           onHide={() => {

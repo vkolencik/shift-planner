@@ -2,7 +2,7 @@ import {
   compareMonths, Day,
   getActiveMonth,
   getDayOfWeekNumber,
-  isActiveMonthWritable,
+  isMonthWritable,
   isWeekend,
   Month,
   toDay
@@ -66,21 +66,22 @@ describe('dates should', () => {
       }))
   })
 
-  describe(isActiveMonthWritable.name, () => {
+  describe(isMonthWritable.name, () => {
     ([
-      { month: 2, date: 24, shouldBeWritable: false },
-      { month: 2, date: 25, shouldBeWritable: true },
-      { month: 3, date: 4, shouldBeWritable: true },
-      { month: 3, date: 5, shouldBeWritable: true },
-      { month: 3, date: 6, shouldBeWritable: false },
-      { month: 3, date: 17, shouldBeWritable: true },
-      { month: 3, date: 25, shouldBeWritable: true },
-      { month: 3, date: 26, shouldBeWritable: true },
-      { month: 3, date: 27, shouldBeWritable: false }
-    ]).forEach(data => it(`${data.shouldBeWritable ? 'should' : 'shouldn\'t'} be writable on 2023-${data.month}-${data.date}`, () => {
-      jest.setSystemTime(new Date(2023, data.month - 1, data.date, 0, 1))
+      { currentMonth: 2, currentDate: 24, activeMonth: 5, shouldBeWritable: false },
+      { currentMonth: 2, currentDate: 25, activeMonth: 5, shouldBeWritable: true },
+      { currentMonth: 3, currentDate: 4, activeMonth: 5, shouldBeWritable: true },
+      { currentMonth: 3, currentDate: 5, activeMonth: 5, shouldBeWritable: true },
+      { currentMonth: 3, currentDate: 6, activeMonth: 5, shouldBeWritable: false },
+      { currentMonth: 3, currentDate: 17, activeMonth: 5, shouldBeWritable: true },
+      { currentMonth: 3, currentDate: 25, activeMonth: 5, shouldBeWritable: true },
+      { currentMonth: 3, currentDate: 26, activeMonth: 5, shouldBeWritable: true },
+      { currentMonth: 3, currentDate: 27, activeMonth: 5, shouldBeWritable: false }
+    ]).forEach(data => it(`${data.shouldBeWritable ? 'should' : 'shouldn\'t'} be writable on 2023-${data.currentMonth}-${data.currentDate}`, () => {
+      const year = 2023
+      jest.setSystemTime(new Date(year, data.currentMonth - 1, data.currentDate, 0, 1))
 
-      const isWritable = isActiveMonthWritable()
+      const isWritable = isMonthWritable({month: data.activeMonth, year})
 
       expect(isWritable).toEqual(data.shouldBeWritable)
     }))
