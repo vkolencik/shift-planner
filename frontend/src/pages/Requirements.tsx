@@ -151,9 +151,6 @@ export const Requirements: React.FC = () => {
 
   return (
     <>
-      {isWritable ||
-        <Alert variant="warning">Aktuální měsíc je již uzamčen (pouze pro čtení).</Alert>
-      }
       {permissions.includes(Permission.modifyRequirementsOfOthers)
         && permissions.includes(Permission.readRequirementsOfOthers)
         && <>
@@ -222,24 +219,25 @@ export const Requirements: React.FC = () => {
       }
 
       <Container>
-
-        {permissions.includes(Permission.modifyRequirementsOfOthers) &&
-          <ButtonGroup>
-            <Button variant="outline-secondary" onClick={handlePreviousMonth}>
-              <FontAwesomeIcon icon={faArrowLeft}/>
-            </Button>
-            <Button variant="outline-secondary"
-                    disabled={month.month === getActiveMonth().month && month.year === getActiveMonth().year}
-                    onClick={handleCurrentMonth}>
-              Aktuální měsíc
-            </Button>
-            <Button variant="outline-secondary" onClick={handleNextMonth}>
-              <FontAwesomeIcon icon={faArrowRight}/>
-            </Button>
-          </ButtonGroup>
-        }
+        <ButtonGroup>
+          <Button variant="outline-secondary" onClick={handlePreviousMonth}>
+            <FontAwesomeIcon icon={faArrowLeft}/>
+          </Button>
+          <Button variant="outline-secondary"
+                  disabled={month.month === getActiveMonth().month && month.year === getActiveMonth().year}
+                  onClick={handleCurrentMonth}>
+            Aktuální měsíc
+          </Button>
+          <Button variant="outline-secondary" onClick={handleNextMonth}>
+            <FontAwesomeIcon icon={faArrowRight}/>
+          </Button>
+        </ButtonGroup>
 
         <h2>{getMonthLabel(month)}</h2>
+
+        {isWritable ||
+          <Alert variant="warning">Aktuální měsíc je již uzamčen (pouze pro čtení).</Alert>
+        }
 
         {!loading && requirements
           ? <div><FullCalendar

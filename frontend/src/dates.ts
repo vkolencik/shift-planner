@@ -79,18 +79,17 @@ export function getActiveMonth (): Month {
   return { year: currentMonth.year(), month: currentMonth.month() + 1 }
 }
 
-export function isMonthWritable (month: Month): boolean {
+export function isMonthWritable (editedMonth: Month): boolean {
   const today = moment()
+  const activeMonth = getActiveMonth()
 
-  if (today.year() === 2023 && today.month() === 2 && today.date() > 5) {
-    return (17 <= today.date() && today.date() <= 26)
-  }
 
-  if (today.year() === 2023 && today.month() === 3 && today.date() < 25) {
+  if (compareMonths(editedMonth, activeMonth) !== 0) {
     return false
   }
 
-  return today.date() >= 25 || today.date() <= 5
+  const todayDate = today.date()
+  return todayDate >= 20 || todayDate <= 5
 }
 
 export function getMonthDays (month: Month): number[] {
