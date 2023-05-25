@@ -86,6 +86,9 @@ describe('dates should', () => {
       { currentMonth: 6, currentDate: 5, currentYear: 2023, editedMonth: 8, editedYear: 2022, shouldBeWritable: false },
       { currentMonth: 6, currentDate: 6, currentYear: 2023, editedMonth: 7, editedYear: 2023, shouldBeWritable: false },
       { currentMonth: 6, currentDate: 6, currentYear: 2023, editedMonth: 8, editedYear: 2023, shouldBeWritable: false },
+      { currentMonth: 6, currentDate: 25, currentYear: 2023, editedMonth: 8, editedYear: 2023, shouldBeWritable: false },
+      { currentMonth: 7, currentDate: 5, currentYear: 2023, editedMonth: 8, editedYear: 2023, shouldBeWritable: false },
+
     ]).forEach(data => it(`${data.editedYear}-${data.editedMonth} ${data.shouldBeWritable ? 'should' : 'shouldn\'t'} be writable on 2023-${data.currentMonth}-${data.currentDate}`, () => {
       jest.setSystemTime(new Date(data.currentYear, data.currentMonth - 1, data.currentDate, 0, 1))
 

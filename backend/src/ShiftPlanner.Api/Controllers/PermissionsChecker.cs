@@ -39,28 +39,34 @@ class PermissionsChecker : IPermissionsChecker
         };
     }
 
-    private bool IsModifiableOnDay(Day day)
+    private bool IsModifiableOnDay(Day editedDay)
     {
         var today = _clock.Today;
 
-        if (today.Date >= new DateOnly(2023, 3, 17) && today.Date <= new DateOnly(2023, 4, RequirementsDeadlineDate))
-        {
-            return today.Date <= new DateOnly(2023, 3, 26)
-                   && day.Date >= new DateOnly(2023, 5, 1) && day.Date <= new DateOnly(2023, 5, 31);
-        } 
-        
         var activeMonthAfterMonths = today.DayOfMonth < RequirementsOpenDate ? 1 : 2;
         var activeMonth = today.Date.AddMonths(activeMonthAfterMonths);
-        
-        if (day.Year != activeMonth.Year || day.Month != activeMonth.Month)
+
+        if (activeMonth.Month == August)
         {
             return false;
         }
 
-        var isReadOnly = activeMonthAfterMonths == 1 && today.DayOfMonth > RequirementsDeadlineDate;
-        
-        return !isReadOnly;
+        if (editedDay.Year == activeMonth.Year && (
+                editedDay.Month == activeMonth.Month
+                || IsSummerMonth(editedDay.Month) && activeMonth.Month == July))
+        {
+            var isReadOnly = activeMonthAfterMonths == 1 && today.DayOfMonth > RequirementsDeadlineDate;
+
+            return !isReadOnly;
+        }
+
+        return false;
     }
+
+    private bool IsSummerMonth(int month) => month == July || month == August;
+
+    private const int July = 7;
+    private const int August = 8;
 
     private bool IsLeaveModifiableOnDay(Day day)
     {
@@ -71,5 +77,5 @@ class PermissionsChecker : IPermissionsChecker
         return day.Date <= endOfYear;
     }
 
-    public bool CanApproveRequirements() =>  _userAccessor.HasClaim(Claims.ApproveRequirementsOfOthers);
+    public bool CanApproveRequirements() => _userAccessor.HasClaim(Claims.ApproveRequirementsOfOthers);
 }

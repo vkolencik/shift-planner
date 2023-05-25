@@ -90,6 +90,10 @@ export function isMonthWritable (editedMonth: Month): boolean {
   const today = moment()
   const activeMonth = getActiveMonth()
 
+  if (activeMonth.month === august) {
+    return false
+  }
+
   if (compareMonths(editedMonth, activeMonth) == 0
     || isSummerMonth(editedMonth) && activeMonth.month === july && activeMonth.year === editedMonth.year) {
     const todayDate = today.date()
