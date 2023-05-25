@@ -1,5 +1,8 @@
 import moment, { Moment } from 'moment'
 
+const july = 7
+const august = 8
+
 export function getMonthLabel (month: Month) {
   return getStartOfMonth(month).toLocaleString('default', { month: 'long' }) + ' ' + month.year
 }
@@ -79,17 +82,21 @@ export function getActiveMonth (): Month {
   return { year: currentMonth.year(), month: currentMonth.month() + 1 }
 }
 
+function isSummerMonth (editedMonth: Month) {
+  return editedMonth.month === july || editedMonth.month === august
+}
+
 export function isMonthWritable (editedMonth: Month): boolean {
   const today = moment()
   const activeMonth = getActiveMonth()
 
-
-  if (compareMonths(editedMonth, activeMonth) !== 0) {
-    return false
+  if (compareMonths(editedMonth, activeMonth) == 0
+    || isSummerMonth(editedMonth) && activeMonth.month === july && activeMonth.year === editedMonth.year) {
+    const todayDate = today.date()
+    return todayDate >= 20 || todayDate <= 5
   }
 
-  const todayDate = today.date()
-  return todayDate >= 20 || todayDate <= 5
+  return false;
 }
 
 export function getMonthDays (month: Month): number[] {

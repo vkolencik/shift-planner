@@ -77,7 +77,16 @@ describe('dates should', () => {
       { currentMonth: 4, currentDate: 1, currentYear: 2023, editedMonth: 4, editedYear: 2023, shouldBeWritable: false },
       { currentMonth: 3, currentDate: 5, currentYear: 2023, editedMonth: 4, editedYear: 2024, shouldBeWritable: false },
       { currentMonth: 3, currentDate: 5, currentYear: 2023, editedMonth: 4, editedYear: 2022, shouldBeWritable: false },
-    ]).forEach(data => it(`${data.shouldBeWritable ? 'should' : 'shouldn\'t'} be writable on 2023-${data.currentMonth}-${data.currentDate}`, () => {
+      { currentMonth: 5, currentDate: 24, currentYear: 2023, editedMonth: 7, editedYear: 2023, shouldBeWritable: false },
+      { currentMonth: 5, currentDate: 24, currentYear: 2023, editedMonth: 8, editedYear: 2023, shouldBeWritable: false },
+      { currentMonth: 5, currentDate: 25, currentYear: 2023, editedMonth: 7, editedYear: 2023, shouldBeWritable: true },
+      { currentMonth: 5, currentDate: 25, currentYear: 2023, editedMonth: 8, editedYear: 2023, shouldBeWritable: true },
+      { currentMonth: 6, currentDate: 5, currentYear: 2023, editedMonth: 7, editedYear: 2023, shouldBeWritable: true },
+      { currentMonth: 6, currentDate: 5, currentYear: 2023, editedMonth: 8, editedYear: 2023, shouldBeWritable: true },
+      { currentMonth: 6, currentDate: 5, currentYear: 2023, editedMonth: 8, editedYear: 2022, shouldBeWritable: false },
+      { currentMonth: 6, currentDate: 6, currentYear: 2023, editedMonth: 7, editedYear: 2023, shouldBeWritable: false },
+      { currentMonth: 6, currentDate: 6, currentYear: 2023, editedMonth: 8, editedYear: 2023, shouldBeWritable: false },
+    ]).forEach(data => it(`${data.editedYear}-${data.editedMonth} ${data.shouldBeWritable ? 'should' : 'shouldn\'t'} be writable on 2023-${data.currentMonth}-${data.currentDate}`, () => {
       jest.setSystemTime(new Date(data.currentYear, data.currentMonth - 1, data.currentDate, 0, 1))
 
       const isWritable = isMonthWritable({month: data.editedMonth, year: data.editedYear})
