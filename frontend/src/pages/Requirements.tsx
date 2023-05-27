@@ -21,8 +21,7 @@ import {
   addMonths,
   getActiveMonth,
   getMonthLabel,
-  getStartOfMonth,
-  isActiveMonthWritable,
+  getStartOfMonth, isMonthWritable,
   Month
 } from '../dates'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -66,6 +65,8 @@ export const Requirements: React.FC = () => {
   const [userSelectOpen, setUserSelectOpen] = useState<boolean>(false)
   const [month, setMonth] = useState<Month>(getActiveMonth())
 
+  const isSelectedMonthWritable = isMonthWritable(month)
+
   useEffect(() => {
     if (selectedDateRange === null && calendarRef.current) {
       calendarRef.current.getApi().unselect()
@@ -81,12 +82,18 @@ export const Requirements: React.FC = () => {
       })
   }, [month.year, month.month, user.userId])
 
-  const handleDateRangeSelect = (info: DateSelectArg) => {
-    setSelectedDateRange({ from: moment(info.start), to: moment(info.end).add(-1, 'day') })
+  const handleDateClick = (info: DateClickArg) => {
+    handleDateRangeSelect({ from: moment(info.date), to: moment(info.date) })
   }
 
-  const handleDateClick = (info: DateClickArg) => {
-    setSelectedDateRange({ from: moment(info.date), to: moment(info.date) })
+  function handleEventClick (event: EventClickArg) {
+    handleDateRangeSelect({ from: moment(event.event.start), to: moment(event.event.end) })
+  }
+
+  function handleDateRangeSelect (dateRange: DateRange) {
+    if (isSelectedMonthWritable || permissions.includes(Permission.modifyRequirementsOfOthers)) {
+      setSelectedDateRange(dateRange)
+    }
   }
 
   const handleDateRangeUnselect = (info: DateUnselectArg) => {
@@ -137,10 +144,6 @@ export const Requirements: React.FC = () => {
     setLoading(false)
   }
 
-  function handleEventClick (event: EventClickArg) {
-    setSelectedDateRange({ from: moment(event.event.start), to: moment(event.event.end) })
-  }
-
   const selectedDayRequirementType = selectedDateRange && requirements ? requirements[momentToDay(selectedDateRange?.from)] : null
 
   const handleUserSelected = (user: User) => {
@@ -148,13 +151,8 @@ export const Requirements: React.FC = () => {
     setUserSelectOpen(false)
   }
 
-  const isWritable = isActiveMonthWritable() || permissions.includes(Permission.modifyRequirementsOfOthers)
-
   return (
     <>
-      {isActiveMonthWritable() ||
-        <Alert variant="warning">Aktuální měsíc je již uzamčen (pouze pro čtení).</Alert>
-      }
       {permissions.includes(Permission.modifyRequirementsOfOthers)
         && permissions.includes(Permission.readRequirementsOfOthers)
         && <>
@@ -171,7 +169,7 @@ export const Requirements: React.FC = () => {
         </>
       }
 
-      {selectedDateRange && isWritable &&
+      {selectedDateRange &&
         <Modal
           show={true}
           onHide={() => {
@@ -223,24 +221,25 @@ export const Requirements: React.FC = () => {
       }
 
       <Container>
-
-        {permissions.includes(Permission.modifyRequirementsOfOthers) &&
-          <ButtonGroup>
-            <Button variant="outline-secondary" onClick={handlePreviousMonth}>
-              <FontAwesomeIcon icon={faArrowLeft}/>
-            </Button>
-            <Button variant="outline-secondary"
-                    disabled={month.month === getActiveMonth().month && month.year === getActiveMonth().year}
-                    onClick={handleCurrentMonth}>
-              Aktuální měsíc
-            </Button>
-            <Button variant="outline-secondary" onClick={handleNextMonth}>
-              <FontAwesomeIcon icon={faArrowRight}/>
-            </Button>
-          </ButtonGroup>
-        }
+        <ButtonGroup>
+          <Button variant="outline-secondary" onClick={handlePreviousMonth}>
+            <FontAwesomeIcon icon={faArrowLeft}/>
+          </Button>
+          <Button variant="outline-secondary"
+                  disabled={month.month === getActiveMonth().month && month.year === getActiveMonth().year}
+                  onClick={handleCurrentMonth}>
+            Aktuální měsíc
+          </Button>
+          <Button variant="outline-secondary" onClick={handleNextMonth}>
+            <FontAwesomeIcon icon={faArrowRight}/>
+          </Button>
+        </ButtonGroup>
 
         <h2>{getMonthLabel(month)}</h2>
+
+        {isSelectedMonthWritable ||
+          <Alert variant="warning">Aktuální měsíc je již uzamčen (pouze pro čtení).</Alert>
+        }
 
         {!loading && requirements
           ? <div><FullCalendar
