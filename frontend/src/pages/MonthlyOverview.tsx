@@ -17,39 +17,46 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
 type CellDetails = { cssClass: string, titleText: string, cellText: string }
-const absenceClasses: { [requirementType in RequirementType]: CellDetails } = {
-  'leave': {
-    cssClass: 'table-purple',
-    cellText: 'D',
-    titleText: 'Dovolená',
-  },
-  'soft-yes': {
-    cssClass: 'table-success',
-    cellText: 'Ch',
-    titleText: 'Chci'
-  },
-  'hard-no': {
-    cssClass: 'table-danger',
-    cellText: 'N',
-    titleText: 'Nemůžu'
-  },
-  'only-morning': {
-    cssClass: 'table-warning',
-    cellText: 'R',
-    titleText: 'Pouze R'
-  },
-  'only-afternoon': {
-    cssClass: 'table-primary',
-    cellText: 'O',
-    titleText: 'Jen odpoledne'
+const getCellDetails = (requirementType: RequirementType): CellDetails => {
+  switch (requirementType) {
+    case 'leave':
+      return ({
+        cssClass: 'table-purple',
+        cellText: 'D',
+        titleText: 'Dovolená',
+      })
+    case 'soft-yes':
+      return ({
+        cssClass: 'table-success',
+        cellText: 'Ch',
+        titleText: 'Chci'
+      })
+    case 'hard-no':
+      return ({
+        cssClass: 'table-danger',
+        cellText: 'N',
+        titleText: 'Nemůžu'
+      })
+    case 'only-morning':
+      return ({
+        cssClass: 'table-warning',
+        cellText: 'R',
+        titleText: 'Pouze R'
+      })
+    case 'only-afternoon':
+      return ({
+        cssClass: 'table-primary',
+        cellText: 'O',
+        titleText: 'Jen odpoledne'
+      })
   }
 }
 
 function DayCell ({ requirementType }: { requirementType: string | undefined }) {
   let details: CellDetails | null = null
-  if (requirementType !== undefined && requirementType in absenceClasses) {
+  if (requirementType !== undefined) {
     // @ts-ignore
-    details = absenceClasses[requirementType]
+    details = getCellDetails(requirementType)
   }
 
   // @ts-ignore
@@ -75,7 +82,6 @@ export function MonthlyOverview (): JSX.Element {
     setRequirements(null)
     setMonth(prevMonth => addMonths(prevMonth, 1))
   }
-
 
   return (<Container>
     <ButtonGroup className="no-print">
