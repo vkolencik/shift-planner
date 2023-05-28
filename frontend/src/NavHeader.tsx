@@ -9,7 +9,7 @@ export const NavHeader: FC = () => {
   const { logout } = useAuth0()
   const permissions = usePermissions()
 
-  return (<Navbar bg="light" expand="sm" sticky="top" className="border-bottom no-print">
+  return (<Navbar bg="light" expand="sm" sticky="top" className="border-bottom no-print flex-shrink-0 flex-grow-0">
     <Container>
       <Navbar.Brand href="/" className="navbar-brand basic-navbar-nav">
         <img
@@ -28,6 +28,7 @@ export const NavHeader: FC = () => {
           <LinkContainer to="/tydenik"><Nav.Link>Týdeník</Nav.Link></LinkContainer>
           <LinkContainer to="/sluzby"><Nav.Link>Služby</Nav.Link></LinkContainer>
           {permissions.includes(Permission.prerelease) && false && <LinkContainer to="/konference"><Nav.Link>Konference</Nav.Link></LinkContainer>}
+          {permissions.includes(Permission.prerelease) && <LinkContainer to="/test"><Nav.Link>Test</Nav.Link></LinkContainer>}
         </Nav>
       </Navbar.Collapse>
       <UserBadge/>

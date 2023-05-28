@@ -1,9 +1,12 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import 'react-bootstrap-typeahead/css/Typeahead.css';
 
-body {
+html, body {
+    height: 100%;
     margin: 0;
-    margin-bottom: 12pt;
+}
+
+body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
