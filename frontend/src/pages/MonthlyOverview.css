@@ -3,3 +3,19 @@
     min-width: 2em !important;
     background-clip: padding-box;
 }
+
+table > thead {
+    background-color: white;
+}
+
+table > thead > th {
+    width: 2em;
+}
+
+table > thead > th:first-child {
+    width: fit-content;
+}
+
+table th {
+    white-space: nowrap;
+}

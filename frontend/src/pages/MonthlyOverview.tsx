@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { MonthRequirements, RequirementType, useApi, User } from '../service/api'
+import { MonthRequirements, RequirementType, requirementTypes, useApi, User, UserRequirement } from '../service/api'
 import {
   getDay,
   getActiveMonth,
@@ -8,48 +8,59 @@ import {
   parseDate, Month, addMonths, getMonthLabel
 } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
-import { Button, ButtonGroup, Container, Table } from 'react-bootstrap'
+import { Button, ButtonGroup, ButtonToolbar, Table } from 'react-bootstrap'
 import {Printer} from 'react-bootstrap-icons'
 import './MonthlyOverview.css'
 import { useUserList } from '../service/users'
 import { isExternalUser } from '../users'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { FixedPage, ScrollablePart } from '../layout/layout'
 
 type CellDetails = { cssClass: string, titleText: string, cellText: string }
-const absenceClasses: { [requirementType in RequirementType]: CellDetails } = {
-  'leave': {
-    cssClass: 'table-purple',
-    cellText: 'D',
-    titleText: 'Dovolená',
-  },
-  'soft-yes': {
-    cssClass: 'table-success',
-    cellText: 'Ch',
-    titleText: 'Chci'
-  },
-  'hard-no': {
-    cssClass: 'table-danger',
-    cellText: 'N',
-    titleText: 'Nemůžu'
-  },
-  'only-morning': {
-    cssClass: 'table-warning',
-    cellText: 'R',
-    titleText: 'Pouze R'
-  },
-  'only-afternoon': {
-    cssClass: 'table-primary',
-    cellText: 'O',
-    titleText: 'Jen odpoledne'
+const getCellDetails = (requirement: UserRequirement): CellDetails => {
+  const requirementType = requirement.requirementType
+
+  if (requirementType === 'leave') {
+    return ({
+      cssClass: requirement.approved ? 'table-cyan' : 'table-purple',
+      cellText: requirement.approved ? 'D' : 'D',
+      titleText: requirement.approved ? 'Dovolená - schv8leno' : 'Dovolená - čeká na schválení',
+    })
+  } else if (requirementType === 'soft-yes') {
+    return ({
+      cssClass: 'table-success',
+      cellText: 'Ch',
+      titleText: 'Chci'
+    })
+  } else if (requirementType === 'hard-no') {
+    return ({
+      cssClass: 'table-danger',
+      cellText: 'N',
+      titleText: 'Nemůžu'
+    })
+  } else if (requirementType === 'only-morning') {
+    return ({
+      cssClass: 'table-warning',
+      cellText: 'R',
+      titleText: 'Pouze R'
+    })
+  } else if (requirementType === 'only-afternoon') {
+    return ({
+      cssClass: 'table-primary',
+      cellText: 'O',
+      titleText: 'Jen odpoledne'
+    })
+  } else {
+    throw new Error(`Unknown requirement type ${requirementType}`)
   }
 }
 
-function DayCell ({ requirementType }: { requirementType: string | undefined }) {
+function DayCell ({ requirement }: { requirement: UserRequirement | undefined }) {
   let details: CellDetails | null = null
-  if (requirementType !== undefined && requirementType in absenceClasses) {
+  if (requirement !== undefined) {
     // @ts-ignore
-    details = absenceClasses[requirementType]
+    details = getCellDetails(requirement)
   }
 
   // @ts-ignore
@@ -76,19 +87,23 @@ export function MonthlyOverview (): JSX.Element {
     setMonth(prevMonth => addMonths(prevMonth, 1))
   }
 
+  return (<FixedPage>
+    <ButtonToolbar className='justify-content-between'>
+      <ButtonGroup className="no-print" >
+        <Button variant="outline-secondary" onClick={handlePreviousMonth}><FontAwesomeIcon icon={faArrowLeft}/></Button>
+        <Button variant="outline-secondary" onClick={handleNextMonth}><FontAwesomeIcon icon={faArrowRight}/></Button>
+      </ButtonGroup>
+      <h1 className='h2'>{getMonthLabel(month)}</h1>
 
-  return (<Container>
-    <ButtonGroup className="no-print">
-      <Button variant="outline-secondary" onClick={handlePreviousMonth}><FontAwesomeIcon icon={faArrowLeft}/></Button>
-      <Button variant="outline-secondary" onClick={handleNextMonth}><FontAwesomeIcon icon={faArrowRight}/></Button>
+      <ButtonGroup className="no-print">
+      <Button variant="primary" onClick={window.print}><Printer/>&nbsp;Tisk</Button>
     </ButtonGroup>
-
-    <h1>{getMonthLabel(month)}</h1>
+    </ButtonToolbar>
 
     {requirements === null
       ? <LoadingSpinner/>
       : <MonthlyOverviewInner month={month} requirements={requirements}/>}
-  </Container>)
+  </FixedPage>)
 }
 
 export const MonthlyOverviewInner: React.FC<{requirements: MonthRequirements, month: Month}> = ({ month, requirements } ) => {
@@ -99,47 +114,44 @@ export const MonthlyOverviewInner: React.FC<{requirements: MonthRequirements, mo
 
   const dailySums = new Array(daysInMonth).fill(users.filter(u => !isExternalUser(u)).length - 6)
 
-  const requirementsPerUserDay: { [key: string]: string } = {}
+  const requirementsPerUserDay: { [key: string]: UserRequirement } = {}
   const countsAsAbsence = (r: RequirementType) => r === 'leave' || r === 'hard-no' || r === 'only-afternoon'
   for (const requirement of requirements) {
     const day = parseDate(requirement.date).getDate()
     if (countsAsAbsence(requirement.requirementType)) {
       dailySums[day - 1]--
     }
-    requirementsPerUserDay[`${requirement.userId}-${day}`] = requirement.requirementType
+    requirementsPerUserDay[`${requirement.userId}-${day}`] = requirement
   }
 
   const currentMonth = getActiveMonth()
   const weekends: number[] = days.filter(day => isWeekend(getDay(currentMonth.year, currentMonth.month, day)))
 
-  return <div className='big-table'>
-    <button className='btn btn-primary no-print' onClick={window.print}>
-      <Printer/>&nbsp;Tisk
-    </button>
-    <Table bordered hover className='table-fit table-sm table-bordered'>
-      <thead className='thead-light sticky-top table-primary table-bordered'>
-      <tr>
-        <th>Datum</th>
-        {days.map(day => weekends.includes(day)
-          ? <th scope='col' className='weekend-day text-center'>{day}</th>
-          : <th scope='col' className='text-center'>{day}</th>)}
-      </tr>
-      <tr>
-        <th>Lidí k dispozici</th>
-        {days.map(day => weekends.includes(day)
-          ? <th scope="col" className="weekend-day">&nbsp;</th>
-          : <th scope="col">{dailySums[day - 1]}</th>)}
-      </tr>
-      </thead>
-      <tbody>
-      {users.map(user =>
+  return <ScrollablePart>
+      <Table bordered hover className='table-responsive table-sm table-bordered' style={{width: '1px'}}>
+        <thead className='thead-light table-primary table-bordered sticky-top'>
         <tr>
-          <th scope="row">{user.userName}</th>
-          {days.map(day => <DayCell requirementType={requirementsPerUserDay[`${user.userId}-${day}`]}/>
-          )}
+          <th>Datum</th>
+          {days.map(day => weekends.includes(day)
+            ? <th scope='col' className='weekend-day text-center'>{day}</th>
+            : <th scope='col' className='text-center'>{day}</th>)}
         </tr>
-      )}
-      </tbody>
-    </Table>
-  </div>
+        <tr>
+          <th>Lidí k dispozici</th>
+          {days.map(day => weekends.includes(day)
+            ? <th scope="col" className="weekend-day">&nbsp;</th>
+            : <th scope="col">{dailySums[day - 1]}</th>)}
+        </tr>
+        </thead>
+        <tbody className=''>
+        {users.map(user =>
+          <tr>
+            <th scope="row">{user.userName}</th>
+            {days.map(day => <DayCell requirement={requirementsPerUserDay[`${user.userId}-${day}`]}/>
+            )}
+          </tr>
+        )}
+        </tbody>
+      </Table>
+    </ScrollablePart>
 }
