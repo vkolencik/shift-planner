@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { MonthRequirements, RequirementType, useApi, User } from '../service/api'
+import { MonthRequirements, RequirementType, requirementTypes, useApi, User, UserRequirement } from '../service/api'
 import {
   getDay,
   getActiveMonth,
@@ -18,46 +18,49 @@ import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { FixedPage, ScrollablePart } from '../layout/layout'
 
 type CellDetails = { cssClass: string, titleText: string, cellText: string }
-const getCellDetails = (requirementType: RequirementType): CellDetails => {
-  switch (requirementType) {
-    case 'leave':
-      return ({
-        cssClass: 'table-purple',
-        cellText: 'D',
-        titleText: 'Dovolená',
-      })
-    case 'soft-yes':
-      return ({
-        cssClass: 'table-success',
-        cellText: 'Ch',
-        titleText: 'Chci'
-      })
-    case 'hard-no':
-      return ({
-        cssClass: 'table-danger',
-        cellText: 'N',
-        titleText: 'Nemůžu'
-      })
-    case 'only-morning':
-      return ({
-        cssClass: 'table-warning',
-        cellText: 'R',
-        titleText: 'Pouze R'
-      })
-    case 'only-afternoon':
-      return ({
-        cssClass: 'table-primary',
-        cellText: 'O',
-        titleText: 'Jen odpoledne'
-      })
+const getCellDetails = (requirement: UserRequirement): CellDetails => {
+  const requirementType = requirement.requirementType
+
+  if (requirementType === 'leave') {
+    return ({
+      cssClass: requirement.approved ? 'table-cyan' : 'table-purple',
+      cellText: requirement.approved ? 'D' : 'D',
+      titleText: requirement.approved ? 'Dovolená - schv8leno' : 'Dovolená - čeká na schválení',
+    })
+  } else if (requirementType === 'soft-yes') {
+    return ({
+      cssClass: 'table-success',
+      cellText: 'Ch',
+      titleText: 'Chci'
+    })
+  } else if (requirementType === 'hard-no') {
+    return ({
+      cssClass: 'table-danger',
+      cellText: 'N',
+      titleText: 'Nemůžu'
+    })
+  } else if (requirementType === 'only-morning') {
+    return ({
+      cssClass: 'table-warning',
+      cellText: 'R',
+      titleText: 'Pouze R'
+    })
+  } else if (requirementType === 'only-afternoon') {
+    return ({
+      cssClass: 'table-primary',
+      cellText: 'O',
+      titleText: 'Jen odpoledne'
+    })
+  } else {
+    throw new Error(`Unknown requirement type ${requirementType}`)
   }
 }
 
-function DayCell ({ requirementType }: { requirementType: string | undefined }) {
+function DayCell ({ requirement }: { requirement: UserRequirement | undefined }) {
   let details: CellDetails | null = null
-  if (requirementType !== undefined) {
+  if (requirement !== undefined) {
     // @ts-ignore
-    details = getCellDetails(requirementType)
+    details = getCellDetails(requirement)
   }
 
   // @ts-ignore
@@ -111,14 +114,14 @@ export const MonthlyOverviewInner: React.FC<{requirements: MonthRequirements, mo
 
   const dailySums = new Array(daysInMonth).fill(users.filter(u => !isExternalUser(u)).length - 6)
 
-  const requirementsPerUserDay: { [key: string]: string } = {}
+  const requirementsPerUserDay: { [key: string]: UserRequirement } = {}
   const countsAsAbsence = (r: RequirementType) => r === 'leave' || r === 'hard-no' || r === 'only-afternoon'
   for (const requirement of requirements) {
     const day = parseDate(requirement.date).getDate()
     if (countsAsAbsence(requirement.requirementType)) {
       dailySums[day - 1]--
     }
-    requirementsPerUserDay[`${requirement.userId}-${day}`] = requirement.requirementType
+    requirementsPerUserDay[`${requirement.userId}-${day}`] = requirement
   }
 
   const currentMonth = getActiveMonth()
@@ -144,7 +147,7 @@ export const MonthlyOverviewInner: React.FC<{requirements: MonthRequirements, mo
         {users.map(user =>
           <tr>
             <th scope="row">{user.userName}</th>
-            {days.map(day => <DayCell requirementType={requirementsPerUserDay[`${user.userId}-${day}`]}/>
+            {days.map(day => <DayCell requirement={requirementsPerUserDay[`${user.userId}-${day}`]}/>
             )}
           </tr>
         )}

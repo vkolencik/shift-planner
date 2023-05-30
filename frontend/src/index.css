@@ -44,6 +44,10 @@ table td.table-purple {
     background-color: #c985de;
 }
 
+table td.table-cyan {
+    background-color: #85c6de;
+}
+
 th {
     background-clip: padding-box;
 }
