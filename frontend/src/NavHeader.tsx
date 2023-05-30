@@ -28,7 +28,7 @@ export const NavHeader: FC = () => {
           <LinkContainer to="/tydenik"><Nav.Link>Týdeník</Nav.Link></LinkContainer>
           <LinkContainer to="/sluzby"><Nav.Link>Služby</Nav.Link></LinkContainer>
           {permissions.includes(Permission.prerelease) && false && <LinkContainer to="/konference"><Nav.Link>Konference</Nav.Link></LinkContainer>}
-          {permissions.includes(Permission.prerelease) && <LinkContainer to="/test"><Nav.Link>Test</Nav.Link></LinkContainer>}
+          {/*{permissions.includes(Permission.prerelease) && <LinkContainer to="/test"><Nav.Link>Test</Nav.Link></LinkContainer>}*/}
         </Nav>
       </Navbar.Collapse>
       <UserBadge/>
