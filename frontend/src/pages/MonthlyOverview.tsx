@@ -25,7 +25,7 @@ const getCellDetails = (requirement: UserRequirement): CellDetails => {
     return ({
       cssClass: requirement.approved ? 'table-cyan' : 'table-purple',
       cellText: requirement.approved ? 'D' : 'D',
-      titleText: requirement.approved ? 'Dovolená - schv8leno' : 'Dovolená - čeká na schválení',
+      titleText: requirement.approved ? 'Dovolená - schváleno' : 'Dovolená - čeká na schválení',
     })
   } else if (requirementType === 'soft-yes') {
     return ({
