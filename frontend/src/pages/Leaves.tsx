@@ -37,11 +37,11 @@ const getMinAvailableEmployeesForDay = (day: Day): number => {
 
   const monthDay = getMonthDay(day)
   if (compareMonths(month, {year: 2023, month: 8}) == 0 && 14 <= monthDay && monthDay <= 31) {
-    return minEmployeesInSummer - 3
+    return minEmployeesInSummer + 3
   }
 
   if (compareMonths(month, {year: 2023, month: 7}) == 0 && 17 <= monthDay && monthDay <= 21) {
-    return minEmployeesInSummer - 2
+    return minEmployeesInSummer + 2
   }
 
   if (month.month === 7 || month.month === 8) {
