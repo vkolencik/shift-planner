@@ -8,7 +8,7 @@ import {
   getActiveMonth, getDayOfWeekNumber, getMonth,
   getMonthDates,
   getMonthDay,
-  getMonthLabel,
+  getMonthLabel, isMonthWritable,
   isWeekend,
   Month
 } from '../dates'
@@ -35,6 +35,15 @@ const minEmployeesInSummer = 32
 const getMinAvailableEmployeesForDay = (day: Day): number => {
   const month = getMonth(day)
 
+  const monthDay = getMonthDay(day)
+  if (compareMonths(month, {year: 2023, month: 8}) == 0 && 14 <= monthDay && monthDay <= 31) {
+    return minEmployeesInSummer - 3
+  }
+
+  if (compareMonths(month, {year: 2023, month: 7}) == 0 && 17 <= monthDay && monthDay <= 21) {
+    return minEmployeesInSummer - 2
+  }
+
   if (month.month === 7 || month.month === 8) {
     return minEmployeesInSummer
   }
@@ -42,7 +51,11 @@ const getMinAvailableEmployeesForDay = (day: Day): number => {
   return minEmployeesPerWeekday[getDayOfWeekNumber(day) - 1]
 }
 
-const minWritableMonth: Month = addMonths(getActiveMonth(), 1)
+let minWritableMonth: Month = getActiveMonth()
+if (!isMonthWritable(minWritableMonth)) {
+  minWritableMonth = addMonths(minWritableMonth, 1)
+}
+
 const maxMonth: Month = { year: minWritableMonth.year, month: 12 }
 
 export const Leaves: React.FC = () => {

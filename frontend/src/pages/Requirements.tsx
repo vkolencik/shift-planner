@@ -192,13 +192,14 @@ export const Requirements: React.FC = () => {
             {Object.values(requirementTypes).map(t => {
               return (
                 <>
-                  <FormCheck key={t.value}>
+                  <FormCheck key={t.value} >
                     <FormCheckInput
                       type="radio"
                       onChange={() => handleAddRequirement(t.value)}
                       checked={selectedDayRequirementType === t.value}
                       id={`requirement-type-input-${t.value}`}
                       key={`radio-${t.value}`}
+                      disabled={t.value === 'leave'}
                     />
                     <FormCheckLabel
                       htmlFor={`requirement-type-input-${t.value}`}
