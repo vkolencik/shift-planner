@@ -124,8 +124,7 @@ export const MonthlyOverviewInner: React.FC<{requirements: MonthRequirements, mo
     requirementsPerUserDay[`${requirement.userId}-${day}`] = requirement
   }
 
-  const currentMonth = getActiveMonth()
-  const weekends: number[] = days.filter(day => isWeekend(getDay(currentMonth.year, currentMonth.month, day)))
+  const weekends: number[] = days.filter(day => isWeekend(getDay(month.year, month.month, day)))
 
   return <ScrollablePart>
       <Table bordered hover className='table-responsive table-sm table-bordered' style={{width: '1px'}}>
