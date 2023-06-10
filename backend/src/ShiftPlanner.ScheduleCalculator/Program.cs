@@ -19,7 +19,7 @@ static class Program
 
         var aggregator = services.GetRequiredService<ISchedulingParametersAggregator>();
 
-        var month = new ScheduledMonth(2023, 6);
+        var month = new ScheduledMonth(2023, 8);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
 
         var scheduler = new ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)), new RulesetFactory());
