@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Schedule, useApi } from '../service/api'
 import {
   addMonths,
+  compareMonths,
   formatDate,
   getDayOfWeek,
   getMonthDates, getMonthLabel,
@@ -18,7 +19,8 @@ import { workplaces } from '../domain'
 import { Permission, usePermissions } from '../auth/auth'
 import { Printer } from 'react-bootstrap-icons'
 
-const currentMonth: Month = {year: 2023, month: 6}
+const currentMonth: Month = { year: 2023, month: 7 }
+const maxMonth: Month = { year: 2023, month: 8 }
 
 function getUserShiftEntries (schedule: Schedule): [string, number][] {
   const userShifts: { [name: string]: number } = {}
@@ -53,7 +55,7 @@ export function MonthSchedule (): JSX.Element {
   }
 
   function handleNextMonth () {
-    if (!permissions.includes(Permission.approveRequirementsOfOthers) && month.year === currentMonth.year && month.month === currentMonth.month) {
+    if (!permissions.includes(Permission.approveRequirementsOfOthers) && compareMonths(month, maxMonth) >= 0) {
       return
     }
 
