@@ -3,7 +3,7 @@ import { Schedule, useApi, User, ValidationError } from '../service/api'
 import {
   Day,
   formatDate,
-  getDayOfWeek,
+  getDayOfWeekName,
   getMonthDates, getMonthLabel,
   isWeekend,
   Month, toDay
@@ -212,7 +212,7 @@ export function MonthScheduleEdit (): JSX.Element {
                 <tbody>
                 {getMonthDates(month).map((d) =>
                   (<tr className={isWeekend(d) ? 'table-success' : ''}>
-                    <th scope="row">{formatDate(d)} ({getDayOfWeek(d)})</th>
+                    <th scope="row">{formatDate(d)} ({getDayOfWeekName(d)})</th>
                     {workplaces.map(w =>
                       <ShiftCell
                         user={schedule?.shifts?.find(s => s.day === d && s.workplace === w)?.user!}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { addDays, Day, formatDate, getMonth, getStartOfWeek, getWeekDays, toDay } from '../dates'
+import { addDays, Day, formatDate, getDayOfWeekNumber, getMonth, getStartOfWeek, getWeekDays, toDay } from '../dates'
+import { requiredAvailabilitiesSummer2023 } from './daily-required-availabilities-summer-2023'
 import { RequirementType, requirementTypes, ShiftAssignment, useApi, UserRequirement } from '../service/api'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Alert, Button, ButtonGroup, Table } from 'react-bootstrap'
@@ -146,7 +147,14 @@ export const WeeklyOverview: React.FC = () => {
     dailyAvailabilities.push(available)
   }
 
-  const requiredAvailabilities = [26, 26, 27, 25, 22, null, null]
+  const getRequiredAvailability = (day: Day): number | null => {
+    if (toDay('2023-07-01') <= day && day <= toDay('2023-08-31')) {
+      return requiredAvailabilitiesSummer2023[day]
+    }
+
+    const requiredAvailabilities = [26, 26, 27, 25, 22, null, null]
+    return requiredAvailabilities[getDayOfWeekNumber(day) - 1]
+  }
 
   return <div className="container">
     <ButtonGroup>
@@ -167,7 +175,7 @@ export const WeeklyOverview: React.FC = () => {
       </tr>
       <tr>
         <th scope="row">Potřebný počet</th>
-        {requiredAvailabilities.map(n => <th scope="col" className="text-center">{n}</th>)}
+        {weekDays.map(d => <th scope="col" className="text-center">{getRequiredAvailability(d)}</th>)}
       </tr>
       </thead>
       <tbody>

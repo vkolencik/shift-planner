@@ -4,7 +4,7 @@ import {
   addMonths,
   compareMonths,
   formatDate,
-  getDayOfWeek,
+  getDayOfWeekName,
   getMonthDates, getMonthLabel,
   isWeekend,
   Month
@@ -112,7 +112,7 @@ function MonthScheduleInner ({ month, schedule }: { month: Month, schedule: Sche
             <tbody>
             {getMonthDates(month).map(d =>
               (<tr className={isWeekend(d) ? 'table-success' : ''}>
-                <th scope="row">{formatDate(d)} ({getDayOfWeek(d)})</th>
+                <th scope="row">{formatDate(d)} ({getDayOfWeekName(d)})</th>
                 {workplaces.map(w => <td>
                   {schedule?.shifts?.find(s => s.day === d && s.workplace === w)?.user.userName}
                 </td>)}

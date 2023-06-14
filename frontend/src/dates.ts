@@ -130,7 +130,7 @@ function padDateComponent (value: number): string {
   return String(value).padStart(2, '0')
 }
 
-export function getDayOfWeek (day: string): string {
+export function getDayOfWeekName (day: Day): string {
   return [
     'Ne',
     'Po',
