@@ -35,11 +35,12 @@ export const requirementTypes: { [key in RequirementType]: { name: string, value
   'leave': { name: 'Dovolená', value: 'leave' },
   'soft-yes': { name: 'Chci', value: 'soft-yes' },
   'hard-no': { name: 'Nemůžu', value: 'hard-no' },
+  'not-working': { name: 'Nepracuji', value: 'not-working' },
   'only-morning': { name: 'Pouze R', value: 'only-morning' },
   'only-afternoon': { name: 'Až odpoledne', value: 'only-afternoon' }
 }
 
-export type RequirementType = 'leave' | 'hard-no' | 'soft-yes' | 'only-morning' | 'only-afternoon'
+export type RequirementType = 'leave' | 'hard-no' | 'not-working' | 'soft-yes' | 'only-morning' | 'only-afternoon'
 
 export interface UserRequirement {
   userId: string,
