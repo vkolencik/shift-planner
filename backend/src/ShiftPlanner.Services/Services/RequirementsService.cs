@@ -34,8 +34,9 @@ internal class RequirementsService : IRequirementsService
     {
         var requirements = await _repository.GetRequirementsForMonth(tenant, month);
         var users = await _userService.GetAllUsers();
-        // TODO: handle deleted user case here
-        var userRequirements = requirements.Select(r => new UserRequirementModel(r.UserId, users.Single(u => u.UserId == r.UserId).UserName, r.Date, r.RequirementType, r.Approved)).ToArray();
+        var userRequirements = requirements
+            .Where(r => users.Any(u => u.UserId == r.UserId))
+            .Select(r => new UserRequirementModel(r.UserId, users.Single(u => u.UserId == r.UserId).UserName, r.Date, r.RequirementType, r.Approved)).ToArray();
         return userRequirements;
     }
 
