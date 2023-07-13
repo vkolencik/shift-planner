@@ -99,6 +99,7 @@ public class RequirementsServiceShould
                     new Requirement(TestData.Tenant, "user1", new Day(2022, 12, 2), "hard-no"),
                     new Requirement(TestData.Tenant, "user2", new Day(2022, 12, 3), "soft-yes"),
                     new Requirement(TestData.Tenant, "user2", new Day(2022, 12, 4), "leave", true),
+                    new Requirement(TestData.Tenant, "deleted-user", new Day(2022, 12, 4), "leave", true),
                 });
 
         _userServiceMock

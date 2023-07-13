@@ -39,6 +39,12 @@ const getCellDetails = (requirement: UserRequirement): CellDetails => {
       cellText: 'N',
       titleText: 'Nemůžu'
     })
+  } else if (requirementType === 'not-working') {
+    return ({
+      cssClass: 'table-danger',
+      cellText: 'N',
+      titleText: 'Nepracuji'
+    })
   } else if (requirementType === 'only-morning') {
     return ({
       cssClass: 'table-warning',
@@ -115,7 +121,7 @@ export const MonthlyOverviewInner: React.FC<{requirements: MonthRequirements, mo
   const dailySums = new Array(daysInMonth).fill(users.filter(u => !isExternalUser(u)).length - 6)
 
   const requirementsPerUserDay: { [key: string]: UserRequirement } = {}
-  const countsAsAbsence = (r: RequirementType) => r === 'leave' || r === 'hard-no' || r === 'only-afternoon'
+  const countsAsAbsence = (r: RequirementType) => r === 'leave' || r === 'hard-no'|| r === 'not-working' || r === 'only-afternoon'
   for (const requirement of requirements) {
     const day = parseDate(requirement.date).getDate()
     if (countsAsAbsence(requirement.requirementType)) {

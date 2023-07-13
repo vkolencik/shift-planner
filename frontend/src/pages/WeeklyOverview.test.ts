@@ -16,6 +16,7 @@ describe('Weekly overview should', () => {
       { userId: 'user1', userName: 'User 1', requirementType: 'only-morning', date: toDay('2022-12-04'), approved: true },
       { userId: 'user1', userName: 'User 1', requirementType: 'soft-yes', date: toDay('2022-12-05'), approved: true },
       { userId: 'user1', userName: 'User 1', requirementType: 'hard-no', date: toDay('2022-12-22'), approved: true },
+      { userId: 'user1', userName: 'User 1', requirementType: 'not-working', date: toDay('2022-12-24'), approved: true },
       { userId: 'user2', userName: 'User 2', requirementType: 'hard-no', date: toDay('2022-12-15'), approved: true },
     ]
     const shifts: ShiftAssignment[] = [
@@ -34,6 +35,7 @@ describe('Weekly overview should', () => {
       ['user2:2022-12-02' as DateUserKey]: {status: 'day-after'},
       ['user1:2022-12-21' as DateUserKey]: {status: 'shift', workplace: 'ARO'},
       ['user1:2022-12-22' as DateUserKey]: {status: 'day-after'},
+      ['user1:2022-12-24' as DateUserKey]: {status: 'unavailable', reason: 'not-working'},
     }
 
     expect(view).toEqual(expectedView)

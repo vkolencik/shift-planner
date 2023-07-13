@@ -43,7 +43,8 @@ function requirementsToEvents (requirements: EmployeeMonthRequirements): EventSo
     'only-morning': '#f1d567',
     'soft-yes': '#2eb401',
     'leave': '#c985de',
-    'hard-no': '#9a0d0d'
+    'hard-no': '#9a0d0d',
+    'not-working': '#9a0d0d'
   }
 
   return Object.entries(requirements).map(([date, type]) => ({

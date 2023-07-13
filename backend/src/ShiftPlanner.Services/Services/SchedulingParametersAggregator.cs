@@ -9,7 +9,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
     private readonly IRequirementsService _requirementsService;
     private readonly IUserService _userService;
     private readonly IStoredScheduleService _storedScheduleService;
-    private static readonly HashSet<string> AbsenceRequirementTypes = new() {"leave", "hard-no", "only-morning"};
+    private static readonly HashSet<string> AbsenceRequirementTypes = new() {"leave", "hard-no", "not-working", "only-morning"};
 
     public SchedulingParametersAggregator(
         IEmployeeInfoService employeeInfoService,

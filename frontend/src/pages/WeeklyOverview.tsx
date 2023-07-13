@@ -22,7 +22,7 @@ export function CreateWeekView (requirements: UserRequirement[], shifts: ShiftAs
   let view: WeekView = {}
 
   for (const requirement of requirements) {
-    if (['leave', 'hard-no', 'only-afternoon'].includes(requirement.requirementType)) {
+    if (['leave', 'hard-no', 'not-working', 'only-afternoon'].includes(requirement.requirementType)) {
       view[getDayUserKey(requirement.userId, requirement.date)] = {
         status: 'unavailable',
         reason: requirement.requirementType
