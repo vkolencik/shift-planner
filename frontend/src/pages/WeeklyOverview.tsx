@@ -152,6 +152,16 @@ export const WeeklyOverview: React.FC = () => {
       return requiredAvailabilitiesSummer2023[day]
     }
 
+    if (toDay('2023-09-01') <= day && day <= toDay('2023-09-30')) {
+      const requiredAvailabilitiesSeptember2023 = [25, 25, 26, 25, 22, null, null]
+      return requiredAvailabilitiesSeptember2023[getDayOfWeekNumber(day) - 1]
+    }
+
+    if (toDay('2023-10-01') <= day && day <= toDay('2023-10-31')) {
+      const requiredAvailabilitiesOctober = [25, 25, 27, 26, 22, null, null]
+      return requiredAvailabilitiesOctober[getDayOfWeekNumber(day) - 1]
+    }
+
     const requiredAvailabilities = [26, 26, 27, 25, 22, null, null]
     return requiredAvailabilities[getDayOfWeekNumber(day) - 1]
   }
