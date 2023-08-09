@@ -23,6 +23,8 @@ public abstract class GoogleSheetsService
         var secretJson = await _secretsManagerClient.FetchRawSecret(CertificateArn);
         var credential = GoogleCredential.FromJson(secretJson).CreateScoped(Scopes);
 
+        Console.Out.WriteLine("Fetched Google credentials");
+        
         // Create Google Sheets API service.
         var service = new SheetsService(
             new BaseClientService.Initializer
