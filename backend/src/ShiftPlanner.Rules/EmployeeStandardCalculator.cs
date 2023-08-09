@@ -31,6 +31,6 @@ public class EmployeeStandardCalculator : IEmployeeStandardCalculator
 
         return new EmployeeStandard(
             (uint) Math.Floor(standardLb),
-            (uint) Math.Ceiling(standardUb));
+            (uint) Math.Ceiling(standardUb + 0));
     }
 }
