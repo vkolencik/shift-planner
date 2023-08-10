@@ -51,8 +51,8 @@ static class Program
             Console.Out.WriteLine("Solution found");
             Console.Out.WriteLine($"Flexibility: {successResult.Flexibility.Degree}");
 
-            await resultRepositoryGoogleSheet.StoreComputedSchedule(month, successResult);
-            await resultRepositoryS3.StoreComputedSchedule(month, successResult);
+            // await resultRepositoryGoogleSheet.StoreComputedSchedule(month, successResult);
+            // await resultRepositoryS3.StoreComputedSchedule(month, successResult);
         }
 
         // Console.Out.WriteLine(string.Join('\n', result.SolutionParameters.RecordedStandards.Select(kvp => $"{kvp.Key.Name}: {kvp.Value.Minimum}-{kvp.Value.Maximum}")));

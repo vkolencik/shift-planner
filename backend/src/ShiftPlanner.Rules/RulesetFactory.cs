@@ -35,6 +35,6 @@ public class RulesetFactory : IRulesetFactory
 
         yield return new MonthlyShiftCountRule(calculator, parameters, recorder);
         // yield return new WorkplacePreferencePercentagesRule(calculator, parameters);
-        // yield return new EvenSpreadWithinMonthRule(calculator, parameters);
+        yield return new EvenSpreadWithinMonthRule(calculator, parameters);
     }
 }
