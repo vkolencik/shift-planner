@@ -30,7 +30,7 @@ public class NoDoubleAlternativeDayShiftsRule : IRule
             }
         }
 
-        // TODO:
+        // TODO: take the previous month into account
         return;
         var previousMonthDays = _parameters.Month.Previous.Days;
 
