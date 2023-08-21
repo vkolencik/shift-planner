@@ -28,7 +28,6 @@ static class Program
         Console.Out.WriteLine("Initiating scheduler...");
         
         var scheduler = new ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)), new RulesetFactory());
-        // var scheduler = new ShiftScheduler(new SingleFlexibilityVariator(new ScheduleFlexibility(50)), new RulesetFactory());
 
         Console.Out.WriteLine("Scheduler ready, computing schedule...");
 
