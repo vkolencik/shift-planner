@@ -24,13 +24,17 @@ internal class GoogleSheetsEmployeeInfoService : GoogleSheetsService, IEmployeeI
 
     public async Task<IReadOnlyCollection<EmployeeInfo>> GetEmployees(IList<Workplace> workplaces)
     {
+        Console.Out.WriteLine("1");
         using var service = await GetGoogleSheetsService();
+        Console.Out.WriteLine("2");
 
         // Define request parameters.
         String range = "Kose!A3:L100";
         SpreadsheetsResource.ValuesResource.GetRequest request =
             service.Spreadsheets.Values.Get(SpreadsheetId, range);
 
+        Console.Out.WriteLine("Fetching info from google sheet...");
+        
         ValueRange response = await request.ExecuteAsync();
 
         IList<IList<object>> values = response.Values;
