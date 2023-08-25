@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { addDays, Day, formatDate, getDayOfWeekNumber, getMonth, getStartOfWeek, getWeekDays, toDay } from '../dates'
+import {
+  addDays,
+  compareMonths,
+  Day,
+  formatDate,
+  getDayOfWeekNumber,
+  getMonth,
+  getStartOfWeek,
+  getWeekDays,
+  toDay
+} from '../dates'
 import { requiredAvailabilitiesSummer2023 } from './daily-required-availabilities-summer-2023'
-import { RequirementType, requirementTypes, ShiftAssignment, useApi, UserRequirement } from '../service/api'
+import { RequirementType, requirementTypes, ShiftAssignment, useApi, UserRequirement, UserWAD } from '../service/api'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Alert, Button, ButtonGroup, Table } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -15,6 +25,7 @@ type DayInfo =
   | { status: 'unavailable', reason: RequirementType }
   | { status: 'shift', workplace: string }
   | { status: 'day-after' }
+  | { status: 'inactive' }
 
 export interface WeekView {[key: DateUserKey]: DayInfo}
 
@@ -52,7 +63,7 @@ export const WeeklyOverview: React.FC = () => {
   const [requirements, setRequirements] = useState<UserRequirement[]>([])
   const [someShiftDataMissing, setSomeShiftDataMissing] = useState<boolean>(false)
   const [loadingWeek, setLoadingWeek] = useState<boolean>(true)
-  const users = useUserList()
+  const allUsers = useUserList()
   const api = useApi()
   const permissions = usePermissions()
 
@@ -91,14 +102,26 @@ export const WeeklyOverview: React.FC = () => {
 
   const weekDays = getWeekDays(weekStart)
 
-  if (loadingWeek || users === undefined) {
+  if (loadingWeek || allUsers === undefined) {
     return <LoadingSpinner/>
   }
 
+  const users = allUsers.filter(u => compareMonths(u.activeUntil, getMonth(weekStart)) >= 0)
+
   const weeklyView = CreateWeekView(requirements, shifts)
 
-  function DayCell (props: { day: string, userId: string }) {
-    const dayInfo = weeklyView[getDayUserKey(props.userId, toDay(props.day))]
+  function getDayInfo(user: UserWAD, day: Day): DayInfo {
+    return compareMonths(user.activeUntil, getMonth(day)) < 0 ? { status: 'inactive' } : weeklyView[getDayUserKey(user.userId, day)]
+  }
+
+  function DayCell (props: { day: Day, userId: string }) {
+    const user = users.find(u => u.userId === props.userId)
+
+    if (user === undefined) {
+      throw new Error(`Cannot find user ${props.userId}`)
+    }
+
+    const dayInfo = getDayInfo(user, props.day)
 
     if (dayInfo === undefined) {
       return <td className="table-success text-center" title="K dispozici"><FontAwesomeIcon icon={faCheck}/></td>
@@ -107,6 +130,10 @@ export const WeeklyOverview: React.FC = () => {
     switch (dayInfo.status) {
       case 'unavailable':
         return <td className="table-danger text-center" title={requirementTypes[dayInfo.reason].name}>
+          <FontAwesomeIcon icon={faBan}/>
+        </td>
+      case 'inactive':
+        return <td className="table-danger text-center" title='Uživatel deaktivován'>
           <FontAwesomeIcon icon={faBan}/>
         </td>
       case 'shift':
@@ -137,9 +164,8 @@ export const WeeklyOverview: React.FC = () => {
     let available = users.filter(u => !isExternalUser(u)).length
 
     for (const user of users) {
-      const dailyStatus = weeklyView[getDayUserKey(user.userId, day)]
-      if (
-        dailyStatus !== undefined && (dailyStatus.status === 'day-after' || dailyStatus.status === 'unavailable')) {
+      const dayInfo = getDayInfo(user, day)
+      if (dayInfo !== undefined && (dayInfo.status === 'day-after' || dayInfo.status === 'unavailable' || dayInfo.status === 'inactive')) {
         available--
       }
     }
