@@ -23,7 +23,7 @@ public class StoredScheduleServiceShould
         var month = new ScheduledMonth(2023, 1);
         var day = new Day(month, 1);
         var workplace = TestData.Workplace;
-        var user = new User("user-id-1", "user name", "user1@krtek.me");
+        var user = TestData.TestUser();
 
         var shift = new ScheduledShift(day, workplace, user);
 
@@ -45,7 +45,7 @@ public class StoredScheduleServiceShould
         var month = new ScheduledMonth(2023, 1);
         var day = new Day(month, 1);
         var workplace = TestData.Workplace;
-        var user = new User("user-id-1", "user name", "user1@krtek.me");
+        var user = TestData.TestUser();
         var schedule = new Schedule(new [] { new ScheduledShift(day, workplace, user) });
 
         _scheduleRepositoryMock

@@ -106,8 +106,8 @@ public class RequirementsServiceShould
             .Setup(_ => _.GetAllUsers())
             .ReturnsAsync(new []
             {
-                new User("user1", "User 1", "user1@krtek.me"), 
-                new User("user2", "User 2", "user2@krtek.me"), 
+                TestData.TestUser(), 
+                TestData.TestUser(), 
             });
         
         var service = CreateService();

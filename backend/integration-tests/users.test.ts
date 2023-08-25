@@ -26,6 +26,11 @@ describe('Users endpoint should', () => {
       {
         userId: testUser2Id,
         userName: testUser2Name
+      },
+      {
+        userId: deactivatedUserId,
+        userName: deactivatedUserName,
+        activeUntil: deactivatedUserActiveUntilDate
       }
     ]))
   })

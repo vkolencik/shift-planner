@@ -7,6 +7,9 @@ declare global {
   let testUserName: string
   let testUser2Id: string
   let testUser2Name: string
+  let deactivatedUserId: string
+  let deactivatedUserName: string
+  let deactivatedUserActiveUntilDate: string
 }
 
 export {}

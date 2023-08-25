@@ -22,9 +22,9 @@ public abstract class ScheduleControllerShould
             var workplace = new Workplace("ABC");
             var month = new ScheduledMonth(2027, 7);
 
-            var scheduledShift = new ScheduledShift(new Day(month, 3), workplace, new User("user1", "Mr. User 1", "user1@krtek.me"));
+            var scheduledShift = new ScheduledShift(new Day(month, 3), workplace, new User("user1", "Mr. User 1", "user1@krtek.me", User.MaxDate));
             var storedSchedule = new Schedule(new[] {scheduledShift});
-            var expectedOutputShifts = new[] {new ShiftAssignmentOutputModel("2027-07-03", "ABC", new UserOutputModel("user1", "Mr. User 1"))};
+            var expectedOutputShifts = new[] {new ShiftAssignmentOutputModel("2027-07-03", "ABC", new UserOutputModel("user1", "Mr. User 1", "2999-01-01"))};
 
             _storedScheduleServiceMock
                 .Setup(_ => _.GetSchedule(month))
@@ -67,7 +67,7 @@ public abstract class ScheduleControllerShould
         [Fact]
         public async Task RejectSchedule_GivenInvalidSchedule()
         {
-            var user = new User("user-1", "User 1", "user1@krtek.me");
+            var user = new User("user-1", "User 1", "user1@krtek.me", User.MaxDate);
             var day = new Day(2023, 1, 5);
             var dayString = "2023-01-05";
             var workplace = new Workplace("ARO");
@@ -75,7 +75,7 @@ public abstract class ScheduleControllerShould
 
             IReadOnlyCollection<ValidationErrorOutputModel> errors = new[]
             {
-                new ValidationErrorOutputModel(new[] {new ShiftOutputModel(dayString, workplace.Name)}, new UserOutputModel(user.UserId, user.UserName), "Unknown")
+                new ValidationErrorOutputModel(new[] {new ShiftOutputModel(dayString, workplace.Name)}, new UserOutputModel(user.UserId, user.UserName, "2999-01-01"), "Unknown")
             };
 
             var expectedSchedule = new Schedule(
@@ -108,7 +108,7 @@ public abstract class ScheduleControllerShould
             Assert.False(outputModel.IsValid);
             var error = Assert.Single(outputModel.ValidationErrors);
             Assert.Equal("Unknown", error.Error);
-            Assert.Equal(new UserOutputModel(user.UserId, user.UserName), error.User);
+            Assert.Equal(new UserOutputModel(user.UserId, user.UserName, "2999-01-01"), error.User);
             Assert.Equal(new ShiftOutputModel(dayString, workplace.Name), error.Shifts.Single());
         }
     }
@@ -118,7 +118,7 @@ public abstract class ScheduleControllerShould
         [Fact]
         public async Task SaveSchedule()
         {
-            var user = new User("user-1", "User 1", "user1@krtek.me");
+            var user = new User("user-1", "User 1", "user1@krtek.me", User.MaxDate);
             var day = new Day(2023, 1, 5);
             var dayString = "2023-01-05";
             var workplace = new Workplace("ARO");

@@ -33,8 +33,18 @@ public class Auth0UserService : IUserService
         _logger.LogInformation("Fetched {} users", users.Count);
 
         return users
-            .Select(u => new User(u.UserId, u.FullName, u.Email))
+            .Select(u => new User(u.UserId, u.FullName, u.Email, GetActiveUntilDate(((JObject?) u.AppMetadata)?.GetValue("activeUntil")?.ToString())))
             .Concat(new [] {new User("auth0|637f84e6841043dd7a9d44a1", "Vobořil", "lukas.voboril@bulovka.cz")})
             .ToArray();
+    }
+
+    private DateOnly GetActiveUntilDate(string? activeUntil)
+    {
+        if (activeUntil is null)
+        {
+            return User.MaxDate;
+        }
+
+        return DateOnly.ParseExact(activeUntil, "yyyy-MM-dd");
     }
 }

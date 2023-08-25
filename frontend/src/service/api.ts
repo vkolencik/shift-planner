@@ -57,7 +57,8 @@ export type EmployeeMonthRequirements = { [key: Day]: RequirementType }
 
 export interface User {
   userId: string,
-  userName: string
+  userName: string,
+  activeUntil: null | Day
 }
 
 export function momentToDay (date: Moment): Day {

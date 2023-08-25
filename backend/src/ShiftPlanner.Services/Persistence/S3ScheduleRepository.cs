@@ -110,7 +110,7 @@ public class S3ScheduleRepository : IScheduleRepository
 
     ScheduledShift ConvertStoredShift(StoredScheduledShift s, IReadOnlyCollection<User> users)
     {
-        return new ScheduledShift(new Day(DateOnly.ParseExact(s.Day, "yyyy-MM-dd")), new Workplace(s.Workplace), users.SingleOrDefault(u => u.UserId == s.UserId) ?? new User(s.UserId, s.UserId, ""));
+        return new ScheduledShift(new Day(DateOnly.ParseExact(s.Day, "yyyy-MM-dd")), new Workplace(s.Workplace), users.SingleOrDefault(u => u.UserId == s.UserId) ?? new User(s.UserId, s.UserId, "", new DateOnly(2456, 1, 1)));
     }
 
     private string GetBucketName()

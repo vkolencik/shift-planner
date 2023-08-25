@@ -6,11 +6,11 @@ using ShiftPlanner.Services.Services;
 
 namespace ShiftPlanner.Api.Tests.Controllers;
 
-public class UsersConstrollerShould
+public class UsersControllerShould
 {
     private Mock<IUserService> _userServiceMock;
 
-    public UsersConstrollerShould()
+    public UsersControllerShould()
     {
         _userServiceMock = new Mock<IUserService>();
     }
@@ -20,11 +20,11 @@ public class UsersConstrollerShould
     {
         var expectedUsers = new []
         {
-            new UserOutputModel("user1", "User 1")
+            new UserOutputModel("user1", "User 1", "2023-08-21")
         };
         _userServiceMock
             .Setup(_ => _.GetAllUsers())
-            .ReturnsAsync(new[] {new User("user1", "User 1", "user1@krtek.me")});
+            .ReturnsAsync(new[] {new User("user1", "User 1", "user1@krtek.me", new DateOnly(2023, 08, 21))});
         
         var usersController = new UsersController(_userServiceMock.Object);
 
