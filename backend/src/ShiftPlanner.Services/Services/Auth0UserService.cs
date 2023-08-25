@@ -32,6 +32,9 @@ public class Auth0UserService : IUserService
         var users = await mgmtClient.Users.GetAllAsync(new GetUsersRequest{}, new PaginationInfo(0, 100));
         _logger.LogInformation("Fetched {} users", users.Count);
 
-        return users.Select(u => new User(u.UserId, u.FullName, u.Email)).ToArray();
+        return users
+            .Select(u => new User(u.UserId, u.FullName, u.Email))
+            .Concat(new [] {new User("auth0|637f84e6841043dd7a9d44a1", "Vobořil", "lukas.voboril@bulovka.cz")})
+            .ToArray();
     }
 }
