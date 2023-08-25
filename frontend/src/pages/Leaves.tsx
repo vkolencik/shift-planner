@@ -61,7 +61,7 @@ const maxMonth: Month = { year: minWritableMonth.year, month: 12 }
 export const Leaves: React.FC = () => {
 
   const api = useApi()
-  const users = useUserList()
+  const allUsers = useUserList()
   const [leaves, setLeaves] = useState<Leave[] | null>(null)
   const [month, setMonth] = useState<Month>(minWritableMonth)
   const [loading, setLoading] = useState<boolean>(false)
@@ -78,6 +78,8 @@ export const Leaves: React.FC = () => {
   if (leaves === null) {
     return <LoadingSpinner/>
   }
+
+  const users = allUsers.filter(u => compareMonths(u.activeUntil, month) >= 0)
 
   const isReadOnly = compareMonths(month, minWritableMonth) < 0
 
