@@ -1,11 +1,11 @@
 import React, { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react'
-import { useApi, User } from './api'
+import { useApi, UserWAD } from './api'
 import { usePermissions } from '../auth/auth'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 
-const UserListContext = createContext<User[] | null>(null)
+const UserListContext = createContext<UserWAD[] | null>(null)
 
-export const useUserList = (): User[] => {
+export const useUserList = (): UserWAD[] => {
   const users = useContext(UserListContext)
 
   if (users === null) {
@@ -18,7 +18,7 @@ export const useUserList = (): User[] => {
 export const WithUserList: React.FC<PropsWithChildren> = ({ children }) => {
   const api = useApi()
   const permissions = usePermissions()
-  const [users, setUsers] = useState<User[] | null>(null)
+  const [users, setUsers] = useState<UserWAD[] | null>(null)
   useEffect(() => {
       api.users.get().then(setUsers)
     },

@@ -73,7 +73,7 @@ export interface Shift {
 }
 
 export type ShiftAssignment = Shift & {
-  user: { userId: string, userName: string }
+  user: User
 }
 
 export interface ValidationError {
@@ -87,6 +87,7 @@ export interface Leave {
   day: Day
 }
 
+export type UserWAD = User & { activeUntil: Month }
 
 export function useApi () {
   const { user, getAccessTokenSilently, isAuthenticated } = useAuth0()
@@ -220,7 +221,7 @@ export function useApi () {
     },
 
     users: {
-      get: async (): Promise<User[]> => {
+      get: async (): Promise<(UserWAD)[]> => {
         const token = await getAccessToken()
 
         const response = await fetch(`${baseUrl}/api/${tenant}/users`, { headers: { Authorization: `Bearer ${token}` } })
@@ -229,10 +230,15 @@ export function useApi () {
           throw new Error(`Error fetching users: ${await response.text()}`)
         }
 
-        let users = await response.json() as User[]
+        const voborilUserId = 'auth0|637f84e6841043dd7a9d44a1'
+
+        let users = (await response.json()) as User[]
         users = users.filter(u => !excludedUserIds.includes(u.userId))
         sortArrayBy(users, u => u.userName)
-        return users
+        return users.map(u => ({
+          ...u,
+          activeUntil: u.userId === voborilUserId ? {year: 2023, month: 8} : {year: 2999, month: 1}
+        }))
       },
       loggedInUser
     },
