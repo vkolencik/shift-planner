@@ -26,14 +26,8 @@ const testUsers = [
 ]
 
 const excludedUserIds = getInstance() === Instance.Production ? [...inactiveUsers, ...testUsers] : inactiveUsers
-const additionalUsers: User[] = [
-  {
-    userId: 'auth0|637f84e6841043dd7a9d44a1',
-    userName: 'Vobořil'
-  }
-]
 
-  function padDateComponent (value: number): string {
+function padDateComponent (value: number): string {
   return String(value).padStart(2, '0')
 }
 
@@ -237,7 +231,6 @@ export function useApi () {
 
         let users = await response.json() as User[]
         users = users.filter(u => !excludedUserIds.includes(u.userId))
-        users = [ ...users, ...additionalUsers ]
         sortArrayBy(users, u => u.userName)
         return users
       },
