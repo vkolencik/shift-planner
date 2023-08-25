@@ -87,7 +87,7 @@ export interface Leave {
   day: Day
 }
 
-export type UserWAD = User & { activeUntil: Day }
+export type UserWAD = User & { activeUntil: Month }
 
 export function useApi () {
   const { user, getAccessTokenSilently, isAuthenticated } = useAuth0()
@@ -237,7 +237,7 @@ export function useApi () {
         sortArrayBy(users, u => u.userName)
         return users.map(u => ({
           ...u,
-          activeUntil: u.userId === voborilUserId ? toDay('2023-08-31') : toDay('2999-01-01')
+          activeUntil: u.userId === voborilUserId ? {year: 2023, month: 8} : {year: 2999, month: 1}
         }))
       },
       loggedInUser

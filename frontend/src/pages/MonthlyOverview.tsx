@@ -5,7 +5,7 @@ import {
   getActiveMonth,
   getNumberOfDaysOfMonth,
   isWeekend,
-  parseDate, Month, addMonths, getMonthLabel
+  parseDate, Month, addMonths, getMonthLabel, compareMonths
 } from '../dates'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { Button, ButtonGroup, ButtonToolbar, Table } from 'react-bootstrap'
@@ -113,7 +113,7 @@ export function MonthlyOverview (): JSX.Element {
 }
 
 export const MonthlyOverviewInner: React.FC<{requirements: MonthRequirements, month: Month}> = ({ month, requirements } ) => {
-  const users = useUserList()
+  const users = useUserList().filter(u => compareMonths(u.activeUntil, month) >= 0)
 
   const daysInMonth = getNumberOfDaysOfMonth(month)
   const days = new Array(daysInMonth).fill(1).map((_, i) => i + 1)
