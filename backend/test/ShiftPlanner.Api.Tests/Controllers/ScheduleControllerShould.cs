@@ -24,7 +24,7 @@ public abstract class ScheduleControllerShould
 
             var scheduledShift = new ScheduledShift(new Day(month, 3), workplace, new User("user1", "Mr. User 1", "user1@krtek.me", User.MaxDate));
             var storedSchedule = new Schedule(new[] {scheduledShift});
-            var expectedOutputShifts = new[] {new ShiftAssignmentOutputModel("2027-07-03", "ABC", new UserOutputModel("user1", "Mr. User 1", "2999-01"))};
+            var expectedOutputShifts = new[] {new ShiftAssignmentOutputModel("2027-07-03", "ABC", new UserOutputModel("user1", "Mr. User 1"))};
 
             _storedScheduleServiceMock
                 .Setup(_ => _.GetSchedule(month))
@@ -75,7 +75,7 @@ public abstract class ScheduleControllerShould
 
             IReadOnlyCollection<ValidationErrorOutputModel> errors = new[]
             {
-                new ValidationErrorOutputModel(new[] {new ShiftOutputModel(dayString, workplace.Name)}, new ScheduleUserOutputModel(user.UserId, user.UserName), "Unknown")
+                new ValidationErrorOutputModel(new[] {new ShiftOutputModel(dayString, workplace.Name)}, new UserOutputModel(user.UserId, user.UserName), "Unknown")
             };
 
             var expectedSchedule = new Schedule(
@@ -108,7 +108,7 @@ public abstract class ScheduleControllerShould
             Assert.False(outputModel.IsValid);
             var error = Assert.Single(outputModel.ValidationErrors);
             Assert.Equal("Unknown", error.Error);
-            Assert.Equal(new ScheduleUserOutputModel(user.UserId, user.UserName), error.User);
+            Assert.Equal(new UserOutputModel(user.UserId, user.UserName), error.User);
             Assert.Equal(new ShiftOutputModel(dayString, workplace.Name), error.Shifts.Single());
         }
     }

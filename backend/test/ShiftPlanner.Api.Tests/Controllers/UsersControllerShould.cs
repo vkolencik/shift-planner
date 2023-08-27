@@ -21,7 +21,7 @@ public class UsersControllerShould
     {
         var expectedUsers = new []
         {
-            new UserOutputModel("user1", "User 1", "2023-08")
+            new FullUserOutputModel("user1", "User 1", "2023-08")
         };
         _userServiceMock
             .Setup(_ => _.GetAllUsers())
@@ -33,7 +33,7 @@ public class UsersControllerShould
         
         var result = Assert.IsType<OkObjectResult>(response.Result);
         Assert.NotNull(result.Value);
-        var users = (IEnumerable<UserOutputModel>) result.Value!;
+        var users = (IEnumerable<FullUserOutputModel>) result.Value!;
         Assert.Equal(expectedUsers, users);
     }
 }

@@ -16,10 +16,10 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserOutputModel>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<FullUserOutputModel>>> GetUsers()
     {
         var users = await _userService.GetAllUsers();
-        var outputModel = users.Select(u => new UserOutputModel(u.UserId, u.UserName, u.ActiveUntil.ToString()));
+        var outputModel = users.Select(u => new FullUserOutputModel(u.UserId, u.UserName, u.ActiveUntil.ToString()));
         return Ok(outputModel);
     }
 }

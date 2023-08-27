@@ -55,7 +55,7 @@ public class ScheduleController : ControllerBase
             .Select(
                 e => new ValidationErrorOutputModel(
                     e.Shifts.Select(s => new ShiftOutputModel(s.Day.Date.ToString("yyyy-MM-dd"), s.Workplace.Name)).ToArray(),
-                    e.UserName == null ? null : new ScheduleUserOutputModel(users.SingleOrDefault(u => u.UserName == e.UserName)?.UserId ?? "", e.UserName),
+                    e.UserName == null ? null : new UserOutputModel(users.SingleOrDefault(u => u.UserName == e.UserName)?.UserId ?? "", e.UserName),
                     e.ErrorType.ToString())).ToArray();
         var outputModel = new ScheduleValidationOutputModel(!validationErrors.Any(), errorOutputModels);
 
@@ -92,7 +92,7 @@ public class ScheduleController : ControllerBase
     }
 
     private ShiftAssignmentOutputModel ConvertToOutput(ScheduledShift shift) =>
-        new ShiftAssignmentOutputModel(shift.Day.Date.ToString("yyyy-MM-dd"), shift.Workplace.Name, new UserOutputModel(shift.User.UserId, shift.User.UserName, shift.User.ActiveUntil.ToString()));
+        new ShiftAssignmentOutputModel(shift.Day.Date.ToString("yyyy-MM-dd"), shift.Workplace.Name, new UserOutputModel(shift.User.UserId, shift.User.UserName));
 }
 
 public record ScheduleOutputModel(IReadOnlyList<ShiftAssignmentOutputModel> Shifts);
@@ -107,4 +107,4 @@ public record ShiftAssignmentInputModel(string Day, string Workplace, string Use
 
 public record ScheduleValidationOutputModel(bool IsValid, IReadOnlyCollection<ValidationErrorOutputModel> ValidationErrors);
 
-public record ValidationErrorOutputModel(IReadOnlyCollection<ShiftOutputModel> Shifts, ScheduleUserOutputModel? User, string Error);
+public record ValidationErrorOutputModel(IReadOnlyCollection<ShiftOutputModel> Shifts, UserOutputModel? User, string Error);
