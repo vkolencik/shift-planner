@@ -232,14 +232,12 @@ export function useApi () {
           throw new Error(`Error fetching users: ${await response.text()}`)
         }
 
-        const voborilUserId = 'auth0|637f84e6841043dd7a9d44a1'
-
         let users = (await response.json()) as UserApiModel[]
         users = users.filter(u => !excludedUserIds.includes(u.userId))
         sortArrayBy(users, u => u.userName)
         return users.map(u => ({
           ...u,
-          activeUntil: u.userId === voborilUserId ? {year: 2023, month: 8} : parseMonth(u.activeUntil)
+          activeUntil: parseMonth(u.activeUntil)
         }))
       },
       loggedInUser

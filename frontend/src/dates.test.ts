@@ -4,7 +4,8 @@ import {
   getDayOfWeekNumber,
   isMonthWritable,
   isWeekend,
-  Month, parseMonth,
+  Month,
+  parseMonth,
   toDay
 } from './dates'
 
