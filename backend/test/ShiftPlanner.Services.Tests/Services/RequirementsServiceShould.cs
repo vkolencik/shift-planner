@@ -83,12 +83,14 @@ public class RequirementsServiceShould
     {
         var tenant = TestData.Tenant;
         var month = TestData.Month;
+        var user1 = TestData.TestUser();
+        var user2 = TestData.TestUser();
         
         var expectedRequirements = new[]
         {
-            new UserRequirementModel("user1", "User 1", new Day(2022, 12, 2), "hard-no", null),
-            new UserRequirementModel("user2", "User 2", new Day(2022, 12, 3), "soft-yes", null),
-            new UserRequirementModel("user2", "User 2", new Day(2022, 12, 4), "leave", true),
+            new UserRequirementModel(user1.UserId, user1.UserName, new Day(2022, 12, 2), "hard-no", null),
+            new UserRequirementModel(user2.UserId, user2.UserName, new Day(2022, 12, 3), "soft-yes", null),
+            new UserRequirementModel(user2.UserId, user2.UserName, new Day(2022, 12, 4), "leave", true),
         };
 
         _repositoryMock
@@ -96,18 +98,18 @@ public class RequirementsServiceShould
             .ReturnsAsync(
                 new[]
                 {
-                    new Requirement(TestData.Tenant, "user1", new Day(2022, 12, 2), "hard-no"),
-                    new Requirement(TestData.Tenant, "user2", new Day(2022, 12, 3), "soft-yes"),
-                    new Requirement(TestData.Tenant, "user2", new Day(2022, 12, 4), "leave", true),
-                    new Requirement(TestData.Tenant, "deleted-user", new Day(2022, 12, 4), "leave", true),
+                    new Requirement(TestData.Tenant, user1.UserId, new Day(2022, 12, 2), "hard-no"),
+                    new Requirement(TestData.Tenant, user2.UserId, new Day(2022, 12, 3), "soft-yes"),
+                    new Requirement(TestData.Tenant, user2.UserId, new Day(2022, 12, 4), "leave", true),
+                    new Requirement(TestData.Tenant, "deleted-user-id", new Day(2022, 12, 4), "leave", true),
                 });
 
         _userServiceMock
             .Setup(_ => _.GetAllUsers())
             .ReturnsAsync(new []
             {
-                TestData.TestUser(), 
-                TestData.TestUser(), 
+                user1, 
+                user2, 
             });
         
         var service = CreateService();

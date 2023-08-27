@@ -19,7 +19,7 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<IEnumerable<UserOutputModel>>> GetUsers()
     {
         var users = await _userService.GetAllUsers();
-        var outputModel = users.Select(u => new UserOutputModel(u.UserId, u.UserName, "TODO-asoidjf"));
+        var outputModel = users.Select(u => new UserOutputModel(u.UserId, u.UserName, u.ActiveUntil.ToString()));
         return Ok(outputModel);
     }
 }

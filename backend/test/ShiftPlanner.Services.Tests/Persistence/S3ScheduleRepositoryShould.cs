@@ -63,8 +63,8 @@ public class S3ScheduleRepositoryShould
     {
         var prefix = "2023/06/";
         var storedScheduleKey = prefix + "abc123.json";
-        var userId = "user-id-1";
         var user = TestData.TestUser();
+        var userId = user.UserId;
 
         var storedSchedule = new {Shifts = new[] {new {Day = "2023-06-01", Workplace = "X7", UserId = userId}}};
 

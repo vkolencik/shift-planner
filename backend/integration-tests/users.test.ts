@@ -30,7 +30,7 @@ describe('Users endpoint should', () => {
       {
         userId: deactivatedUserId,
         userName: deactivatedUserName,
-        activeUntil: deactivatedUserActiveUntilDate
+        activeUntil: deactivatedUserActiveUntilMonth
       }
     ]))
   })

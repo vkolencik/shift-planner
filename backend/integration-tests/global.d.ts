@@ -9,7 +9,7 @@ declare global {
   let testUser2Name: string
   let deactivatedUserId: string
   let deactivatedUserName: string
-  let deactivatedUserActiveUntilDate: string
+  let deactivatedUserActiveUntilMonth: string
 }
 
 export {}

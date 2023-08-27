@@ -14,7 +14,7 @@ const config: Config = {
     testUser2Name: 'Test User 2',
     deactivatedUserId: 'auth0|64e321894601e446d813236e',
     deactivatedUserName: 'Deactivated User',
-    deactivatedUserActiveUntilDate: '2023-08-21',
+    deactivatedUserActiveUntilMonth: '2020-08',
     'ts-jest': {
       tsconfig: 'tsconfig.json'
     }

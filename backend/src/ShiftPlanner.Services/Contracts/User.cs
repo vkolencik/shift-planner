@@ -1,6 +1,8 @@
-﻿namespace ShiftPlanner.Services.Contracts;
+﻿using ShiftPlanner.Domain;
 
-public record User(string UserId, string UserName, string Email, DateOnly ActiveUntil)
+namespace ShiftPlanner.Services.Contracts;
+
+public record User(string UserId, string UserName, string Email, ScheduledMonth ActiveUntil)
 {
-    public static readonly DateOnly MaxDate = new DateOnly(2999, 1, 1);
+    public static readonly ScheduledMonth MaxDate = new ScheduledMonth(2999, 1);
 }

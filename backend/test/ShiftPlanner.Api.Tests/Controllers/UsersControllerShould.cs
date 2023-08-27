@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ShiftPlanner.Api.Controllers;
+using ShiftPlanner.Domain;
 using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Services;
 
@@ -20,11 +21,11 @@ public class UsersControllerShould
     {
         var expectedUsers = new []
         {
-            new UserOutputModel("user1", "User 1", "2023-08-21")
+            new UserOutputModel("user1", "User 1", "2023-08")
         };
         _userServiceMock
             .Setup(_ => _.GetAllUsers())
-            .ReturnsAsync(new[] {new User("user1", "User 1", "user1@krtek.me", new DateOnly(2023, 08, 21))});
+            .ReturnsAsync(new[] {new User("user1", "User 1", "user1@krtek.me", new ScheduledMonth(2023, 08))});
         
         var usersController = new UsersController(_userServiceMock.Object);
 

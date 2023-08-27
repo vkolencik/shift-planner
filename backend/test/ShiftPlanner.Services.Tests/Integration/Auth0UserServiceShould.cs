@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Amazon.SecretsManager;
 using Microsoft.Extensions.Logging.Abstractions;
+using ShiftPlanner.Domain;
 using ShiftPlanner.Services.Contracts;
 using ShiftPlanner.Services.Infra;
 using ShiftPlanner.Services.Services;
@@ -20,7 +21,7 @@ public class Auth0UserServiceShould
         var users = await service.GetAllUsers();
 
         var expectedActiveUser = new User("auth0|633015ee115794a47e8166d8", "Test User 1", "test_user_1@krtek.me", User.MaxDate);
-        var expectedDeactivatedUser = new User("auth0|64e321894601e446d813236e", "Deactivated User", "deactivated_user@krtek.me", new DateOnly(2023, 08, 21));
+        var expectedDeactivatedUser = new User("auth0|64e321894601e446d813236e", "Deactivated User", "deactivated_user@krtek.me", new ScheduledMonth(2020, 08));
         Assert.Contains(expectedActiveUser, users);
         Assert.Contains(expectedDeactivatedUser, users);
     }

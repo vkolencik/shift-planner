@@ -1,7 +1,10 @@
-﻿using Auth0.ManagementApi;
+﻿using System.Text.RegularExpressions;
+using Auth0.ManagementApi;
 using Auth0.ManagementApi.Models;
 using Auth0.ManagementApi.Paging;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
+using ShiftPlanner.Domain;
 using ShiftPlanner.Services.Contracts;
 using User = ShiftPlanner.Services.Contracts.User;
 
@@ -34,17 +37,24 @@ public class Auth0UserService : IUserService
 
         return users
             .Select(u => new User(u.UserId, u.FullName, u.Email, GetActiveUntilDate(((JObject?) u.AppMetadata)?.GetValue("activeUntil")?.ToString())))
-            .Concat(new [] {new User("auth0|637f84e6841043dd7a9d44a1", "Vobořil", "lukas.voboril@bulovka.cz")})
+            .Concat(new [] {new User("auth0|637f84e6841043dd7a9d44a1", "Vobořil", "lukas.voboril@bulovka.cz", new ScheduledMonth(2023, 8))})
             .ToArray();
     }
 
-    private DateOnly GetActiveUntilDate(string? activeUntil)
+    private ScheduledMonth GetActiveUntilDate(string? activeUntil)
     {
         if (activeUntil is null)
         {
             return User.MaxDate;
         }
 
-        return DateOnly.ParseExact(activeUntil, "yyyy-MM-dd");
+        var match = Regex.Match(activeUntil, @"^(\d+)-(\d+)$", RegexOptions.Singleline);
+
+        if (!match.Success || match.Groups.Count != 3)
+        {
+            throw new ArgumentException($"Cannot parse month {activeUntil}", nameof(activeUntil));
+        }
+        
+        return new ScheduledMonth(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
     }
 }

@@ -12,11 +12,11 @@ public abstract class ScheduleValidatingConstraintReceiverShould
     private static readonly Day Day1 = new Day(2023, 01, 01);
     private static readonly Day Day2 = new Day(2023, 01, 02);
     private static readonly User User1 = TestData.TestUser();
-    private static readonly Employee Employee1 = new Employee("User 1", CompetenceLevel.Level1, Capabilities, Workload.Infinite);
+    private static readonly Employee Employee1 = new Employee(User1.UserName, CompetenceLevel.Level1, Capabilities, Workload.Infinite);
     private static readonly User User2 = TestData.TestUser();
-    private static readonly Employee Employee2 = new Employee("User 2", CompetenceLevel.Level1, Capabilities, Workload.Infinite);
+    private static readonly Employee Employee2 = new Employee(User2.UserName, CompetenceLevel.Level1, Capabilities, Workload.Infinite);
     private static readonly User User3 = TestData.TestUser();
-    private static readonly Employee Employee3 = new Employee("User 3", CompetenceLevel.Level1, Capabilities, Workload.Infinite);
+    private static readonly Employee Employee3 = new Employee(User3.UserName, CompetenceLevel.Level1, Capabilities, Workload.Infinite);
 
     private static readonly Schedule Schedule = new Schedule(
         new[]
