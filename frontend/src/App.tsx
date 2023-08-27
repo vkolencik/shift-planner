@@ -14,6 +14,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { Leaves } from './pages/Leaves'
 import { Test } from './Test'
+import { Conferences } from './Conferences'
 
 function App () {
   const navigate = useNavigate()
@@ -55,7 +56,7 @@ function App () {
             <Route path="/dovolene" element={<Leaves/>}/>
             <Route path="/sluzby" element={<MonthSchedule/>}/>
             <Route path="/sluzby/:year/:month/editace" element={<MonthScheduleEdit/>}/>
-            <Route path="/konference" element={<h1>Konference</h1>}/>
+            <Route path="/konference" element={<Conferences/>}/>
             <Route path="/test" element={<Test/>}/>
           </Routes>
         </div>

@@ -2,9 +2,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { getBaseUrl, getInstance, Instance } from '../instance-config'
 import { Moment } from 'moment'
-import { Day, getMonth, Month, parseDate, parseMonth, toDay } from '../dates'
+import { Day, Month, parseMonth, toDay } from '../dates'
 import { sortArrayBy } from '../sort-array-by'
-import { aggregateRequirements } from '../requirements/aggregate-requirements'
 
 const baseUrl = getBaseUrl()
 const tenant = 'fnb'
