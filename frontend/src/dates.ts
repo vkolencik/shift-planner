@@ -167,3 +167,12 @@ export function getMonthDay (date: Day): number {
   const moment = getMoment(date)
   return moment.date()
 }
+
+export function parseMonth (month: string): Month {
+  const matches = month.match(/^(\d+)-(\d+)$/)
+  if (matches === null || matches.length !== 3) {
+    throw new Error(`Cannot parse month ${month}`)
+  }
+
+  return { year: parseInt(matches[1], 10), month: parseInt(matches[2], 10) }
+}

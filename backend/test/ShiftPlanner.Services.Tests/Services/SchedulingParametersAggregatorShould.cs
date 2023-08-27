@@ -32,16 +32,16 @@ public class SchedulingParametersAggregatorShould
         var e2Capabilities = new Capabilities(new WorkplaceCapability[] {new WorkplaceCapability.Red(workplace), new WorkplaceCapability.Green(new Workplace("w2"), 100)});
 
         var employee1 = new Employee("e1", CompetenceLevel.Level1, e1Capabilities, new Workload(5, 7));
-        var user1 = new User("uid1", "u1", "eml1@krtek.me");
+        var user1 = TestData.TestUser();
 
         var employee2 = new Employee("e2", CompetenceLevel.Level2, e2Capabilities, new Workload(5, 7));
-        var user2 = new User("uid2", "u2", "eml2@krtek.me");
+        var user2 = TestData.TestUser();
 
         var employee3 = new Employee("e3", CompetenceLevel.Level3, e2Capabilities, new Workload(5, 7));
-        var user3 = new User("uid3", "u3", "eml3@krtek.me");
+        var user3 = TestData.TestUser();
 
         var employee4 = new Employee("e4", CompetenceLevel.Level4, e2Capabilities, new Workload(5, 7));
-        var user4 = new User("uid4", "u4", "eml4@krtek.me");
+        var user4 = TestData.TestUser();
 
         var leave1 = new Leave(month.Days.First(), month.Days.First());
         var leave2 = new Leave(month.Days.Skip(10).First(), month.Days.Skip(10).First(), false);
@@ -85,14 +85,8 @@ public class SchedulingParametersAggregatorShould
 
         _usersServiceMock
             .Setup(_ => _.GetAllUsers())
-            .ReturnsAsync(new[]
-            {
-                new User(user1.UserId, user1.UserName, user1.Email), 
-                new User(user2.UserId, user2.UserName, user2.Email),
-                new User(user3.UserId, user3.UserName, user3.Email),
-                new User(user4.UserId, user4.UserName, user4.Email),
-            });
-
+            .ReturnsAsync(new[] {user1, user2, user3, user4});
+        
         _storedScheduleServiceMock.Setup(_ => _.GetSchedule(lastMonth)).ReturnsAsync(lastMonthSchedule);
 
         IEnumerable<EmployeeMonth> expectedEmployeeMonths = new[]

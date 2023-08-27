@@ -5,6 +5,7 @@ import {
   isMonthWritable,
   isWeekend,
   Month,
+  parseMonth,
   toDay
 } from './dates'
 
@@ -96,5 +97,11 @@ describe('dates should', () => {
 
       expect(isWritable).toEqual(data.shouldBeWritable)
     }))
+  })
+
+  describe(parseMonth.name, () => {
+    const month = parseMonth('2022-04')
+
+    expect(month).toEqual({year: 2022, month: 4})
   })
 })

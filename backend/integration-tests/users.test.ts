@@ -21,11 +21,18 @@ describe('Users endpoint should', () => {
     expect(users).toEqual(expect.arrayContaining([
       {
         userId: testUserId,
-        userName: testUserName
+        userName: testUserName,
+        activeUntil: '2999-01'
       },
       {
         userId: testUser2Id,
-        userName: testUser2Name
+        userName: testUser2Name,
+        activeUntil: '2999-01'
+      },
+      {
+        userId: deactivatedUserId,
+        userName: deactivatedUserName,
+        activeUntil: deactivatedUserActiveUntilMonth
       }
     ]))
   })

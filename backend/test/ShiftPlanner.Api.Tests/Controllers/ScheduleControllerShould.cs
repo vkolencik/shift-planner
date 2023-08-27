@@ -22,7 +22,7 @@ public abstract class ScheduleControllerShould
             var workplace = new Workplace("ABC");
             var month = new ScheduledMonth(2027, 7);
 
-            var scheduledShift = new ScheduledShift(new Day(month, 3), workplace, new User("user1", "Mr. User 1", "user1@krtek.me"));
+            var scheduledShift = new ScheduledShift(new Day(month, 3), workplace, new User("user1", "Mr. User 1", "user1@krtek.me", User.MaxDate));
             var storedSchedule = new Schedule(new[] {scheduledShift});
             var expectedOutputShifts = new[] {new ShiftAssignmentOutputModel("2027-07-03", "ABC", new UserOutputModel("user1", "Mr. User 1"))};
 
@@ -67,7 +67,7 @@ public abstract class ScheduleControllerShould
         [Fact]
         public async Task RejectSchedule_GivenInvalidSchedule()
         {
-            var user = new User("user-1", "User 1", "user1@krtek.me");
+            var user = new User("user-1", "User 1", "user1@krtek.me", User.MaxDate);
             var day = new Day(2023, 1, 5);
             var dayString = "2023-01-05";
             var workplace = new Workplace("ARO");
@@ -118,7 +118,7 @@ public abstract class ScheduleControllerShould
         [Fact]
         public async Task SaveSchedule()
         {
-            var user = new User("user-1", "User 1", "user1@krtek.me");
+            var user = new User("user-1", "User 1", "user1@krtek.me", User.MaxDate);
             var day = new Day(2023, 1, 5);
             var dayString = "2023-01-05";
             var workplace = new Workplace("ARO");
