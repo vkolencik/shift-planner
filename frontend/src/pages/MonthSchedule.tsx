@@ -19,7 +19,7 @@ import { workplaces } from '../domain'
 import { Permission, usePermissions } from '../auth/auth'
 import { Printer } from 'react-bootstrap-icons'
 
-const currentMonth: Month = { year: 2023, month: 10 }
+const currentMonth: Month = { year: 2023, month: 9 }
 const maxMonth: Month = { year: 2023, month: 9 }
 
 function getUserShiftEntries (schedule: Schedule): [string, number][] {
