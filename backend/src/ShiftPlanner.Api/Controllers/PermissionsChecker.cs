@@ -4,15 +4,20 @@ namespace ShiftPlanner.Api.Controllers;
 
 class PermissionsChecker : IPermissionsChecker
 {
-    private const int RequirementsDeadlineDate = 5;
+    private const int DefaultRequirementsDeadlineDate = 5;
     private const int RequirementsOpenDate = 25;
     private readonly IUserAccessor _userAccessor;
     private readonly IClock _clock;
+    private readonly IDictionary<ScheduledMonth, int> RequirementsDeadlineDateExceptions;
 
     public PermissionsChecker(IUserAccessor userAccessor, IClock clock)
     {
         _userAccessor = userAccessor;
         _clock = clock;
+        RequirementsDeadlineDateExceptions = new Dictionary<ScheduledMonth, int>
+        {
+            [new ScheduledMonth(2023, 11)] = 15
+        };
     }
 
     public bool CanReadRequirementsOfUser(string userId)
@@ -55,7 +60,12 @@ class PermissionsChecker : IPermissionsChecker
                 editedDay.Month == activeMonth.Month
                 || IsSummerMonth(editedDay.Month) && activeMonth.Month == July))
         {
-            var isReadOnly = activeMonthAfterMonths == 1 && today.DayOfMonth > RequirementsDeadlineDate;
+            if (!RequirementsDeadlineDateExceptions.TryGetValue(new ScheduledMonth(activeMonth.Year, activeMonth.Month), out var deadlineDate))
+            {
+                deadlineDate = DefaultRequirementsDeadlineDate;
+            }
+
+            var isReadOnly = activeMonthAfterMonths == 1 && today.DayOfMonth > deadlineDate;
 
             return !isReadOnly;
         }

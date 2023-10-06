@@ -97,7 +97,10 @@ export function isMonthWritable (editedMonth: Month): boolean {
   if (compareMonths(editedMonth, activeMonth) == 0
     || isSummerMonth(editedMonth) && activeMonth.month === july && activeMonth.year === editedMonth.year) {
     const todayDate = today.date()
-    return todayDate >= 20 || todayDate <= 5
+    const requirementsOpenDate = 25
+    let requirementsCloseDateExceptions: { month: Month, deadline: number }[] = [ { month: { year: 2023, month: 11 }, deadline: 15 }]
+    const requirementsCloseDate = requirementsCloseDateExceptions.find(e => compareMonths(e.month, editedMonth) === 0)?.deadline || 5
+    return todayDate >= requirementsOpenDate || todayDate <= requirementsCloseDate
   }
 
   return false;

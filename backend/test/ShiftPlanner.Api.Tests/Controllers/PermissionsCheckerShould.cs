@@ -88,6 +88,8 @@ public abstract class PermissionsCheckerShould
         [InlineData("Requirement for summer month 2 on summer month 1 - start of period", 6, 25, 8, 1, false)]
         [InlineData("Requirement for summer month 2 on summer month 1 - end of period", 7, 5, 8, 1, false)]
         [InlineData("Requirement far in the future", 3, 1, 6, 1, false)]
+        [InlineData("Special case for 2023-10 before deadline", 10, 6, 11, 1, true)]
+        [InlineData("Special case for 2023-10 after deadline", 10, 16, 11, 1, false)]
 #pragma warning disable xUnit1026
         public void DisallowModificationAfterCutoffDate(string description, int currentMonth, int currentDay, int requirementMonth, int requirementDay, bool isPermitted)
 #pragma warning restore xUnit1026
