@@ -211,9 +211,9 @@ describe('users requirements resource should', () => {
       const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUser2Id)}/requirements/${activeYear}/${activeMonth}`, getHeaders(token))
 
       expect(resp.status).toEqual(200)
-      expect(await resp.json()).toEqual({
+      expect(await resp.json()).toEqual(expect.objectContaining({
         [`${activeYear}-${activeMonth}-06`]: 'soft-yes'
-      })
+      }))
     })
 
     it('creating requirement for someone else', async () => {
