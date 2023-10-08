@@ -22,7 +22,7 @@ public class WorkplacePreferencePercentagesRule : IRule
         IScheduleConstraintReceiver target,
         EmployeeMonth employeeMonth)
     {
-        foreach (var capability in employeeMonth.Employee.Capabilities.WorkplaceCapabilities
+        foreach (var capability in employeeMonth.Employee.Capabilities.WorkplaceCapabilities.Where(wc => _parameters.Workplaces.Contains(wc.Workplace))
                      .OfType<WorkplaceCapability.Green>())
         {
             var employeeStandardForWorkplace = _standardCalculator.ComputeStandard(employeeMonth, (double) capability.PreferencePercentage / 100);

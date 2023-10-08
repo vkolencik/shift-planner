@@ -29,6 +29,9 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
 
         var activeEmployeeInfos = employeeInfos.Where(e => e.EmployeeStatus == EmployeeStatus.Active);
 
+        var competenceGroups = CompetenceGroup.CompetenceGroups;
+        var activeWorkplaces = competenceGroups.SelectMany(cg => cg.Workplaces);
+
         var employeeRequirements = await _requirementsService.GetRequirementsOverviewForMonth(tenant, month);
 
         var users = await _userService.GetAllUsers();
@@ -42,7 +45,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
             .ToArray();
 
         var previousMonth = month.Previous;
-        var existingShifts = (await _storedScheduleService.GetSchedule(previousMonth)).Shifts;
+        var existingShifts = (await _storedScheduleService.GetSchedule(previousMonth))?.Shifts ?? Array.Empty<ScheduledShift>();
 
         var missingUsers = existingShifts.Select(s => s.User.Email).ToHashSet().Except(employeeInfos.Select(ei => ei.Email).ToHashSet()).ToArray();
 
@@ -69,13 +72,14 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
             .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
             .Concat(externalEmployeeShiftAssignments)
             .Where(sa => sa.Shift.Day.ScheduledMonth == month)
+            .Where(sa => activeWorkplaces.Contains(sa.Shift.Workplace))
             .ToArray();
 
         return new MonthScheduleParameters(
             month,
             new[] {externalChirurgove, externalMencl, externalCerny, externalKral},
             activeEmployeeMonths,
-            CompetenceGroup.CompetenceGroups,
+            competenceGroups,
             lastMonthShifts,
             predefinedShifts,
             Workplace.WeekendInterchangeabilityGroups);

@@ -27,7 +27,7 @@ import { sortArrayBy } from '../sort-array-by'
 import { Link, useParams } from 'react-router-dom'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { workplaces } from '../domain'
+import { getWorkplaces } from '../domain'
 import { UserSelectModal } from '../UserSelectModal'
 import { toast } from 'react-toastify'
 
@@ -206,14 +206,14 @@ export function MonthScheduleEdit (): JSX.Element {
                 <thead className="thead-light table-primary table-bordered">
                 <tr>
                   <th></th>
-                  {workplaces.map(w => <th scope="col">{w}</th>)}
+                  {getWorkplaces(month).map(w => <th scope="col">{w}</th>)}
                 </tr>
                 </thead>
                 <tbody>
                 {getMonthDates(month).map((d) =>
                   (<tr className={isWeekend(d) ? 'table-success' : ''}>
                     <th scope="row">{formatDate(d)} ({getDayOfWeekName(d)})</th>
-                    {workplaces.map(w =>
+                    {getWorkplaces(month).map(w =>
                       <ShiftCell
                         user={schedule?.shifts?.find(s => s.day === d && s.workplace === w)?.user!}
                         coords={{ day: d, workplace: w }}

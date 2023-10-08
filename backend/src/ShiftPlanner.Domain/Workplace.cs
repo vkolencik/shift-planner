@@ -11,10 +11,10 @@ public record Workplace(string Name)
 
     public static readonly IList<Workplace> Workplaces = new[] {A1, A2, A3, Res, Kpr, Urg};
 
-    public static readonly IReadOnlyCollection<ISet<Workplace>> WeekendInterchangeabilityGroups =
-    new [] {
-        new HashSet<Workplace> {Kpr, Urg}
-    };
+    public static readonly IReadOnlyCollection<ISet<Workplace>> WeekendInterchangeabilityGroups = Array.Empty<ISet<Workplace>>();
+    // new [] {
+        // new HashSet<Workplace> {Kpr, Urg}
+    // };
 
     public override string ToString() => Name;
 }
