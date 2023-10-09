@@ -54,8 +54,13 @@ namespace ShiftPlanner.Engine.SchedulingEngine
                 foreach (var workplace in _workplaces)
                 {
                     var assignedEmployee = _employees
-                        .Single(e => _solver.Result(VariableName.Schedule(e.Value, day.Value, workplace.Value)) == 1)
+                        .SingleOrDefault(e => _solver.Result(VariableName.Schedule(e.Value, day.Value, workplace.Value)) == 1)
                         .Key;
+
+                    if (assignedEmployee is null)
+                    {
+                        continue;
+                    }
 
                     outputModel.Add(new ShiftAssignment(assignedEmployee, day.Key, workplace.Key));
                 }

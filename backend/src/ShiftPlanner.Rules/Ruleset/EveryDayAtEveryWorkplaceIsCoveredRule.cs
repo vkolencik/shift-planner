@@ -2,8 +2,6 @@
 
 namespace ShiftPlanner.Rules.Ruleset;
 
-// A2, KPR
-
 public class EveryDayAtEveryWorkplaceIsCoveredRule : IRule
 {
     private readonly ISolverParameters _parameters;

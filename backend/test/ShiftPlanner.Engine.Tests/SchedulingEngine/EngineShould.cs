@@ -45,7 +45,7 @@ public class EngineShould
     [Fact]
     public void CreateOutputModel()
     {
-        var input = CreateBasicInput();
+        var input = CreateBasicInput() with {Workplaces = new[] {new Workplace("1"), new Workplace("2"), new Workplace("3")}};
         for (int day = 1; day <= input.Days.Count; day++)
         {
             var d = day;
@@ -59,6 +59,11 @@ public class EngineShould
             _solverMock.Setup(_ => _.Result(VariableName.Schedule(1, d, 2))).Returns(0);
             _solverMock.Setup(_ => _.Result(VariableName.Schedule(2, d, 2))).Returns(day % 2);
             _solverMock.Setup(_ => _.Result(VariableName.Schedule(3, d, 2))).Returns((day + 1) % 2);
+
+            // Third workplace is empty all the time:
+            _solverMock.Setup(_ => _.Result(VariableName.Schedule(1, d, 3))).Returns(0);
+            _solverMock.Setup(_ => _.Result(VariableName.Schedule(2, d, 3))).Returns(0);
+            _solverMock.Setup(_ => _.Result(VariableName.Schedule(3, d, 3))).Returns(0);
         }
 
         var engine = CreateEngine(input);
@@ -86,6 +91,12 @@ public class EngineShould
             Assert.Equal(
                 input.Employees.ElementAt(2),
                 schedule.GetAssignedEmployee(new Shift(new Day(2022, 2, d), input.Workplaces.ElementAt(1))));
+        }
+
+        foreach (var day in input.Days)
+        {
+            Assert.Null(
+                schedule.GetAssignedEmployee(new Shift(day, input.Workplaces.ElementAt(2))));
         }
     }
 
@@ -160,7 +171,7 @@ public class EngineShould
         return new SolverParameters(new ScheduledMonth(2022, 2).Days, Array.Empty<Employee>(), Array.Empty<Workplace>());
     }
 
-    private static ISolverParameters CreateBasicInput()
+    private static SolverParameters CreateBasicInput()
     {
         var workplace1 = new Workplace("ARO");
         var workplaces = new Workplace[]
