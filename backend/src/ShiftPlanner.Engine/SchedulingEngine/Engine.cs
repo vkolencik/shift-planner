@@ -103,5 +103,15 @@ namespace ShiftPlanner.Engine.SchedulingEngine
                     .Select(s => VariableName.Schedule(_employees[s.Employee], _days[s.Shift.Day], _workplaces[s.Shift.Workplace]))
                     .ToArray());
         }
+
+        public void MaximizeSum(ShiftAssignment[] shiftAssignments)
+        {
+            _solver.MaximizeSum(shiftAssignments.Select(s => 
+                VariableName.Schedule(
+                    _employees[s.Employee],
+                    _days[s.Shift.Day],
+                    _workplaces[s.Shift.Workplace])
+                ).ToArray());            
+        }
     }
 }

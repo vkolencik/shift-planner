@@ -166,6 +166,27 @@ public class EngineShould
         Assert.Null(schedulingResult);
     }
 
+    [Fact]
+    public void MaximizeSumOfVariable()
+    {
+        var input = CreateBasicInput();
+        var engine = CreateEngine(input);
+
+        var variableNames = new [] {VariableName.Schedule(1, 1, 1), VariableName.Schedule(2, 2, 2)};
+        
+        _solverMock.Setup(_ => _.MaximizeSum(variableNames)).Verifiable();
+
+        var shiftAssignments = new []
+        {
+            new ShiftAssignment(input.Employees.First(), input.Days.First(), input.Workplaces.First()),
+            new ShiftAssignment(input.Employees.ElementAt(1), input.Days.ElementAt(1), input.Workplaces.ElementAt(1)),
+        };
+        
+        engine.MaximizeSum(shiftAssignments);
+
+        _solverMock.VerifyAll();
+    }
+    
     private static ISolverParameters CreateEmptyInput()
     {
         return new SolverParameters(new ScheduledMonth(2022, 2).Days, Array.Empty<Employee>(), Array.Empty<Workplace>());
@@ -190,7 +211,7 @@ public class EngineShould
             },
             workplaces);
     }
-
+    
     private Engine.SchedulingEngine.Engine CreateEngine(ISolverParameters input)
     {
         return new Engine.SchedulingEngine.Engine(_solverMock.Object, input);

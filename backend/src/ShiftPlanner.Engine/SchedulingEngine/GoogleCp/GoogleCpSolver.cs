@@ -111,6 +111,12 @@ internal class GoogleCpSolver : ISolver
         }
     }
 
+    public void MaximizeSum(IReadOnlyCollection<VariableName> variableNames)
+    {
+        var variables = variableNames.Select(v => _variables[v]).ToArray();
+        _model.Maximize(LinearExpr.Sum(variables));
+    }
+
     public SolverStatus SolverStatus => _solver.Response.Status switch
     {
         CpSolverStatus.Unknown => SolverStatus.Initialized,
