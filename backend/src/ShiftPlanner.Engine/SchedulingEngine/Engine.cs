@@ -104,7 +104,7 @@ namespace ShiftPlanner.Engine.SchedulingEngine
                     .ToArray());
         }
 
-        public void MaximizeSum(ShiftAssignment[] shiftAssignments)
+        public void MaximizeSum(IReadOnlyCollection<ShiftAssignment> shiftAssignments)
         {
             _solver.MaximizeSum(shiftAssignments.Select(s => 
                 VariableName.Schedule(
