@@ -11,9 +11,11 @@ public class EveryDayAtEveryWorkplaceIsCoveredRuleShould
     {
         var receiverMock = new Mock<IScheduleConstraintReceiver>();
 
-        var capturedSumShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
+        var capturedSumMandatoryShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
+        var capturedSumOptionalShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
         var capturedMaxShifts = new List<IReadOnlyCollection<ShiftAssignment>>();
-        receiverMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedSumShifts), Constraint.Eq, 1));
+        receiverMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedSumMandatoryShifts), Constraint.Eq, 1));
+        receiverMock.Setup(_ => _.AddSumConstraint(Capture.In(capturedSumOptionalShifts), Constraint.Lte, 1));
         receiverMock.Setup(_ => _.MaximizeSum(Capture.In(capturedMaxShifts)));
 
         Day Day1 = new Day(2022, 2, 1);
@@ -33,11 +35,23 @@ public class EveryDayAtEveryWorkplaceIsCoveredRuleShould
 
         rule.Apply(receiverMock.Object);
 
-        Assert.Equal(4, capturedSumShifts.Count);
-        Assert.Contains(new[] {new ShiftAssignment(RulesFixture.Employee1, RulesFixture.Day1, RulesFixture.Workplace1), new ShiftAssignment(RulesFixture.Employee2, RulesFixture.Day1, RulesFixture.Workplace1)}, capturedSumShifts);
-        Assert.Contains(new[] {new ShiftAssignment(RulesFixture.Employee1, RulesFixture.Day1, RulesFixture.Workplace2), new ShiftAssignment(RulesFixture.Employee2, RulesFixture.Day1, RulesFixture.Workplace2)}, capturedSumShifts);
-        Assert.Contains(new[] {new ShiftAssignment(RulesFixture.Employee1, RulesFixture.Day2, RulesFixture.Workplace1), new ShiftAssignment(RulesFixture.Employee2, RulesFixture.Day2, RulesFixture.Workplace1)}, capturedSumShifts);
-        Assert.Contains(new[] {new ShiftAssignment(RulesFixture.Employee1, RulesFixture.Day2, RulesFixture.Workplace2), new ShiftAssignment(RulesFixture.Employee2, RulesFixture.Day2, RulesFixture.Workplace2)}, capturedSumShifts);
+        Assert.Equal(4, capturedSumMandatoryShifts.Count);
+        Assert.Contains(new[] {new ShiftAssignment(RulesFixture.Employee1, RulesFixture.Day1, RulesFixture.Workplace1), new ShiftAssignment(RulesFixture.Employee2, RulesFixture.Day1, RulesFixture.Workplace1)}, capturedSumMandatoryShifts);
+        Assert.Contains(new[] {new ShiftAssignment(RulesFixture.Employee1, RulesFixture.Day1, RulesFixture.Workplace2), new ShiftAssignment(RulesFixture.Employee2, RulesFixture.Day1, RulesFixture.Workplace2)}, capturedSumMandatoryShifts);
+        Assert.Contains(new[] {new ShiftAssignment(RulesFixture.Employee1, RulesFixture.Day2, RulesFixture.Workplace1), new ShiftAssignment(RulesFixture.Employee2, RulesFixture.Day2, RulesFixture.Workplace1)}, capturedSumMandatoryShifts);
+        Assert.Contains(new[] {new ShiftAssignment(RulesFixture.Employee1, RulesFixture.Day2, RulesFixture.Workplace2), new ShiftAssignment(RulesFixture.Employee2, RulesFixture.Day2, RulesFixture.Workplace2)}, capturedSumMandatoryShifts);
+        
+        Assert.Equal(2, capturedSumOptionalShifts.Count);
+        Assert.Contains(new[]
+        {
+            new ShiftAssignment(RulesFixture.Employee1, RulesFixture.Day1, OptionalWorkplace),
+            new ShiftAssignment(RulesFixture.Employee2, RulesFixture.Day1, OptionalWorkplace)
+        }, capturedSumOptionalShifts);
+        Assert.Contains(new[]
+        {
+            new ShiftAssignment(RulesFixture.Employee1, RulesFixture.Day1, OptionalWorkplace),
+            new ShiftAssignment(RulesFixture.Employee2, RulesFixture.Day1, OptionalWorkplace)
+        }, capturedSumOptionalShifts);
         
         var capturedMaxShift = Assert.Single(capturedMaxShifts);
         Assert.Equal(new[]

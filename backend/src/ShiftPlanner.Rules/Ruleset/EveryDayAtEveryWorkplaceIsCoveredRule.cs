@@ -15,13 +15,13 @@ public class EveryDayAtEveryWorkplaceIsCoveredRule : IRule
     {
         foreach (var day in _parameters.Days)
         {
-            foreach (var workplace in _parameters.Workplaces.Where(w => !w.Optional))
+            foreach (var workplace in _parameters.Workplaces)
             {
                 var shiftsOnDayAtWorkplace = _parameters.AllEmployees
                     .Select(e => new ShiftAssignment(e, day, workplace))
                     .ToArray();
 
-                engine.AddSumConstraint(shiftsOnDayAtWorkplace, Constraint.Eq, 1);
+                engine.AddSumConstraint(shiftsOnDayAtWorkplace, workplace.Optional ? Constraint.Lte : Constraint.Eq, 1);
             }
         }
 
