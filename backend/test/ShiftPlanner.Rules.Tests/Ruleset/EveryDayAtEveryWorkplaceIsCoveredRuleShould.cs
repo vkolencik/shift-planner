@@ -20,7 +20,7 @@ public class EveryDayAtEveryWorkplaceIsCoveredRuleShould
         Day Day2 = new Day(2022, 2, 2);
         Workplace Workplace1 = new Workplace("Workplace1");
         Workplace Workplace2 = new Workplace("Workplace2");
-        Workplace OptionalWorkplace = new Workplace("Workplace3");
+        Workplace OptionalWorkplace = new Workplace("Workplace3", true);
         Employee Employee1 = new Employee("Employee1", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Workplace1, 100)}), Workload.Infinite);
         Employee Employee2 = new Employee("Employee2", CompetenceLevel.Level1, new Capabilities(new[] {new WorkplaceCapability.Green(Workplace2, 100)}), Workload.Infinite);
 
@@ -29,9 +29,7 @@ public class EveryDayAtEveryWorkplaceIsCoveredRuleShould
             new[] {Employee1, Employee2},
             new[] {Workplace1, Workplace2, OptionalWorkplace});
 
-        var rule = new EveryDayAtEveryWorkplaceIsCoveredRule(
-            solverParameters,
-            new[] {OptionalWorkplace});
+        var rule = new EveryDayAtEveryWorkplaceIsCoveredRule(solverParameters);
 
         rule.Apply(receiverMock.Object);
 

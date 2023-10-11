@@ -5,14 +5,12 @@ namespace ShiftPlanner.Rules;
 
 public class RulesetFactory : IRulesetFactory
 {
-    private readonly Workplace[] _optionalWorkplaces = {Workplace.A2, Workplace.Kpr};
-
     public IEnumerable<IRule> CreateRuleset(
         IMonthScheduleParameters parameters,
         ScheduleFlexibility flexibility,
         ISchedulingParametersRecorder recorder)
     {
-        yield return new EveryDayAtEveryWorkplaceIsCoveredRule(parameters, _optionalWorkplaces);
+        yield return new EveryDayAtEveryWorkplaceIsCoveredRule(parameters);
         yield return new NoConcurrentShiftsRule(parameters);
 
         yield return new NoConsecutiveShiftsRule(parameters);
