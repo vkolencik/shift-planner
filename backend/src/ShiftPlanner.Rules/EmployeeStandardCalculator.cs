@@ -30,7 +30,7 @@ public class EmployeeStandardCalculator : IEmployeeStandardCalculator
         var standardUb = Math.Min(employeeMonth.Employee.Workload.MaximumShiftsPerMonth * employeeCapacity / daysCount, multiplier * preciseStandard + flexibilityModifier);
 
         return new EmployeeStandard(
-            (uint) Math.Floor(standardLb),
-            (uint) Math.Ceiling(standardUb));
+            0, // (uint) Math.Floor(standardLb),
+            (uint) Math.Ceiling(standardUb) + 3);
     }
 }

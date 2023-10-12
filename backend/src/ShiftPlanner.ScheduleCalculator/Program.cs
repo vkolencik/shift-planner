@@ -26,8 +26,10 @@ static class Program
         Validate(schedulingParams);
 
         Console.Out.WriteLine("Initiating scheduler...");
-        
-        var scheduler = new ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)), new RulesetFactory());
+
+        var flexibilityVariator = new SequenceFlexibilityVariator(new ScheduleFlexibility(50));
+        // var flexibilityVariator = new SingleFlexibilityVariator(new ScheduleFlexibility(50));
+        var scheduler = new ShiftScheduler(flexibilityVariator, new RulesetFactory());
 
         Console.Out.WriteLine("Scheduler ready, computing schedule...");
 
@@ -51,7 +53,7 @@ static class Program
             Console.Out.WriteLine($"Flexibility: {successResult.Flexibility.Degree}");
 
             // await resultRepositoryGoogleSheet.StoreComputedSchedule(month, successResult);
-            // await resultRepositoryS3.StoreComputedSchedule(month, successResult);
+            await resultRepositoryS3.StoreComputedSchedule(month, successResult);
         }
 
         // Console.Out.WriteLine(string.Join('\n', result.SolutionParameters.RecordedStandards.Select(kvp => $"{kvp.Key.Name}: {kvp.Value.Minimum}-{kvp.Value.Maximum}")));
@@ -69,8 +71,7 @@ static class Program
                     .Where(em => em.Employee.Capabilities.AllowedWorkplaces.Contains(w))
                     .Where(em => em.Leaves.All(l => !l.Days.Contains(d)));
                 
-                var c = employees
-                    .Count();
+                var c = employees.Count();
 
                 if (c <= 2) errors.Add("" + d + "-" + w + "-" + string.Join("|", employees.Select(e => e.Employee.Name)));
             }

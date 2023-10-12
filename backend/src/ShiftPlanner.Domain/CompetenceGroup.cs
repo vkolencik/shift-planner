@@ -8,6 +8,6 @@ public record CompetenceGroup(IReadOnlyCollection<Workplace> Workplaces)
         // new CompetenceGroup(new Workplace[] {Workplace.Kpr, Workplace.Res, Workplace.Urg}),
 
         new CompetenceGroup(new Workplace[] {Workplace.A1, Workplace.A2}),
-        new CompetenceGroup(new Workplace[] {Workplace.Kpr, Workplace.Res}),
+        new CompetenceGroup(new Workplace[] {Workplace.Res}),
     };
 }
