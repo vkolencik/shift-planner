@@ -16,7 +16,8 @@ class PermissionsChecker : IPermissionsChecker
         _clock = clock;
         RequirementsDeadlineDateExceptions = new Dictionary<ScheduledMonth, int>
         {
-            [new ScheduledMonth(2023, 11)] = 15
+            [new ScheduledMonth(2023, 11)] = 15,
+            [new ScheduledMonth(2023, 12)] = 10
         };
     }
 
