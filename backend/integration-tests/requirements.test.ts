@@ -9,10 +9,14 @@ describe('users requirements resource should', () => {
   const testTenant = `test-tenant-requirements-${new Date().getTime()}`
 
   const activeMonthDate = moment().add(2, 'months')
+  const previousMonthDate = moment().add(1, 'months')
 
   const activeYear = activeMonthDate.year()
+  const previousMonthYear = previousMonthDate.year()
   const activeMonthNumber = activeMonthDate.month() + 1
+  const previousMonthNumber = previousMonthDate.month() + 1
   const activeMonth: string = (activeMonthNumber < 10 ? '0' : '') + activeMonthNumber
+  const previousMonth: string = (previousMonthNumber < 10 ? '0' : '') + previousMonthNumber
 
   const requirementParams: RequirementParams = {
     tenant: testTenant,
@@ -77,7 +81,7 @@ describe('users requirements resource should', () => {
 
   it('only return requirements for the specified month', async () => {
     await putRequirement({ ...requirementParams, year: activeYear, month: activeMonthNumber, day: 6 }, token)
-    await putRequirement({ ...requirementParams, year: activeYear, month: activeMonthNumber - 1 }, token)
+    await putRequirement({ ...requirementParams, year: previousMonthYear, month: previousMonthNumber - 1 }, token)
 
     const resp = await fetch(`${backendBaseUrl}/api/${testTenant}/users/${encodeURIComponent(testUserId)}/requirements/${activeYear}/${activeMonth}`, getHeaders(token))
 
