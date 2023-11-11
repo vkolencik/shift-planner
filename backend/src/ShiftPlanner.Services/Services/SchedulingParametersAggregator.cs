@@ -62,12 +62,14 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
         var externalMencl = GetExternalEmployee(employeeInfos, "externista-mencl@bulovka.cz");
         var externalCerny = GetExternalEmployee(employeeInfos, "externista-cerny@bulovka.cz");
         var externalKral = GetExternalEmployee(employeeInfos, "adam.kral@bulovka.cz");
+        var externalBilska = GetExternalEmployee(employeeInfos, "externista-bilska@bulovka.cz");
 
         var externalEmployeeShiftAssignments = ArraySegment<ShiftAssignment>.Empty
-                ;
-            // .Concat(GenerateExternalEmployeeShiftAssignments(9, externalChirurgove, new[] {5, 12, 19, 23, 26}))
-            // .Concat(GenerateExternalEmployeeShiftAssignments(9, externalMencl, new int[] {9}))
-            // .Concat(GenerateExternalEmployeeShiftAssignments(9, externalCerny, new[] {20}));
+            .Concat(GenerateExternalEmployeeShiftAssignments(12, externalChirurgove, new[] {5, 12, 19, 26}))
+            .Concat(GenerateExternalEmployeeShiftAssignments(12, externalCerny, new[] {4, 11, 18, 29}))
+            .Concat(GenerateExternalEmployeeShiftAssignments(12, externalBilska, new[] {9, 27}));
+        // .Concat(GenerateExternalEmployeeShiftAssignments(9, externalChirurgove, new[] {5, 12, 19, 23, 26}))
+        // .Concat(GenerateExternalEmployeeShiftAssignments(9, externalMencl, new int[] {9}))
 
         var predefinedShifts = existingShifts
             .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))

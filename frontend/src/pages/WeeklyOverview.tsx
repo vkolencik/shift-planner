@@ -45,6 +45,9 @@ export function CreateWeekView (requirements: UserRequirement[], shifts: ShiftAs
     for (const shift of shifts) {
       view[getDayUserKey(shift.user.userId, shift.day)] = { status: 'shift', workplace: shift.workplace }
       view[getDayUserKey(shift.user.userId, addDays(shift.day, 1))] = { status: 'day-after' }
+      if (compareMonths(getMonth(shift.day), {year: 2023, month:12}) === 0) {
+        view[getDayUserKey(shift.user.userId, addDays(shift.day, 2))] = { status: 'day-after' }
+      }
     }
   }
 

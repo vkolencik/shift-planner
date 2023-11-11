@@ -20,7 +20,7 @@ static class Program
         var aggregator = services.GetRequiredService<ISchedulingParametersAggregator>();
 
         Console.Out.WriteLine("Fetching parameters...");
-        var month = new ScheduledMonth(2023, 11);
+        var month = new ScheduledMonth(2023, 12);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
 
         Validate(schedulingParams);
@@ -52,8 +52,8 @@ static class Program
             Console.Out.WriteLine("Solution found");
             Console.Out.WriteLine($"Flexibility: {successResult.Flexibility.Degree}");
 
-            // await resultRepositoryGoogleSheet.StoreComputedSchedule(month, successResult);
-            await resultRepositoryS3.StoreComputedSchedule(month, successResult);
+            await resultRepositoryGoogleSheet.StoreComputedSchedule(month, successResult);
+            // await resultRepositoryS3.StoreComputedSchedule(month, successResult);
         }
 
         // Console.Out.WriteLine(string.Join('\n', result.SolutionParameters.RecordedStandards.Select(kvp => $"{kvp.Key.Name}: {kvp.Value.Minimum}-{kvp.Value.Maximum}")));
