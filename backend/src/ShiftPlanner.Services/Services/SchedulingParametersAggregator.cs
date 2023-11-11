@@ -80,7 +80,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
 
         return new MonthScheduleParameters(
             month,
-            new[] {externalChirurgove, externalMencl, externalCerny, externalKral},
+            new[] {externalChirurgove, externalMencl, externalCerny, externalKral, externalBilska},
             activeEmployeeMonths,
             competenceGroups,
             lastMonthShifts,
