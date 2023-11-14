@@ -65,6 +65,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
         var externalCerny = GetExternalEmployee(employeeInfos, "externista-cerny@bulovka.cz");
         var externalKral = GetExternalEmployee(employeeInfos, "adam.kral@bulovka.cz");
         var externalBilska = GetExternalEmployee(employeeInfos, "externista-bilska@bulovka.cz");
+        var externalParizek = GetExternalEmployee(employeeInfos, "externista-parizek@bulovka.cz");
 
         var skola = activeEmployeeMonths.Single(em => em.Employee.Name == "Škola").Employee;
 
@@ -72,15 +73,14 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
                 .Concat(GenerateEmployeeShiftAssignments(12, externalChirurgove, new[] {5, 12, 19, 26}, Workplace.Urg))
                 .Concat(GenerateEmployeeShiftAssignments(12, externalCerny, new[] {4, 11, 18, 29}, Workplace.Urg))
                 .Concat(GenerateEmployeeShiftAssignments(12, externalBilska, new[] {9, 27}, Workplace.Urg))
-                .Concat(GenerateEmployeeShiftAssignments(12, externalBilska, new[] {9, 27}, Workplace.Urg))
-                .Concat(GenerateEmployeeShiftAssignments(12, skola, new[] {
-                    1, 
-                    3, 
-                    5, 
-                    12, 
-                    19, 
-                    31
-                    
+                .Concat(GenerateEmployeeShiftAssignments(12, externalParizek, new[] {18, 20, 22}, Workplace.Res))
+                .Concat(GenerateEmployeeShiftAssignments(12, skola, new int[] {
+                // 1, 
+                // 3, 
+                5, 
+                12, 
+                19, 
+                31
                 }, Workplace.Res))
             ;
         
@@ -96,7 +96,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
 
         return new MonthScheduleParameters(
             month,
-            new[] {externalChirurgove, externalMencl, externalCerny, externalKral, externalBilska},
+            new[] {externalChirurgove, externalMencl, externalCerny, externalKral, externalBilska, externalParizek},
             activeEmployeeMonths,
             competenceGroups,
             lastMonthShifts,

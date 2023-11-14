@@ -2,10 +2,10 @@ namespace ShiftPlanner.Domain;
 
 public record Workplace(string Name, bool Optional = false)
 {
-    public static readonly Workplace A1 = new Workplace("A1", false);
-    public static readonly Workplace A2 = new Workplace("A2", false);
+    public static readonly Workplace A1 = new Workplace("A1", true);
+    public static readonly Workplace A2 = new Workplace("A2", true);
     public static readonly Workplace A3 = new Workplace("A3", true);
-    public static readonly Workplace Res = new Workplace("RES", false);
+    public static readonly Workplace Res = new Workplace("RES", true);
     public static readonly Workplace Kpr = new Workplace("KPR", true);
     public static readonly Workplace Urg = new Workplace("URG", true);
 

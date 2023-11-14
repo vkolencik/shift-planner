@@ -1,0 +1,789 @@
+{
+  "Shifts": [
+    {
+      "Day": "2023-12-01",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e8841043dd7a9d44b5"
+    },
+    {
+      "Day": "2023-12-01",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84ed841043dd7a9d44e4"
+    },
+    {
+      "Day": "2023-12-01",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e6841043dd7a9d449f"
+    },
+    {
+      "Day": "2023-12-01",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e9841043dd7a9d44bc"
+    },
+    {
+      "Day": "2023-12-01",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84ea841043dd7a9d44c7"
+    },
+    {
+      "Day": "2023-12-02",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e7841043dd7a9d44a8"
+    },
+    {
+      "Day": "2023-12-02",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e7841043dd7a9d44a7"
+    },
+    {
+      "Day": "2023-12-02",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e8841043dd7a9d44b2"
+    },
+    {
+      "Day": "2023-12-02",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e4841043dd7a9d4493"
+    },
+    {
+      "Day": "2023-12-02",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84e8841043dd7a9d44b3"
+    },
+    {
+      "Day": "2023-12-03",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e8841043dd7a9d44b5"
+    },
+    {
+      "Day": "2023-12-03",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84ed841043dd7a9d44e4"
+    },
+    {
+      "Day": "2023-12-03",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e6841043dd7a9d449f"
+    },
+    {
+      "Day": "2023-12-03",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e9841043dd7a9d44bc"
+    },
+    {
+      "Day": "2023-12-03",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84e4841043dd7a9d4495"
+    },
+    {
+      "Day": "2023-12-04",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84ec841043dd7a9d44da"
+    },
+    {
+      "Day": "2023-12-04",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84ed841043dd7a9d44e5"
+    },
+    {
+      "Day": "2023-12-04",
+      "Workplace": "A3",
+      "UserId": "auth0|654c80513cd7c80a0c7b5191"
+    },
+    {
+      "Day": "2023-12-04",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e7841043dd7a9d44a9"
+    },
+    {
+      "Day": "2023-12-04",
+      "Workplace": "URG",
+      "UserId": "auth0|642489e640ee26f5cdcb7b26"
+    },
+    {
+      "Day": "2023-12-05",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e5841043dd7a9d4497"
+    },
+    {
+      "Day": "2023-12-05",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e8841043dd7a9d44b1"
+    },
+    {
+      "Day": "2023-12-05",
+      "Workplace": "A3",
+      "UserId": "auth0|645580a090a1b6b09befe090"
+    },
+    {
+      "Day": "2023-12-05",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e7841043dd7a9d44aa"
+    },
+    {
+      "Day": "2023-12-05",
+      "Workplace": "KPR",
+      "UserId": "auth0|652444cec69b93d874d621cf"
+    },
+    {
+      "Day": "2023-12-05",
+      "Workplace": "URG",
+      "UserId": "auth0|6408ff3bb9a9af8862b59815"
+    },
+    {
+      "Day": "2023-12-06",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e4841043dd7a9d4493"
+    },
+    {
+      "Day": "2023-12-06",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e7841043dd7a9d44a7"
+    },
+    {
+      "Day": "2023-12-06",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e6841043dd7a9d449f"
+    },
+    {
+      "Day": "2023-12-06",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e6841043dd7a9d449e"
+    },
+    {
+      "Day": "2023-12-06",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84e8841043dd7a9d44b3"
+    },
+    {
+      "Day": "2023-12-07",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e4841043dd7a9d4494"
+    },
+    {
+      "Day": "2023-12-07",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e4841043dd7a9d4492"
+    },
+    {
+      "Day": "2023-12-07",
+      "Workplace": "A3",
+      "UserId": "auth0|654fe2ec8e0c33359803fefb"
+    },
+    {
+      "Day": "2023-12-07",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e9841043dd7a9d44bc"
+    },
+    {
+      "Day": "2023-12-07",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84ed841043dd7a9d44e4"
+    },
+    {
+      "Day": "2023-12-08",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84ed841043dd7a9d44e5"
+    },
+    {
+      "Day": "2023-12-08",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e8841043dd7a9d44b1"
+    },
+    {
+      "Day": "2023-12-08",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e9841043dd7a9d44bf"
+    },
+    {
+      "Day": "2023-12-08",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84ec841043dd7a9d44dc"
+    },
+    {
+      "Day": "2023-12-08",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84ea841043dd7a9d44c7"
+    },
+    {
+      "Day": "2023-12-09",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84ea841043dd7a9d44c5"
+    },
+    {
+      "Day": "2023-12-09",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e4841043dd7a9d4495"
+    },
+    {
+      "Day": "2023-12-09",
+      "Workplace": "A3",
+      "UserId": "auth0|654c80513cd7c80a0c7b5191"
+    },
+    {
+      "Day": "2023-12-09",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e7841043dd7a9d44a9"
+    },
+    {
+      "Day": "2023-12-09",
+      "Workplace": "URG",
+      "UserId": "auth0|654fe3cd8e0c33359803ffc8"
+    },
+    {
+      "Day": "2023-12-10",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84ed841043dd7a9d44e5"
+    },
+    {
+      "Day": "2023-12-10",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e8841043dd7a9d44b1"
+    },
+    {
+      "Day": "2023-12-10",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e9841043dd7a9d44bf"
+    },
+    {
+      "Day": "2023-12-10",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84ec841043dd7a9d44dc"
+    },
+    {
+      "Day": "2023-12-10",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84ea841043dd7a9d44c7"
+    },
+    {
+      "Day": "2023-12-11",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e5841043dd7a9d4497"
+    },
+    {
+      "Day": "2023-12-11",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e4841043dd7a9d4492"
+    },
+    {
+      "Day": "2023-12-11",
+      "Workplace": "A3",
+      "UserId": "auth0|645580a090a1b6b09befe090"
+    },
+    {
+      "Day": "2023-12-11",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e6841043dd7a9d449e"
+    },
+    {
+      "Day": "2023-12-11",
+      "Workplace": "URG",
+      "UserId": "auth0|642489e640ee26f5cdcb7b26"
+    },
+    {
+      "Day": "2023-12-12",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e8841043dd7a9d44b5"
+    },
+    {
+      "Day": "2023-12-12",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e7841043dd7a9d44aa"
+    },
+    {
+      "Day": "2023-12-12",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e8841043dd7a9d44b2"
+    },
+    {
+      "Day": "2023-12-12",
+      "Workplace": "RES",
+      "UserId": "auth0|652444cec69b93d874d621cf"
+    },
+    {
+      "Day": "2023-12-12",
+      "Workplace": "URG",
+      "UserId": "auth0|6408ff3bb9a9af8862b59815"
+    },
+    {
+      "Day": "2023-12-13",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e4841043dd7a9d4494"
+    },
+    {
+      "Day": "2023-12-13",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e8841043dd7a9d44b1"
+    },
+    {
+      "Day": "2023-12-13",
+      "Workplace": "A3",
+      "UserId": "auth0|654c80513cd7c80a0c7b5191"
+    },
+    {
+      "Day": "2023-12-13",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e7841043dd7a9d44a9"
+    },
+    {
+      "Day": "2023-12-13",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84e8841043dd7a9d44b4"
+    },
+    {
+      "Day": "2023-12-14",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84ec841043dd7a9d44dd"
+    },
+    {
+      "Day": "2023-12-14",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e9841043dd7a9d44bc"
+    },
+    {
+      "Day": "2023-12-14",
+      "Workplace": "A3",
+      "UserId": "auth0|652443bed5b1e5eb42baf759"
+    },
+    {
+      "Day": "2023-12-14",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84ec841043dd7a9d44dc"
+    },
+    {
+      "Day": "2023-12-14",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84ed841043dd7a9d44e3"
+    },
+    {
+      "Day": "2023-12-15",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e8841043dd7a9d44b5"
+    },
+    {
+      "Day": "2023-12-15",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84eb841043dd7a9d44d2"
+    },
+    {
+      "Day": "2023-12-15",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e9841043dd7a9d44bd"
+    },
+    {
+      "Day": "2023-12-15",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e7841043dd7a9d44aa"
+    },
+    {
+      "Day": "2023-12-15",
+      "Workplace": "URG",
+      "UserId": "auth0|654fe26f786a3e9f081f0a56"
+    },
+    {
+      "Day": "2023-12-16",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e4841043dd7a9d4495"
+    },
+    {
+      "Day": "2023-12-16",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84eb841043dd7a9d44cf"
+    },
+    {
+      "Day": "2023-12-16",
+      "Workplace": "A3",
+      "UserId": "auth0|645580a090a1b6b09befe090"
+    },
+    {
+      "Day": "2023-12-16",
+      "Workplace": "RES",
+      "UserId": "auth0|652444cec69b93d874d621cf"
+    },
+    {
+      "Day": "2023-12-16",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84e8841043dd7a9d44b4"
+    },
+    {
+      "Day": "2023-12-17",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e8841043dd7a9d44b5"
+    },
+    {
+      "Day": "2023-12-17",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84eb841043dd7a9d44d2"
+    },
+    {
+      "Day": "2023-12-17",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e9841043dd7a9d44bd"
+    },
+    {
+      "Day": "2023-12-17",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e7841043dd7a9d44aa"
+    },
+    {
+      "Day": "2023-12-17",
+      "Workplace": "URG",
+      "UserId": "auth0|654fe26f786a3e9f081f0a56"
+    },
+    {
+      "Day": "2023-12-18",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e5841043dd7a9d4497"
+    },
+    {
+      "Day": "2023-12-18",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e9841043dd7a9d44bc"
+    },
+    {
+      "Day": "2023-12-18",
+      "Workplace": "A3",
+      "UserId": "auth0|654fe2ec8e0c33359803fefb"
+    },
+    {
+      "Day": "2023-12-18",
+      "Workplace": "RES",
+      "UserId": "auth0|6553b49b4aa92515c78b2fa1"
+    },
+    {
+      "Day": "2023-12-18",
+      "Workplace": "URG",
+      "UserId": "auth0|642489e640ee26f5cdcb7b26"
+    },
+    {
+      "Day": "2023-12-19",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e7841043dd7a9d44a9"
+    },
+    {
+      "Day": "2023-12-19",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84ed841043dd7a9d44e4"
+    },
+    {
+      "Day": "2023-12-19",
+      "Workplace": "A3",
+      "UserId": "auth0|654c80513cd7c80a0c7b5191"
+    },
+    {
+      "Day": "2023-12-19",
+      "Workplace": "RES",
+      "UserId": "auth0|652444cec69b93d874d621cf"
+    },
+    {
+      "Day": "2023-12-19",
+      "Workplace": "URG",
+      "UserId": "auth0|6408ff3bb9a9af8862b59815"
+    },
+    {
+      "Day": "2023-12-20",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84ec841043dd7a9d44dd"
+    },
+    {
+      "Day": "2023-12-20",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e8841043dd7a9d44b1"
+    },
+    {
+      "Day": "2023-12-20",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e8841043dd7a9d44b4"
+    },
+    {
+      "Day": "2023-12-20",
+      "Workplace": "RES",
+      "UserId": "auth0|6553b49b4aa92515c78b2fa1"
+    },
+    {
+      "Day": "2023-12-20",
+      "Workplace": "URG",
+      "UserId": "auth0|654fe26f786a3e9f081f0a56"
+    },
+    {
+      "Day": "2023-12-21",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e9841043dd7a9d44bc"
+    },
+    {
+      "Day": "2023-12-21",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84eb841043dd7a9d44d2"
+    },
+    {
+      "Day": "2023-12-21",
+      "Workplace": "A3",
+      "UserId": "auth0|654fe2ec8e0c33359803fefb"
+    },
+    {
+      "Day": "2023-12-21",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84ec841043dd7a9d44dc"
+    },
+    {
+      "Day": "2023-12-21",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84ed841043dd7a9d44e3"
+    },
+    {
+      "Day": "2023-12-22",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e7841043dd7a9d44a8"
+    },
+    {
+      "Day": "2023-12-22",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e7841043dd7a9d44a7"
+    },
+    {
+      "Day": "2023-12-22",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e8841043dd7a9d44b2"
+    },
+    {
+      "Day": "2023-12-22",
+      "Workplace": "RES",
+      "UserId": "auth0|6553b49b4aa92515c78b2fa1"
+    },
+    {
+      "Day": "2023-12-22",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84e9841043dd7a9d44bf"
+    },
+    {
+      "Day": "2023-12-23",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e4841043dd7a9d4494"
+    },
+    {
+      "Day": "2023-12-23",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e8841043dd7a9d44b1"
+    },
+    {
+      "Day": "2023-12-23",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e6841043dd7a9d449f"
+    },
+    {
+      "Day": "2023-12-23",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e7841043dd7a9d44a9"
+    },
+    {
+      "Day": "2023-12-23",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84ea841043dd7a9d44c7"
+    },
+    {
+      "Day": "2023-12-24",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e7841043dd7a9d44a8"
+    },
+    {
+      "Day": "2023-12-24",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e7841043dd7a9d44a7"
+    },
+    {
+      "Day": "2023-12-24",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e8841043dd7a9d44b2"
+    },
+    {
+      "Day": "2023-12-24",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84ec841043dd7a9d44dc"
+    },
+    {
+      "Day": "2023-12-24",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84e9841043dd7a9d44bf"
+    },
+    {
+      "Day": "2023-12-25",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e5841043dd7a9d4497"
+    },
+    {
+      "Day": "2023-12-25",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84eb841043dd7a9d44cf"
+    },
+    {
+      "Day": "2023-12-25",
+      "Workplace": "A3",
+      "UserId": "auth0|654fe2ec8e0c33359803fefb"
+    },
+    {
+      "Day": "2023-12-25",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e4841043dd7a9d4493"
+    },
+    {
+      "Day": "2023-12-25",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84ed841043dd7a9d44e3"
+    },
+    {
+      "Day": "2023-12-26",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e4841043dd7a9d4494"
+    },
+    {
+      "Day": "2023-12-26",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84ea841043dd7a9d44c5"
+    },
+    {
+      "Day": "2023-12-26",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84e9841043dd7a9d44bd"
+    },
+    {
+      "Day": "2023-12-26",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e8841043dd7a9d44b5"
+    },
+    {
+      "Day": "2023-12-26",
+      "Workplace": "URG",
+      "UserId": "auth0|6408ff3bb9a9af8862b59815"
+    },
+    {
+      "Day": "2023-12-27",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84ec841043dd7a9d44dd"
+    },
+    {
+      "Day": "2023-12-27",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84eb841043dd7a9d44d2"
+    },
+    {
+      "Day": "2023-12-27",
+      "Workplace": "A3",
+      "UserId": "auth0|652443bed5b1e5eb42baf759"
+    },
+    {
+      "Day": "2023-12-27",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e6841043dd7a9d449e"
+    },
+    {
+      "Day": "2023-12-27",
+      "Workplace": "URG",
+      "UserId": "auth0|654fe3cd8e0c33359803ffc8"
+    },
+    {
+      "Day": "2023-12-28",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e8841043dd7a9d44b5"
+    },
+    {
+      "Day": "2023-12-28",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84eb841043dd7a9d44cf"
+    },
+    {
+      "Day": "2023-12-28",
+      "Workplace": "A3",
+      "UserId": "auth0|637f84ea841043dd7a9d44c7"
+    },
+    {
+      "Day": "2023-12-28",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84ec841043dd7a9d44dc"
+    },
+    {
+      "Day": "2023-12-28",
+      "Workplace": "URG",
+      "UserId": "auth0|654fe26f786a3e9f081f0a56"
+    },
+    {
+      "Day": "2023-12-29",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e5841043dd7a9d4497"
+    },
+    {
+      "Day": "2023-12-29",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e8841043dd7a9d44b3"
+    },
+    {
+      "Day": "2023-12-29",
+      "Workplace": "A3",
+      "UserId": "auth0|654fe2ec8e0c33359803fefb"
+    },
+    {
+      "Day": "2023-12-29",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e7841043dd7a9d44aa"
+    },
+    {
+      "Day": "2023-12-29",
+      "Workplace": "URG",
+      "UserId": "auth0|642489e640ee26f5cdcb7b26"
+    },
+    {
+      "Day": "2023-12-30",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84ec841043dd7a9d44dd"
+    },
+    {
+      "Day": "2023-12-30",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e4841043dd7a9d4492"
+    },
+    {
+      "Day": "2023-12-30",
+      "Workplace": "A3",
+      "UserId": "auth0|652443bed5b1e5eb42baf759"
+    },
+    {
+      "Day": "2023-12-30",
+      "Workplace": "RES",
+      "UserId": "auth0|637f84e6841043dd7a9d449e"
+    },
+    {
+      "Day": "2023-12-30",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84ed841043dd7a9d44e3"
+    },
+    {
+      "Day": "2023-12-31",
+      "Workplace": "A1",
+      "UserId": "auth0|637f84e5841043dd7a9d4497"
+    },
+    {
+      "Day": "2023-12-31",
+      "Workplace": "A2",
+      "UserId": "auth0|637f84e7841043dd7a9d44a7"
+    },
+    {
+      "Day": "2023-12-31",
+      "Workplace": "A3",
+      "UserId": "auth0|654fe2ec8e0c33359803fefb"
+    },
+    {
+      "Day": "2023-12-31",
+      "Workplace": "RES",
+      "UserId": "auth0|652444cec69b93d874d621cf"
+    },
+    {
+      "Day": "2023-12-31",
+      "Workplace": "KPR",
+      "UserId": "auth0|637f84e8841043dd7a9d44b3"
+    },
+    {
+      "Day": "2023-12-31",
+      "Workplace": "URG",
+      "UserId": "auth0|637f84e8841043dd7a9d44b4"
+    }
+  ]
+}
