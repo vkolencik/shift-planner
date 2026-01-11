@@ -1,39 +1,42 @@
 const fs = require('fs')
 
-const table = 'Bohm\tBeranová\tSepp\tŠumanová\tStrnadelová\tVobořil\n' +
-  'Lubbadová\tKorchová\tPaulovičová\tJánský\tDžunda\tPolka\n' +
-  'Dohnalová\tStepaniuk\tMiřátská\tŠraierová\tDrašnar\tŠebele\n' +
-  'Touficová\tSedlačková\tDžbánková\tFedurčák\tŠumanová\tKoutová\n' +
-  'Dohnalová\tStepaniuk\tMiřátská\tŠraierová\tŠebele\tDrašnar\n' +
-  'Zlámal\tMarešová\tProcklová\tNedvěd\tStrnadelová\tVobořil\n' +
-  'Touficová\tDžunda\tPaulovičová\tJánský\tBohm\tSedlačková\n' +
-  'Jiřička\tFedurčák\tSepp\tTesařík\tSoučková\tŠumanová\n' +
-  'Zlámal\tStepaniuk\tMiřátská\tŠraierová\tDrašnar\tFischer\n' +
-  'Strnadelová\tDžunda\tPaulovičová\tNedvěd\tVobořil\tMarešová\n' +
-  'Lubbadová\tHobzíková\tProcklová\tJánský\tSoučková\tPolka\n' +
-  'Strnadelová\tMarešová\tPaulovičová\tNedvěd\tVobořil\tDžunda\n' +
-  'Drašnar\tBeranová\tMiřátská\tMichalovič\tKoutová\tJagerská\n' +
-  'Bohm\tSedlačková\tProcklová\tŠraierová\tHobzíková\tFedurčák\n' +
-  'Strnadelová\tMarešová\tSepp\tJánský\tVobořil\tDžbánková\n' +
-  'Jiřička\tFischer\tPolka\tNedvěd\tMichalovič\tDžunda\n' +
-  'Zlámal\tKorchová\tSedlačková\tŠumanová\tFedurčák\tJagerská\n' +
-  'Drašnar\tBeranová\tSepp\tBohm\tStepaniuk\tŠebele\n' +
-  'Zlámal\tKorchová\tSedlačková\tŠumanová\tJagerská\tFedurčák\n' +
-  'Touficová\tPolka\tMiřátská\tNedvěd\tDohnalová\tVobořil\n' +
-  'Hobzíková\tFischer\tPaulovičová\tBala\tMichalovič\tKoutová\n' +
-  'Jiřička\tBeranová\tMarešová\tTesařík\tSoučková\tFedurčák\n' +
-  'Lubbadová\tKorchová\tDžbánková\tNedvěd\tJagerská\tStepaniuk\n' +
-  'Koutová\tFischer\tProcklová\tMichalovič\tSoučková\tBala\n' +
-  'Strnadelová\tMarešová\tMiřátská\tJánský\tVobořil\tDžbánková\n' +
-  'Koutová\tFischer\tProcklová\tMichalovič\tSoučková\tBala\n' +
-  'Zlámal\tKorchová\tPaulovičová\tTesařík\tJagerská\tPolka\n' +
-  'Šebele\tStepaniuk\tDžbánková\tŠumanová\tVobořil\tSedlačková'
+const table = 'Rottová\tDžunda\tTesařová\tMichalovič\t\tMarešová\n' +
+  'Strnadelová\tStepaniuk\tProcklová\tBohm\t\tSedlačková\n' +
+  'Rottová\tDžunda\tTesařová\tMichalovič\t\tDrašnar\n' +
+  'Hobzíková\tFedurčák\tZvara\tŠebele\t\tExternista - Černý\n' +
+  'Zlámal\tPolka\tKlíč\tŠraierová\tŠkola\tExternista - chirurg\n' +
+  'Bohm\tStepaniuk\tTesařová\tTesařík\t\tSedlačková\n' +
+  'Dohnalová\tBeranová\tMelnik\tMichalovič\t\tDžunda\n' +
+  'Fedurčák\tPolka\tPaulovičová\tJánský\t\tMarešová\n' +
+  'Lubbadová\tDrašnar\tZvara\tŠebele\t\tExternista - Bilska\n' +
+  'Fedurčák\tPolka\tPaulovičová\tJánský\t\tMarešová\n' +
+  'Zlámal\tBeranová\tKlíč\tTesařík\t\tExternista - Černý\n' +
+  'Rottová\tŠraierová\tProcklová\tŠkola\t\tExternista - chirurg\n' +
+  'Dohnalová\tPolka\tZvara\tŠebele\t\tSepp\n' +
+  'Jiřička\tMichalovič\tBrablecová\tJánský\t\tDžbánková\n' +
+  'Rottová\tKrupková\tMiřátská\tŠraierová\t\tZyková\n' +
+  'Drašnar\tKorchová\tKlíč\tŠkola\t\tSepp\n' +
+  'Rottová\tKrupková\tMiřátská\tŠraierová\t\tZyková\n' +
+  'Zlámal\tMichalovič\tMelnik\tExternista - Pařízek\t\tExternista - Černý\n' +
+  'Šebele\tDžunda\tZvara\tŠkola\t\tExternista - chirurg\n' +
+  'Jiřička\tPolka\tSepp\tExternista - Pařízek\t\tZyková\n' +
+  'Michalovič\tKrupková\tMelnik\tJánský\t\tDžbánková\n' +
+  'Strnadelová\tStepaniuk\tProcklová\tExternista - Pařízek\t\tPaulovičová\n' +
+  'Dohnalová\tPolka\tTesařová\tŠebele\t\tMarešová\n' +
+  'Strnadelová\tStepaniuk\tProcklová\tJánský\t\tPaulovičová\n' +
+  'Zlámal\tKorchová\tMelnik\tBohm\t\tDžbánková\n' +
+  'Dohnalová\tLubbadová\tMiřátská\tRottová\t\tExternista - chirurg\n' +
+  'Jiřička\tKrupková\tBrablecová\tTesařík\t\tExternista - Bilska\n' +
+  'Rottová\tKorchová\tMarešová\tJánský\t\tZyková\n' +
+  'Zlámal\tSedlačková\tMelnik\tŠraierová\t\tExternista - Černý\n' +
+  'Jiřička\tBeranová\tBrablecová\tTesařík\t\tDžbánková\n' +
+  'Zlámal\tStepaniuk\tMelnik\tŠkola\tSedlačková\tSepp'
 
 const rawShifts = table
   .split('\n')
   .map((dayShifts, i) => (
     {
-      date: `2023-02-${i + 1 >= 10 ? '' : '0'}${i + 1}`,
+      date: `2023-12-${i + 1 >= 10 ? '' : '0'}${i + 1}`,
       shifts: dayShifts.split('\t').map(name => ({name: name}))
     }))
 
@@ -63,6 +66,9 @@ const shifts = []
 
 for (const day of rawShifts) {
   for (let i = 0; i < workplaces.length; i++) {
+
+    if (day.shifts[i].name === '') continue
+
     shifts.push({
       Day: day.date,
       Workplace: workplaces[i],
@@ -71,4 +77,4 @@ for (const day of rawShifts) {
   }
 }
 
-fs.writeFileSync('./output.json', JSON.stringify({ Shifts: shifts }))
+fs.writeFileSync('./2023-11-14-shifts-import.json', JSON.stringify({ Shifts: shifts }))

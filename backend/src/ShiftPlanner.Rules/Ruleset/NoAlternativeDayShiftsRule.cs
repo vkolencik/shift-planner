@@ -13,7 +13,7 @@ public class NoAlternativeDayShiftsRule : IRule
 
     public void Apply(IScheduleConstraintReceiver target)
     {
-        foreach (var employee in _parameters.Employees)
+        foreach (var employee in _parameters.Employees.Where(e => e.Name != "Škola"))
         {
             foreach (var (day1, day3) in _parameters.Days.Zip(_parameters.Days.Skip(2)))
             {

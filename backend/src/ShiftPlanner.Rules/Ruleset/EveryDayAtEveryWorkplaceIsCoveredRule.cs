@@ -21,8 +21,13 @@ public class EveryDayAtEveryWorkplaceIsCoveredRule : IRule
                     .Select(e => new ShiftAssignment(e, day, workplace))
                     .ToArray();
 
-                engine.AddSumConstraint(shiftsOnDayAtWorkplace, Constraint.Eq, 1);
+                engine.AddSumConstraint(shiftsOnDayAtWorkplace, workplace.Optional ? Constraint.Lte : Constraint.Eq, 1);
             }
         }
+
+        var optionalWorkplaceShifts = _parameters.Workplaces.Where(w => w.Optional)
+            .SelectMany(w => _parameters.Days.SelectMany(d => _parameters.AllEmployees.Select(e => new ShiftAssignment(e, d, w))))
+            .ToArray();
+        engine.MaximizeSum(optionalWorkplaceShifts);
     }
 }

@@ -24,4 +24,10 @@ public class ScheduledMonthShould
         var previousScheduledMonth = scheduledMonth.Previous;
         Assert.Equal(new ScheduledMonth(expectedPreviousYear, expectedPreviousMonth), previousScheduledMonth);
     }
+
+    [Fact]
+    public void BeComparable()
+    {
+        Assert.True(new ScheduledMonth(2023, 11) < new ScheduledMonth(2023, 12));
+    }
 }

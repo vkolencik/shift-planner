@@ -10,5 +10,6 @@ internal interface ISolver
     void AddSumConstraint(IReadOnlyCollection<VariableName> variableNames, Constraint constraint, uint bound);
     void AddVariableConstraint(VariableName variableName, Constraint constraint, uint value);
     void AddSumRelationConstraint(IReadOnlyCollection<VariableName> variableName1, Constraint constraint, IReadOnlyCollection<VariableName> variableName2);
+    void MaximizeSum(IReadOnlyCollection<VariableName> variableNames);
     SolverStatus SolverStatus { get; }
 }

@@ -29,9 +29,14 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
 
         var activeEmployeeInfos = employeeInfos.Where(e => e.EmployeeStatus == EmployeeStatus.Active);
 
+        var competenceGroups = CompetenceGroup.CompetenceGroups;
+        var activeWorkplaces = competenceGroups.SelectMany(cg => cg.Workplaces);
+
         var employeeRequirements = await _requirementsService.GetRequirementsOverviewForMonth(tenant, month);
 
-        var users = await _userService.GetAllUsers();
+        var users = (await _userService
+                .GetAllUsers())
+            .Where(u => u.ActiveUntil >= month);
         var userIdsByEmail = users.ToDictionary(u => u.Email, u => u.UserId);
 
         var activeEmployeeMonths = activeEmployeeInfos.Select(
@@ -42,7 +47,7 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
             .ToArray();
 
         var previousMonth = month.Previous;
-        var existingShifts = (await _storedScheduleService.GetSchedule(previousMonth)).Shifts;
+        var existingShifts = (await _storedScheduleService.GetSchedule(previousMonth))?.Shifts ?? Array.Empty<ScheduledShift>();
 
         var missingUsers = existingShifts.Select(s => s.User.Email).ToHashSet().Except(employeeInfos.Select(ei => ei.Email).ToHashSet()).ToArray();
 
@@ -59,31 +64,49 @@ internal class SchedulingParametersAggregator : ISchedulingParametersAggregator
         var externalMencl = GetExternalEmployee(employeeInfos, "externista-mencl@bulovka.cz");
         var externalCerny = GetExternalEmployee(employeeInfos, "externista-cerny@bulovka.cz");
         var externalKral = GetExternalEmployee(employeeInfos, "adam.kral@bulovka.cz");
+        var externalBilska = GetExternalEmployee(employeeInfos, "externista-bilska@bulovka.cz");
+        var externalParizek = GetExternalEmployee(employeeInfos, "externista-parizek@bulovka.cz");
+
+        var skola = activeEmployeeMonths.Single(em => em.Employee.Name == "Škola").Employee;
 
         var externalEmployeeShiftAssignments = ArraySegment<ShiftAssignment>.Empty
-            .Concat(GenerateExternalEmployeeShiftAssignments(9, externalChirurgove, new[] {5, 12, 19, 23, 26}))
-            .Concat(GenerateExternalEmployeeShiftAssignments(9, externalMencl, new int[] {9}))
-            .Concat(GenerateExternalEmployeeShiftAssignments(9, externalCerny, new[] {20}));
+                .Concat(GenerateEmployeeShiftAssignments(12, externalChirurgove, new[] {5, 12, 19, 26}, Workplace.Urg))
+                .Concat(GenerateEmployeeShiftAssignments(12, externalCerny, new[] {4, 11, 18, 29}, Workplace.Urg))
+                .Concat(GenerateEmployeeShiftAssignments(12, externalBilska, new[] {9, 27}, Workplace.Urg))
+                .Concat(GenerateEmployeeShiftAssignments(12, externalParizek, new[] {18, 20, 22}, Workplace.Res))
+                .Concat(GenerateEmployeeShiftAssignments(12, skola, new int[] {
+                // 1, 
+                // 3, 
+                5, 
+                12, 
+                19, 
+                31
+                }, Workplace.Res))
+            ;
+        
+        // .Concat(GenerateExternalEmployeeShiftAssignments(9, externalChirurgove, new[] {5, 12, 19, 23, 26}))
+        // .Concat(GenerateExternalEmployeeShiftAssignments(9, externalMencl, new int[] {9}))
 
         var predefinedShifts = existingShifts
             .Select(ss => new ShiftAssignment(GetEmployeeFromInfo(employeeInfos.Single(ei => ei.Email == ss.User.Email)), ss.Day, ss.Workplace))
             .Concat(externalEmployeeShiftAssignments)
             .Where(sa => sa.Shift.Day.ScheduledMonth == month)
+            .Where(sa => activeWorkplaces.Contains(sa.Shift.Workplace))
             .ToArray();
 
         return new MonthScheduleParameters(
             month,
-            new[] {externalChirurgove, externalMencl, externalCerny, externalKral},
+            new[] {externalChirurgove, externalMencl, externalCerny, externalKral, externalBilska, externalParizek},
             activeEmployeeMonths,
-            CompetenceGroup.CompetenceGroups,
+            competenceGroups,
             lastMonthShifts,
             predefinedShifts,
             Workplace.WeekendInterchangeabilityGroups);
     }
 
-    private static IEnumerable<ShiftAssignment> GenerateExternalEmployeeShiftAssignments(int monthNumber, Employee external1, int[] shiftDates)
+    private static IEnumerable<ShiftAssignment> GenerateEmployeeShiftAssignments(int monthNumber, Employee employee, int[] shiftDates, Workplace workplace)
     {
-        return shiftDates.Select(d => new ShiftAssignment(external1, new Day(2023, monthNumber, d), Workplace.Urg));
+        return shiftDates.Select(d => new ShiftAssignment(employee, new Day(2023, monthNumber, d), workplace));
     }
 
     private static Employee GetExternalEmployee(IReadOnlyCollection<EmployeeInfo> employeeInfos, string email)

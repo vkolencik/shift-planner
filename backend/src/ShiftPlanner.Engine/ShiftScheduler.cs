@@ -40,7 +40,7 @@ public class ShiftScheduler
 
             var rules = _rulesetFactory.CreateRuleset(_parameters, flexibility, _recorder).ToList();
             rules.ForEach(r => r.Apply(engine));
-
+            
             var scheduleResult = engine.Solve();
             
             result = scheduleResult is not null

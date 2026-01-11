@@ -15,7 +15,7 @@ import { sortArrayBy } from '../sort-array-by'
 import { Link } from 'react-router-dom'
 import { faArrowLeft, faArrowRight, faEdit } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { workplaces } from '../domain'
+import { getWorkplaces } from '../domain'
 import { Permission, usePermissions } from '../auth/auth'
 import { Printer } from 'react-bootstrap-icons'
 
@@ -106,14 +106,14 @@ function MonthScheduleInner ({ month, schedule }: { month: Month, schedule: Sche
             <thead className="thead-light table-primary table-bordered">
             <tr>
               <th></th>
-              {workplaces.map(w => <th scope="col">{w}</th>)}
+              {getWorkplaces(month).map(w => <th scope="col">{w}</th>)}
             </tr>
             </thead>
             <tbody>
             {getMonthDates(month).map(d =>
               (<tr className={isWeekend(d) ? 'table-success' : ''}>
                 <th scope="row">{formatDate(d)} ({getDayOfWeekName(d)})</th>
-                {workplaces.map(w => <td>
+                {getWorkplaces(month).map(w => <td>
                   {schedule?.shifts?.find(s => s.day === d && s.workplace === w)?.user.userName}
                 </td>)}
               </tr>)

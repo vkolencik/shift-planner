@@ -54,8 +54,13 @@ namespace ShiftPlanner.Engine.SchedulingEngine
                 foreach (var workplace in _workplaces)
                 {
                     var assignedEmployee = _employees
-                        .Single(e => _solver.Result(VariableName.Schedule(e.Value, day.Value, workplace.Value)) == 1)
+                        .SingleOrDefault(e => _solver.Result(VariableName.Schedule(e.Value, day.Value, workplace.Value)) == 1)
                         .Key;
+
+                    if (assignedEmployee is null)
+                    {
+                        continue;
+                    }
 
                     outputModel.Add(new ShiftAssignment(assignedEmployee, day.Key, workplace.Key));
                 }
@@ -97,6 +102,16 @@ namespace ShiftPlanner.Engine.SchedulingEngine
                 shifts2
                     .Select(s => VariableName.Schedule(_employees[s.Employee], _days[s.Shift.Day], _workplaces[s.Shift.Workplace]))
                     .ToArray());
+        }
+
+        public void MaximizeSum(IReadOnlyCollection<ShiftAssignment> shiftAssignments)
+        {
+            _solver.MaximizeSum(shiftAssignments.Select(s => 
+                VariableName.Schedule(
+                    _employees[s.Employee],
+                    _days[s.Shift.Day],
+                    _workplaces[s.Shift.Workplace])
+                ).ToArray());            
         }
     }
 }

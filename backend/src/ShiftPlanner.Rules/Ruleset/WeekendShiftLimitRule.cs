@@ -15,13 +15,13 @@ public class WeekendShiftLimitRule : IRule
     {
         foreach (var employeeMonth in _parameters.EmployeeMonths)
         {
-            var maxSats = 1u;
-            var maxSuns = 1u;
+            var maxSats = 2u;
+            var maxSuns = 2u;
             var maxWeekends = 2u;
 
-            if (employeeMonth.Employee.Name == "Jánský")
+            if (employeeMonth.Employee.Name == "Melnik")
             {
-                maxSats = 0;
+                maxSats = 1;
                 maxSuns = 1;
                 maxWeekends = 1u;
             }

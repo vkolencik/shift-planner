@@ -20,14 +20,16 @@ static class Program
         var aggregator = services.GetRequiredService<ISchedulingParametersAggregator>();
 
         Console.Out.WriteLine("Fetching parameters...");
-        var month = new ScheduledMonth(2023, 9);
+        var month = new ScheduledMonth(2023, 12);
         var schedulingParams = await aggregator.GetSchedulingParameters(new Tenant("fnb"), month);
 
         Validate(schedulingParams);
 
         Console.Out.WriteLine("Initiating scheduler...");
-        
-        var scheduler = new ShiftScheduler(new SequenceFlexibilityVariator(new ScheduleFlexibility(50)), new RulesetFactory());
+
+        // var flexibilityVariator = new SequenceFlexibilityVariator(new ScheduleFlexibility(50));
+        var flexibilityVariator = new SingleFlexibilityVariator(new ScheduleFlexibility(50));
+        var scheduler = new ShiftScheduler(flexibilityVariator, new RulesetFactory());
 
         Console.Out.WriteLine("Scheduler ready, computing schedule...");
 
@@ -50,7 +52,7 @@ static class Program
             Console.Out.WriteLine("Solution found");
             Console.Out.WriteLine($"Flexibility: {successResult.Flexibility.Degree}");
 
-            // await resultRepositoryGoogleSheet.StoreComputedSchedule(month, successResult);
+            await resultRepositoryGoogleSheet.StoreComputedSchedule(month, successResult);
             // await resultRepositoryS3.StoreComputedSchedule(month, successResult);
         }
 
@@ -69,8 +71,7 @@ static class Program
                     .Where(em => em.Employee.Capabilities.AllowedWorkplaces.Contains(w))
                     .Where(em => em.Leaves.All(l => !l.Days.Contains(d)));
                 
-                var c = employees
-                    .Count();
+                var c = employees.Count();
 
                 if (c <= 2) errors.Add("" + d + "-" + w + "-" + string.Join("|", employees.Select(e => e.Employee.Name)));
             }

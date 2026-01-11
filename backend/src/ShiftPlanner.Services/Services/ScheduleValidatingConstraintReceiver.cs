@@ -96,6 +96,11 @@ internal class ScheduleValidatingConstraintReceiver : IScheduleValidatingConstra
         }
     }
 
+    public void MaximizeSum(IReadOnlyCollection<ShiftAssignment> shiftAssignments)
+    {
+        // does not influence validation
+    }
+
     private static bool IsConstraintSatisfied(int testedValue, Constraint constraint, uint bound)
     {
         return constraint switch

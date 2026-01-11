@@ -29,7 +29,7 @@ public class GoogleSheetsScheduleRepository : GoogleSheetsService, IGoogleSheets
         int rowIndex = 2;
         foreach (var day in month.Days)
         {
-            await WriteListToSheet(service, $"B{rowIndex}", workplaces.Select(w => schedule.GetAssignedEmployee(new Shift(day, w)).Name));
+            await WriteListToSheet(service, $"B{rowIndex}", workplaces.Select(w => schedule.GetAssignedEmployee(new Shift(day, w))?.Name));
             rowIndex++;
         }
     }
